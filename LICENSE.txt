@@ -1,6 +1,23 @@
-MIT License
+Vitrina es un sitio hecho con Quartz. En este repositorio conviven tres cosas
+con condiciones distintas:
+
+  1. El código de Quartz (quartz/ y la configuración base del proyecto),
+     de jackyzha0, bajo licencia MIT.
+  2. Las modificaciones y añadidos de Jorge García, también bajo MIT.
+  3. Los textos del catálogo (content/), de Jorge García, bajo
+     Creative Commons Atribución-CompartirIgual 4.0.
+
+Las carátulas y carteles de content/assets/ no entran en ninguna de las dos:
+son de sus respectivos autores y se usan en miniatura solo para identificar
+cada obra. Ver content/creditos.md.
+
+
+================================================================================
+CÓDIGO — Licencia MIT
+================================================================================
 
 Copyright (c) 2021 jackyzha0
+Copyright (c) 2026 Jorge García
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +36,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+================================================================================
+CONTENIDO — CC BY-SA 4.0
+================================================================================
+
+Copyright (c) 2026 Jorge García
+
+Los textos de content/ están bajo Creative Commons
+Atribución-CompartirIgual 4.0 Internacional (CC BY-SA 4.0).
+
+Eres libre de compartirlos y adaptarlos, incluso comercialmente, siempre que
+cites la autoría y distribuyas tus versiones bajo esta misma licencia.
+
+Texto completo de la licencia:
+https://creativecommons.org/licenses/by-sa/4.0/deed.es

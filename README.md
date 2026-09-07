@@ -754,9 +754,13 @@ pasas después, vuelve a pasar `autores.py`.
 ## Licencia y créditos
 
 El generador es [Quartz](https://quartz.jzhao.xyz), de jackyzha0, bajo licencia
-MIT. Se conserva su `LICENSE.txt`.
+MIT. Mis cambios sobre él van igual, bajo MIT.
 
-El contenido de `content/` es mío, Copyright (c) 2026 jorgeress.
+Los textos de `content/` son míos, Copyright (c) 2026 Jorge García, bajo
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es):
+cópialos y adáptalos citando de dónde salen y manteniendo la misma licencia.
+
+El reparto completo está en `LICENSE.txt`.
 
 Las carátulas son de sus respectivos autores y se usan en miniatura para
 identificar cada obra. Vienen de [Open Library](https://openlibrary.org),
