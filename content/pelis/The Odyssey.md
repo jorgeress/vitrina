@@ -6,7 +6,10 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[the-odyssey.webp]]"
-tags: []
+tags:
+  - aventura
+  - acción
+  - fantasía
 letterboxd: the-odyssey-2026
 ---
 

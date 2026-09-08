@@ -6,7 +6,10 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[buffalo-66.webp]]"
-tags: []
+tags:
+  - drama
+  - comedia
+  - romance
 letterboxd: buffalo-66
 ---
 

@@ -6,7 +6,8 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[el-bola.webp]]"
-tags: []
+tags:
+  - drama
 letterboxd: pellet-2000
 ---
 

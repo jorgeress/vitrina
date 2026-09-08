@@ -6,7 +6,10 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[harakiri.webp]]"
-tags: []
+tags:
+  - historia
+  - drama
+  - acción
 letterboxd: harakiri
 ---
 

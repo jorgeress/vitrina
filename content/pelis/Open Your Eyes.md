@@ -6,7 +6,10 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[open-your-eyes.webp]]"
-tags: []
+tags:
+  - suspense
+  - drama
+  - ciencia-ficción
 letterboxd: open-your-eyes
 ---
 

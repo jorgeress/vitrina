@@ -6,7 +6,9 @@ nota: 8
 estado: terminado
 favorito: false
 portada: "[[demolition.webp]]"
-tags: []
+tags:
+  - drama
+  - comedia
 letterboxd: demolition
 ---
 

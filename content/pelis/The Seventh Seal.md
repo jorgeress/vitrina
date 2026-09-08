@@ -6,7 +6,9 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[the-seventh-seal.webp]]"
-tags: []
+tags:
+  - fantasía
+  - drama
 letterboxd: the-seventh-seal
 ---
 

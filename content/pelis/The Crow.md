@@ -6,7 +6,10 @@ nota: 8
 estado: terminado
 favorito: false
 portada: "[[the-crow.webp]]"
-tags: []
+tags:
+  - acción
+  - suspense
+  - fantasía
 letterboxd: the-crow
 ---
 

@@ -6,7 +6,10 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[project-hail-mary.webp]]"
-tags: []
+tags:
+  - comedia
+  - ciencia-ficción
+  - aventura
 letterboxd: project-hail-mary
 ---
 

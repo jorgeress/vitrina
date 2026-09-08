@@ -6,7 +6,10 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[mulholland-drive.webp]]"
-tags: []
+tags:
+  - drama
+  - misterio
+  - suspense
 letterboxd: mulholland-drive
 ---
 

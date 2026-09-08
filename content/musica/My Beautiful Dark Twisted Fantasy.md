@@ -6,7 +6,10 @@ nota:
 estado: terminado
 favorito: true
 portada: "[[my-beautiful-dark-twisted-fantasy.webp]]"
-tags: []
+tags:
+  - hip-hop
+  - pop-rap
+  - pop-soul
 mbid: 5d6e21e1-deb5-428e-bb42-c2a567f3619b
 favoritas: 1
 ---

@@ -6,7 +6,8 @@ nota: 10
 estado: terminado
 favorito: true
 portada: "[[the-hunt.webp]]"
-tags: []
+tags:
+  - drama
 letterboxd: the-hunt-2012
 ---
 

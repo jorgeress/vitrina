@@ -6,7 +6,10 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[clue.webp]]"
-tags: []
+tags:
+  - crimen
+  - comedia
+  - misterio
 letterboxd: clue
 ---
 

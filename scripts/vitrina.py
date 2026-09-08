@@ -467,6 +467,9 @@ def ficha_letterboxd(slug):
     tmdb = TMDB_RE.search(html)
     return {
         "titulo": datos.get("name"),
+        # Letterboxd los saca de una lista cerrada de diecinueve, siempre en
+        # ingles. Traducirlos es cosa de datos.py, que es quien los escribe.
+        "generos": [g for g in datos.get("genre") or [] if g],
         # El tamaño va en la propia ruta y viene pedido a 600 de ancho. A 1000
         # llega nitido a la tarjeta de 220 px hasta en una pantalla de 3x, y
         # ocupa lo mismo despues de pasar por el WebP de portadas.py.

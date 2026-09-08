@@ -6,7 +6,8 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[zoolander.webp]]"
-tags: []
+tags:
+  - comedia
 letterboxd: zoolander
 ---
 

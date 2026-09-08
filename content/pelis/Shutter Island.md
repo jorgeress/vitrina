@@ -6,7 +6,10 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[shutter-island.webp]]"
-tags: []
+tags:
+  - misterio
+  - drama
+  - suspense
 letterboxd: shutter-island
 ---
 

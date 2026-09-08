@@ -6,7 +6,11 @@ nota:
 estado: terminado
 favorito: true
 portada: "[[the-black-parade.webp]]"
-tags: []
+tags:
+  - rock
+  - emo
+  - pop-punk
+  - punk
 mbid: bcba43e7-2f72-3b60-b234-577e77fd2d9e
 favoritas: 2
 ---

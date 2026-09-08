@@ -6,7 +6,8 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[dead-poets-society.webp]]"
-tags: []
+tags:
+  - drama
 letterboxd: dead-poets-society
 ---
 

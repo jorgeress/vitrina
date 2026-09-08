@@ -6,16 +6,17 @@ pagina de juegos de Steam sabe cuanto has jugado pero no de que año es el juego
 quien lo hizo ni de que va; el diario de Letterboxd sabe tu nota pero no quien
 dirige. Todo eso esta en otro sitio, publico y sin clave, y esto va a buscarlo.
 
-La regla es la misma en las dos secciones: **no adivinar**. Los juegos se
+La regla es la misma en las tres secciones: **no adivinar**. Los juegos se
 resuelven por el `appid` que el importador ya guardo, que identifica la obra sin
-lugar a dudas, y las peliculas por el mismo id de Letterboxd del que sale
-el cartel, que Wikidata solo da cuando no hay duda de cual es. Antes que
-rellenar una ficha con los datos de otra obra, se deja vacia.
+lugar a dudas; las peliculas por el mismo id de Letterboxd del que sale el
+cartel, que Wikidata solo da cuando no hay duda de cual es; y los discos por su
+`mbid`. Antes que rellenar una ficha con los datos de otra obra, se deja vacia.
 
 Como todo lo demas de Vitrina, no pide clave ni registro.
 
   juegos  Steam, ficha de la tienda: year, autor y tags
-  pelis   Letterboxd: autor, o sea la direccion
+  pelis   Letterboxd: autor (la direccion) y tags
+  musica  MusicBrainz: tags, en ingles y tal como los da
 
 Uso:
   scripts/datos.py                    rellena los campos vacios
@@ -93,20 +94,61 @@ DIRECCION_RE = re.compile(r"<th[^>]*>\s*Directed by\s*</th>\s*<td[^>]*>(.*?)</td
                           re.S | re.I)
 
 
+# Los diecinueve generos de Letterboxd, que son lista cerrada, al castellano.
+# Una tabla y no una traduccion al vuelo: asi "Action" y el genero de Steam
+# caen los dos en `acción` y la pagina de esa etiqueta junta las peliculas con
+# los juegos, que es de lo que sirve una etiqueta. Lo que no este aqui se
+# escribe tal cual y se nota, que es mejor que inventarselo.
+GENEROS_LETTERBOXD = {
+    "action": "acción",
+    "adventure": "aventura",
+    "animation": "animación",
+    "comedy": "comedia",
+    "crime": "crimen",
+    "documentary": "documental",
+    "drama": "drama",
+    "family": "familia",
+    "fantasy": "fantasía",
+    "history": "historia",
+    "horror": "terror",
+    "music": "música",
+    "mystery": "misterio",
+    "romance": "romance",
+    "science fiction": "ciencia-ficción",
+    "thriller": "suspense",
+    "tv movie": "película-de-tv",
+    "war": "guerra",
+    "western": "western",
+}
+
+
 def datos_peli(titulo, campos, md):
-    """La direccion, de la ficha de Letterboxd.
+    """La direccion y los generos, de la ficha de Letterboxd.
 
     Ni el export de Letterboxd ni su RSS traen el director, asi que las
     peliculas importadas se quedan sin `autor`. Sale de la misma pagina de la
     que ya sale el cartel y de la misma peticion, asi que llega gratis. Si la
     pelicula no se ha podido identificar queda Wikipedia, que lo trae en la
     ficha lateral pero hay que rascarlo del HTML.
+
+    Los generos salen de esa misma peticion y solo de ella: Wikipedia no los
+    da en una fila fija que se pueda leer sin adivinar, asi que una pelicula
+    sin id de Letterboxd se queda sin etiquetas y con su director.
     """
     slug_lb, detalle = asegurar_letterboxd(md, campos)
     if slug_lb:
-        direccion = ficha_letterboxd(slug_lb).get("direccion")
+        ficha = ficha_letterboxd(slug_lb)
+        valores = {}
+        direccion = ficha.get("direccion")
         if direccion:
-            return {"autor": ", ".join(direccion[:2])}, f"Letterboxd ({slug_lb})"
+            valores["autor"] = ", ".join(direccion[:2])
+        generos = [etiqueta(GENEROS_LETTERBOXD.get(g.strip().lower(), g))
+                   for g in ficha.get("generos") or []]
+        generos = [g for g in generos if g][:MAX_TAGS]
+        if generos:
+            valores["tags"] = generos
+        if valores:
+            return valores, f"Letterboxd ({slug_lb})"
 
     for articulo in articulos_ingleses(titulo, campos.get("year")):
         m = DIRECCION_RE.search(articulo_html(articulo))
@@ -124,12 +166,46 @@ def datos_peli(titulo, campos, md):
     return {}, (detalle if not slug_lb else "su ficha de Letterboxd no dice quien dirige")
 
 
-# Que sabe rellenar cada seccion, y en que campos. Los libros no estan porque
-# ya entran completos: `importar.py libro` los crea con año, autor y coverid
-# de la edicion que hayas elegido tu. La musica tampoco, porque ListenBrainz da
-# el artista de una y el genero de un disco no lo dice nadie sin discutirlo.
+def datos_album(titulo, campos, md):
+    """Los generos del disco, de MusicBrainz.
+
+    Los vota la gente, asi que vienen ordenados por votos y con cola: In
+    Rainbows trae diecisiete, de `alternative rock` a `krautrock`. Se cortan
+    por MAX_TAGS, que deja los mas votados, que son los que describen el disco.
+
+    **Van en ingles, tal como los da MusicBrainz.** Es lo unico del sitio que
+    no esta en castellano, y es a proposito: los generos de Steam y los de
+    Letterboxd salen de listas cerradas que se pueden traducir de una vez, y el
+    de MusicBrainz es abierto y de miles de entradas. Traducir sobre la marcha
+    seria adivinar, y con los generos musicales encima se discute: `emo` o
+    `pop punk` no tienen version castellana que nadie use.
+    """
+    del titulo  # manda el mbid, que identifica el disco sin dudas
+    mbid = campos.get("mbid")
+    if not mbid:
+        return {}, "la ficha no tiene mbid; se pone a mano"
+    del md
+
+    datos = pedir(f"https://musicbrainz.org/ws/2/release-group/{mbid}"
+                  "?fmt=json&inc=genres")
+    if datos is None:
+        return {}, f"MusicBrainz no responde por el mbid {mbid}"
+    generos = sorted(datos.get("genres") or [],
+                     key=lambda g: -(g.get("count") or 0))
+    generos = [etiqueta(g.get("name")) for g in generos]
+    generos = [g for g in generos if g][:MAX_TAGS]
+    if not generos:
+        return {}, f"MusicBrainz no tiene generos votados de {mbid}"
+    return {"tags": generos}, f"MusicBrainz ({datos.get('title') or mbid})"
+
+
+# Que sabe rellenar cada seccion, y en que campos. Los libros no estan: lo unico
+# que guardan de Open Library es `coverid`, que identifica la portada y no la
+# obra, asi que no hay por donde preguntar sus generos sin adivinar por titulo.
+# Es la misma raya que traza textos.py, y por lo mismo.
 FUENTES = {"juego": (datos_juego, ("year", "autor", "tags")),
-           "peli": (datos_peli, ("autor",))}
+           "peli": (datos_peli, ("autor", "tags")),
+           "album": (datos_album, ("tags",))}
 
 
 # --- recorrido ---------------------------------------------------------------

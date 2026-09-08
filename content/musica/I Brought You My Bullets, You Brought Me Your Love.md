@@ -6,7 +6,11 @@ nota:
 estado: terminado
 favorito: true
 portada: "[[i-brought-you-my-bullets-you-brought-me-your-love.webp]]"
-tags: []
+tags:
+  - emo
+  - punk
+  - post-hardcore
+  - rock
 mbid: e8923ffe-6ea0-3a65-b6e4-90bca0a6d3a8
 favoritas: 1
 ---

@@ -6,7 +6,8 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[la-haine.webp]]"
-tags: []
+tags:
+  - drama
 letterboxd: la-haine
 ---
 

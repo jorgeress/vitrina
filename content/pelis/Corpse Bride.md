@@ -6,7 +6,10 @@ nota: 8
 estado: terminado
 favorito: false
 portada: "[[corpse-bride.webp]]"
-tags: []
+tags:
+  - fantasía
+  - animación
+  - romance
 letterboxd: corpse-bride
 ---
 

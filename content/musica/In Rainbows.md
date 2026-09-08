@@ -6,7 +6,11 @@ nota:
 estado: terminado
 favorito: true
 portada: "[[in-rainbows.webp]]"
-tags: []
+tags:
+  - alternative-rock
+  - rock
+  - art-rock
+  - electronic
 mbid: 6e335887-60ba-38f0-95af-fae7774336bf
 favoritas: 2
 ---

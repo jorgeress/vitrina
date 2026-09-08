@@ -6,7 +6,9 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[how-to-lose-a-guy-in-10-days.webp]]"
-tags: []
+tags:
+  - comedia
+  - romance
 letterboxd: how-to-lose-a-guy-in-10-days
 ---
 

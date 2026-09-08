@@ -6,7 +6,10 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[inglourious-basterds.webp]]"
-tags: []
+tags:
+  - guerra
+  - drama
+  - suspense
 letterboxd: inglourious-basterds
 ---
 

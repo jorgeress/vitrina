@@ -6,7 +6,8 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[12-angry-men.webp]]"
-tags: []
+tags:
+  - drama
 letterboxd: 12-angry-men
 ---
 

@@ -6,7 +6,8 @@ nota: 10
 estado: terminado
 favorito: true
 portada: "[[the-perks-of-being-a-wallflower.webp]]"
-tags: []
+tags:
+  - drama
 letterboxd: the-perks-of-being-a-wallflower
 ---
 

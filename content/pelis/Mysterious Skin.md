@@ -6,7 +6,8 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[mysterious-skin.webp]]"
-tags: []
+tags:
+  - drama
 letterboxd: mysterious-skin
 ---
 

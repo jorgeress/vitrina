@@ -6,7 +6,9 @@ nota: 8
 estado: terminado
 favorito: false
 portada: "[[little-women.webp]]"
-tags: []
+tags:
+  - drama
+  - romance
 letterboxd: little-women-2019
 ---
 

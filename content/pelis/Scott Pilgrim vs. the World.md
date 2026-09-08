@@ -6,7 +6,10 @@ nota: 10
 estado: terminado
 favorito: false
 portada: "[[scott-pilgrim-vs-the-world.webp]]"
-tags: []
+tags:
+  - romance
+  - acción
+  - comedia
 letterboxd: scott-pilgrim-vs-the-world
 ---
 

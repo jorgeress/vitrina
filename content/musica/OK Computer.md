@@ -6,7 +6,11 @@ nota:
 estado: terminado
 favorito: true
 portada: "[[ok-computer.webp]]"
-tags: []
+tags:
+  - alternative-rock
+  - art-rock
+  - rock
+  - experimental
 mbid: b1392450-e666-3926-a536-22c65f834433
 favoritas: 1
 ---

@@ -6,7 +6,9 @@ nota: 10
 estado: terminado
 favorito: true
 portada: "[[call-me-by-your-name.webp]]"
-tags: []
+tags:
+  - romance
+  - drama
 letterboxd: call-me-by-your-name
 ---
 
