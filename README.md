@@ -59,6 +59,14 @@ conflictos absurdos en cada commit. Se borra sin miedo. En GitHub lo reconstruye
 la Action en cada push y lo sube a Pages; la carpeta local es solo para verlo
 antes de publicar.
 
+**`plugins/` es lo que Quartz no trae.** Dos cosas, y las dos por lo mismo:
+para que la maquetación siga fuera de las notas. Una es la cabecera de cada
+ficha, que pinta la carátula, los datos y el enlace a la fuente leyendo el
+`tipo`, la `nota`, el `appid`… de la nota, sin escribir nada en ella. La otra
+saca del buscador las cinco páginas sueltas que Quartz emite por cada `.base`,
+que eran una copia en blanco de la galería que ya está en el índice de su
+sección.
+
 La otra carpeta grande, `quartz/`, es el generador: no es contenido, es el
 programa. Este repo es un *fork* de Quartz con la vault dentro, que es como se
 usa Quartz normalmente.
@@ -95,13 +103,14 @@ scripts/
   importar.py       vuelca de golpe Letterboxd, Steam, Spotify y ListenBrainz
   vitrina.py        lo que comparten todos los scripts
   portadas.py       baja las carátulas y rellena el campo `portada`
-  datos.py          rellena año, autor y tags desde Steam y Letterboxd
+  datos.py          rellena año, autor y tags: Steam, Letterboxd, MusicBrainz
   textos.py         escribe el cuerpo: de qué va cada obra, y las canciones
   autores.py        conecta lo que comparte estudio, dirección o artista
   vistazo.py        levanta el sitio con los borradores dentro
   estado.py         qué hay, qué falta y qué se publica
   pruebas.py        las pruebas de todo lo anterior, sin red
 requirements.txt    Pillow, lo unico que los scripts piden fuera de la estandar
+plugins/vitrina/    la cabecera de las fichas y las .base fuera del buscador
 quartz/             el generador (fork de Quartz, no se toca)
 quartz.config.yaml  configuración del sitio
 public/             lo que genera el build; no se versiona

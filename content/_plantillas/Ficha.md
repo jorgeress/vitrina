@@ -17,13 +17,19 @@ Campos:
   sin nota sale igual, al final.
 - `favorito`: true o false. Alimenta *Favoritos* y la vista «Solo favoritos» de
   cada sección.
-- `favoritas`: solo en discos. Cuántas canciones tuyas hay en él. Ordena la
-  vista «Por tus canciones»; los nombres van en el cuerpo de la ficha.
+- `favoritas`: solo en discos. Cuántas canciones tuyas hay en él. Sale en la
+  ficha como «Canciones tuyas»; los nombres van en el cuerpo.
 - `portada`: enlace a una imagen de `assets/portadas/`, entre corchetes.
 - `tags`: géneros o etiquetas libres, en minúscula y sin espacios. Los mangas
-  van aquí, con la etiqueta `manga`, y no en una sección aparte.
+  van aquí, con la etiqueta `manga`, y no en una sección aparte. Los rellena
+  `datos.py` salvo en libros: juegos y películas en castellano, discos en
+  inglés, que es como los da MusicBrainz.
 - El identificador de la fuente, que lo pone el script y no se toca: `appid`
-  (Steam), `letterboxd`, `mbid` (MusicBrainz) o `coverid` (Open Library).
+  (Steam), `letterboxd`, `mbid` (MusicBrainz) o `coverid` (Open Library). La
+  ficha los usa para enlazar a la fuente al pie de sus datos.
+- `wikipedia`: solo en libros, el nombre de su artículo en la Wikipedia en
+  español. `coverid` identifica la portada y no la obra, así que es lo único
+  con lo que un libro puede enlazar a algún sitio.
 
 El cuerpo de la ficha es para lo tuyo: por qué te gustó, o qué canciones son
 las que te sabes. Es lo único que ninguna fuente puede rellenar, y lo único que
