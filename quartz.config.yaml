@@ -119,13 +119,12 @@ plugins:
       enableRSS: true
       # Las fichas sin texto tambien entran en el buscador: una ficha vacia
       # sigue teniendo titulo, y quien busca "Elden Ring" espera encontrarla.
-      # El precio son las cinco paginas sueltas de los .base, que entran con
-      # el titulo del fichero y sin texto. Del arbol lateral ya se van, con el
-      # filterFn del explorer; de aqui no hay forma de sacarlas. Este plugin no
-      # tiene opcion de filtro, solo respeta data.unlisted, y el que pinta las
-      # bases construye sus paginas con el frontmatter a mano, sin leer el de
-      # nadie. Meter *.base en ignorePatterns deja sin galeria a las cinco
-      # secciones (comprobado).
+      # El precio eran las cinco paginas sueltas de los .base, que entraban con
+      # el titulo del fichero y sin texto. Del arbol lateral se van con el
+      # filterFn del explorer, y del buscador las saca ahora el transformador
+      # de ./plugins/vitrina, que las marca `unlisted`: es lo unico que este
+      # plugin mira. Meter *.base en ignorePatterns deja sin galeria a las
+      # cinco secciones (comprobado).
       includeEmptyFiles: true
   - source: "@quartz-community/favicon"
     enabled: true
@@ -178,8 +177,17 @@ plugins:
     layout:
       position: beforeBody
       priority: 10
+  # Fuera: pintaba la fecha del commit y el tiempo de lectura sobre cada ficha.
+  # En un catalogo las dos mienten. "05 sept 2026" es cuando toque el fichero,
+  # no cuando se estreno la peli, y encima del titulo se lee como el año de la
+  # obra; y "Se lee en 1 min" mide un parrafo de tres lineas. El hueco lo ocupa
+  # ahora la cabecera de Vitrina, que dice el año de verdad.
   - source: "@quartz-community/content-meta"
+    enabled: false
+  # La caratula y los datos de la obra, encima del texto de la ficha.
+  - source: "./plugins/vitrina"
     enabled: true
+    order: 60
     layout:
       position: beforeBody
       priority: 20
@@ -207,6 +215,9 @@ plugins:
       group: toolbar
   - source: "@quartz-community/breadcrumbs"
     enabled: true
+    options:
+      # El plugin trae "Home" y no lo traduce con el locale.
+      rootName: Inicio
     layout:
       position: beforeBody
       priority: 5

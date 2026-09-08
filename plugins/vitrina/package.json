@@ -1,0 +1,37 @@
+{
+  "name": "vitrina-plugin",
+  "version": "1.0.0",
+  "description": "Lo que Vitrina necesita de Quartz y Quartz no trae: la cabecera de una ficha y las bases fuera del buscador.",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": {
+      "import": "./index.js"
+    },
+    "./components": {
+      "import": "./components.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./index.js",
+  "quartz": {
+    "name": "vitrina",
+    "displayName": "Vitrina",
+    "category": [
+      "pageType",
+      "component"
+    ],
+    "version": "1.0.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 60,
+    "defaultEnabled": true,
+    "components": {
+      "Ficha": {
+        "displayName": "Ficha",
+        "defaultPosition": "beforeBody",
+        "defaultPriority": 20
+      }
+    }
+  }
+}
