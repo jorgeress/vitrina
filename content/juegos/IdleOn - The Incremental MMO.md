@@ -3,7 +3,7 @@ tipo: juego
 year: 2025
 autor: Lavaflame2
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[idleon-the-incremental-mmo.webp]]"
 tags:

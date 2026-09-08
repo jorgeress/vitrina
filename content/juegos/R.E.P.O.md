@@ -3,7 +3,7 @@ tipo: juego
 year: 2025
 autor: semiwork
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[r-e-p-o.webp]]"
 tags:

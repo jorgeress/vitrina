@@ -3,7 +3,7 @@ tipo: juego
 year: 2013
 autor: The Indie Stone
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[project-zomboid.webp]]"
 tags:

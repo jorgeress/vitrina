@@ -3,7 +3,7 @@ tipo: juego
 year: 2018
 autor: Lazy Bear Games
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[graveyard-keeper.webp]]"
 tags:

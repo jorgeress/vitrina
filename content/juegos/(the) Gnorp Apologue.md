@@ -3,7 +3,7 @@ tipo: juego
 year: 2023
 autor: Myco
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[the-gnorp-apologue.webp]]"
 tags:

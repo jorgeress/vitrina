@@ -3,7 +3,7 @@ tipo: juego
 year: 2022
 autor: "[[autores/FromSoftware, Inc|FromSoftware, Inc.]]"
 nota: 10
-estado: en curso
+estado:
 favorito: true
 portada: "[[elden-ring.webp]]"
 tags:

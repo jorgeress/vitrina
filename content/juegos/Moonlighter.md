@@ -3,7 +3,7 @@ tipo: juego
 year: 2018
 autor: Digital Sun
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[moonlighter.webp]]"
 tags:

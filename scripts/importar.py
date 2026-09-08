@@ -251,9 +251,13 @@ def importar_steam(args):
     for titulo, dato in hallados.items():
         horas = round(dato["minutos"] / 60)
         juegos[titulo] = {
-            # Steam sabe cuanto has jugado, no si lo terminaste: nadie puede
-            # deducir eso, asi que lo jugado entra como "en curso".
-            "estado": "pendiente" if dato["minutos"] == 0 else "en curso",
+            # Steam sabe cuanto has jugado, no si lo terminaste. Lo que nunca
+            # has abierto si es "pendiente" sin discusion; lo jugado se queda
+            # en blanco y lo pones tu. Antes entraba como "en curso", y como
+            # eso le tocaba a todo lo que tuviera una hora, los 44 juegos
+            # decian lo mismo: un campo que contesta igual siempre no es un
+            # dato, y desde que la ficha lo enseña encima cantaba.
+            "estado": "pendiente" if dato["minutos"] == 0 else None,
             "horas": horas or None,
             "appid": dato.get("appid"),
             "capsula": dato.get("capsula"),
@@ -481,7 +485,10 @@ def volcar(elementos, carpeta, tipo, args, cribar=True):
     nuevas = repetidas = 0
     for titulo, dato in sorted(elementos.items()):
         campos = {"tipo": tipo, "year": dato.get("year"), "autor": dato.get("autor"),
-                  "nota": dato.get("nota"), "estado": dato.get("estado", "pendiente"),
+                  # Sin defecto: una fuente que no sabe el estado lo deja en
+                  # blanco, como la nota. Inventarle "pendiente" a lo que ya
+                  # has jugado es tan falso como decir que sigue en curso.
+                  "nota": dato.get("nota"), "estado": dato.get("estado"),
                   "favorito": dato.get("favorito", False),
                   "portada": None, "tags": None}
         if dato.get("horas"):

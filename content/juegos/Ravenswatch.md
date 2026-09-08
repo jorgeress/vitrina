@@ -3,7 +3,7 @@ tipo: juego
 year: 2024
 autor: Passtech Games
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[ravenswatch.webp]]"
 tags:

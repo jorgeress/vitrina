@@ -3,7 +3,7 @@ tipo: juego
 year: 2023
 autor: Zeekerss
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[lethal-company.webp]]"
 tags:

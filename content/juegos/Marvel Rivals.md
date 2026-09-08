@@ -3,7 +3,7 @@ tipo: juego
 year: 2024
 autor: NetEase Games
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[marvel-rivals.webp]]"
 tags:

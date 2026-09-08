@@ -3,7 +3,7 @@ tipo: juego
 year: 2023
 autor: Aleksandr Golovkin
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[underworld-idle.webp]]"
 tags:

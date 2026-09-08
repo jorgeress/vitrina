@@ -3,7 +3,7 @@ tipo: juego
 year: 2017
 autor: Monolith Productions
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[middle-earthtm-shadow-of-wartm.webp]]"
 tags:

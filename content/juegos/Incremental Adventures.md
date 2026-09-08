@@ -3,7 +3,7 @@ tipo: juego
 year: 2020
 autor: Gniller
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[incremental-adventures.webp]]"
 tags:

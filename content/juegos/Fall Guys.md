@@ -3,7 +3,7 @@ tipo: juego
 year: 2020
 autor: Mediatonic
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[fall-guys.webp]]"
 tags:

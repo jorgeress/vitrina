@@ -3,7 +3,7 @@ tipo: juego
 year: 2025
 autor: Thorium
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[undermine-2.webp]]"
 tags:

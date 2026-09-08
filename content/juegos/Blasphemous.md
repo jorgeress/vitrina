@@ -3,7 +3,7 @@ tipo: juego
 year: 2019
 autor: The Game Kitchen
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[blasphemous.webp]]"
 tags:

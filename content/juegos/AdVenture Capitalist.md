@@ -3,7 +3,7 @@ tipo: juego
 year: 2015
 autor: Hyper Hippo Games
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[adventure-capitalist.webp]]"
 tags:

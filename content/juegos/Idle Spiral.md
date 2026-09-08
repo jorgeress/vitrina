@@ -3,7 +3,7 @@ tipo: juego
 year: 2022
 autor: Idle System, Inc., Yayu
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[idle-spiral.webp]]"
 tags:

@@ -3,7 +3,7 @@ tipo: juego
 year: 2019
 autor: Rockstar Games
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[red-dead-redemption-2.webp]]"
 tags:

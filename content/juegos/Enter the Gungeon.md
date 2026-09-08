@@ -3,7 +3,7 @@ tipo: juego
 year: 2016
 autor: Dodge Roll
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[enter-the-gungeon.webp]]"
 tags:

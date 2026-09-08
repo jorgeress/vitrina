@@ -3,7 +3,7 @@ tipo: juego
 year: 2016
 autor: ConcernedApe
 nota:
-estado: en curso
+estado:
 favorito: false
 portada: "[[stardew-valley.webp]]"
 tags:
