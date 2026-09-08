@@ -1,3 +1,8 @@
+formulas:
+  # `nota` esta vacia en casi la mitad de las fichas, y el comparador de Bases
+  # manda los vacios al principio cuando el orden es DESC: la galeria abria con
+  # lo que no he puntuado. Esto los baja a -1 para que caigan al final.
+  puntuacion: if(note.nota, note.nota, -1)
 filters:
   and:
     - note.favorito == true
@@ -22,8 +27,10 @@ views:
       - note.autor
       - note.nota
     sort:
-      - property: note.nota
+      - property: formula.puntuacion
         direction: DESC
+      - property: file.name
+        direction: ASC
   - type: board
     name: Por tipo
     groupBy:
@@ -33,5 +40,7 @@ views:
       - note.autor
       - note.nota
     sort:
-      - property: note.nota
+      - property: formula.puntuacion
         direction: DESC
+      - property: file.name
+        direction: ASC
