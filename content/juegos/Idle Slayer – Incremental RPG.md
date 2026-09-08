@@ -3,7 +3,6 @@ tipo: juego
 year: 2020
 autor: Pablo Leban
 nota:
-estado:
 favorito: false
 portada: "[[idle-slayer-incremental-rpg.webp]]"
 tags:

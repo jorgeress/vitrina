@@ -3,7 +3,6 @@ tipo: juego
 year: 2023
 autor: Blobfish
 nota:
-estado:
 favorito: false
 portada: "[[brotato.webp]]"
 tags:

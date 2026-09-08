@@ -3,7 +3,6 @@ tipo: juego
 year: 2022
 autor: CyberConnect2 Co. Ltd.
 nota:
-estado:
 favorito: false
 portada: "[[jojo-s-bizarre-adventure-all-star-battle-r.webp]]"
 tags:

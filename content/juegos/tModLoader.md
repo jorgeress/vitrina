@@ -3,7 +3,6 @@ tipo: juego
 year: 2020
 autor: TML Team
 nota:
-estado:
 favorito: false
 portada: "[[tmodloader.webp]]"
 tags:

@@ -3,7 +3,6 @@ tipo: juego
 year: 2019
 autor: HopFrog
 nota:
-estado:
 favorito: false
 portada: "[[forager.webp]]"
 tags:

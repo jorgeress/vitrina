@@ -3,7 +3,6 @@ tipo: juego
 year: 2021
 autor: Boros Bros
 nota:
-estado:
 favorito: false
 portada: "[[bro-falls-ultimate-showdown.webp]]"
 tags:

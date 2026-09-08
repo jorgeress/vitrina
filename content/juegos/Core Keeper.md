@@ -3,7 +3,6 @@ tipo: juego
 year: 2024
 autor: Pugstorm
 nota:
-estado:
 favorito: false
 portada: "[[core-keeper.webp]]"
 tags:

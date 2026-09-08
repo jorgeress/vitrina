@@ -3,7 +3,6 @@ tipo: juego
 year: 2025
 autor: Team Cherry
 nota:
-estado:
 favorito: false
 portada: "[[hollow-knight-silksong.webp]]"
 tags:

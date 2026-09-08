@@ -3,7 +3,6 @@ tipo: juego
 year: 2021
 autor: YDKR, Semenov Iurii
 nota:
-estado:
 favorito: false
 portada: "[[dps-idle.webp]]"
 tags:

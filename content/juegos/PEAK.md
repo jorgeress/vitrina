@@ -3,7 +3,6 @@ tipo: juego
 year: 2025
 autor: Team PEAK
 nota:
-estado:
 favorito: false
 portada: "[[peak.webp]]"
 tags:

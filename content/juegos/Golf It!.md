@@ -3,7 +3,6 @@ tipo: juego
 year: 2023
 autor: Perfuse Entertainment
 nota:
-estado:
 favorito: false
 portada: "[[golf-it.webp]]"
 tags:

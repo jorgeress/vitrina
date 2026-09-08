@@ -10,7 +10,9 @@ añade cuando se sepa, y los scripts saben crear una clave que no existía.
 Campos:
 
 - `tipo`: juego, peli, libro o album. Debe coincidir con la carpeta.
-- `estado`: pendiente, en curso, terminado, abandonado.
+- `estado`: pendiente, en curso, terminado, abandonado. Si no lo sabes, la
+  clave no va: es el único campo que no deja hueco vacío, porque de un juego
+  ninguna fuente puede saberlo y los 44 acabaron diciendo lo mismo.
 - `year`: año de la obra, no el de la edición que tengas.
 - `autor`: estudio, dirección, autor o artista según el caso.
 - `nota`: del 1 al 10, en número. Es opcional: ordena las galerías, y una ficha

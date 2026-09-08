@@ -3,7 +3,6 @@ tipo: juego
 year: 2025
 autor: Panik Arcade
 nota:
-estado:
 favorito: false
 portada: "[[cloverpit.webp]]"
 tags:

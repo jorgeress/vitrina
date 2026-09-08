@@ -3,7 +3,6 @@ tipo: juego
 year: 2025
 autor: Full Circle
 nota:
-estado:
 favorito: false
 portada: "[[skate.webp]]"
 tags:

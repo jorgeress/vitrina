@@ -3,7 +3,6 @@ tipo: juego
 year: 2019
 autor: Mega Crit
 nota:
-estado:
 favorito: false
 portada: "[[slay-the-spire.webp]]"
 tags:

@@ -152,6 +152,9 @@ ESTADOS = ["pendiente", "en curso", "terminado", "abandonado"]
 
 CAMPOS = ["tipo", "year", "autor", "nota", "estado", "favorito", "portada", "tags"]
 
+# Los que no dejan la clave vacia si no hay valor. Ver escribir_ficha().
+SIN_HUECO = {"estado"}
+
 def fichas_existentes(carpeta):
     return {p.stem: normal(p.stem) for p in (VAULT / carpeta).glob("*.md")
             if p.stem != "index"}
@@ -166,6 +169,11 @@ def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True):
     if normal(titulo) in fichas_existentes(carpeta).values():
         return None
     orden = CAMPOS + [c for c in campos if c not in CAMPOS]
+    # Casi todos los campos se escriben aunque vengan vacios: la clave suelta es
+    # el hueco donde luego pones el dato, y Obsidian lo ofrece en el editor de
+    # propiedades. `estado` no, porque ninguna fuente lo sabe de lo que ya has
+    # jugado: si no hay valor, no hay clave.
+    orden = [c for c in orden if c not in SIN_HUECO or not vacio(campos.get(c))]
     lineas = [linea_yaml(c, campos.get(c)) for c in orden]
     if nombre_de_fichero(titulo) != titulo:
         # Un nombre de fichero no admite ":" ni "?", asi que "Spider-Man: Brand

@@ -3,7 +3,6 @@ tipo: juego
 year: 2024
 autor: LocalThunk
 nota:
-estado:
 favorito: false
 portada: "[[balatro.webp]]"
 tags:

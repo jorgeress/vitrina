@@ -3,7 +3,6 @@ tipo: juego
 year: 2025
 autor: AdHoc Studio
 nota:
-estado:
 favorito: false
 portada: "[[dispatch.webp]]"
 tags:

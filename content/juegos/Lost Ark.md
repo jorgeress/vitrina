@@ -3,7 +3,6 @@ tipo: juego
 year: 2022
 autor: Smilegate RPG
 nota:
-estado:
 favorito: false
 portada: "[[lost-ark.webp]]"
 tags:
