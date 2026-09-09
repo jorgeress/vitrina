@@ -49,8 +49,6 @@ views:
         direction: DESC
       - property: file.name
         direction: ASC
-    summaries:
-      nota: Average
   - type: cards
     name: Favoritos
     filters:

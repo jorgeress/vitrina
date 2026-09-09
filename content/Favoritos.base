@@ -3,6 +3,10 @@ formulas:
   # manda los vacios al principio cuando el orden es DESC: la galeria abria con
   # lo que no he puntuado. Esto los baja a -1 para que caigan al final.
   puntuacion: if(note.nota, note.nota, -1)
+  # `tipo` guarda la clave, no el rotulo: agrupar por el crudo pintaba columnas
+  # tituladas "peli" y "album". Los nombres de seccion viven aqui, en la vista,
+  # y no en las noventa fichas.
+  seccion: if(note.tipo == "juego", "Juegos", if(note.tipo == "peli", "Películas", if(note.tipo == "libro", "Libros", "Música")))
 filters:
   and:
     - note.favorito == true
@@ -11,8 +15,11 @@ properties:
     displayName: Título
   note.tipo:
     displayName: Tipo
+  # Es la unica pagina que mezcla los cuatro tipos: aqui el mismo campo es
+  # estudio, direccion, autor y artista, asi que el rotulo tiene que valer
+  # para los cuatro.
   note.autor:
-    displayName: Autor
+    displayName: Autoría
   note.nota:
     displayName: Nota
   note.year:
@@ -21,10 +28,13 @@ views:
   - type: cards
     name: Todo junto
     image: note.portada
-    cardSize: 200
+    # Las mismas medidas que las galerias de seccion: entrar en Favoritos no
+    # deberia cambiar el tamaño de la tarjeta.
+    cardSize: 220
     order:
       - file.name
       - note.autor
+      - note.year
       - note.nota
     sort:
       - property: formula.puntuacion
@@ -34,10 +44,12 @@ views:
   - type: board
     name: Por tipo
     groupBy:
-      property: note.tipo
+      property: formula.seccion
+    # Sin `file.name`: la vista de tablero no lo descarta como hace la de
+    # tarjetas, y cada ficha repetia su titulo como si fuera un dato mas.
     order:
-      - file.name
       - note.autor
+      - note.year
       - note.nota
     sort:
       - property: formula.puntuacion
