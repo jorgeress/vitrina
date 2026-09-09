@@ -1,7 +1,7 @@
 ---
 tipo: album
 year: 2004
-autor: "[[autores/My Chemical Romance|My Chemical Romance]]"
+autor: My Chemical Romance
 nota:
 estado: terminado
 favorito: true

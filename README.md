@@ -697,25 +697,44 @@ donde un fallo es silencioso.
 
 Obsidian agrupa por **enlaces**, no por campos: dos juegos con `autor:
 FromSoftware` escrito exactamente igual no están conectados de ninguna manera,
-ni en el grafo ni en los backlinks. `scripts/autores.py` convierte ese campo en
-un enlace y escribe la página del autor con lo suyo listado:
+ni en el grafo ni en los backlinks. `scripts/autores.py` escribe la página de
+cada autor con lo suyo listado, y el sitio se encarga del enlace de vuelta:
 
 ```yaml
-autor: "[[autores/Quentin Tarantino|Quentin Tarantino]]"
+autor: QLOC, FromSoftware, Inc.     # el campo es texto, siempre
 ```
 
 ```bash
-scripts/autores.py             # enlaza y reescribe las páginas de autor
-scripts/autores.py --minimo 1  # enlaza a todos, tengan una obra o veinte
-scripts/autores.py --deshacer  # quita los enlaces y deja el nombre pelado
+scripts/autores.py             # escribe las páginas de autor
+scripts/autores.py --minimo 1  # una página por autor, tenga una obra o veinte
+scripts/autores.py --deshacer  # borra las páginas de autor
 scripts/autores.py --dry-run   # dice qué haría, sin tocar nada
 ```
 
-**Sólo se enlaza a quien tenga dos obras o más.** De los 92 autores de esta
+**El campo `autor` nunca lleva el enlace dentro.** Es un dato, igual que el año
+o la nota, y por lo mismo que una ficha no guarda ni el orden ni el HTML de su
+tarjeta: la maquetación vive fuera. Quien pone el enlace es `plugins/vitrina`,
+al pintar — busca dentro del texto los nombres que tengan página y los enlaza —,
+y el mismo plugin apunta esas páginas en los `links` de la ficha para que el
+grafo dibuje la arista. El resultado en la web es el mismo de antes; lo que
+cambia es dónde vive.
+
+Tenerlo así arregla tres cosas de golpe:
+
+- **Una ficha con varios autores los enlaza a todos.** Antes sólo se enlazaba
+  uno, porque el campo era una cadena con un `[[...]]` metido en medio.
+- **Las galerías dejan de romperse.** Una tarjeta entera ya es un enlace, así
+  que el `[[...]]` del autor metía un `<a>` dentro de otro; el navegador parte
+  eso al leerlo, y la portada acababa en una celda de la rejilla y el título en
+  otra. Eran 12 fichas, 9 de ellas en Favoritos.
+- **`datos.py` y `autores.py` dejan de pisarse.** Los dos escriben ahora texto
+  plano, así que ya no hay que volver a pasar el segundo después del primero.
+
+**Sólo tiene página quien tenga dos obras o más.** De los 91 autores de esta
 colección, sólo 5 repiten: FromSoftware, My Chemical Romance, Radiohead, Hayao
-Miyazaki y Quentin Tarantino. Enlazar a los otros 87 sería crear 87 páginas que
-no agrupan nada y doblar el tamaño del sitio en callejones sin salida. Al crecer
-la colección basta con volver a pasarlo: el que llegue a dos se enlaza solo.
+Miyazaki y Quentin Tarantino. Darle página a los otros 86 sería crear 86
+callejones sin salida y doblar el tamaño del sitio. Al crecer la colección basta
+con volver a pasarlo: el que llegue a dos la estrena solo.
 
 ### La coma no vale como separador
 
@@ -733,11 +752,15 @@ siguiente es un sufijo de empresa (`Inc.`, `Ltd.`, `S.L.`…), en cuyo caso se
 vuelve a pegar al anterior. Tiene prueba, por si algún día alguien lo
 «simplifica».
 
+Esa lista de sufijos hace falta para *repartir* el campo en autores y saber
+quién merece página. Para *enlazar* no hace falta ninguna heurística: el plugin
+no parte el texto, busca dentro de él los nombres que ya tienen página, que se
+conocen enteros y exactos. Por eso «FromSoftware, Inc.» se enlaza con su coma
+incluida y «Burton» no se lleva el apellido de «Tim Burton».
+
 Las páginas de `content/autores/` son derivadas y se reescriben enteras en cada
-pasada, así que no se editan a mano. El campo `autor` sí es tuyo: el script le
-pone o le quita el enlace alrededor, nunca cambia el nombre. Y ojo, que
-`datos.py` reescribe `autor` en texto plano desde Steam y Letterboxd: si lo
-pasas después, vuelve a pasar `autores.py`.
+pasada, así que no se editan a mano. El campo `autor` sí es tuyo: el script
+nunca cambia el nombre.
 
 ## Cosas a medias
 

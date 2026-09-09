@@ -1,7 +1,7 @@
 ---
 tipo: peli
 year: 2004
-autor: "[[autores/Hayao Miyazaki|Hayao Miyazaki]]"
+autor: Hayao Miyazaki
 nota: 10
 estado: terminado
 favorito: false

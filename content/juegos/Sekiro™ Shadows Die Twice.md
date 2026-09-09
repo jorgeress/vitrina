@@ -1,7 +1,7 @@
 ---
 tipo: juego
 year: 2019
-autor: "[[autores/FromSoftware, Inc|FromSoftware, Inc.]]"
+autor: FromSoftware, Inc.
 nota: 10
 favorito: true
 portada: "[[sekirotm-shadows-die-twice.webp]]"

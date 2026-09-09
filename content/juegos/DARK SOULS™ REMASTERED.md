@@ -1,7 +1,7 @@
 ---
 tipo: juego
 year: 2018
-autor: QLOC, [[autores/FromSoftware, Inc|FromSoftware, Inc.]]
+autor: QLOC, FromSoftware, Inc.
 nota: 10
 favorito: true
 portada: "[[dark-soulstm-remastered.webp]]"

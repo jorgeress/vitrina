@@ -1,7 +1,7 @@
 ---
 tipo: peli
 year: 2003
-autor: "[[autores/Quentin Tarantino|Quentin Tarantino]]"
+autor: Quentin Tarantino
 nota: 10
 estado: terminado
 favorito: false

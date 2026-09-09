@@ -59,19 +59,101 @@ const WIKILINK = /^\[\[([^\]|]+)(?:\|([^\]]+))?\]\]$/
 const hay = (v) => v !== undefined && v !== null && v !== ""
 
 /**
- * `autor` puede ser texto suelto ("Albert Camus") o un enlace a la pagina de
- * autor ("[[autores/Radiohead|Radiohead]]"), que es lo que hace `autores.py`
- * en cuanto dos obras comparten firma. Se pintan distinto: una es un nombre y
- * la otra se puede pinchar.
+ * Las paginas de autor que hay, de nombre mas largo a mas corto.
+ *
+ * `autores.py` escribe una por cada firma con dos obras o mas, y el titulo de
+ * la pagina es el nombre exacto: "FromSoftware, Inc.". De ahi sale el mapa.
+ *
+ * El orden importa y es la mitad del truco de `nombresEnTexto`: si algun dia
+ * hay pagina de "FromSoftware" y de "FromSoftware, Inc.", la larga tiene que
+ * probarse antes o la corta se lleva media firma por delante.
  */
-function autor(valor, slug, allSlugs) {
+export function paginasDeAutor(allFiles) {
+  return allFiles
+    .filter((file) => {
+      const slug = String(file.slug ?? "")
+      // El indice de la carpeta lo fabrica folder-page y se titula "Autores":
+      // no es la firma de nadie.
+      return slug.startsWith("autores/") && !slug.endsWith("/index")
+    })
+    .map((file) => [String(file.frontmatter?.title ?? ""), file.slug])
+    .filter(([nombre]) => nombre !== "")
+    .sort((a, b) => b[0].length - a[0].length)
+}
+
+/** Lo que separa una firma de la siguiente dentro del campo `autor`. */
+const SEPARADOR = /[,;/&()]/
+
+/**
+ * El campo `autor` -> los trozos que lo forman, diciendo cuales tienen pagina.
+ *
+ * Devuelve una lista de `[texto, slug | null]` en el orden en que se leen, para
+ * que quien la use pinte el enlace o lo apunte en el grafo.
+ *
+ * Va buscando nombres dentro del texto en vez de partirlo por comas, porque por
+ * comas no se puede: la coma separa en "Mike Johnson, Tim Burton" y no separa
+ * en "FromSoftware, Inc.". `autores.py` resuelve eso con una lista de sufijos
+ * de empresa; aqui no hace falta ninguna heuristica, porque los nombres que
+ * importan -- los que tienen pagina -- se conocen enteros y exactos.
+ *
+ * Asi "QLOC, FromSoftware, Inc." sale como "QLOC, " en texto y "FromSoftware,
+ * Inc." enlazado, que es justo lo que se quiere de una ficha con dos autores.
+ */
+export function nombresEnTexto(valor, paginas) {
   const texto = String(valor).trim()
-  const m = texto.match(WIKILINK)
-  if (!m) return texto
-  const destino = m[1]
-  const visible = m[2] ?? destino
-  const href = transformLink(slug, destino, { strategy: "shortest", allSlugs })
-  return h("a", { href, class: "internal" }, visible)
+  const trozos = []
+  let suelto = ""
+  let i = 0
+
+  // Un nombre solo cuenta si ocupa una firma entera: del principio del campo o
+  // de detras de un separador, hasta el final o hasta el siguiente. El espacio
+  // a secas no abre firma, o una pagina llamada "Burton" se llevaria el
+  // apellido de "Tim Burton".
+  const abre = (pos) => {
+    const antes = texto.slice(0, pos).trimEnd()
+    return antes === "" || SEPARADOR.test(antes[antes.length - 1])
+  }
+  const cierra = (pos) => {
+    const despues = texto.slice(pos).trimStart()
+    return despues === "" || SEPARADOR.test(despues[0])
+  }
+
+  while (i < texto.length) {
+    const candidato = abre(i)
+      ? paginas.find(([nombre]) => texto.startsWith(nombre, i) && cierra(i + nombre.length))
+      : undefined
+    if (candidato) {
+      if (suelto) trozos.push([suelto, null])
+      suelto = ""
+      trozos.push([candidato[0], candidato[1]])
+      i += candidato[0].length
+    } else {
+      suelto += texto[i]
+      i += 1
+    }
+  }
+  if (suelto) trozos.push([suelto, null])
+  return trozos
+}
+
+/**
+ * `autor` es siempre texto plano -- "Albert Camus", "QLOC, FromSoftware, Inc."
+ * --, porque en la ficha es un dato y no maquetacion. El enlace a la pagina de
+ * autor se pone aqui, al pintar, y solo para los nombres que tengan una.
+ */
+function autor(valor, slug, allSlugs, paginas) {
+  return nombresEnTexto(valor, paginas).map(([trozo, destino]) =>
+    destino
+      ? h(
+          "a",
+          {
+            href: transformLink(slug, destino, { strategy: "shortest", allSlugs }),
+            class: "internal",
+          },
+          trozo,
+        )
+      : trozo,
+  )
 }
 
 /** De "[[elden-ring.webp]]" al fichero, que vive siempre en assets/portadas/. */
@@ -101,7 +183,7 @@ const Ficha = () => {
     const dato = (clave, valor) => hay(valor) && datos.push([clave, valor])
 
     dato("Año", f.year)
-    dato(tipo.autor, hay(f.autor) ? autor(f.autor, slug, allSlugs) : null)
+    dato(tipo.autor, hay(f.autor) ? autor(f.autor, slug, allSlugs, paginasDeAutor(allFiles)) : null)
     dato("Nota", hay(f.nota) ? `${f.nota} / 10` : null)
     dato("Estado", ESTADOS[f.estado])
     if (f.tipo === "juego") dato("Horas", hay(f.horas) ? `${f.horas} h` : null)

@@ -2,28 +2,35 @@
 """Conecta las fichas que comparten estudio, direccion o artista.
 
 Obsidian agrupa por enlaces, no por campos: dos juegos con `autor: FromSoftware`
-escrito igual no estan conectados de ninguna manera, ni en el grafo ni en los
-backlinks. Con `autor: "[[autores/FromSoftware, Inc.|FromSoftware, Inc.]]"` si:
-la pagina del estudio lista lo suyo, el grafo dibuja el haz y desde una ficha se
-llega a las hermanas.
+escrito igual no estan conectados de ninguna manera. La pagina de autor si los
+conecta: lista lo suyo, el grafo dibuja el haz y desde una ficha se llega a las
+hermanas por los backlinks.
 
-**Solo se enlaza a quien tenga dos obras o mas** (`--minimo`). Con una sola, el
-enlace lleva a una pagina que no agrupa nada, y son 92 autores para 90 fichas:
-el sitio doblaria de tamaño en paginas muertas. Al crecer la coleccion basta con
-volver a pasarlo y el que llegue a dos se enlaza solo.
+Lo que este script escribe son **las paginas**, no los enlaces. El campo `autor`
+de la ficha se queda siempre en texto plano -- "QLOC, FromSoftware, Inc." --
+porque es un dato, no maquetacion, y porque es lo que escriben tambien
+`datos.py`, `nueva.py` e `importar.py`; antes esto le ponia un `[[...]]`
+alrededor y los tres se pisaban en cada pasada.
+
+El enlace lo pone la web al pintar, en `plugins/vitrina`: la cabecera de la
+ficha busca dentro del texto los nombres que tengan pagina y los enlaza, y el
+mismo plugin apunta esas paginas en los `links` de la ficha para que el grafo
+las una. Asi una ficha con varios autores enlaza a todos los que tengan pagina
+sin partir el campo por comas, que no se puede hacer a ojo: la coma separa
+"Mike Johnson, Tim Burton" y no separa "FromSoftware, Inc.".
+
+**Solo tiene pagina quien tenga dos obras o mas** (`--minimo`). Con una sola, la
+pagina no agrupa nada, y son 92 autores para 90 fichas: el sitio doblaria de
+tamaño en paginas muertas. Al crecer la coleccion basta con volver a pasarlo y
+el que llegue a dos la estrena.
 
 Las paginas de `content/autores/` las escribe esto entero en cada pasada, asi
-que no se editan a mano. Lo que si es tuyo es el campo `autor` de cada ficha:
-aqui solo se le pone o se le quita el enlace alrededor, nunca se cambia el
-nombre.
-
-Ojo: `datos.py` reescribe `autor` desde Steam y Letterboxd en texto plano. Si lo
-pasas despues, vuelve a pasar esto para volver a enlazar.
+que no se editan a mano.
 
 Uso:
-  scripts/autores.py             enlaza y reescribe las paginas de autor
-  scripts/autores.py --minimo 1  enlaza a todos, tengan una obra o veinte
-  scripts/autores.py --deshacer  quita los enlaces y deja el nombre pelado
+  scripts/autores.py             escribe las paginas de autor
+  scripts/autores.py --minimo 1  una pagina por autor, tenga una obra o veinte
+  scripts/autores.py --deshacer  borra las paginas de autor
   scripts/autores.py --dry-run   dice que haria, sin tocar nada
 """
 
@@ -38,8 +45,9 @@ from vitrina import (SECCIONES, VAULT, escribir_campos, frontmatter,
 
 AUTORES = VAULT / "autores"
 
-# Un `autor` ya enlazado: "[[autores/X|X]]". Se lee para poder volver a pasar
-# el script sin acabar con enlaces dentro de enlaces.
+# Un `autor` enlazado de cuando el enlace vivia en el campo: "[[autores/X|X]]".
+# Se sigue leyendo para poder recuperar el nombre de las fichas que aun lo
+# lleven, y para que volver a pasar el script sobre una vault vieja la limpie.
 ENLACE_RE = re.compile(r"\[\[autores/[^|\]]+\|([^\]]+)\]\]")
 
 # Trozos que son el final de un nombre de empresa y no un autor aparte: sin
@@ -104,7 +112,8 @@ def main():
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--minimo", type=int, default=2,
                    help="obras que hacen falta para tener pagina (por defecto 2)")
-    p.add_argument("--deshacer", action="store_true", help="quita todos los enlaces")
+    p.add_argument("--deshacer", action="store_true",
+                   help="borra las paginas de autor")
     p.add_argument("--dry-run", action="store_true", help="no escribe nada")
     args = p.parse_args()
 
@@ -112,15 +121,14 @@ def main():
     enlazables = ({} if args.deshacer
                   else {a: o for a, o in mapa.items() if len(o) >= args.minimo})
 
-    # Las fichas: se les pone o se les quita el enlace, nunca se cambia el nombre.
+    # Las fichas: solo se les quita el `[[...]]` que dejaron las pasadas de
+    # antes, cuando el enlace vivia en el campo. El nombre nunca se cambia.
     tocadas = 0
     for md, _, _, campos in fichas():
         partes = separar(campos.get("autor"))
         if not partes:
             continue
-        nuevo = ", ".join(
-            f"[[autores/{nombre_de_fichero(a)}|{a}]]" if a in enlazables else a
-            for a in partes)
+        nuevo = ", ".join(partes)
         if nuevo == (campos.get("autor") or ""):
             continue
         tocadas += 1
@@ -142,11 +150,12 @@ def main():
             destino = AUTORES / f"{nombre_de_fichero(autor)}.md"
             destino.write_text(pagina(autor, obras), encoding="utf-8")
 
-    print(f"{tocadas} fichas actualizadas, {len(enlazables)} páginas de autor.")
+    print(f"{len(enlazables)} páginas de autor"
+          + (f", {tocadas} fichas limpiadas de enlaces viejos." if tocadas else "."))
     if not args.deshacer:
         sueltos = len(mapa) - len(enlazables)
         print(f"{sueltos} autores con menos de {args.minimo} obras se quedan "
-              f"en texto, sin enlace.")
+              f"en texto, sin página.")
     return 0
 
 

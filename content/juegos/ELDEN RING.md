@@ -1,7 +1,7 @@
 ---
 tipo: juego
 year: 2022
-autor: "[[autores/FromSoftware, Inc|FromSoftware, Inc.]]"
+autor: FromSoftware, Inc.
 nota: 10
 favorito: true
 portada: "[[elden-ring.webp]]"
