@@ -303,19 +303,16 @@ mbid: 6e335887-60ba-38f0-95af-fae7774336bf
 ```
 
 **Los favoritos son de disco entero, no de canción**, con el campo `favorito`
-como en las otras tres secciones. Hubo una versión con una ★ al final de las
-canciones favoritas y una página que las juntaba todas, y se quitó a propósito:
-marcarlas obligaba a editar el fichero **y** pasar un script después, y eso no
-lo puede hacer nadie desde la web publicada. Un `favorito` de disco se cambia
-en un gesto desde Obsidian y se ve online para todo el mundo, que es de lo que
-va esto. Las canciones siguen listadas, que es lo que valía la pena.
+como en las otras tres secciones. Marcar canciones sueltas obligaría a editar
+el fichero **y** pasar un script después, y eso no lo puede hacer nadie desde la
+web publicada; un `favorito` de disco se cambia en un gesto desde Obsidian y se
+ve online para todo el mundo, que es de lo que va esto. Las canciones siguen
+listadas, que es lo que valía la pena.
 
-Si algún día vuelven, hay una limitación que conviene recordar: un `.base`
-consulta **fichas**, y una canción no es una ficha, es una línea dentro del
-disco que la lleva. Ninguna vista puede juntarlas; haría falta una página
-escrita por un script. Por eso también desapareció la vista «Por tus
-canciones», que ordenaba discos por cuántas favoritas tenían y no enseñaba ni
-una.
+Y hay un límite que no depende de las ganas: un `.base` consulta **fichas**, y
+una canción no es una ficha, es una línea dentro del disco que la lleva.
+Ninguna vista puede juntarlas; para eso haría falta una página escrita por un
+script.
 
 `favoritas` es un número y no una lista porque de ahí salió: cuando el
 importador pliega las dos mil canciones guardadas de un export de Spotify en
@@ -379,8 +376,7 @@ Sirve igual para cómics y novela gráfica, que Open Library cataloga: *Watchmen
 también**: la convención es dejarlo en libros con la etiqueta `manga` en `tags`,
 no darle sección propia. Un `.base` filtra por etiqueta igual de bien que por
 carpeta, así que separarlos sería duplicar una sección entera para no ganar
-nada. El día que haya bastantes, `Libros.base` se lleva una vista «Solo manga»
-que filtre por el tag; hoy no la tiene porque no hay ninguno y saldría vacía.
+nada.
 
 ## Portadas
 
@@ -475,7 +471,7 @@ fijarla a `1` le cortaría la cabeza a los pósters. Sin declararla, cada
 carátula se pinta entera con su forma y lo que se paga es que las tarjetas de
 una fila no midan todas lo mismo. Recortar es peor que descuadrar.
 
-## Cómo voy
+## Qué falta por rellenar
 
 Las galerías enseñan lo que hay. Para saber por dónde seguir hace falta lo
 contrario, que es lo que **no** hay:
@@ -687,22 +683,22 @@ debajo.
 
 ### Los discos, y por qué no se les pisa la lista
 
-El cuerpo de un disco tenía solo sus canciones favoritas. Ahora lleva la lista
-entera con una estrella en las suyas, y esa parte se lee del fichero antes de
-reescribirlo, porque es lo único de la ficha que no se puede volver a buscar en
-ningún sitio.
+El cuerpo de un disco lleva la lista entera con una estrella en las tuyas, y esa
+parte se lee del fichero antes de reescribirlo, porque es lo único de la ficha
+que no se puede volver a buscar en ningún sitio.
 
-Tiene tres trampas, y las tres mordieron de verdad al pasarlo:
+Tiene tres trampas:
 
-- **El apóstrofo.** Él escribió `I Don't Love You` con el recto y MusicBrainz lo
-  tiene con el tipográfico. Comparando en crudo, esa favorita se quedaba sin
-  estrella y su elección desaparecía sin un aviso. Se compara con `normal()`,
+- **El apóstrofo.** Si escribes `I Don't Love You` con el recto y MusicBrainz lo
+  tiene con el tipográfico, comparando en crudo esa favorita se queda sin
+  estrella y tu elección desaparece sin un aviso. Se compara con `normal()`,
   que quita acentos y puntuación.
 - **Las ediciones a medias.** De *Three Cheers for Sweet Revenge* hay 19
   ediciones y la primera no tiene ni una canción, así que se recorren hasta dar
   con una que traiga la lista.
 - **Las canciones repetidas.** La edición de *My Beautiful Dark Twisted Fantasy*
-  trae «Runaway» dos veces, y su única favorita salía estrellada dos.
+  trae «Runaway» dos veces, así que una sola favorita puede acabar con dos
+  estrellas.
 
 Y una favorita que no esté en la edición que lista MusicBrainz no se tira: se
 queda escrita al pie. Todo esto tiene prueba en `scripts/pruebas.py`, porque es
@@ -731,19 +727,19 @@ o la nota, y por lo mismo que una ficha no guarda ni el orden ni el HTML de su
 tarjeta: la maquetación vive fuera. Quien pone el enlace es `plugins/vitrina`,
 al pintar — busca dentro del texto los nombres que tengan página y los enlaza —,
 y el mismo plugin apunta esas páginas en los `links` de la ficha para que el
-grafo dibuje la arista. El resultado en la web es el mismo de antes; lo que
-cambia es dónde vive.
+grafo dibuje la arista.
 
-Tenerlo así arregla tres cosas de golpe:
+Tenerlo así resuelve tres cosas de golpe:
 
-- **Una ficha con varios autores los enlaza a todos.** Antes sólo se enlazaba
-  uno, porque el campo era una cadena con un `[[...]]` metido en medio.
-- **Las galerías dejan de romperse.** Una tarjeta entera ya es un enlace, así
-  que el `[[...]]` del autor metía un `<a>` dentro de otro; el navegador parte
-  eso al leerlo, y la portada acababa en una celda de la rejilla y el título en
-  otra. Eran 12 fichas, 9 de ellas en Favoritos.
-- **`datos.py` y `autores.py` dejan de pisarse.** Los dos escriben ahora texto
-  plano, así que ya no hay que volver a pasar el segundo después del primero.
+- **Una ficha con varios autores los enlaza a todos**, porque el plugin busca
+  en el texto todos los nombres que tengan página en vez de depender de un
+  `[[...]]` escrito en el campo.
+- **Las galerías no se rompen.** Una tarjeta entera ya es un enlace, así que un
+  `[[...]]` dentro del campo metería un `<a>` dentro de otro; el navegador parte
+  eso al leerlo, y la portada acaba en una celda de la rejilla y el título en
+  otra.
+- **`datos.py` y `autores.py` no se pisan.** Los dos escriben texto plano, así
+  que no hay que volver a pasar el segundo después del primero.
 
 **Sólo tiene página quien tenga dos obras o más.** De los 91 autores de esta
 colección, sólo 5 repiten: FromSoftware, My Chemical Romance, Radiohead, Hayao
@@ -776,27 +772,6 @@ incluida y «Burton» no se lleva el apellido de «Tim Burton».
 Las páginas de `content/autores/` son derivadas y se reescriben enteras en cada
 pasada, así que no se editan a mano. El campo `autor` sí es tuyo: el script
 nunca cambia el nombre.
-
-## Cosas a medias
-
-- El plugin que renderiza las Bases solo trae sus textos en inglés. Se ven dos:
-  el contador de resultados, oculto por CSS, y el «No data found.» de una vista
-  vacía, reescrito en castellano desde `quartz/styles/custom.scss`. Si algún día
-  aparece un tercero, habrá que hacer lo mismo con él.
-- **Series y anime no tienen sección.** No es por falta de fuente: la API de
-  [AniList](https://anilist.co) responde sin clave ni registro y da el id, el
-  año, el estudio y la carátula, comprobado. Es que es una sección entera
-  (fuente, `.base`, índice, pruebas y documentación) y no un retoque, así que
-  se hará aparte.
-- **Los libros necesitan que alguien diga cuál es el artículo.** Solo guardan
-  `coverid`, que identifica la portada y no la obra, y desde ahí no se llega a
-  un texto sin adivinar: en Open Library 1 de 3 tiene descripción y está en
-  francés, y Wikidata solo enlaza 1 de 3. Los tres de esta colección llevan ya
-  un campo `wikipedia`, puesto tras comprobar contra Wikidata que el autor del
-  artículo era el de la ficha. Uno nuevo hay que resolverlo igual.
-- El export de Steam ha cambiado de formato varias veces, así que el importador
-  rastrea el JSON entero buscando cosas con `appid` y nombre en vez de dar por
-  buena una ruta concreta. Si algún día deja de encontrarlos, es ahí.
 
 ## Licencia y créditos
 
