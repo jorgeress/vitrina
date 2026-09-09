@@ -104,10 +104,22 @@
   font-size: 0.68rem;
 }
 
-// La nota siempre es la ultima fila de la tarjeta: se destaca como chip.
-.bases-card-row:last-child .bases-card-value {
+// La nota es la ultima fila de la tarjeta y, desde la formula `nota` de los
+// `.base`, tambien la unica que existe siempre: cuando la ficha no la tiene, la
+// formula pone un guion. Antes esta regla iba a ciegas por la posicion, y en
+// las 47 fichas sin puntuar la ultima fila era el autor, que salia en azul y
+// negrita como si fuera un 10.
+//
+// El destacado va sobre el numero y no sobre la casilla, asi que el guion se
+// queda fuera por si solo. Y se pinta en gris, que es como ya sale el mismo
+// guion en las casillas vacias de las tablas: es la ausencia de nota, no una.
+.bases-card-row:last-child .bases-card-value .bases-number {
   font-weight: 600;
   color: var(--secondary);
+}
+
+.bases-card-row:last-child .bases-card-value .bases-text {
+  color: var(--gray);
 }
 
 .bases-table {
