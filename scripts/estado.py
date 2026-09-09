@@ -19,10 +19,16 @@ import re
 import sys
 from collections import Counter, defaultdict
 
-from vitrina import (FRONT_RE, PORTADAS, SECCIONES, VAULT, frontmatter, vacio)
+from vitrina import (ESTADOS, FRONT_RE, PORTADAS, SECCIONES, VAULT,
+                     frontmatter, vacio)
 
 # Los que hacen falta para que una ficha este completa de verdad.
 CAMPOS = ("year", "autor", "nota", "portada", "tags")
+
+# Las secciones que reparten sus dos ultimas vistas por `estado`. Juegos no
+# esta: alli el reparto sale de las horas, porque Steam sabe cuanto has jugado y
+# no si lo terminaste, asi que una ficha suya sin estado no le falta nada.
+POR_ESTADO = ("pelis", "libros", "musica")
 
 # En assets/portadas/ vive tambien el .gitkeep, que no es una caratula huerfana.
 IMAGENES = {".webp", ".jpg", ".jpeg", ".png", ".gif", ".avif"}
@@ -60,6 +66,8 @@ def main():
     con_texto = Counter()
     faltan = defaultdict(list)
     notas = Counter()
+    estados = defaultdict(Counter)
+    inventados = []
     favoritos = Counter()
     portadas_usadas = set()
     rotas = []
@@ -78,6 +86,13 @@ def main():
                     faltan[campo].append(f"{carpeta}/{md.stem}")
             if campos.get("nota"):
                 notas[int(campos["nota"])] += 1
+            estado = campos.get("estado")
+            if vacio(estado):
+                estados[carpeta]["sin poner"] += 1
+            elif estado in ESTADOS:
+                estados[carpeta][estado] += 1
+            else:
+                inventados.append(f"{carpeta}/{md.stem} -> {estado}")
             if campos.get("favorito") == "true":
                 favoritos[carpeta] += 1
             apuntada = re.sub(r"^\[\[|\]\]$", "", campos.get("portada") or "")
@@ -121,8 +136,32 @@ def main():
         print("\nNOTAS      " + "  ".join(f"{n}:{c}" for n, c in
                                           sorted(notas.items(), reverse=True)))
 
+    # De aqui salen las dos ultimas vistas de pelis, libros y musica: lo
+    # terminado en una y lo que queda -- "pendiente" y "en curso" -- en la otra.
+    # Lo que no cae en ninguna de las dos solo se ve en la galeria, y eso no se
+    # nota mirandola.
+    print("\nESTADOS")
+    columnas = ESTADOS + ["sin poner"]
+    print("  " + " " * 10 + "".join(f"{c:>11}" for c in columnas))
+    for carpeta in carpetas:
+        print(f"  {carpeta:10}" + "".join(f"{estados[carpeta][c]:>11}"
+                                          for c in columnas))
+    sin_poner = sum(estados[c]["sin poner"] for c in carpetas
+                    if c in POR_ESTADO)
+    if sin_poner:
+        print(f"  {sin_poner} ficha(s) sin estado: no salen ni en la vista de lo")
+        print("  terminado ni en la lista de lo que queda.")
+    if estados["juegos"]["sin poner"]:
+        print("  En juegos esa columna no es un hueco: sus dos vistas reparten")
+        print("  por horas jugadas, que es lo que la fuente sabe de verdad.")
+    if inventados:
+        print(f"  {len(inventados)} ficha(s) con un estado que no existe, que es")
+        print("  la otra manera de no salir en ninguna de las dos:")
+        for i in inventados:
+            print(f"    ✗ {i}")
+
     # Favoritos.base junta las cuatro secciones y cada .base tiene ademas su
-    # vista "Solo favoritos". Si aqui sale 0, esas paginas salen vacias.
+    # vista "Favoritos". Si aqui sale 0, esas paginas salen vacias.
     print(f"\nFAVORITOS  {barra(sum(favoritos.values()), hay)}  "
           f"{sum(favoritos.values())} de {hay}")
     for carpeta in carpetas:

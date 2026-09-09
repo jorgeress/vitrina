@@ -73,3 +73,49 @@ views:
     image: note.portada
     cardSize: 220
     imageAspectRatio: 1
+  # Las dos mitades de `estado`, que la galeria enseña juntas y que aqui se
+  # miran por separado: lo oido, y la lista de lo que queda. De las cuatro
+  # secciones es la unica en la que «Por escuchar» se llena entera a mano:
+  # ListenBrainz cuenta lo que ya has escuchado, y de lo que te falta no sabe
+  # nada.
+  - type: cards
+    name: Escuchados
+    filters:
+      and:
+        - note.estado == "terminado"
+    order:
+      - file.name
+      - note.autor
+      - note.year
+      - formula.nota
+    sort:
+      - property: formula.puntuacion
+        direction: DESC
+      - property: file.name
+        direction: ASC
+    image: note.portada
+    cardSize: 220
+    imageAspectRatio: 1
+  # "en curso" entra aqui: empezado no es terminado, y si se quedara fuera, el
+  # disco que estoy dandole ahora no saldria en ninguna de las dos.
+  # "abandonado" no, que eso ya no espera nada.
+  #
+  # Y sin nota, ni pintada ni en el orden: no la tiene nada de lo que todavia no
+  # has oido, asi que la fila serian guiones y el orden un empate a -1 que
+  # acabaria resolviendo el titulo igual. Se ordena por titulo directamente.
+  - type: cards
+    name: Por escuchar
+    filters:
+      or:
+        - note.estado == "pendiente"
+        - note.estado == "en curso"
+    order:
+      - file.name
+      - note.autor
+      - note.year
+    sort:
+      - property: file.name
+        direction: ASC
+    image: note.portada
+    cardSize: 220
+    imageAspectRatio: 1

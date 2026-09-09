@@ -15,6 +15,7 @@ cargarse y de ahi cuelga media cadena de imports. Esta en requirements.txt.
 """
 
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -377,6 +378,46 @@ class Coherencia(unittest.TestCase):
             texto = ruta.read_text(encoding="utf-8")
             self.assertIn(f'note.tipo == "{m.SECCIONES[carpeta]}"', texto,
                           f"{base}.base no filtra por el tipo que escribe {carpeta}")
+
+    def test_las_vistas_de_estado_filtran_por_estados_que_existen(self):
+        # Mismo riesgo que el tipo, y mas facil de que pase: las dos ultimas
+        # vistas de cada seccion --lo terminado y lo que queda-- filtran por un
+        # valor escrito a mano. Con una letra de mas la pestaña sale vacia y no
+        # falla nada.
+        for base in ("Peliculas", "Libros", "Musica"):
+            ruta = m.RAIZ / "content" / f"{base}.base"
+            if not ruta.exists():
+                continue
+            texto = ruta.read_text(encoding="utf-8")
+            filtrados = set(re.findall(r'note\.estado == "([^"]*)"', texto))
+            self.assertTrue(filtrados, f"{base}.base no filtra por estado")
+            for estado in filtrados:
+                self.assertIn(estado, m.ESTADOS,
+                              f'{base}.base filtra por "{estado}", que no existe')
+
+    def test_juegos_reparte_por_las_horas_y_no_por_el_estado(self):
+        # La excepcion de las cuatro secciones, y esta puesta a proposito: en
+        # juegos no hay `estado` que mirar --Steam sabe cuanto has jugado, no si
+        # lo terminaste-- asi que sus dos ultimas vistas van por `horas`. Si
+        # alguna volviera a filtrar por estado, saldria vacia, que es como no
+        # estar.
+        texto = (m.RAIZ / "content" / "Juegos.base").read_text(encoding="utf-8")
+        self.assertIn("- note.horas", texto)
+        self.assertNotIn("note.estado", texto)
+
+    def test_ninguna_ficha_se_inventa_un_estado(self):
+        # Una ficha con un estado fuera de la lista no sale ni en la vista de lo
+        # terminado ni en la de lo que queda: solo en la galeria, con todo lo
+        # demas, que es donde no se nota.
+        for carpeta in m.SECCIONES:
+            for ficha in (m.RAIZ / "content" / carpeta).glob("*.md"):
+                if ficha.stem == "index":
+                    continue
+                estado = m.frontmatter(ficha.read_text(encoding="utf-8")).get("estado")
+                if m.vacio(estado):
+                    continue
+                self.assertIn(estado, m.ESTADOS,
+                              f"{ficha.name} dice estado: {estado}")
 
     def test_las_fichas_de_la_vault_llevan_un_tipo_conocido(self):
         for carpeta, tipo in m.SECCIONES.items():

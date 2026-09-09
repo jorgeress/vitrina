@@ -70,3 +70,49 @@ views:
     image: note.portada
     cardSize: 220
     imageAspectRatio: 0.67
+  # Las dos mitades de la seccion, que en juegos no salen de `estado` como en
+  # las otras tres: esa clave no la llevan las fichas a proposito, porque Steam
+  # sabe cuanto has jugado y no si lo terminaste. Pero eso --las horas-- si lo
+  # sabe, y con eso se parte en dos sin inventar nada: lo que tiene horas encima
+  # esta jugado, y lo que no, esperando. De paso el reparto es total, las 44
+  # caen en una o en la otra, y no hay que marcar ficha por ficha.
+  - type: cards
+    name: Jugados
+    filters:
+      and:
+        - note.horas
+    order:
+      - file.name
+      - note.autor
+      - note.year
+      - formula.nota
+    sort:
+      - property: formula.puntuacion
+        direction: DESC
+      - property: file.name
+        direction: ASC
+    image: note.portada
+    cardSize: 220
+    imageAspectRatio: 0.67
+  # Lo que no has abierto nunca, que es con lo que entra del import: sin horas y
+  # con `estado: pendiente`. Se mira la hora y no el estado porque asi vale
+  # igual para un juego apuntado a mano, que no trae ni lo uno ni lo otro.
+  #
+  # Y sin nota, ni pintada ni en el orden: no la tiene nada de lo que todavia no
+  # has jugado, asi que la fila serian guiones y el orden un empate a -1 que
+  # acabaria resolviendo el titulo igual. Se ordena por titulo directamente.
+  - type: cards
+    name: Por jugar
+    filters:
+      not:
+        - note.horas
+    order:
+      - file.name
+      - note.autor
+      - note.year
+    sort:
+      - property: file.name
+        direction: ASC
+    image: note.portada
+    cardSize: 220
+    imageAspectRatio: 0.67

@@ -27,8 +27,11 @@ tags:
 
 Las galerías no están escritas a mano. Son *Bases* de Obsidian (`.base`), que
 filtran y ordenan por esas propiedades, así que se actualizan solas en cuanto
-añado una ficha. Cada sección tiene tres vistas: galería, tabla y solo
-favoritos.
+añado una ficha. Cada sección tiene cinco vistas: galería, tabla, favoritos,
+lo terminado y lo que queda, que es la watchlist de esa sección. Las dos
+últimas salen del campo `estado`, salvo en juegos: ahí Steam sabe cuántas horas
+les has echado y no si los terminaste, así que el reparto va por las horas y
+las pestañas son *Jugados* y *Por jugar*.
 
 Lo que se ve en la web es exactamente lo mismo que veo en Obsidian, sin plugins
 de terceros ni un segundo formato que mantener.
@@ -220,9 +223,10 @@ Cada fuente da lo suyo, y ninguna lo da todo:
 | Spotify | El zip del export | Lo mismo, desde tu historial. Con `--completo`, los álbumes guardados; con `--canciones`, tus me gusta plegados en los discos que los llevan. |
 
 Letterboxd es la única de las tres que sabe si algo te gustó. Steam sabe cuánto
-jugaste, que no es lo mismo (por eso lo jugado entra como `en curso` y no como
-`terminado`: eso no lo puede deducir nadie), y Spotify solo sabe que le diste a
-guardar. De ahí que el volcado sea un punto de partida y no el resultado.
+jugaste, que no es lo mismo (por eso lo jugado no entra con ningún estado: eso
+no lo puede deducir nadie, y esa sección se reparte por las horas), y Spotify
+solo sabe que le diste a guardar. De ahí que el volcado sea un punto de partida
+y no el resultado.
 
 [ListenBrainz](https://listenbrainz.org) es el registro de escuchas de
 MusicBrainz, la misma gente del Cover Art Archive de donde salen las carátulas,
@@ -485,21 +489,29 @@ scripts/estado.py --detalle        # además, qué ficha le falta cada cosa
 ```
 FICHAS
               total  borrador  publicadas  con texto
-  juegos         44         0          44          0
-  pelis          37         0          37          0
-  libros          3         0           3          0
+  juegos         44         0          44         44
+  pelis          37         0          37         37
+  libros          3         0           3          3
   musica          6         0           6          6
              —————— ————————— ——————————— ——————————
-  total          90         0          90          6
+  total          90         0          90         90
 
 EN LA WEB  ████████████████████████  90 de 90
 
 SIN RELLENAR
   nota         47   ███████████·············
-  tags         46   ████████████············
-  texto        84   ██······················
+  tags          3   ███████████████████████·
 
 NOTAS      10:38  9:1  8:4
+
+ESTADOS
+              pendiente   en curso  terminado abandonado  sin poner
+  juegos              0          0          0          0         44
+  pelis               0          0         37          0          0
+  libros              0          0          3          0          0
+  musica              0          0          6          0          0
+  En juegos esa columna no es un hueco: sus dos vistas reparten
+  por horas jugadas, que es lo que la fuente sabe de verdad.
 
 FAVORITOS  ██████··················  21 de 90
   juegos        6
@@ -508,10 +520,13 @@ FAVORITOS  ██████··················  21 de 90
   musica        6
 ```
 
-El bloque de **favoritos** está ahí porque `Favoritos.base` y las cuatro vistas
-«Solo favoritos» son las únicas páginas que pueden salir vacías sin que nada
-falle: si una sección marca 0, su pestaña se queda en blanco y solo se ve
-entrando a mirarla.
+Los bloques de **estados** y **favoritos** están por lo mismo: son las vistas
+que pueden salir vacías sin que nada falle, y una pestaña en blanco solo se ve
+entrando a mirarla. Una sección con 0 favoritos deja su pestaña *Favoritos*
+vacía; y en películas, libros y discos, una ficha sin `estado` no sale ni en la
+de lo terminado ni en la watchlist, aunque siga en la galería. Los 44 juegos sin
+estado no son ese caso, y por eso la tabla lo dice: esa sección reparte por
+horas y no le falta nada.
 
 Avisa además de dos cosas que no se ven de otra manera: fichas que apuntan a una
 imagen que ya no está, e imágenes en `assets/portadas/` que ya no usa ninguna
