@@ -18,4 +18,4 @@ appid: 2738490
 > mazmorra aleatoria. En este mundo lúgubre, toda acción tiene sus
 > consecuencias...
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/2738490/)
+> → [Steam](https://store.steampowered.com/app/2738490/)

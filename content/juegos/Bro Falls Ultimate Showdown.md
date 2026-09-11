@@ -20,4 +20,4 @@ appid: 1590320
 > showdown party and only one who can get the victory. Play as Brokkoli to
 > activate the traps or avoid them as a juicy food and win the rounds.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1590320/)
+> → [Steam](https://store.steampowered.com/app/1590320/)

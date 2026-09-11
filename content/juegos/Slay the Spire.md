@@ -17,4 +17,4 @@ appid: 646570
 > cartas para un solo jugador que pudiéramos. Crea un mazo único, encuentra
 > criaturas extrañas, descubre reliquias de inmenso poder y mata La Aguja.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/646570/)
+> → [Steam](https://store.steampowered.com/app/646570/)

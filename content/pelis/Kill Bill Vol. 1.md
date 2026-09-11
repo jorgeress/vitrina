@@ -24,4 +24,4 @@ letterboxd: kill-bill-vol-1
 > La película está protagonizada por Uma Thurman, David Carradine, Vivica A.
 > Fox, Lucy Liu, Michael Madsen, Sonny Chiba y Daryl Hannah.
 >
-> — De [«Kill Bill: Volumen 1»](https://es.wikipedia.org/wiki/Kill_Bill%3A_Volumen_1) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Kill_Bill%3A_Volumen_1) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

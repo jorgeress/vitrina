@@ -19,4 +19,4 @@ letterboxd: shutter-island
 > DiCaprio, Mark Ruffalo, Ben Kingsley y Michelle Williams. La producción
 > está basada en la novela homónima escrita por Dennis Lehane.
 >
-> — De [«Shutter Island (película)»](https://es.wikipedia.org/wiki/Shutter_Island_%28pel%C3%ADcula%29) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Shutter_Island_%28pel%C3%ADcula%29) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

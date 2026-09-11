@@ -18,4 +18,4 @@ appid: 1174180
 > deberá atracar, robar y luchar para sobrevivir en su camino por el
 > escabroso territorio.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1174180/)
+> → [Steam](https://store.steampowered.com/app/1174180/)

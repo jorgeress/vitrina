@@ -17,4 +17,4 @@ appid: 1349540
 > Collect cards, upgrade cards, defeat monsters, join guilds and hire
 > heroes. Raise your DPS!
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1349540/)
+> → [Steam](https://store.steampowered.com/app/1349540/)

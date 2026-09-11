@@ -19,4 +19,4 @@ letterboxd: inglourious-basterds
 > Laurent, y lanzada por The Weinstein Company en Estados Unidos y por
 > Universal Pictures en el resto del mundo.
 >
-> — De [«Inglourious Basterds»](https://es.wikipedia.org/wiki/Inglourious_Basterds) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Inglourious_Basterds) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

@@ -25,4 +25,4 @@ letterboxd: the-crow
 > utilizando un doble, escenas oscuras y retoques por ordenador. La película
 > se presentó como un homenaje.
 >
-> — De [«El cuervo (película de 1994)»](https://es.wikipedia.org/wiki/El_cuervo_%28pel%C3%ADcula_de_1994%29) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/El_cuervo_%28pel%C3%ADcula_de_1994%29) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

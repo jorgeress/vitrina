@@ -18,4 +18,4 @@ appid: 250900
 > human abilities and enabling him to fight off droves of mysterious
 > creatures, discover secrets and fight his way to safety.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/250900/)
+> → [Steam](https://store.steampowered.com/app/250900/)

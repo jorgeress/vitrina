@@ -19,4 +19,4 @@ appid: 356190
 > batallas y domina Mordor con tu propio ejército de orcos en La Tierra
 > Media™: Sombras de Guerra™.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/356190/)
+> → [Steam](https://store.steampowered.com/app/356190/)

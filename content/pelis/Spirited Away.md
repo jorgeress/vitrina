@@ -27,4 +27,4 @@ letterboxd: spirited-away
 > como misión buscar su libertad y la de sus padres, y así poder regresar a
 > su mundo.
 >
-> — De [«El viaje de Chihiro»](https://es.wikipedia.org/wiki/El_viaje_de_Chihiro) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/El_viaje_de_Chihiro) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

@@ -19,4 +19,4 @@ appid: 1281930
 > para Terraria con tModLoader! Este DLC hace realidad el modding de
 > Terraria.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1281930/)
+> → [Steam](https://store.steampowered.com/app/1281930/)

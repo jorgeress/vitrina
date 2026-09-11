@@ -646,7 +646,7 @@ Me reí con esta desde los catorce y no he parado.
 > [!quote] De qué va
 > Zoolander es una comedia cinematográfica estadounidense de 2001…
 >
-> — De «Zoolander» en Wikipedia, bajo CC BY-SA 4.0
+> → Wikipedia · CC BY-SA 4.0
 ```
 
 `textos.py` **sólo pisa lo que ha escrito él**: el bloque de la cita, y la

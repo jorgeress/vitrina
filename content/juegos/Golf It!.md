@@ -21,4 +21,4 @@ appid: 571740
 > emerge as the ultimate minigolf champion. Your thrilling golfing odyssey
 > begins here!
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/571740/)
+> → [Steam](https://store.steampowered.com/app/571740/)

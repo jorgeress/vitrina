@@ -19,4 +19,4 @@ appid: 413150
 > algunas monedas. ¿Te ves capaz de vivir de la tierra y convertir estos
 > campos descuidados en un hogar próspero?
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/413150/)
+> → [Steam](https://store.steampowered.com/app/413150/)

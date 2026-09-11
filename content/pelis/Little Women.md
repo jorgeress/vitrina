@@ -22,4 +22,4 @@ letterboxd: little-women-2019
 > adaptación cinematográfica de la novela homónima de 1868 de Louisa May
 > Alcott.
 >
-> — De [«Mujercitas (película de 2019)»](https://es.wikipedia.org/wiki/Mujercitas_%28pel%C3%ADcula_de_2019%29) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Mujercitas_%28pel%C3%ADcula_de_2019%29) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

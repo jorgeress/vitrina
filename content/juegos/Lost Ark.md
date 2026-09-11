@@ -19,4 +19,4 @@ appid: 1599340
 > explora lugares desconocidos, busca tesoros perdidos y ponte a prueba con
 > la emocionante acción y combate de este RPG de acción gratuito.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1599340/)
+> → [Steam](https://store.steampowered.com/app/1599340/)

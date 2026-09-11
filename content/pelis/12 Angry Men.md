@@ -16,4 +16,4 @@ letterboxd: 12-angry-men
 > Sidney Lumet y basada en el guion para TV de título similar escrito por
 > Reginald Rose.
 >
-> — De [«12 Angry Men (película de 1957)»](https://es.wikipedia.org/wiki/12_Angry_Men_%28pel%C3%ADcula_de_1957%29) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/12_Angry_Men_%28pel%C3%ADcula_de_1957%29) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

@@ -21,4 +21,4 @@ capsula: 722290ef250a94cc84535249d99b87c5d3b98b83/library_600x900.jpg
 > fabrica equipamiento cada vez más poderoso, derrota a jefes épicos y
 > disfruta de un profundo RPG idle con progresión activa y sin conexión.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1353300/)
+> → [Steam](https://store.steampowered.com/app/1353300/)

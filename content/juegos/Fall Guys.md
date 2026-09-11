@@ -19,4 +19,4 @@ appid: 1097150
 > compiten en delirantes carreras de obstáculos formadas por rondas cada vez
 > más emocionantes hasta que una sola persona se alza con la victoria.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1097150/)
+> → [Steam](https://store.steampowered.com/app/1097150/)

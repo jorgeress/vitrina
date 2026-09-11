@@ -17,4 +17,4 @@ wikipedia: Indigno de ser humano
 > considerada la obra maestra de Dazai, así como también la segunda novela
 > más vendida en Japón tras Kokoro de Natsume Sōseki.
 >
-> — De [«Indigno de ser humano»](https://es.wikipedia.org/wiki/Indigno_de_ser_humano) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Indigno_de_ser_humano) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

@@ -19,4 +19,4 @@ letterboxd: one-cut-of-the-dead
 > actores y cineastas que tienen la tarea de filmar una película de zombis
 > para la televisión en vivo, y deben hacerlo en una sola toma.
 >
-> — De [«Kamera o Tomeru na!»](https://es.wikipedia.org/wiki/Kamera_o_Tomeru_na%21) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Kamera_o_Tomeru_na%21) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

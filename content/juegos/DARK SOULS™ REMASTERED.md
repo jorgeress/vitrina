@@ -17,4 +17,4 @@ appid: 570940
 > podrás regresar a Lordran con unos impresionantes detalles en alta
 > definición y a 60 fps.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/570940/)
+> → [Steam](https://store.steampowered.com/app/570940/)

@@ -19,4 +19,4 @@ appid: 1371630
 > where combat is fully automated. It's up to you to make the most of that
 > automation to reach extremely high numbers!
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1371630/)
+> → [Steam](https://store.steampowered.com/app/1371630/)

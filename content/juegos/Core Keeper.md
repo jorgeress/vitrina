@@ -21,4 +21,4 @@ capsula: 8e1f05bc29b662fc85a8847457a7d0eed312fbff/library_capsule.jpg
 > construye, lucha, fabrica y cultiva para desentrañar el misterio del
 > antiguo Núcleo.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1621690/)
+> → [Steam](https://store.steampowered.com/app/1621690/)

@@ -18,4 +18,4 @@ appid: 814380
 > FromSoftware, creadores de Bloodborne y la saga Dark Souls. Véngate.
 > Restituye tu honor. Mata con ingenio.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/814380/)
+> → [Steam](https://store.steampowered.com/app/814380/)

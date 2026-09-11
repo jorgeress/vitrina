@@ -21,4 +21,4 @@ appid: 1869780
 > time! Grab a partner and uncover UnderMine 2's secrets together in local
 > co-op.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1869780/)
+> → [Steam](https://store.steampowered.com/app/1869780/)

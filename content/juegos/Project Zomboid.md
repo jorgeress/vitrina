@@ -21,4 +21,4 @@ appid: 108600
 > cute tutorial raccoon await the unwary. So how will you die? All it takes
 > is a bite..
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/108600/)
+> → [Steam](https://store.steampowered.com/app/108600/)

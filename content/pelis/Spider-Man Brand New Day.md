@@ -28,4 +28,4 @@ letterboxd: spider-man-brand-new-day
 > investiga una nueva y poderosa amenaza mientras sus superpoderes
 > experimentan una evolución sorprendente y potencialmente peligrosa.
 >
-> — De [«Spider-Man: Brand New Day»](https://es.wikipedia.org/wiki/Spider-Man%3A_Brand_New_Day) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Spider-Man%3A_Brand_New_Day) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

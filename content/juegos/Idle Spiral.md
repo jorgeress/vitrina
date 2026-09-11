@@ -20,4 +20,4 @@ appid: 1827980
 > juego es muy simple, ¡pero es muy profundo y puede disfrutarse durante
 > mucho tiempo!
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1827980/)
+> → [Steam](https://store.steampowered.com/app/1827980/)

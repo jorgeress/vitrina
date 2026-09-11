@@ -21,4 +21,4 @@ appid: 1942280
 > objetos para crear combinaciones únicas y sobrevivir hasta que acudan los
 > refuerzos.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1942280/)
+> → [Steam](https://store.steampowered.com/app/1942280/)

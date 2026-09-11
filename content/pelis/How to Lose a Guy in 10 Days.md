@@ -19,4 +19,4 @@ letterboxd: how-to-lose-a-guy-in-10-days
 > en una historieta con el mismo nombre hecha por Michele Alexander y
 > Jeannie Long.
 >
-> — De [«How to Lose a Guy in 10 Days»](https://es.wikipedia.org/wiki/How_to_Lose_a_Guy_in_10_Days) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/How_to_Lose_a_Guy_in_10_Days) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

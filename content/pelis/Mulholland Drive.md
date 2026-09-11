@@ -22,4 +22,4 @@ letterboxd: mulholland-drive
 > oníricas e imágenes surrealistas características del estilo narrativo
 > críptico de Lynch.
 >
-> — De [«Mulholland Drive (película)»](https://es.wikipedia.org/wiki/Mulholland_Drive_%28pel%C3%ADcula%29) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Mulholland_Drive_%28pel%C3%ADcula%29) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

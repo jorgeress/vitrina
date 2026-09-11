@@ -24,4 +24,4 @@ letterboxd: eternal-sunshine-of-the-spotless-mind
 > Wilkinson. El título del filme proviene de un verso del poema Eloisa to
 > Abelard (1717), de Alexander Pope.
 >
-> — De [«Eternal Sunshine of the Spotless Mind»](https://es.wikipedia.org/wiki/Eternal_Sunshine_of_the_Spotless_Mind) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Eternal_Sunshine_of_the_Spotless_Mind) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

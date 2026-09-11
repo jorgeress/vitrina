@@ -25,4 +25,4 @@ letterboxd: the-odyssey-2026
 > Theron, Himesh Patel y Jon Bernthal. Nolan y su esposa, Emma Thomas,
 > produjeron la película a través de su compañía Syncopy.
 >
-> — De [«La Odisea (película de 2026)»](https://es.wikipedia.org/wiki/La_Odisea_%28pel%C3%ADcula_de_2026%29) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/La_Odisea_%28pel%C3%ADcula_de_2026%29) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

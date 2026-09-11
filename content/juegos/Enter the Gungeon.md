@@ -21,4 +21,4 @@ capsula: 0f83ce1bfba1f0bd837b8d575dde76ba44855ea0/library_capsule.jpg
 > alcanzar el tesoro supremo de la legendaria Armazmorra: el arma que puede
 > matar el pasado.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/311690/)
+> → [Steam](https://store.steampowered.com/app/311690/)

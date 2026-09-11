@@ -22,4 +22,4 @@ letterboxd: open-your-eyes
 > comparaciones con la obra de teatro de Calderón de la Barca La vida es
 > sueño (1635).
 >
-> — De [«Abre los ojos (película)»](https://es.wikipedia.org/wiki/Abre_los_ojos_%28pel%C3%ADcula%29) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Abre_los_ojos_%28pel%C3%ADcula%29) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

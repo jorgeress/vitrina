@@ -25,4 +25,4 @@ letterboxd: clue
 > actores Eileen Brennan, Tim Curry, Madeline Kahn, Christopher Lloyd,
 > Michael McKean, Martin Mull y Lesley Ann Warren.
 >
-> — De [«Clue (película)»](https://es.wikipedia.org/wiki/Clue_%28pel%C3%ADcula%29) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Clue_%28pel%C3%ADcula%29) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

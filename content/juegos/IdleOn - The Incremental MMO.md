@@ -20,4 +20,4 @@ appid: 1476970
 > to Cannon-Pirate, and level 20 unique skills like Farming, Sailing, and
 > Construction!
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1476970/)
+> → [Steam](https://store.steampowered.com/app/1476970/)

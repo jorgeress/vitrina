@@ -22,4 +22,4 @@ letterboxd: scott-pilgrim-vs-the-world
 > enfrentarse a los siete malvados exnovios de Ramona, quienes intentarán
 > derrotarle.
 >
-> — De [«Scott Pilgrim vs. the World»](https://es.wikipedia.org/wiki/Scott_Pilgrim_vs._the_World) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Scott_Pilgrim_vs._the_World) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

@@ -17,4 +17,4 @@ letterboxd: pellet-2000
 > como actor. La película ganó cuatro Premios Goya incluyendo el de mejor
 > película.
 >
-> — De [«El Bola»](https://es.wikipedia.org/wiki/El_Bola) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/El_Bola) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

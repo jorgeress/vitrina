@@ -22,4 +22,4 @@ capsula: 6754ae9d2f555ee1cf37f9d44021d34554d9991d/library_600x900.jpg
 > oficina, las relaciones personales y tu propia misión de convertirte en un
 > héroe.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/2592160/)
+> → [Steam](https://store.steampowered.com/app/2592160/)

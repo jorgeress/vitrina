@@ -18,4 +18,4 @@ appid: 1966720
 > A co-op horror about scavenging at abandoned moons to sell scrap to the
 > Company.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1966720/)
+> → [Steam](https://store.steampowered.com/app/1966720/)

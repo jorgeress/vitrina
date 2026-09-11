@@ -23,4 +23,4 @@ letterboxd: corpse-bride
 > hace de actor de voz, junto a Helena Bonham Carter que da voz a Emily, la
 > novia cadáver.
 >
-> — De [«Corpse Bride»](https://es.wikipedia.org/wiki/Corpse_Bride) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Corpse_Bride) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

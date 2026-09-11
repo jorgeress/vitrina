@@ -18,4 +18,4 @@ letterboxd: manchester-by-the-sea
 > comenzó el 23 de marzo de 2015, en Manchester-by-the-Sea, un pueblo del
 > Nordeste de Estados Unidos.
 >
-> — De [«Manchester by the Sea (película)»](https://es.wikipedia.org/wiki/Manchester_by_the_Sea_%28pel%C3%ADcula%29) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Manchester_by_the_Sea_%28pel%C3%ADcula%29) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

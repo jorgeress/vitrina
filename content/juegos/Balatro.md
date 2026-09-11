@@ -19,4 +19,4 @@ appid: 2379780
 > alterarán tus partidas y activar combos impresionantes que dispararán tu
 > adrenalina.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/2379780/)
+> → [Steam](https://store.steampowered.com/app/2379780/)

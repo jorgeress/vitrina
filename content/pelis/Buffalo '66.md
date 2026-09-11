@@ -20,4 +20,4 @@ letterboxd: buffalo-66
 > completa con Mickey Rourke, Rosanna Arquette, Ben Gazzara y Anjelica
 > Huston. Gallo también compuso gran parte de la música para la película.
 >
-> — De [«Buffalo '66»](https://es.wikipedia.org/wiki/Buffalo_%2766) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Buffalo_%2766) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

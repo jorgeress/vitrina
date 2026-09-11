@@ -17,4 +17,4 @@ appid: 1245620
 > y que la gracia te guíe para abrazar el poder del Círculo de Elden y
 > encumbrarte como señor del Círculo en las Tierras Intermedias.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1245620/)
+> → [Steam](https://store.steampowered.com/app/1245620/)

@@ -25,4 +25,4 @@ letterboxd: the-shawshank-redemption
 > en una operación de blanqueo de dinero dirigida por el alcaide de la
 > prisión Samuel Norton.
 >
-> — De [«The Shawshank Redemption»](https://es.wikipedia.org/wiki/The_Shawshank_Redemption) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/The_Shawshank_Redemption) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

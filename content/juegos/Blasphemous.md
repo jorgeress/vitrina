@@ -19,4 +19,4 @@ appid: 774361
 > Explora, mejora tus habilidades y masacra las hordas de enemigos que se
 > interponen en tu misión para romper el ciclo de condenación eterna.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/774361/)
+> → [Steam](https://store.steampowered.com/app/774361/)

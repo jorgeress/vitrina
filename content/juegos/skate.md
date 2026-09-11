@@ -21,4 +21,4 @@ capsula: 8dd654efd195e289b91d1d3afe1cbb24123fe6b5/library_capsule.jpg
 > exploración sin tabla para gozar de total libertad en el mundo
 > multijugador de San Vansterdam.
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/3354750/)
+> → [Steam](https://store.steampowered.com/app/3354750/)

@@ -29,4 +29,4 @@ wikipedia: El extranjero
 > protagonizado por Marcello Mastroianni. El grupo inglés The Cure se
 > inspiró en el libro para componer la canción «Killing an Arab».
 >
-> — De [«El extranjero»](https://es.wikipedia.org/wiki/El_extranjero) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/El_extranjero) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

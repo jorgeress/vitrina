@@ -16,4 +16,4 @@ wikipedia: Noches blancas (Dostoyevski)
 > Dostoyevski. Fue publicada en 1848, al inicio de la carrera del escritor,
 > bajo el subtítulo Novela sentimental: De las memorias de un soñador
 >
-> — De [«Noches blancas (Dostoyevski)»](https://es.wikipedia.org/wiki/Noches_blancas_%28Dostoyevski%29) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Noches_blancas_%28Dostoyevski%29) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

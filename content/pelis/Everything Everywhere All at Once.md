@@ -22,4 +22,4 @@ letterboxd: everything-everywhere-all-at-once
 > James Hong y Jamie Lee Curtis. Fue la ganadora del premio Óscar a mejor
 > película en 2023.
 >
-> — De [«Everything Everywhere All at Once»](https://es.wikipedia.org/wiki/Everything_Everywhere_All_at_Once) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Everything_Everywhere_All_at_Once) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

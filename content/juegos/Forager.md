@@ -20,4 +20,4 @@ appid: 751780
 > secretos y construye tu base desde la nada! ¡Compra tierras para explorar
 > y expandirte!
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/751780/)
+> → [Steam](https://store.steampowered.com/app/751780/)

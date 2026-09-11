@@ -24,4 +24,4 @@ letterboxd: mysterious-skin
 > prostituto masculino, mientras que el otro se aísla en un mundo de
 > fantasía, pues cree haber sido abducido por alienígenas.
 >
-> — De [«Mysterious Skin»](https://es.wikipedia.org/wiki/Mysterious_Skin) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Mysterious_Skin) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

@@ -18,4 +18,4 @@ letterboxd: dead-poets-society
 > alumnos durante 1959 en la Welton Academy (Vermont), institución señera y
 > prestigiosa.
 >
-> — De [«Dead Poets Society»](https://es.wikipedia.org/wiki/Dead_Poets_Society) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Dead_Poets_Society) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

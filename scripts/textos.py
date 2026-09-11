@@ -78,10 +78,17 @@ def cita(texto, credito):
     se ve que la sinopsis es de la fuente y que lo que escriba el debajo es
     suyo. Quartz pinta los callouts igual que Obsidian, asi que se ve lo mismo
     en el editor y en la web.
+
+    El credito va tras una flecha y con el nombre de la fuente enlazado, nada
+    mas: «→ Steam». Antes era una frase entera, «— De su ficha en Steam»,
+    repetida en 86 fichas y casi tan larga como alguna sinopsis; se leia como
+    parte del texto en vez de como la nota al pie que es. La flecha dice lo
+    mismo -de ahi sale y ahi te lleva- y el enlace, que es lo que ampara la
+    cita, sigue estando.
     """
     lineas = textwrap.wrap(texto, ANCHO - 2) or [""]
     cuerpo = "\n".join(f"> {l}" for l in lineas)
-    return f"> [!quote] De qué va\n{cuerpo}\n>\n> — {credito}"
+    return f"> [!quote] De qué va\n{cuerpo}\n>\n> → {credito}"
 
 
 # --- fuentes -----------------------------------------------------------------
@@ -103,9 +110,12 @@ def texto_juego(titulo, campos, md):
     if not sinopsis:
         return None, f"su ficha de Steam no trae descripcion ({appid})"
 
-    tienda = f"https://store.steampowered.com/app/{appid}/"
-    return cita(sinopsis, f"De su [ficha en Steam]({tienda})"), \
+    return cita(sinopsis, credito_steam(appid)), \
         f"Steam ({datos.get('name') or appid})"
+
+
+def credito_steam(appid):
+    return f"[Steam](https://store.steampowered.com/app/{appid}/)"
 
 
 def articulo_es(propiedad, valor):
@@ -138,10 +148,15 @@ def resumen_wikipedia(articulo):
 
 
 def credito_wikipedia(articulo):
+    """«→ Wikipedia · CC BY-SA 4.0», los dos enlazados.
+
+    El titulo del articulo ya no se escribe: el enlace lleva a el, y la
+    licencia deja expresamente cumplir la atribucion con un enlace a donde
+    esten los datos (seccion 3(a)(2)). Lo que no se puede quitar es la licencia.
+    """
     enlace = "https://es.wikipedia.org/wiki/" + urllib.parse.quote(
         articulo.replace(" ", "_"), safe="")
-    return (f"De [«{articulo}»]({enlace}) en Wikipedia, "
-            f"bajo [CC BY-SA 4.0]({LICENCIA_CC})")
+    return f"[Wikipedia]({enlace}) · [CC BY-SA 4.0]({LICENCIA_CC})"
 
 
 def texto_peli(titulo, campos, md):
@@ -169,7 +184,7 @@ def texto_peli(titulo, campos, md):
     ficha = ficha_letterboxd(slug_lb)
     sinopsis, tmdb = ficha.get("sinopsis"), ficha.get("tmdb")
     if sinopsis and tmdb:
-        return cita(limpio(sinopsis), f"De [su ficha en TMDB]({tmdb}), en inglés"), \
+        return cita(limpio(sinopsis), f"[TMDB]({tmdb}) · en inglés"), \
             f"TMDB via Letterboxd ({slug_lb})"
     if not articulo:
         return None, f"ni articulo en español ni sinopsis en Letterboxd ({slug_lb})"

@@ -277,7 +277,7 @@ class LoQueEscribeEl(unittest.TestCase):
 
     def test_force_no_le_borra_el_parrafo_a_una_pelicula(self):
         cuerpo = ("Me rei con esta desde los catorce.\n\n"
-                  "> [!quote] De qué va\n> Algo.\n>\n> — De [x](y)\n")
+                  "> [!quote] De qué va\n> Algo.\n>\n> → [x](y)\n")
         self.assertEqual(textos.lo_suyo(cuerpo), "Me rei con esta desde los catorce.")
 
     def test_force_no_le_borra_el_parrafo_a_un_disco(self):
@@ -331,10 +331,9 @@ class TextosCitados(unittest.TestCase):
     def test_la_cita_de_steam_enlaza_su_ficha_de_la_tienda(self):
         # Steam no da ninguna licencia: la cita con su fuente es lo que la
         # ampara, asi que un texto suyo sin enlace no debe poder salir.
-        cuerpo = textos.cita("Un juego de prueba.",
-                             "De su [ficha en Steam](https://store.steampowered.com/app/1/)")
+        cuerpo = textos.cita("Un juego de prueba.", textos.credito_steam(1))
         self.assertTrue(cuerpo.startswith("> [!quote] De qué va"))
-        self.assertIn("store.steampowered.com/app/1/", cuerpo)
+        self.assertTrue(cuerpo.endswith("> → [Steam](https://store.steampowered.com/app/1/)"))
         for linea in cuerpo.splitlines():
             self.assertTrue(linea.startswith(">"), f"linea fuera del callout: {linea}")
 

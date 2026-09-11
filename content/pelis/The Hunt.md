@@ -17,4 +17,4 @@ letterboxd: the-hunt-2012
 > Festival Internacional de Cine de Toronto en 2012. Ganó 16 premios y tuvo
 > más de 20 nominaciones.
 >
-> — De [«Jagten»](https://es.wikipedia.org/wiki/Jagten) en Wikipedia, bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)
+> → [Wikipedia](https://es.wikipedia.org/wiki/Jagten) · [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es)

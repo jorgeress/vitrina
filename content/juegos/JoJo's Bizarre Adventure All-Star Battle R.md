@@ -17,4 +17,4 @@ appid: 1372110
 > más! ¡Descubre cómo interactúan personajes que no coinciden en la historia
 > cuando se encuentran cara a cara!
 >
-> — De su [ficha en Steam](https://store.steampowered.com/app/1372110/)
+> → [Steam](https://store.steampowered.com/app/1372110/)
