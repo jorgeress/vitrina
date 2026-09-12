@@ -56,6 +56,17 @@ ENLACE_RE = re.compile(r"\[\[autores/[^|\]]+\|([^\]]+)\]\]")
 SUFIJOS = ("inc.", "inc", "ltd.", "ltd", "llc", "co.", "corp.", "gmbh",
            "s.a.", "s.l.", "b.v.", "pty", "ab", "oy")
 
+# Nombres que llevan una coma dentro y son uno solo. Con los estudios basta la
+# lista de arriba, porque lo que va detras de la coma es siempre un sufijo de
+# empresa; con las personas y los grupos no hay regla que valga -- "The Creator"
+# no es "Inc." --, asi que se nombran. Sin esto, "Tyler, The Creator" entraba
+# como dos autores y se llevaba dos paginas, una titulada "Tyler" y otra "The
+# Creator", con un disco cada una.
+#
+# La lista crece cuando aparezca el siguiente: "Earth, Wind & Fire" o
+# "Crosby, Stills & Nash" harian lo mismo.
+NOMBRES_CON_COMA = ("tyler, the creator",)
+
 
 def separar(valor):
     """El campo `autor` -> la lista de personas o estudios que nombra.
@@ -63,7 +74,8 @@ def separar(valor):
     La coma no basta como separador porque significa las dos cosas:
     "Mike Johnson, Tim Burton" son dos directores y "FromSoftware, Inc." es un
     solo estudio. Lo que decide es si el trozo de despues es un sufijo de
-    empresa, en cuyo caso se vuelve a pegar al anterior.
+    empresa, en cuyo caso se vuelve a pegar al anterior, o si los dos juntos
+    forman un nombre de los que se sabe que llevan coma.
     """
     valor = ENLACE_RE.sub(r"\1", valor or "").strip()
     if not valor:
@@ -72,7 +84,10 @@ def separar(valor):
     for trozo in [t.strip() for t in valor.split(",")]:
         if not trozo:
             continue
-        if partes and trozo.lower().rstrip(".") in [s.rstrip(".") for s in SUFIJOS]:
+        junto = f"{partes[-1]}, {trozo}".lower() if partes else ""
+        if junto in NOMBRES_CON_COMA:
+            partes[-1] += ", " + trozo
+        elif partes and trozo.lower().rstrip(".") in [s.rstrip(".") for s in SUFIJOS]:
             partes[-1] += ", " + trozo
         else:
             partes.append(trozo)
