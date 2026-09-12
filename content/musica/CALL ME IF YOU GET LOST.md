@@ -1,5 +1,6 @@
 ---
 tipo: album
+seccion: "[[musica/index|Música]]"
 year: 2021
 autor: Tyler, The Creator
 nota:

@@ -1,5 +1,6 @@
 ---
 tipo: juego
+seccion: "[[juegos/index|Juegos]]"
 year: 2024
 autor: LocalThunk
 nota:

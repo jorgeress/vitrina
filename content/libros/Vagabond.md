@@ -1,5 +1,6 @@
 ---
 tipo: libro
+seccion: "[[libros/index|Libros]]"
 year: 1999
 autor: Takehiko Inoue
 nota:

@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 2025
 autor: Kenji Iwaisawa
 nota: 10

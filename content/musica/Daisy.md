@@ -1,5 +1,6 @@
 ---
 tipo: album
+seccion: "[[musica/index|Música]]"
 year: 2009
 autor: Brand New
 nota:

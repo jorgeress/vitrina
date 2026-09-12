@@ -1,5 +1,6 @@
 ---
 tipo: album
+seccion: "[[musica/index|Música]]"
 year: 2006
 autor: My Chemical Romance
 nota:

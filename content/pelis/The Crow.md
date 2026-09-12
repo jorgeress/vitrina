@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 1994
 autor: Alex Proyas
 nota: 8

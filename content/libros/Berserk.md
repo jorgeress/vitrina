@@ -1,5 +1,6 @@
 ---
 tipo: libro
+seccion: "[[libros/index|Libros]]"
 year: 1990
 autor: Kentaro Miura
 nota:

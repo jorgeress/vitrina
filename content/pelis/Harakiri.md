@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 1962
 autor: Masaki Kobayashi
 nota: 10

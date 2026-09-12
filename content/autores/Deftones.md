@@ -1,6 +1,7 @@
 ---
 title: "Deftones"
 tipo: autor
+seccion: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de Deftones.

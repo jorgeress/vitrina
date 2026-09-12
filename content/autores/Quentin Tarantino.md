@@ -1,6 +1,7 @@
 ---
 title: "Quentin Tarantino"
 tipo: autor
+seccion: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de Quentin Tarantino.

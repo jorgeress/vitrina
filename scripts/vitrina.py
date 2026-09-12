@@ -144,13 +144,36 @@ def nombre_de_fichero(titulo):
 
 
 
+def enlace_seccion(carpeta):
+    """El enlace de una ficha a la galeria de su seccion, para la cabecera.
+
+    Este si va escrito dentro de la ficha, y no lo pone la web al construir como
+    el del autor, porque a este tiene que verlo tambien Obsidian: su grafo
+    dibuja los `[[...]]` que estan en la vault y nada mas, asi que sin esto las
+    fichas salian sueltas alli aunque en la web colgaran de su seccion.
+
+    Va en la cabecera y no en el cuerpo porque es un dato de la ficha --de que
+    seccion es-- y no maquetacion, y porque Obsidian cuenta los enlaces de las
+    propiedades igual que los del texto: salen en el grafo y en los backlinks.
+    De paso no se pinta en la web, que ya lo dice la miga de pan.
+
+    El nombre sale del `title` del indice, asi que "Peliculas" se escribe en un
+    solo sitio y renombrar una seccion es tocar su index.md.
+    """
+    indice = VAULT / carpeta / "index.md"
+    titulo = ""
+    if indice.exists():
+        titulo = frontmatter(indice.read_text(encoding="utf-8")).get("title") or ""
+    return f"[[{carpeta}/index|{titulo or carpeta}]]"
+
 # --- fichas nuevas -----------------------------------------------------------
 # Lo que hace falta para crear una ficha desde cero, que necesitan tanto el
 # importador, que las vuelca a cientos, como el alta de una obra suelta.
 
 ESTADOS = ["pendiente", "en curso", "terminado", "abandonado"]
 
-CAMPOS = ["tipo", "year", "autor", "nota", "estado", "favorito", "portada", "tags"]
+CAMPOS = ["tipo", "seccion", "year", "autor", "nota", "estado", "favorito",
+          "portada", "tags"]
 
 # Los que no dejan la clave vacia si no hay valor. Ver escribir_ficha().
 SIN_HUECO = {"estado"}
@@ -168,6 +191,8 @@ def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True):
     # Misma obra escrita distinto ("Parásitos" y "Parasitos"): no se duplica.
     if normal(titulo) in fichas_existentes(carpeta).values():
         return None
+    # La seccion no se pregunta ni se pasa: la dice la carpeta en la que cae.
+    campos = {**campos, "seccion": enlace_seccion(carpeta)}
     orden = CAMPOS + [c for c in campos if c not in CAMPOS]
     # Casi todos los campos se escriben aunque vengan vacios: la clave suelta es
     # el hueco donde luego pones el dato, y Obsidian lo ofrece en el editor de

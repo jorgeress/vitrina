@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 2026
 autor: Phil Lord, Christopher Miller
 nota: 10

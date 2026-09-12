@@ -1,5 +1,6 @@
 ---
 tipo: album
+seccion: "[[musica/index|Música]]"
 year: 2019
 autor: Mac DeMarco
 nota:

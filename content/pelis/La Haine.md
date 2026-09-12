@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 1995
 autor: Mathieu Kassovitz
 nota: 10

@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 2004
 autor: Hayao Miyazaki
 nota: 10

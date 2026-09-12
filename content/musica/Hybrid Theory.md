@@ -1,5 +1,6 @@
 ---
 tipo: album
+seccion: "[[musica/index|Música]]"
 year: 2000
 autor: Linkin Park
 nota:

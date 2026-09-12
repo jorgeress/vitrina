@@ -1,5 +1,6 @@
 ---
 tipo: juego
+seccion: "[[juegos/index|Juegos]]"
 year: 2011
 autor: Re-Logic
 nota: 10

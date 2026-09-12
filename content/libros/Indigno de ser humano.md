@@ -1,5 +1,6 @@
 ---
 tipo: libro
+seccion: "[[libros/index|Libros]]"
 year: 1948
 autor: Osamu Dazai
 nota:

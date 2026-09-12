@@ -1,5 +1,6 @@
 ---
 tipo: juego
+seccion: "[[juegos/index|Juegos]]"
 year: 2023
 autor: Perfuse Entertainment
 nota:

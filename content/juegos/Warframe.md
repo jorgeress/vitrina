@@ -1,5 +1,6 @@
 ---
 tipo: juego
+seccion: "[[juegos/index|Juegos]]"
 year: 2013
 autor: Digital Extremes
 nota: 10

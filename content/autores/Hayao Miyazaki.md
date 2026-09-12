@@ -1,6 +1,7 @@
 ---
 title: "Hayao Miyazaki"
 tipo: autor
+seccion: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de Hayao Miyazaki.

@@ -1,6 +1,7 @@
 ---
 title: "Linkin Park"
 tipo: autor
+seccion: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de Linkin Park.

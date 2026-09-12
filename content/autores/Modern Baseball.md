@@ -1,6 +1,7 @@
 ---
 title: "Modern Baseball"
 tipo: autor
+seccion: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de Modern Baseball.

@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 2015
 autor: Jean-Marc Vallée
 nota: 8

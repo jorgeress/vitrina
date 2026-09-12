@@ -1,5 +1,6 @@
 ---
 tipo: libro
+seccion: "[[libros/index|Libros]]"
 year: 2008
 autor: Hiroya Oku
 nota:

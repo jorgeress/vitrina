@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 2012
 autor: Thomas Vinterberg
 nota: 10

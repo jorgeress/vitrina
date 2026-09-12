@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 1985
 autor: Jonathan Lynn
 nota: 10

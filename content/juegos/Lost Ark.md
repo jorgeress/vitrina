@@ -1,5 +1,6 @@
 ---
 tipo: juego
+seccion: "[[juegos/index|Juegos]]"
 year: 2022
 autor: Smilegate RPG
 nota:

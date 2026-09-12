@@ -1,6 +1,7 @@
 ---
 title: "My Chemical Romance"
 tipo: autor
+seccion: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de My Chemical Romance.

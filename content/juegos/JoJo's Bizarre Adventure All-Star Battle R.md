@@ -1,5 +1,6 @@
 ---
 tipo: juego
+seccion: "[[juegos/index|Juegos]]"
 year: 2022
 autor: CyberConnect2 Co. Ltd.
 nota:

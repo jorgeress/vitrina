@@ -1,6 +1,7 @@
 ---
 title: "TV Girl"
 tipo: autor
+seccion: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de TV Girl.

@@ -1,6 +1,7 @@
 ---
 title: D>E>A>T>H>M>E>T>A>L
 tipo: album
+seccion: "[[musica/index|Música]]"
 year: 2000
 autor: Panchiko
 nota:

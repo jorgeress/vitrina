@@ -10,6 +10,10 @@ añade cuando se sepa, y los scripts saben crear una clave que no existía.
 Campos:
 
 - `tipo`: juego, peli, libro o album. Debe coincidir con la carpeta.
+- `seccion`: el enlace a la galería de su sección, `"[[juegos/index|Juegos]]"`.
+  Es lo que cuelga la ficha de su sección en el grafo, y de ahí de Vitrina.
+  No se escribe a mano: lo ponen los scripts al crear la ficha, y
+  `scripts/secciones.py` repara el de las que falten o cambien de carpeta.
 - `estado`: pendiente, en curso, terminado, abandonado. Es lo que reparte
   películas, libros y discos en sus dos últimas pestañas: lo terminado en una,
   y lo pendiente y lo empezado en la otra, que es la lista de lo que queda; una

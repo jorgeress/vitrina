@@ -1,6 +1,7 @@
 ---
 title: "Tyler, The Creator"
 tipo: autor
+seccion: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de Tyler, The Creator.

@@ -1,5 +1,6 @@
 ---
 tipo: juego
+seccion: "[[juegos/index|Juegos]]"
 year: 2026
 autor: Tambouille, Géraud Zucchini
 nota:

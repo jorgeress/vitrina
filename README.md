@@ -14,6 +14,7 @@ Cada ficha es un fichero Markdown con unas pocas propiedades en la cabecera:
 ```yaml
 ---
 tipo: juego                        # juego, peli, libro o album
+seccion: "[[juegos/index|Juegos]]" # de qué sección cuelga; lo ponen los scripts
 year: 2019
 autor: ZA/UM                       # estudio, dirección, autor o artista
 nota: 10                           # del 1 al 10
@@ -109,6 +110,7 @@ scripts/
   datos.py          rellena año, autor y tags: Steam, Letterboxd, MusicBrainz
   textos.py         escribe el cuerpo: de qué va cada obra, y las canciones
   autores.py        conecta lo que comparte estudio, dirección o artista
+  secciones.py      cuelga cada ficha de su sección: el campo `seccion`
   vistazo.py        levanta el sitio con los borradores dentro
   estado.py         qué hay, qué falta y qué se publica
   pruebas.py        las pruebas de todo lo anterior, sin red
@@ -763,21 +765,43 @@ donde un fallo es silencioso.
 
 ## De Vitrina cuelga todo
 
-En el grafo, una colección es una nube de puntos sueltos: una ficha no cita a
+Una colección es, de partida, una nube de puntos sueltos: una ficha no cita a
 ninguna otra, y la galería de su sección tampoco la cita a ella —el
 `![[Juegos.base]]` de `/juegos/` no es una lista de enlaces, es una pregunta que
-se resuelve al pintar—. Así que el dibujo salía partido en dos: Vitrina con sus
-cuatro secciones por un lado, que eso sí lo enlaza `index.md`, y las 127 fichas
-por otro, colgando sólo de sus etiquetas.
+se resuelve al pintar—. Así que el grafo salía partido en dos: Vitrina con sus
+secciones por un lado, que eso sí lo enlaza `index.md`, y las 127 fichas por
+otro, colgando sólo de sus etiquetas.
 
-La arista que faltaba es la obvia: *Hollow Knight* es un juego, así que cuelga
-de **Juegos**, y Juegos cuelga de **Vitrina**. La pone `plugins/vitrina` al
-construir, mirando en qué carpeta está cada nota. No va escrita dentro de la
-ficha por lo mismo que el enlace del autor —la nota guarda datos, no
-maquetación— y porque el dato ya está: la carpeta dice de qué sección es cada
-una. Tampoco nombra ninguna sección: vale para cualquier carpeta que tenga
-`index`, así que las páginas de autor cuelgan de **Autores** por el mismo
-camino, y una carpeta nueva no hay que apuntarla en ningún sitio.
+La arista que faltaba es la obvia, y va escrita en la cabecera de cada ficha:
+
+```yaml
+seccion: "[[juegos/index|Juegos]]"
+```
+
+*Hollow Knight* cuelga de **Juegos**, Juegos cuelga de **Vitrina**, y las
+páginas de autor cuelgan de **Autores** por el mismo campo. Un árbol, y el mismo
+en los dos sitios.
+
+**Por qué en la cabecera y no en el cuerpo.** Porque es un dato de la ficha —de
+qué sección es— y no maquetación, que es el reparto de toda la vault; porque
+Obsidian cuenta los enlaces de las propiedades igual que los del texto, así que
+sale en el grafo y en los *backlinks*; y porque así no se pinta en la web, donde
+ese sitio ya lo ocupa la miga de pan.
+
+**Y por qué escrito, y no puesto al construir** como el enlace del autor. Porque
+el grafo de Obsidian sólo dibuja los `[[...]]` que están en la vault: un enlace
+que ponga el sitio al generarse se ve en la web y allí no, y la vault es la
+fuente. Quartz lo lee de la cabecera él solo, sin plugin que valga.
+
+Nadie lo escribe a mano: lo ponen `nueva.py` e `importar.py` al crear la ficha,
+porque lo dice la carpeta en la que cae. `scripts/secciones.py` es para las que
+ya estaban, para una escrita a mano y para una que cambie de sección:
+
+```bash
+scripts/secciones.py            # escribe el campo en las que falte o esté mal
+scripts/secciones.py --dry-run  # dice qué haría, sin tocar nada
+scripts/secciones.py --deshacer # quita el campo de todas las fichas
+```
 
 Eso es el tronco, y un tronco solo no junta una peli con un juego: entre ramas
 no hay ni un enlace. Lo que cruza la colección son los otros dos hilos, las

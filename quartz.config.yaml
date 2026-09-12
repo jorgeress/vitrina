@@ -177,8 +177,8 @@ plugins:
   - source: "@quartz-community/graph"
     enabled: true
     options:
-      # Las etiquetas, como nodos. El tronco ya lo pone `plugins/vitrina`: cada
-      # ficha cuelga de su seccion y las secciones de Vitrina, asi que el grafo
+      # Las etiquetas, como nodos. El tronco lo pone el campo `seccion` de cada
+      # ficha: cuelga de su seccion y las secciones de Vitrina, asi que el grafo
       # sale de una pieza. Pero eso es un arbol, y un arbol no junta una peli
       # con un juego: entre ramas no hay ni un enlace, porque una ficha no cita
       # a ninguna otra. Los generos si cruzan la coleccion entera --el tag de un

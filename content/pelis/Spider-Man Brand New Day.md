@@ -1,6 +1,7 @@
 ---
 title: "Spider-Man: Brand New Day"
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 2026
 autor: Destin Daniel Cretton
 nota: 10

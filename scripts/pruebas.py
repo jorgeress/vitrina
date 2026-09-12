@@ -535,6 +535,40 @@ class Coherencia(unittest.TestCase):
                 self.assertIn(estado, m.ESTADOS,
                               f"{ficha.name} dice estado: {estado}")
 
+    def test_cada_ficha_cuelga_de_su_seccion(self):
+        # El campo `seccion` es lo unico que une una ficha con su galeria: la
+        # galeria es una .base, que no enlaza a nada, asi que sin el la ficha se
+        # queda suelta en el grafo de Obsidian y en el de la web. Y como lo
+        # escriben los scripts y no se ve en ningun sitio, faltaria en silencio.
+        for carpeta in m.SECCIONES:
+            debido = m.enlace_seccion(carpeta)
+            for ficha in (m.RAIZ / "content" / carpeta).glob("*.md"):
+                if ficha.stem == "index":
+                    continue
+                campos = m.frontmatter(ficha.read_text(encoding="utf-8"))
+                self.assertEqual(campos.get("seccion"), debido,
+                                 f"{ficha.name} no cuelga de {carpeta}")
+
+    def test_la_seccion_lleva_el_nombre_que_dice_su_indice(self):
+        # El rotulo del enlace sale del `title` del index.md, que es donde se
+        # escribe una sola vez: si se leyera del nombre de la carpeta, "pelis"
+        # saldria asi en vez de "Peliculas".
+        self.assertEqual(m.enlace_seccion("pelis"), "[[pelis/index|Películas]]")
+
+    def test_una_ficha_nueva_ya_nace_colgada(self):
+        # Asi no hay que pasar secciones.py detras de cada alta.
+        with tempfile.TemporaryDirectory() as tmp:
+            antes, m.VAULT = m.VAULT, Path(tmp)
+            try:
+                (m.VAULT / "juegos").mkdir()
+                (m.VAULT / "juegos" / "index.md").write_text(
+                    "---\ntitle: Juegos\n---\n", encoding="utf-8")
+                destino = m.escribir_ficha("juegos", "Celeste", {"tipo": "juego"})
+                campos = m.frontmatter(destino.read_text(encoding="utf-8"))
+            finally:
+                m.VAULT = antes
+        self.assertEqual(campos.get("seccion"), "[[juegos/index|Juegos]]")
+
     def test_las_fichas_de_la_vault_llevan_un_tipo_conocido(self):
         for carpeta, tipo in m.SECCIONES.items():
             for ficha in (m.RAIZ / "content" / carpeta).glob("*.md"):

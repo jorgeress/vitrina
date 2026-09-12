@@ -130,7 +130,12 @@ def obras_por_autor():
 
 
 def pagina(autor, obras):
-    lineas = [f'---\ntitle: "{autor}"\ntipo: autor\n---\n',
+    # `seccion` cuelga la pagina de Autores, igual que una ficha cuelga de la
+    # suya. El titulo no se lee del index.md de la carpeta, que main() borra
+    # entera antes de rehacerla y para entonces ya no esta: aqui se sabe, es el
+    # de INDICE.
+    lineas = [f'---\ntitle: "{autor}"\ntipo: autor\n'
+              f'seccion: "[[autores/index|Autores]]"\n---\n',
               # Sin el punto si el nombre ya acaba en uno: "FromSoftware, Inc.."
               f"Lo que tengo de {autor}{'' if autor.endswith('.') else '.'}\n"]
     for carpeta, nombre, year in sorted(obras, key=lambda o: (o[0], o[1])):

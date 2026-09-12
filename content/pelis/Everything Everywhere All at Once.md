@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 2022
 autor: Daniel Kwan, Daniel Scheinert
 nota: 10

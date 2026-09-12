@@ -1,5 +1,6 @@
 ---
 tipo: juego
+seccion: "[[juegos/index|Juegos]]"
 year: 2014
 autor: Nicalis, Inc., Edmund McMillen
 nota: 10

@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 1997
 autor: Alejandro Amenábar
 nota: 10

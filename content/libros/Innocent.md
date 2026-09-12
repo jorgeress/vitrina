@@ -1,5 +1,6 @@
 ---
 tipo: libro
+seccion: "[[libros/index|Libros]]"
 year: 2016
 autor: Shinichi Sakamoto
 nota:

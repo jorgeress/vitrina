@@ -1,5 +1,6 @@
 ---
 tipo: juego
+seccion: "[[juegos/index|Juegos]]"
 year: 2018
 autor: QLOC, FromSoftware, Inc.
 nota: 10

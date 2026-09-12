@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 2016
 autor: Kenneth Lonergan
 nota: 10

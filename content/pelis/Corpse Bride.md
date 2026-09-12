@@ -1,5 +1,6 @@
 ---
 tipo: peli
+seccion: "[[pelis/index|Películas]]"
 year: 2005
 autor: Mike Johnson, Tim Burton
 nota: 8
