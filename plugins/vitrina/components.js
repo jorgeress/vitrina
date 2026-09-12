@@ -184,20 +184,35 @@ function portada(valor, slug) {
  * hueco que tiene Vitrina es ese: encima del texto. En una ficha lo ocupa la
  * caratula; en la portada, que no es una obra, no lo ocupaba nadie.
  */
+// Las fuerzas estan para que el dibujo quepa en su caja, que con 290 nodos no
+// es lo que sale de serie: los ajustes que trae Quartz reparten el grafo por
+// donde pueda y la mitad acaba fuera del recuadro.
+//
+//   enableRadial  el que lo cambia todo: mete una fuerza que empuja cada nodo a
+//                 una circunferencia de 0,8 del radio de la caja, asi que el
+//                 dibujo sale redondo y acotado en vez de un manchon que crece
+//                 hacia donde le dejan.
+//   repelForce    mas flojo que el de serie: es lo que se empujan los nodos
+//                 entre si, y con 290 a 0,5 el grafo se abria hasta reventar.
+//   centerForce   mas fuerte por lo mismo, tirando todo hacia el medio.
+//   linkDistance  mas corto: la distancia a la que se quieren los unidos.
+//   scale         el zoom de entrada. Sube hasta que la circunferencia ocupa
+//                 la caja, que si no se queda un circulito en medio.
+//   fontSize      los rotulos, mas pequeños: son 290 y a 0,6 se pisan.
 const GRAFO = {
   drag: true,
   zoom: true,
   depth: -1,
-  scale: 0.9,
-  repelForce: 0.5,
-  centerForce: 0.3,
-  linkDistance: 30,
-  fontSize: 0.6,
+  scale: 1.15,
+  repelForce: 0.35,
+  centerForce: 0.4,
+  linkDistance: 24,
+  fontSize: 0.5,
   opacityScale: 1,
   showTags: true,
   removeTags: [],
   focusOnHover: true,
-  enableRadial: false,
+  enableRadial: true,
 }
 
 function grafoDeCasa() {
@@ -267,9 +282,12 @@ const Ficha = () => {
 
   Ficha.css = `
 /* El grafo de la portada, en grande y con la vista pequeña de la barra fuera:
-   dibujan lo mismo, y ahi al lado no cabe nada que se lea. */
+   dibujan lo mismo, y ahi al lado no cabe nada que se lea.
+
+   La caja tira a cuadrada porque el radio del dibujo sale de su lado corto: en
+   una tira ancha y baja, el grafo se queda en un circulito en medio. */
 .grafo-casa .graph-outer {
-  height: min(60vh, 460px);
+  height: min(70vh, 520px);
   margin: 1.4rem 0 0;
 }
 body[data-slug="index"] .sidebar .graph {
