@@ -219,7 +219,10 @@ def datos_album(titulo, campos, md):
 # primeros de eso le pondria a Camus `ficcion, asesinato, frances`.
 #
 # Asi que se busca al reves: de los sesenta, cuales estan en esta tabla. Lo que
-# no este no se escribe. Eso deja libros sin etiquetas --los clasicos
+# no este no se escribe. Y la mitad de los que valen no vienen sueltos sino
+# dentro de una cabecera de BISAC --"Fiction, Mystery & Detective, General"--,
+# que es como clasifican las editoriales lo que publican; de partirlas se
+# encarga generos_de_subjects. Eso deja libros sin etiquetas --los clasicos
 # traducidos, sobre todo, que es justo lo que hay hoy en la vault-- y es la
 # decision correcta para este script: una ficha sin tags se ve y se arregla a
 # mano; una con `aventura` puesto por una maquina en `El extranjero` se queda
@@ -242,7 +245,14 @@ GENEROS_OPENLIBRARY = {
     "thrillers": "suspense",
     "suspense": "suspense",
     "mystery": "misterio",
+    "mystery fiction": "misterio",
     "detective and mystery stories": "misterio",
+    # Los tramos de BISAC, que no aparecen sueltos sino dentro de la cabecera:
+    # "Fiction / Mystery & Detective / General".
+    "mystery & detective": "misterio",
+    "war & military": "guerra",
+    "american science fiction": "ciencia-ficción",
+    "american fantasy fiction": "fantasía",
     "crime": "crimen",
     "love stories": "romance",
     "romance": "romance",
@@ -257,15 +267,41 @@ GENEROS_OPENLIBRARY = {
 }
 
 
+# Una cabecera de BISAC, que es el vocabulario con el que las editoriales
+# clasifican lo que publican: "Fiction / Science Fiction / Hard Science Fiction",
+# o con comas, que Open Library escribe de las dos formas. Empiezan siempre por
+# una categoria de arriba, y esas son las tres que traen novela.
+BISAC_RE = re.compile(r"^(fiction|juvenile fiction|young adult fiction)\b")
+
+
 def generos_de_subjects(subjects):
     """Los `subject` de Open Library -> los tags que reconoce la tabla.
+
+    Mira cada subject entero y, si es una cabecera de BISAC, tambien sus tramos
+    por separado. Eso es lo que saca el genero de la mitad de los libros: lo que
+    la editorial declara no viene como `horror` a secas sino como "Fiction,
+    Horror", y buscando la cadena entera se tiraba entera. Partirla no es
+    adivinar, porque BISAC es una lista cerrada y el tramo del medio es
+    justamente el genero.
+
+    Solo se parten las que empiezan por una categoria de BISAC. Un subject
+    suelto se queda de una pieza a proposito: `1984` trae "fantasy" por su
+    cuenta, y ese sale de que alguien lo puso en un estante, no de la editorial.
 
     En el orden de la tabla y no en el que vengan: los subjects no traen
     ninguno, asi que el de la fuente no significa nada y el de la tabla al menos
     es siempre el mismo. Sin repetidos, que los hay: "science fiction" y
     "sci-fi" son el mismo tag y un libro suele traer los dos.
     """
-    dichos = {str(s).strip().lower() for s in subjects or []}
+    dichos = set()
+    for s in subjects or []:
+        s = str(s).strip().lower()
+        if not s:
+            continue
+        dichos.add(s)
+        if BISAC_RE.match(s):
+            dichos.update(t for t in re.split(r"\s*[/,]\s*", s) if t)
+
     salida = []
     for subject, tag in GENEROS_OPENLIBRARY.items():
         if subject in dichos and tag not in salida:

@@ -588,7 +588,7 @@ ninguna. Antes que rellenar una ficha con los datos de otra obra, se queda
 vacía y lo dice.
 
 En la colección de este repo: 44 de 44 juegos y 37 de 37 películas. En libros,
-1 de 3, y esa proporción es la normal: ver abajo.
+1 de 3, y en clásicos traducidos ésa es la proporción normal: ver abajo.
 
 No pisa nada de lo que hayas escrito tú: solo toca los campos que estén
 vacíos, salvo que le pases `--force`, y deja el resto de la cabecera igual, en
@@ -609,13 +609,27 @@ primeros le pondría a Camus `ficción, asesinato, francés`.
 
 Así que los libros van al revés que las otras tres secciones: en vez de traducir
 lo que venga, se mira cuáles de esos sesenta están en una lista blanca corta de
-géneros, y lo que no esté no se escribe. El precio es que muchos libros se
-quedan sin etiquetas — sobre todo los clásicos traducidos, porque la edición que
-dio la portada suele ser la castellana y esas fichas están mucho más vacías que
-las inglesas. Sobre catorce libros de prueba, ocho salieron etiquetados y
-ninguno con una etiqueta que no le tocara, que es el reparto que interesa:
-una ficha sin tags se ve y se arregla a mano, y una con `aventura` puesto por
-una máquina en «El extranjero» se queda ahí para siempre.
+géneros, y lo que no esté no se escribe.
+
+La mitad de los que valen no vienen sueltos, y esa es la parte que hay que
+saber. Lo que la editorial declara no llega como `horror` sino como **cabecera
+de BISAC** — «Fiction, Horror», «Fiction / Science Fiction / Hard Science
+Fiction», «Fiction, Mystery & Detective, General» —, que es el vocabulario con
+el que la industria del libro clasifica lo que publica. Es lista cerrada y el
+tramo del medio es justamente el género, así que esas se parten y se leen por
+tramos. Sólo ésas: un `subject` suelto se queda de una pieza a propósito, porque
+sale de que alguien puso el libro en un estante y no de la editorial — `1984`
+trae «fantasy» por su cuenta y salía de novela fantástica.
+
+Sobre catorce libros de prueba, **once** salieron etiquetados y ninguno con una
+etiqueta que no le tocara, que es el reparto que interesa: una ficha sin tags se
+ve y se arregla a mano, y una con `aventura` puesto por una máquina en «El
+extranjero» se queda ahí para siempre. Los tres que no salen son clásicos
+traducidos, y no por el idioma de la ficha: se probó a ir a la obra inglesa
+canónica por Wikidata (`P648`, que da el id de Open Library sin buscar por
+título) y el registro inglés de «Noches blancas» trae nueve subjects, ninguno de
+los cuales es un género. No es que esté en castellano; es que nadie lo ha
+clasificado.
 
 La tabla es corta a propósito, y está en `GENEROS_OPENLIBRARY`. Cada vez que se
 le mete un género blando — «classics», «history», «adventure stories»,

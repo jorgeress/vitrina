@@ -389,6 +389,26 @@ class GenerosDeLibro(unittest.TestCase):
         self.assertEqual(datos.generos_de_subjects([]), [])
         self.assertEqual(datos.generos_de_subjects(None), [])
 
+    def test_una_cabecera_de_bisac_se_parte_para_leerle_el_genero(self):
+        # De aqui sale el genero de la mitad de los libros. La editorial no
+        # declara `horror`: declara "Fiction, Horror", y buscando la cadena
+        # entera se tiraba entera. Open Library las escribe de las dos formas,
+        # con comas y con barras, y las dos tienen que valer.
+        self.assertEqual(datos.generos_de_subjects(["Fiction, Horror"]), ["terror"])
+        self.assertEqual(
+            datos.generos_de_subjects(["Fiction / Science Fiction / Hard Science Fiction"]),
+            ["ciencia-ficción"])
+        self.assertEqual(datos.generos_de_subjects(["Fiction, Mystery & Detective, General"]),
+                         ["misterio"])
+
+    def test_un_subject_suelto_no_se_parte_aunque_lleve_coma(self):
+        # El guardarrail de lo de arriba. `1984` trae "fantasy" por su cuenta,
+        # de que alguien lo puso en un estante, y salia de novela fantastica.
+        # Solo se parte lo que empieza por una categoria de BISAC.
+        self.assertEqual(datos.generos_de_subjects(["fantasy"]), [])
+        self.assertEqual(datos.generos_de_subjects(["Comic books, strips"]), [])
+        self.assertEqual(datos.generos_de_subjects(["Romans, nouvelles"]), [])
+
     def test_dos_nombres_del_mismo_genero_dan_un_tag_y_no_dos(self):
         # Casi todo libro de ciencia-ficcion trae varios de estos a la vez.
         self.assertEqual(
