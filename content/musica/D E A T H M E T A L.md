@@ -15,3 +15,9 @@ tags:
 mbid: e53da1e9-2197-4755-baf1-182de0c74e26
 ---
 
+## Canciones
+
+1. D>E>A>T>H>M>E>T>A>L
+2. Stabilisers for Big Boys
+3. Laputa
+4. The Eyes of Ibad

@@ -178,3 +178,11 @@ footer::before {
   color: var(--gray);
   font-size: 0.85rem;
 }
+
+// El "De qué va" de la cita. El rotulo esta en el Markdown por Obsidian, que
+// sin titulo pinta el del tipo de callout -- y el suyo es "Quote", en ingles.
+// Asi que el texto se queda en la nota y se apaga aqui: en la web manda el
+// simbolo de las comillas, que ya dice que lo de debajo es una cita y no mia.
+.callout[data-callout="quote"] > .callout-title > .callout-title-inner {
+  display: none;
+}

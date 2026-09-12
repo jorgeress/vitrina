@@ -21,10 +21,6 @@ properties:
     displayName: Artista
   note.nota:
     displayName: Nota
-  note.estado:
-    displayName: Estado
-  note.favoritas:
-    displayName: Tus canciones
 views:
   - type: cards
     name: Galería
@@ -48,8 +44,6 @@ views:
       - note.autor
       - note.year
       - note.nota
-      - note.estado
-      - note.favoritas
     sort:
       - property: formula.puntuacion
         direction: DESC
@@ -73,29 +67,9 @@ views:
     image: note.portada
     cardSize: 220
     imageAspectRatio: 1
-  # Las dos mitades de `estado`, que la galeria enseña juntas y que aqui se
-  # miran por separado: lo oido, y la lista de lo que queda. De las cuatro
-  # secciones es la unica en la que «Por escuchar» se llena entera a mano:
-  # ListenBrainz cuenta lo que ya has escuchado, y de lo que te falta no sabe
-  # nada.
-  - type: cards
-    name: Escuchados
-    filters:
-      and:
-        - note.estado == "terminado"
-    order:
-      - file.name
-      - note.autor
-      - note.year
-      - formula.nota
-    sort:
-      - property: formula.puntuacion
-        direction: DESC
-      - property: file.name
-        direction: ASC
-    image: note.portada
-    cardSize: 220
-    imageAspectRatio: 1
+  # No hay vista de lo ya escuchado: Galería ya los enseña, y con casi todo
+  # escuchado seria la misma lista con otro nombre. Lo que si hace falta
+  # apartado es lo que queda, que es lo que esta pestaña enseña.
   # "en curso" entra aqui: empezado no es terminado, y si se quedara fuera, el
   # disco que estoy dandole ahora no saldria en ninguna de las dos.
   # "abandonado" no, que eso ya no espera nada.

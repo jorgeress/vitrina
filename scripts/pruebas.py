@@ -570,7 +570,10 @@ class Coherencia(unittest.TestCase):
         esperadas = {m.nombre_de_fichero(a): autores.pagina(a, o)
                      for a, o in mapa.items() if len(o) >= 2}
         carpeta = m.RAIZ / "content" / "autores"
-        en_disco = {md.stem for md in carpeta.glob("*.md")} if carpeta.exists() else set()
+        # El indice no es la pagina de nadie: lo escribe el mismo script para
+        # que la carpeta salga titulada "Autores" en el arbol lateral.
+        en_disco = ({md.stem for md in carpeta.glob("*.md") if md.stem != "index"}
+                    if carpeta.exists() else set())
 
         faltan = sorted(set(esperadas) - en_disco)
         self.assertFalse(faltan, "sin pagina de autor y con dos obras o mas: "

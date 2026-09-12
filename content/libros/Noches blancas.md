@@ -6,7 +6,9 @@ nota:
 estado: terminado
 favorito: true
 portada: "[[noches-blancas.webp]]"
-tags: []
+tags:
+  - romance
+  - drama
 coverid: 10861094
 wikipedia: Noches blancas (Dostoyevski)
 ---

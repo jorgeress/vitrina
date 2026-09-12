@@ -185,9 +185,12 @@ const Ficha = () => {
     dato("Año", f.year)
     dato(tipo.autor, hay(f.autor) ? autor(f.autor, slug, allSlugs, paginasDeAutor(allFiles)) : null)
     dato("Nota", hay(f.nota) ? `${f.nota} / 10` : null)
-    dato("Estado", ESTADOS[f.estado])
+    // Solo cuando dice algo. Casi todas las fichas ponen "terminado" --es lo que
+    // escribe el importador de lo que ya has visto o leido-- asi que la fila
+    // salia en todas repitiendo lo que se da por supuesto al tenerlo aqui. Lo
+    // que informa es lo contrario: que este pendiente, a medias o abandonado.
+    if (f.estado !== "terminado") dato("Estado", ESTADOS[f.estado])
     if (f.tipo === "juego") dato("Horas", hay(f.horas) ? `${f.horas} h` : null)
-    if (f.tipo === "album") dato("Canciones tuyas", f.favoritas)
 
     const enlace = tipo.enlace(f) || null
     const img = hay(f.portada) ? portada(f.portada, slug) : null

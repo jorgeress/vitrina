@@ -8,6 +8,7 @@ favorito: false
 portada: "[[shadow-slave.webp]]"
 tags:
   - novela-web
+  - fantasía
 coverid: 15173101
 ---
 

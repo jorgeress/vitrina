@@ -21,8 +21,6 @@ properties:
     displayName: Autor
   note.nota:
     displayName: Nota
-  note.estado:
-    displayName: Estado
 views:
   - type: cards
     name: Galería
@@ -46,7 +44,6 @@ views:
       - note.autor
       - note.year
       - note.nota
-      - note.estado
     sort:
       - property: formula.puntuacion
         direction: DESC
@@ -70,28 +67,9 @@ views:
     image: note.portada
     cardSize: 220
     imageAspectRatio: 0.67
-  # Las dos mitades de `estado`, que la galeria enseña juntas y que aqui se
-  # miran por separado: lo leido, y la lista de lo que queda. Un libro entra
-  # como `pendiente` mientras no digas otra cosa (`nueva.py`, `importar.py
-  # libros`), asi que apuntarlo ya es ponerlo en la lista.
-  - type: cards
-    name: Leídos
-    filters:
-      and:
-        - note.estado == "terminado"
-    order:
-      - file.name
-      - note.autor
-      - note.year
-      - formula.nota
-    sort:
-      - property: formula.puntuacion
-        direction: DESC
-      - property: file.name
-        direction: ASC
-    image: note.portada
-    cardSize: 220
-    imageAspectRatio: 0.67
+  # No hay vista de lo ya leído: Galería ya los enseña, y con casi todo
+  # leído seria la misma lista con otro nombre. Lo que si hace falta
+  # apartado es lo que queda, que es lo que esta pestaña enseña.
   # "en curso" entra aqui: empezado no es terminado, y si se quedara fuera, el
   # que estoy leyendo ahora no saldria en ninguna de las dos. "abandonado" no,
   # que eso ya no espera nada.

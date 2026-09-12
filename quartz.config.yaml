@@ -151,11 +151,42 @@ plugins:
       # con new Function. Hay que repetir el filtro de "tags", que es el que
       # trae por defecto y este sustituye.
       filterFn: '(node) => node.slugSegment !== "tags" && !node.slugSegment.endsWith(".base")'
+      # El arbol en el orden del sitio y no en el del abecedario. Por defecto
+      # ordena por nombre, y asi "autores" --que no es una seccion, sino lo que
+      # las cruza-- abria la lista por delante de Juegos. Va al final, detras de
+      # las cuatro, y las cuatro en el orden de la portada.
+      #
+      # Es la misma via que filterFn: el componente serializa la funcion y el
+      # cliente la rehace con new Function, asi que una cadena de YAML vale.
+      # Dentro de las carpetas no se toca nada: alli sigue mandando el titulo.
+      sortFn: |
+        (a, b) => {
+          const orden = ["juegos", "pelis", "libros", "musica", "autores"]
+          const ia = orden.indexOf(a.slugSegment)
+          const ib = orden.indexOf(b.slugSegment)
+          if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib)
+          if (a.isFolder !== b.isFolder) return a.isFolder ? -1 : 1
+          return (a.displayName || "").localeCompare(b.displayName || "", undefined, {
+            numeric: true,
+            sensitivity: "base",
+          })
+        }
     layout:
       position: left
       priority: 50
   - source: "@quartz-community/graph"
     enabled: true
+    options:
+      # Las etiquetas, como nodos. Sin esto el grafo solo dibuja lo que enlaza
+      # una nota con otra, y en un catalogo eso es poquisimo: una ficha no cita
+      # a ninguna otra, asi que lo unico que las unia eran las trece paginas de
+      # autor. Los generos si cruzan la coleccion entera --y cruzan secciones,
+      # que es lo que tiene que el tag de un juego y el de una peli caigan en el
+      # mismo sitio--, asi que de ahi sale el dibujo de verdad.
+      localGraph:
+        showTags: true
+      globalGraph:
+        showTags: true
     layout:
       position: right
       priority: 10

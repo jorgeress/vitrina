@@ -6,7 +6,8 @@ nota:
 estado: terminado
 favorito: true
 portada: "[[indigno-de-ser-humano.webp]]"
-tags: []
+tags:
+  - drama
 coverid: 13003444
 wikipedia: Indigno de ser humano
 ---
