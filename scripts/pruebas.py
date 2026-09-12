@@ -113,6 +113,20 @@ class NombresYParecidos(unittest.TestCase):
             self.assertIn('title: "Spider-Man: Brand New Day"',
                           ficha.read_text(encoding="utf-8"))
 
+    def test_un_titulo_aparte_no_se_come_la_clave_de_encima(self):
+        # La linea de `title` se insertaba delante antes de poner el `tags: []`,
+        # y el indice de tags se calculaba sin contarla: caia sobre `portada` y
+        # lo dejaba en "tags: []". La cabecera salia con dos `tags:` y sin
+        # portada, que es YAML invalido: Quartz no construye esa ficha.
+        with tempfile.TemporaryDirectory() as tmp:
+            self._vault(tmp)
+            md = m.escribir_ficha("musica", "D>E>A>T>H>M>E>T>A>L",
+                                  {"tipo": "album", "portada": None, "tags": None})
+            cabecera = md.read_text(encoding="utf-8")
+            self.assertEqual(cabecera.count("\ntags:"), 1)
+            self.assertEqual(cabecera.count("\nportada:"), 1)
+            self.assertIn("title: D>E>A>T>H>M>E>T>A>L", cabecera)
+
     def test_la_misma_obra_escrita_distinto_no_se_duplica(self):
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
@@ -328,6 +342,15 @@ class AutoresYComas(unittest.TestCase):
         # El caso peor de los dos juntos: "Nicalis, Inc." es uno y Edmund otro.
         self.assertEqual(autores.separar("Nicalis, Inc., Edmund McMillen"),
                          ["Nicalis, Inc.", "Edmund McMillen"])
+
+    def test_un_nombre_con_coma_dentro_no_son_dos_artistas(self):
+        # Con los estudios decide el sufijo de empresa, pero "The Creator" no es
+        # "Inc.": "Tyler, The Creator" entraba como dos autores y se llevaba dos
+        # paginas, "Tyler" y "The Creator", con un disco cada una.
+        self.assertEqual(autores.separar("Tyler, The Creator"), ["Tyler, The Creator"])
+        # Y sin llevarse por delante lo que si son dos.
+        self.assertEqual(autores.separar("Mike Johnson, Tim Burton"),
+                         ["Mike Johnson", "Tim Burton"])
 
     def test_un_autor_ya_enlazado_se_lee_como_su_nombre(self):
         # De esto depende poder volver a pasar el script sin acabar con
