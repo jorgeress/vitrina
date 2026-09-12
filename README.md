@@ -568,7 +568,9 @@ Eso lo cierra `scripts/datos.py`, que sabe dónde está cada cosa:
 | Sección | Fuente | Qué rellena |
 | --- | --- | --- |
 | Juegos | Ficha de la tienda de Steam | `year`, `autor` (el estudio) y `tags` (los géneros, ya en español) |
-| Películas | Ficha de Letterboxd | `autor`, o sea la dirección |
+| Películas | Ficha de Letterboxd | `autor`, o sea la dirección, y `tags` |
+| Música | MusicBrainz | `tags`, en inglés y tal como los da |
+| Libros | Open Library | `tags`, los que reconozca una lista blanca de géneros |
 
 ```bash
 scripts/datos.py                    # rellena solo lo que esté vacío
@@ -585,17 +587,41 @@ de cuál es: si hay dos candidatas del mismo año y nada que las separe, no elig
 ninguna. Antes que rellenar una ficha con los datos de otra obra, se queda
 vacía y lo dice.
 
-En la colección de este repo: 44 de 44 juegos y 37 de 37 películas.
+En la colección de este repo: 44 de 44 juegos y 37 de 37 películas. En libros,
+1 de 3, y esa proporción es la normal: ver abajo.
 
 No pisa nada de lo que hayas escrito tú: solo toca los campos que estén
 vacíos, salvo que le pases `--force`, y deja el resto de la cabecera igual, en
 el mismo orden. Se puede repetir tantas veces como quieras; lo que ya está
 resuelto se salta sin gastar una petición.
 
-Para libros y discos sigue siendo a mano. Funciona donde hay un identificador
-que señale la obra sin lugar a dudas — el `appid` de Steam, el `letterboxd` que
-resuelve Wikidata — y no donde hay que adivinar por título, que es justo lo que
-hace que una ficha acabe con los datos de otra.
+Los libros son el caso raro, y conviene saber por qué antes de esperar mucho de
+ellos. El identificador lo tienen — el `coverid`, que el buscador de Open
+Library admite como campo (`q=cover_i:13151269`) y resuelve a la obra de esa
+portada, una y sólo una —, así que tampoco aquí hay que adivinar por título. Lo
+que falla es lo que hay al otro lado: Steam y Letterboxd dan **géneros**, en
+lista cerrada y por orden, y de ahí basta con coger los primeros; lo que Open
+Library llama `subject` es la catalogación de una biblioteca. `L'étranger` trae
+sesenta, y ahí dentro están revueltos el género («Philosophical Novels»), el
+tema del argumento («Murder», «Death»), el idioma de una edición («French
+language materials») y el formato («Large type books»). Coger los cuatro
+primeros le pondría a Camus `ficción, asesinato, francés`.
+
+Así que los libros van al revés que las otras tres secciones: en vez de traducir
+lo que venga, se mira cuáles de esos sesenta están en una lista blanca corta de
+géneros, y lo que no esté no se escribe. El precio es que muchos libros se
+quedan sin etiquetas — sobre todo los clásicos traducidos, porque la edición que
+dio la portada suele ser la castellana y esas fichas están mucho más vacías que
+las inglesas. Sobre catorce libros de prueba, ocho salieron etiquetados y
+ninguno con una etiqueta que no le tocara, que es el reparto que interesa:
+una ficha sin tags se ve y se arregla a mano, y una con `aventura` puesto por
+una máquina en «El extranjero» se queda ahí para siempre.
+
+La tabla es corta a propósito, y está en `GENEROS_OPENLIBRARY`. Cada vez que se
+le mete un género blando — «classics», «history», «adventure stories»,
+«satire» — empieza a acertar en los libros de género y a fallar en los demás:
+con esos cuatro dentro, `1984` salía de comedia y «El extranjero» de aventuras.
+Si añades uno, las pruebas de `GenerosDeLibro` son el sitio donde comprobarlo.
 
 ## De qué va cada cosa
 

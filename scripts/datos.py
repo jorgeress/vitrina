@@ -9,14 +9,17 @@ dirige. Todo eso esta en otro sitio, publico y sin clave, y esto va a buscarlo.
 La regla es la misma en las tres secciones: **no adivinar**. Los juegos se
 resuelven por el `appid` que el importador ya guardo, que identifica la obra sin
 lugar a dudas; las peliculas por el mismo id de Letterboxd del que sale el
-cartel, que Wikidata solo da cuando no hay duda de cual es; y los discos por su
-`mbid`. Antes que rellenar una ficha con los datos de otra obra, se deja vacia.
+cartel, que Wikidata solo da cuando no hay duda de cual es; los discos por su
+`mbid`; y los libros por el `coverid`, que el buscador de Open Library admite
+como campo y resuelve a la obra de esa portada. Antes que rellenar una ficha con
+los datos de otra obra, se deja vacia.
 
 Como todo lo demas de Vitrina, no pide clave ni registro.
 
   juegos  Steam, ficha de la tienda: year, autor y tags
   pelis   Letterboxd: autor (la direccion) y tags
   musica  MusicBrainz: tags, en ingles y tal como los da
+  libros  Open Library: tags, los que reconoce una lista blanca de generos
 
 Uso:
   scripts/datos.py                    rellena los campos vacios
@@ -199,13 +202,117 @@ def datos_album(titulo, campos, md):
     return {"tags": generos}, f"MusicBrainz ({datos.get('title') or mbid})"
 
 
-# Que sabe rellenar cada seccion, y en que campos. Los libros no estan: lo unico
-# que guardan de Open Library es `coverid`, que identifica la portada y no la
-# obra, asi que no hay por donde preguntar sus generos sin adivinar por titulo.
-# Es la misma raya que traza textos.py, y por lo mismo.
+# Los generos de Open Library que valen como genero, y a que tag caen. Los
+# destinos son los mismos de la tabla de Letterboxd a proposito: asi un libro de
+# ciencia-ficcion y una peli de ciencia-ficcion caen en la misma pagina de
+# etiqueta, que es de lo que sirve una etiqueta.
+#
+# Es lista blanca y no traduccion, y esa es la diferencia con las otras tres
+# fuentes. Steam y Letterboxd dan generos --lista cerrada, ordenada, y los
+# primeros describen la obra-- asi que alli basta con coger los primeros y
+# traducirlos. Lo que Open Library llama `subject` no son generos: es la
+# catalogacion de una biblioteca, sin orden y de tamaño libre. `L'etranger` trae
+# sesenta, y entre ellos estan mezclados el genero de verdad ("Philosophical
+# Novels"), el tema del argumento ("Murder", "Young men", "Death"), el idioma de
+# una edicion ("French language materials"), el formato ("Large type books") y
+# la ficha de catalogo ("Fictional Works [Publication Type]"). Coger los cuatro
+# primeros de eso le pondria a Camus `ficcion, asesinato, frances`.
+#
+# Asi que se busca al reves: de los sesenta, cuales estan en esta tabla. Lo que
+# no este no se escribe. Eso deja libros sin etiquetas --los clasicos
+# traducidos, sobre todo, que es justo lo que hay hoy en la vault-- y es la
+# decision correcta para este script: una ficha sin tags se ve y se arregla a
+# mano; una con `aventura` puesto por una maquina en `El extranjero` se queda
+# ahi para siempre.
+#
+# La tabla es corta a proposito. Cada vez que se le mete un genero blando
+# --"classics", "history", "adventure stories", "satire"-- empieza a acertar en
+# los libros de genero y a fallar en los demas: con esos cuatro dentro, `1984`
+# salia de comedia y `El extranjero` de aventuras.
+GENEROS_OPENLIBRARY = {
+    "science fiction": "ciencia-ficción",
+    "science-fiction": "ciencia-ficción",
+    "sci-fi": "ciencia-ficción",
+    "hard science-fiction": "ciencia-ficción",
+    "ciencia-ficción": "ciencia-ficción",
+    "fantasy fiction": "fantasía",
+    "epic fiction": "fantasía",
+    "horror": "terror",
+    "horror fiction": "terror",
+    "thrillers": "suspense",
+    "suspense": "suspense",
+    "mystery": "misterio",
+    "detective and mystery stories": "misterio",
+    "crime": "crimen",
+    "love stories": "romance",
+    "romance": "romance",
+    "historical fiction": "historia",
+    "war stories": "guerra",
+    # Los dos unicos "blandos" que sobreviven, y por medido: son los que dejan
+    # etiquetado a Camus sin tocar ninguno de los otros trece libros de prueba.
+    "philosophical novels": "filosofía",
+    "philosophical fiction": "filosofía",
+    "biography": "biografía",
+    "poetry": "poesía",
+}
+
+
+def generos_de_subjects(subjects):
+    """Los `subject` de Open Library -> los tags que reconoce la tabla.
+
+    En el orden de la tabla y no en el que vengan: los subjects no traen
+    ninguno, asi que el de la fuente no significa nada y el de la tabla al menos
+    es siempre el mismo. Sin repetidos, que los hay: "science fiction" y
+    "sci-fi" son el mismo tag y un libro suele traer los dos.
+    """
+    dichos = {str(s).strip().lower() for s in subjects or []}
+    salida = []
+    for subject, tag in GENEROS_OPENLIBRARY.items():
+        if subject in dichos and tag not in salida:
+            salida.append(tag)
+    return salida[:MAX_TAGS]
+
+
+def datos_libro(titulo, campos, md):
+    """Los generos del libro, de Open Library.
+
+    Manda el `coverid`, que es lo unico que el importador guardo. Identifica la
+    portada y no la obra, pero el buscador de Open Library lo admite como campo
+    --`q=cover_i:13151269`-- y devuelve la obra a la que pertenece esa portada,
+    una y solo una. Asi que no hay que buscar por titulo, que es lo que este
+    script no hace en ninguna de sus fuentes.
+
+    Que devuelva pocos generos, o ninguno, es lo normal y no es un fallo: la
+    edicion que dio la portada suele ser la castellana, y las fichas de las
+    traducciones estan mucho mas vacias que las inglesas. Cuando no hay, no se
+    escribe nada.
+    """
+    del titulo, md  # manda el coverid, que lleva a una obra y no a dos
+    coverid = campos.get("coverid")
+    if vacio(coverid):
+        return {}, "la ficha no tiene coverid; se pone a mano"
+
+    datos = pedir("https://openlibrary.org/search.json?limit=1"
+                  f"&fields=title,key,subject&q=cover_i%3A{coverid}")
+    if datos is None:
+        return {}, f"Open Library no responde por el coverid {coverid}"
+    docs = datos.get("docs") or []
+    if not docs:
+        return {}, f"Open Library no encuentra la obra del coverid {coverid}"
+
+    obra = docs[0]
+    generos = generos_de_subjects(obra.get("subject"))
+    if not generos:
+        return {}, ("Open Library no dice de que genero es "
+                    f"{obra.get('title') or coverid}")
+    return {"tags": generos}, f"Open Library ({obra.get('title') or obra.get('key')})"
+
+
+# Que sabe rellenar cada seccion, y en que campos.
 FUENTES = {"juego": (datos_juego, ("year", "autor", "tags")),
            "peli": (datos_peli, ("autor", "tags")),
-           "album": (datos_album, ("tags",))}
+           "album": (datos_album, ("tags",)),
+           "libro": (datos_libro, ("tags",))}
 
 
 # --- recorrido ---------------------------------------------------------------
@@ -214,7 +321,7 @@ def fichas(args):
     if args.ficha:
         return [Path(f).resolve() for f in args.ficha]
     # Sin --seccion se recorre solo lo que tiene fuente, para no listar como
-    # fallo cada pelicula y cada libro, que se rellenan a mano de todos modos.
+    # fallo lo que no la tiene y se rellena a mano de todos modos.
     carpetas = [args.seccion] if args.seccion else [
         c for c, tipo in SECCIONES.items() if tipo in FUENTES]
     salida = []

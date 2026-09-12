@@ -362,6 +362,62 @@ class Etiquetas(unittest.TestCase):
         self.assertIsNone(importar.sacar({}, "album", "albumName"))
 
 
+class GenerosDeLibro(unittest.TestCase):
+    """La lista blanca de Open Library, que es la unica fuente que va al reves.
+
+    Las otras tres cogen los primeros generos y los traducen. Aqui no se puede:
+    `subject` es la catalogacion de una biblioteca, sin orden y con de todo
+    dentro, asi que se busca cuales de los sesenta estan en la tabla. Estas
+    pruebas son los casos con los que se ajusto la tabla, y estan para que no se
+    le vuelvan a meter los generos blandos que la hacian fallar.
+    """
+
+    def test_de_sesenta_subjects_solo_salen_los_que_son_genero(self):
+        # Los de `L'etranger`, recortados. Estan mezclados el genero, el tema
+        # del argumento, el idioma de una edicion y la ficha de catalogo.
+        subjects = ["Philosophical Novels", "Murder", "Fiction", "French",
+                    "Large type books", "Young men", "Death",
+                    "Fictional Works [Publication Type]", "Translations into English"]
+        self.assertEqual(datos.generos_de_subjects(subjects), ["filosofía"])
+
+    def test_lo_que_no_esta_en_la_tabla_no_se_escribe(self):
+        # El caso que decide el diseño: antes de dejarla asi, "adventure
+        # stories" y "classics" estaban dentro y le ponian `aventura` a
+        # `El extranjero`. Un tag inventado por una maquina no se ve y se queda.
+        self.assertEqual(datos.generos_de_subjects(["Adventure stories", "Classics",
+                                                    "History", "Satire"]), [])
+        self.assertEqual(datos.generos_de_subjects([]), [])
+        self.assertEqual(datos.generos_de_subjects(None), [])
+
+    def test_dos_nombres_del_mismo_genero_dan_un_tag_y_no_dos(self):
+        # Casi todo libro de ciencia-ficcion trae varios de estos a la vez.
+        self.assertEqual(
+            datos.generos_de_subjects(["Science Fiction", "sci-fi", "science-fiction"]),
+            ["ciencia-ficción"])
+
+    def test_los_tags_caen_donde_los_de_las_pelis_y_los_juegos(self):
+        # De esto vive una pagina de etiqueta: si un libro de terror pusiera
+        # `horror` y una peli `terror`, serian dos paginas con una obra cada
+        # una en vez de una con las dos.
+        destinos = set(datos.GENEROS_OPENLIBRARY.values())
+        conocidos = set(datos.GENEROS_LETTERBOXD.values())
+        # Los que no comparte con las pelis son los que el cine no tiene.
+        self.assertEqual(sorted(destinos - conocidos),
+                         ["biografía", "filosofía", "poesía"])
+
+    def test_un_libro_sin_coverid_no_pregunta_por_titulo(self):
+        # La raya del script: sin el id no hay obra, y buscar "Noches blancas"
+        # a ver que sale es justo lo que no hace ninguna de las cuatro fuentes.
+        def no_llamar(*a, **k):
+            self.fail("ha salido a la red sin id")
+        original = datos.pedir
+        datos.pedir = no_llamar
+        self.addCleanup(setattr, datos, "pedir", original)
+        valores, detalle = datos.datos_libro("Noches blancas", {}, None)
+        self.assertEqual(valores, {})
+        self.assertIn("coverid", detalle)
+
+
 class Coherencia(unittest.TestCase):
     """Que la vault y lo que los scripts esperan de ella no se separen."""
 

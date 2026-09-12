@@ -6,7 +6,8 @@ nota:
 estado: terminado
 favorito: true
 portada: "[[el-extranjero.webp]]"
-tags: []
+tags:
+  - filosofía
 coverid: 13151269
 wikipedia: El extranjero
 ---
