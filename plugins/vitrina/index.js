@@ -7,7 +7,8 @@ import { nombresEnTexto, paginasDeAutor } from "./components.js"
  * unidad que Quartz sabe cargar, no porque tengan nada que ver:
  *
  *   - Aqui abajo, las cinco paginas `.base` fuera del buscador.
- *   - Tambien aqui, la arista de cada ficha a la pagina de su autor.
+ *   - Tambien aqui, la arista de cada ficha a la pagina de su autor y la que
+ *     la cuelga de su seccion.
  *   - En components.js, el componente `Ficha`, que pinta la cabecera de cada
  *     obra: la caratula, los datos y el enlace a la fuente.
  */
@@ -47,6 +48,43 @@ function enlazarAutores(content) {
 }
 
 /**
+ * De cada ficha a su seccion, para que el grafo sea un arbol y no una nube.
+ *
+ * Una ficha no cita a ninguna otra, y su seccion tampoco la cita a ella: el
+ * `![[Juegos.base]]` de /juegos/ no es una lista de enlaces, es una pregunta
+ * que se resuelve al pintar. Asi que el grafo salia partido: por un lado
+ * Vitrina y las cuatro secciones, que eso si lo enlaza `index.md`, y por otro
+ * las fichas, colgando solo de sus etiquetas y de las paginas de autor.
+ *
+ * La arista que faltaba es la obvia: Hollow Knight es un juego, asi que cuelga
+ * de Juegos, y Juegos cuelga de Vitrina. Se pone aqui y no escrita en la ficha
+ * por lo mismo que la del autor -- la nota guarda datos, no maquetacion -- y
+ * porque el dato ya esta: la carpeta dice de que seccion es cada una.
+ *
+ * No nombra ninguna seccion: vale para cualquier carpeta que tenga `index`, asi
+ * que las paginas de autor cuelgan de Autores por el mismo camino, y una
+ * carpeta nueva no hay que apuntarla en ningun sitio.
+ */
+function enlazarSecciones(content) {
+  // "juegos/index" -> "juegos/", que es como queda un enlace ya resuelto a la
+  // pagina de una carpeta, y con lo que comparan el grafo y los backlinks.
+  const secciones = new Set(
+    content
+      .map(([, vfile]) => String(vfile.data?.slug ?? ""))
+      .filter((slug) => slug.endsWith("/index"))
+      .map((slug) => slug.slice(0, -"index".length)),
+  )
+
+  for (const [, vfile] of content) {
+    const slug = String(vfile.data?.slug ?? "")
+    if (slug.endsWith("/index")) continue
+    const seccion = slug.slice(0, slug.lastIndexOf("/") + 1)
+    if (!secciones.has(seccion)) continue
+    vfile.data.links = [...new Set([...(vfile.data.links ?? []), seccion])]
+  }
+}
+
+/**
  * Las cinco paginas `.base` fuera del buscador.
  *
  * `includeEmptyFiles: true` esta puesto a proposito en content-index: una ficha
@@ -80,8 +118,8 @@ function enlazarAutores(content) {
  * se sigue pintando igual: lo unico que cambia es que dejan de salir al buscar.
  *
  * Ese mismo hueco -- fase 1, con todo parseado y antes de que emita nadie -- es
- * el que necesita `enlazarAutores`, y por eso viaja de gorra en este `generate`
- * en vez de tener un pageType para el solo.
+ * el que necesitan `enlazarAutores` y `enlazarSecciones`, y por eso viajan de
+ * gorra en este `generate` en vez de tener un pageType para ellos solos.
  */
 const BasesFueraDelIndice = () => ({
   name: "VitrinaBasesFueraDelIndice",
@@ -98,6 +136,7 @@ const BasesFueraDelIndice = () => ({
     // content-index, que es quien vuelca los `links` al fichero que lee el
     // grafo, y esta fase 1 va entera por delante de los emisores.
     enlazarAutores(content)
+    enlazarSecciones(content)
     return []
   },
   // Nunca se usan, porque `match` no reclama ninguna pagina, pero el

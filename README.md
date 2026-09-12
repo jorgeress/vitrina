@@ -761,6 +761,28 @@ Y una favorita que no esté en la edición que lista MusicBrainz no se tira: se
 queda escrita al pie. Todo esto tiene prueba en `scripts/pruebas.py`, porque es
 donde un fallo es silencioso.
 
+## De Vitrina cuelga todo
+
+En el grafo, una colección es una nube de puntos sueltos: una ficha no cita a
+ninguna otra, y la galería de su sección tampoco la cita a ella —el
+`![[Juegos.base]]` de `/juegos/` no es una lista de enlaces, es una pregunta que
+se resuelve al pintar—. Así que el dibujo salía partido en dos: Vitrina con sus
+cuatro secciones por un lado, que eso sí lo enlaza `index.md`, y las 127 fichas
+por otro, colgando sólo de sus etiquetas.
+
+La arista que faltaba es la obvia: *Hollow Knight* es un juego, así que cuelga
+de **Juegos**, y Juegos cuelga de **Vitrina**. La pone `plugins/vitrina` al
+construir, mirando en qué carpeta está cada nota. No va escrita dentro de la
+ficha por lo mismo que el enlace del autor —la nota guarda datos, no
+maquetación— y porque el dato ya está: la carpeta dice de qué sección es cada
+una. Tampoco nombra ninguna sección: vale para cualquier carpeta que tenga
+`index`, así que las páginas de autor cuelgan de **Autores** por el mismo
+camino, y una carpeta nueva no hay que apuntarla en ningún sitio.
+
+Eso es el tronco, y un tronco solo no junta una peli con un juego: entre ramas
+no hay ni un enlace. Lo que cruza la colección son los otros dos hilos, las
+etiquetas y las páginas de autor.
+
 ## Lo que comparte estudio, dirección o artista
 
 Obsidian agrupa por **enlaces**, no por campos: dos juegos con `autor:

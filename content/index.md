@@ -12,6 +12,10 @@ crítica: son notas para acordarme de por qué algo me gustó.
 - [[libros/index|Libros]]
 - [[musica/index|Música]]
 
+Y [[autores/index|Autores]], que no es una sección más: recoge a quien se
+repite —estudio, dirección, autoría o artista con dos obras o más— para llegar
+de una ficha a las hermanas.
+
 > [!tip] Atajo
 > [[Favoritos]] junta las cuatro secciones y deja solo lo que he marcado como
 > favorito. Cada sección tiene también la suya.
