@@ -547,15 +547,24 @@ Obsidian tampoco dice cómo va a quedar la galería entera.
 scripts/vistazo.py               # el sitio completo, borradores incluidos
 scripts/vistazo.py --puerto 9000
 scripts/vistazo.py --solo-build  # construye y no levanta nada
+scripts/vistazo.py --tema rose-pine   # con ese tema de Obsidian, para verlo
 ```
 
 Sale en <http://localhost:8081>, con las fichas en borrador dentro y un aviso
 en la portada para que no lo confundas con el sitio de verdad, que sigue en el
 8080. Puedes tener los dos abiertos a la vez y compararlos.
 
-No toca `quartz.config.yaml` ni la vault: copia el contenido **fuera del
-repositorio**, le quita la línea `draft` a la copia y construye desde ahí. Ni
-cortándolo a mitad puede acabar publicando un borrador. Que la copia salga
+No toca la vault: copia el contenido **fuera del repositorio**, le quita la
+línea `draft` a la copia y construye desde ahí. Ni cortándolo a mitad puede
+acabar publicando un borrador.
+
+`quartz.config.yaml` tampoco, salvo con `--tema`, y ahí es porque Quartz no
+tiene un `--config` que apunte a otro sitio: el tema sólo se puede cambiar en el
+fichero de verdad. Se enciende mientras dura el build y se restaura en un
+`finally`, que salta también con Ctrl+C, así que lo que se publica no se entera.
+Lo que sí deja rastro es `package.json`: el cargador de plugins se baja el tema
+la primera vez y se apunta ahí como dependencia. Sale en `git status`, y si el
+tema se queda en prueba, `git checkout package.json package-lock.json`. Que la copia salga
 fuera no es capricho: el `glob` de Quartz se salta los directorios que empiezan
 por punto, y además respeta el `.gitignore`, así que una copia dentro del repo
 y anotada ahí no se encontraría a sí misma.
