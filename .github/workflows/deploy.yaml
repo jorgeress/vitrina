@@ -34,6 +34,12 @@ jobs:
           npm ci --ignore-scripts --include=optional
           npm run install-plugins
 
+      # Los tipos del plugin de plugins/vitrina y el formato del codigo. El
+      # build no mira ninguna de las dos: compila el plugin sin comprobarlo, y
+      # del formato no sabe nada.
+      - name: Revisar tipos y formato
+        run: npm run check
+
       # Si los scripts se rompen, la vault se llena de fichas mal y eso no lo
       # nota el build: sale verde con las fichas equivocadas dentro.
       - name: Probar los scripts

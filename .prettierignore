@@ -1,3 +1,15 @@
 public
 node_modules
 .quartz-cache
+
+# Todo el markdown. Son dos cosas y ninguna quiere el formato de Prettier: las
+# fichas de la vault las escribe `escribir_campos`, que respeta el orden de las
+# claves a proposito y se pisaria con el en cada pasada; y el README y los docs
+# estan escritos a mano, donde Prettier tiene opinion propia -- pasa *cursiva* a
+# _cursiva_ y deshace los comentarios alineados de los bloques de codigo.
+#
+# El resto si se revisa, que es lo que interesa: el plugin de plugins/vitrina,
+# la hoja de estilos, la configuracion y los .base, que el .prettierrc ya lee
+# como YAML. Lo de quartz/ viene formateado de upstream con este mismo
+# .prettierrc, asi que no hace falta apartarlo.
+**/*.md
