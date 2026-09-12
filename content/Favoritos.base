@@ -37,6 +37,20 @@ views:
     # Las mismas medidas que las galerias de seccion: entrar en Favoritos no
     # deberia cambiar el tamaño de la tarjeta.
     cardSize: 220
+    # Es la unica galeria que mezcla los cuatro tipos, y las caratulas no miden
+    # igual: un cartel es 2:3 y la portada de un disco es cuadrada. Sin ratio,
+    # el hueco de la imagen lo marca cada fichero, asi que un disco quedaba una
+    # cuarta parte mas bajo que la pelicula de al lado y la fila salia dentada
+    # --lo mismo que pasaba con la nota, y por lo mismo: lo que no mide igual
+    # descuadra la rejilla--. Se fija el 2:3 de las secciones, que es lo que
+    # tienen 15 de las 21.
+    imageAspectRatio: 0.67
+    # Y `contain`, que es lo que cambia respecto a las secciones: ahi todas las
+    # caratulas ya son del ratio de su hueco y recortar no recorta nada. Aqui un
+    # disco cuadrado en un hueco 2:3 perderia un tercio por los lados, que en
+    # una portada de disco es justo donde esta el dibujo. Entra entero, con el
+    # fondo de la tarjeta arriba y abajo.
+    imageFit: contain
     order:
       - file.name
       - note.autor
