@@ -197,12 +197,25 @@ def parecidos(carpeta, titulos):
 
     No se descartan solos: "Portal" contiene a "Portal 2" y son dos juegos
     distintos. Se avisa y ya decides tu.
+
+    Uno empieza por el otro, y no "lo lleva dentro". Lo segundo era lo que
+    habia, y en una tanda corta no se notaba; importando una watchlist de 632
+    peliculas el aviso salia lleno de parejas que no tenian nada que ver,
+    porque `normal` quita los espacios y entonces "Pi" esta literalmente dentro
+    de "Scott Pilgrim vs. the World". Un aviso que hay que aprender a ignorar
+    deja de ser un aviso.
+
+    Y la misma obra repetida casi siempre se diferencia por detras --el
+    subtitulo, la edicion, el año, "Remastered"--, que es justo lo que sigue
+    cogiendo: "Portal" y "Portal 2", o "Dark Souls" y "Dark Souls Remastered".
     """
     avisos = []
     for nombre, existente in fichas_existentes(carpeta).items():
         for titulo in titulos:
             nuevo = normal(titulo)
-            if nuevo != existente and (nuevo in existente or existente in nuevo):
+            if not nuevo or not existente or nuevo == existente:
+                continue
+            if nuevo.startswith(existente) or existente.startswith(nuevo):
                 avisos.append(f"{nombre}  <->  {titulo}")
     return avisos
 

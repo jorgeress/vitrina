@@ -2,6 +2,7 @@
 """Crea fichas en la vault a partir de lo que ya tienes en otros sitios.
 
   letterboxd-rss USUARIO   peliculas: el diario publico del perfil
+  letterboxd-watchlist USUARIO  peliculas: lo que tienes por ver
   letterboxd RUTA          peliculas: el export CSV, si tienes cuenta Pro
   steam RUTA               juegos: la pagina del perfil o el export
   listenbrainz USUARIO     discos: lo mas escuchado, sin clave ninguna
@@ -219,6 +220,71 @@ def juegos_de_html(texto, hallados):
         if siguiente == variante:
             return
         variante = siguiente
+
+
+# Cada pelicula de la parrilla, que Letterboxd pinta con el titulo y el slug en
+# los atributos del componente: data-item-name="NAZA (2026)" data-item-slug="naza".
+# El slug es el mismo id que ya guardan las fichas y del que sale el cartel, asi
+# que la watchlist entra identificada y no hay que volver a buscar nada por
+# titulo. El orden de los dos atributos es el que pinta la pagina.
+WATCHLIST_RE = re.compile(r'data-item-name="([^"]*)"[^>]*?data-item-slug="([^"]*)"')
+
+# La watchlist de alguien que lleva años puede ser larga, pero no infinita: es
+# un tope por si la paginacion cambia y el bucle no encuentra donde parar.
+MAX_PAGINAS = 60
+
+
+def importar_letterboxd_watchlist(args):
+    """La watchlist publica del perfil, que es la otra mitad de Letterboxd.
+
+    El diario RSS solo sabe lo que ya has visto, asi que importando solo de ahi
+    la seccion entra entera como `terminado` y la pestaña "Por ver" se queda
+    vacia. Esto es lo que la llena, y sin cuenta de pago: la watchlist es una
+    pagina publica como el diario.
+
+    No pasa por la criba de los umbrales. La criba esta para separar lo que de
+    verdad has usado de lo que solo estaba en la lista --ocho horas jugadas,
+    cuatro estrellas--, y en una watchlist no hay tal señal ni puede haberla:
+    nada de lo que hay dentro lo has visto. La lista entera es la señal.
+    """
+    usuario = args.usuario.strip().strip("/").split("/")[-1]
+    pelis = {}
+    for pagina in range(1, MAX_PAGINAS + 1):
+        url = f"https://letterboxd.com/{usuario}/watchlist/"
+        if pagina > 1:
+            url += f"page/{pagina}/"
+        crudo = pedir(url, binario=True)
+        if not crudo:
+            if pagina == 1:
+                print(f"No he podido leer la watchlist de '{usuario}'. Comprueba el\n"
+                      "nombre y que el perfil no sea privado.")
+                return 1
+            break  # se acabaron las paginas, o Letterboxd ha dejado de responder
+
+        encontradas = WATCHLIST_RE.findall(crudo.decode("utf-8", "replace"))
+        if not encontradas:
+            break
+        for nombre, slug in encontradas:
+            nombre = html.unescape(nombre).strip()
+            # "NAZA (2026)": el año va detras, entre parentesis.
+            m = re.match(r"^(.*?)\s*\((\d{4})\)$", nombre)
+            titulo = (m.group(1) if m else nombre).strip()
+            if not titulo:
+                continue
+            pelis[titulo] = {
+                "year": m.group(2) if m else None,
+                # Lo que define a la lista: son las que no has visto. La nota se
+                # queda vacia, que es lo unico cierto de algo sin ver.
+                "estado": "pendiente",
+                "nota": None,
+                "letterboxd": slug or None,
+            }
+
+    if not pelis:
+        print(f"La watchlist de '{usuario}' está vacía o no es pública.")
+        return 1
+    print(f"Leída la watchlist de {usuario}: {plural(len(pelis), 'película', 'películas')}.")
+    return volcar(pelis, "pelis", "peli", args, cribar=False)
 
 
 def importar_steam(args):
@@ -568,6 +634,11 @@ def main():
     lr = subs.add_parser("letterboxd-rss", help="el diario público, sin cuenta Pro")
     lr.add_argument("usuario", help="tu nombre de usuario en Letterboxd")
     lr.set_defaults(func=importar_letterboxd_rss)
+
+    lw = subs.add_parser("letterboxd-watchlist",
+                         help="lo que tienes por ver, sin cuenta Pro")
+    lw.add_argument("usuario", help="tu nombre de usuario en Letterboxd")
+    lw.set_defaults(func=importar_letterboxd_watchlist)
 
     st = subs.add_parser("steam", help="export de datos de Steam")
     st.add_argument("ruta", help="el .zip del export o la carpeta")

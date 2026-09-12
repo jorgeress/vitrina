@@ -138,6 +138,24 @@ class NombresYParecidos(unittest.TestCase):
             self.assertTrue(m.parecidos("juegos", ["Portal 2"]))
             self.assertFalse(m.parecidos("juegos", ["Hades"]))
 
+    def test_un_titulo_corto_no_avisa_contra_media_coleccion(self):
+        # `normal` quita los espacios, asi que con "lo lleva dentro" bastaba que
+        # "Pi" apareciera en mitad de otro titulo: importando una watchlist de
+        # 632 peliculas el aviso salia lleno de parejas sin relacion. Uno tiene
+        # que empezar por el otro, que es como se repite una obra de verdad.
+        with tempfile.TemporaryDirectory() as tmp:
+            self._vault(tmp)
+            m.escribir_ficha("pelis", "Pi", {"tipo": "peli"})
+            self.assertFalse(m.parecidos("pelis", ["Scott Pilgrim vs. the World"]))
+            self.assertTrue(m.parecidos("pelis", ["Pi Day"]))
+
+    def test_la_misma_obra_con_subtitulo_si_avisa(self):
+        # Por donde se repiten de verdad: el subtitulo, la edicion o el año.
+        with tempfile.TemporaryDirectory() as tmp:
+            self._vault(tmp)
+            m.escribir_ficha("juegos", "Dark Souls", {"tipo": "juego"})
+            self.assertTrue(m.parecidos("juegos", ["Dark Souls Remastered"]))
+
     def test_una_ficha_nueva_entra_en_borrador_y_con_tags_vacios(self):
         # El invariante del README: a la web solo llega lo ascendido a mano.
         with tempfile.TemporaryDirectory() as tmp:

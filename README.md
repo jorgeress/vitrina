@@ -190,7 +190,8 @@ para recoger solo lo nuevo, y avisa cuando algo se parece a lo que ya tienes
 (el *Witcher 3* de Steam se llama *The Witcher 3: Wild Hunt*, y esa la unes tú).
 
 ```bash
-scripts/importar.py letterboxd-rss TU_USUARIO  # sin cuenta de pago
+scripts/importar.py letterboxd-rss TU_USUARIO  # lo visto, sin cuenta de pago
+scripts/importar.py letterboxd-watchlist TU_USUARIO  # lo que tienes por ver
 scripts/importar.py letterboxd ~/Descargas/letterboxd-export.zip  # con Pro
 scripts/importar.py steam ~/Descargas/juegos.html  # tu página de juegos
 scripts/importar.py listenbrainz TU_USUARIO     # discos más escuchados
@@ -212,6 +213,13 @@ Por defecto va en **modo rápido**: solo entra lo que da alguna señal de habert
 importado, 8 horas jugadas en Steam y 4 estrellas en Letterboxd. Lo que se queda
 fuera se cuenta por pantalla, no desaparece en silencio, y con `--completo`
 entra todo. Los umbrales se mueven con `--min-horas` y `--min-nota`.
+
+La watchlist es la excepción y no pasa por la criba: los umbrales están para
+separar lo que de verdad has usado de lo que sólo estaba en una lista, y en una
+watchlist no hay esa señal ni puede haberla, porque nada de lo que hay dentro
+lo has visto. La lista entera es la señal, y entra como `estado: pendiente`.
+Es lo que llena la pestaña *Por ver*, que importando sólo del diario se queda
+vacía: el RSS únicamente sabe lo que ya viste.
 
 Cada fuente da lo suyo, y ninguna lo da todo:
 
