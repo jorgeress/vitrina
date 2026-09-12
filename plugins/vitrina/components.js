@@ -167,10 +167,57 @@ function portada(valor, slug) {
   return `${subir}assets/portadas/${fichero}`
 }
 
+/**
+ * El grafo de la portada, entero y en grande.
+ *
+ * La vista pequeña de la barra lateral dibuja lo que hay a un salto de la
+ * pagina, y en la portada eso son solo las cinco secciones: el arbol entero,
+ * que es lo que tiene gracia enseñar en casa, habia que ir a buscarlo al boton
+ * de pantalla completa. Aqui se pinta de entrada, y la vista pequeña se quita
+ * de la barra para no dibujar dos veces lo mismo.
+ *
+ * No es un grafo nuevo: es el componente de Quartz, que su script busca por la
+ * pagina entera y dibuja en cada `.graph-container` que encuentre con la
+ * configuracion que lleve puesta. `depth: -1` es "todo", sin contar saltos.
+ *
+ * Va dentro de `Ficha` porque un plugin solo puede colocar un componente, y el
+ * hueco que tiene Vitrina es ese: encima del texto. En una ficha lo ocupa la
+ * caratula; en la portada, que no es una obra, no lo ocupaba nadie.
+ */
+const GRAFO = {
+  drag: true,
+  zoom: true,
+  depth: -1,
+  scale: 0.9,
+  repelForce: 0.5,
+  centerForce: 0.3,
+  linkDistance: 30,
+  fontSize: 0.6,
+  opacityScale: 1,
+  showTags: true,
+  removeTags: [],
+  focusOnHover: true,
+  enableRadial: false,
+}
+
+function grafoDeCasa() {
+  return h(
+    "div",
+    { class: "grafo-casa" },
+    h(
+      "div",
+      { class: "graph-outer" },
+      h("div", { class: "graph-container", "data-cfg": JSON.stringify(GRAFO) }),
+    ),
+  )
+}
+
 const Ficha = () => {
   function Ficha({ fileData, allFiles }) {
     const f = fileData.frontmatter ?? {}
     const tipo = TIPOS[f.tipo]
+    // La portada tampoco es una obra, pero su hueco no se queda vacio.
+    if (fileData.slug === "index") return grafoDeCasa()
     // Los indices, los autores y los creditos no son obras: no llevan cabecera.
     if (!tipo) return null
 
@@ -219,6 +266,15 @@ const Ficha = () => {
   }
 
   Ficha.css = `
+/* El grafo de la portada, en grande y con la vista pequeña de la barra fuera:
+   dibujan lo mismo, y ahi al lado no cabe nada que se lea. */
+.grafo-casa .graph-outer {
+  height: min(60vh, 460px);
+  margin: 1.4rem 0 0;
+}
+body[data-slug="index"] .sidebar .graph {
+  display: none;
+}
 .ficha {
   display: flex;
   gap: 1.2rem;
