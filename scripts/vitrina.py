@@ -148,14 +148,14 @@ def enlace_seccion(carpeta):
     """El enlace de una ficha a la galeria de su seccion, para la cabecera.
 
     Este si va escrito dentro de la ficha, y no lo pone la web al construir como
-    el del autor, porque a este tiene que verlo tambien Obsidian: su grafo
-    dibuja los `[[...]]` que estan en la vault y nada mas, asi que sin esto las
-    fichas salian sueltas alli aunque en la web colgaran de su seccion.
+    el del autor, porque a este tiene que verlo tambien Obsidian: su grafo solo
+    dibuja los `[[...]]` que estan en la vault, asi que sin esto las fichas
+    salian sueltas alli aunque en la web colgaran de su seccion.
 
-    Va en la cabecera y no en el cuerpo porque es un dato de la ficha --de que
-    seccion es-- y no maquetacion, y porque Obsidian cuenta los enlaces de las
-    propiedades igual que los del texto: salen en el grafo y en los backlinks.
-    De paso no se pinta en la web, que ya lo dice la miga de pan.
+    Va en la cabecera y no en el cuerpo porque dice de que seccion es la ficha,
+    que es un dato como el año o la nota, y porque Obsidian cuenta los enlaces
+    de las propiedades igual que los del texto: salen en el grafo y en los
+    backlinks. De paso no se pinta en la web, que ya lo dice la miga de pan.
 
     El nombre sale del `title` del indice, asi que "Peliculas" se escribe en un
     solo sitio y renombrar una seccion es tocar su index.md.

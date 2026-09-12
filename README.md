@@ -765,12 +765,12 @@ donde un fallo es silencioso.
 
 ## De Vitrina cuelga todo
 
-Una colección es, de partida, una nube de puntos sueltos: una ficha no cita a
-ninguna otra, y la galería de su sección tampoco la cita a ella —el
-`![[Juegos.base]]` de `/juegos/` no es una lista de enlaces, es una pregunta que
-se resuelve al pintar—. Así que el grafo salía partido en dos: Vitrina con sus
-secciones por un lado, que eso sí lo enlaza `index.md`, y las 127 fichas por
-otro, colgando sólo de sus etiquetas.
+Una colección es, de partida, una nube de puntos sueltos. Una ficha no cita a
+ninguna otra, y la galería de su sección tampoco la cita a ella, porque el
+`![[Juegos.base]]` de `/juegos/` no es una lista de enlaces sino una pregunta
+que se resuelve al pintar. Así que el grafo salía partido en dos: Vitrina con
+sus secciones por un lado, que eso sí lo enlaza `index.md`, y las 127 fichas
+por otro, colgando sólo de sus etiquetas.
 
 La arista que faltaba es la obvia, y va escrita en la cabecera de cada ficha:
 
@@ -779,19 +779,19 @@ seccion: "[[juegos/index|Juegos]]"
 ```
 
 *Hollow Knight* cuelga de **Juegos**, Juegos cuelga de **Vitrina**, y las
-páginas de autor cuelgan de **Autores** por el mismo campo. Un árbol, y el mismo
-en los dos sitios.
+páginas de autor cuelgan de **Autores** por el mismo campo. Un árbol, y el
+mismo en Obsidian y en la web.
 
-**Por qué en la cabecera y no en el cuerpo.** Porque es un dato de la ficha —de
-qué sección es— y no maquetación, que es el reparto de toda la vault; porque
-Obsidian cuenta los enlaces de las propiedades igual que los del texto, así que
-sale en el grafo y en los *backlinks*; y porque así no se pinta en la web, donde
-ese sitio ya lo ocupa la miga de pan.
+**Por qué en la cabecera y no en el cuerpo.** Porque dice de qué sección es la
+ficha, que es un dato como el año o la nota, y no maquetación. Porque Obsidian
+cuenta los enlaces de las propiedades igual que los del texto, así que sale en
+el grafo y en los *backlinks*. Y porque así no se pinta en la web, donde ese
+sitio ya lo ocupa la miga de pan.
 
-**Y por qué escrito, y no puesto al construir** como el enlace del autor. Porque
-el grafo de Obsidian sólo dibuja los `[[...]]` que están en la vault: un enlace
-que ponga el sitio al generarse se ve en la web y allí no, y la vault es la
-fuente. Quartz lo lee de la cabecera él solo, sin plugin que valga.
+**Y por qué escrito, y no puesto al construir** como el enlace del autor.
+Porque el grafo de Obsidian sólo dibuja los `[[...]]` que están en la vault: un
+enlace que ponga el sitio al generarse se ve en la web y allí no, y la vault es
+la fuente. Quartz lo lee de la cabecera él solo, sin plugin que valga.
 
 Nadie lo escribe a mano: lo ponen `nueva.py` e `importar.py` al crear la ficha,
 porque lo dice la carpeta en la que cae. `scripts/secciones.py` es para las que

@@ -181,9 +181,9 @@ plugins:
       # ficha: cuelga de su seccion y las secciones de Vitrina, asi que el grafo
       # sale de una pieza. Pero eso es un arbol, y un arbol no junta una peli
       # con un juego: entre ramas no hay ni un enlace, porque una ficha no cita
-      # a ninguna otra. Los generos si cruzan la coleccion entera --el tag de un
-      # juego y el de una peli caen en el mismo sitio--, asi que los atajos del
-      # dibujo salen de ahi y de las paginas de autor.
+      # a ninguna otra. Los generos si cruzan la coleccion entera, porque el tag
+      # de un juego y el de una peli caen en el mismo sitio, asi que los atajos
+      # del dibujo salen de ahi y de las paginas de autor.
       localGraph:
         showTags: true
       globalGraph:

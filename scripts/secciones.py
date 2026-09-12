@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 """Cuelga cada ficha de su seccion: escribe el campo `seccion`.
 
-El grafo de Obsidian dibuja los `[[...]]` de la vault y nada mas. Una ficha no
-cita a ninguna otra, y la galeria de su seccion tampoco la cita a ella --el
-`![[Juegos.base]]` de /juegos/ no es una lista de enlaces, es una pregunta que
-se resuelve al pintar--, asi que las fichas salian sueltas: Vitrina y sus cinco
+El grafo de Obsidian solo dibuja los `[[...]]` de la vault. Una ficha no cita a
+ninguna otra, y la galeria de su seccion tampoco la cita a ella, porque el
+`![[Juegos.base]]` de /juegos/ no es una lista de enlaces sino una pregunta que
+se resuelve al pintar. Asi que las fichas salian sueltas: Vitrina y sus cinco
 secciones por un lado y las fichas por otro, unidas solo por las etiquetas.
 
 Este campo es la arista que faltaba. `[[juegos/index|Juegos]]` en la cabecera de
 cada juego, y con eso Hollow Knight cuelga de Juegos y Juegos de Vitrina, en
 Obsidian igual que en la web.
 
-Va en la cabecera y no en el cuerpo porque es un dato --de que seccion es la
-ficha-- y no maquetacion, que es el reparto de toda la vault; Obsidian cuenta
-los enlaces de las propiedades igual que los del texto, y en la web no se pinta.
+Va en la cabecera y no en el cuerpo porque dice de que seccion es la ficha, que
+es un dato como el año o la nota, y no maquetacion, que es el reparto de toda la
+vault. Obsidian cuenta los enlaces de las propiedades igual que los del texto, y
+en la web no se pinta.
 No hay que pasarlo despues de cada alta: `nueva.py` e `importar.py` lo escriben
 al crear la ficha. Esto es para las que ya estaban, para una escrita a mano y
 para una que cambie de carpeta.
