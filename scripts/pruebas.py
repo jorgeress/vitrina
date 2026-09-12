@@ -439,5 +439,34 @@ class Coherencia(unittest.TestCase):
                                 f"{ficha.name} apunta a {nombre}, que no esta")
 
 
+    def test_las_paginas_de_autor_dicen_lo_que_dice_la_vault(self):
+        # Las de content/autores/ son material derivado que vive dentro de la
+        # fuente, y eso solo se sostiene mientras alguien se acuerde de volver a
+        # pasar autores.py. No falla nada si no se acuerda: la pagina se queda
+        # con las obras de la ultima pasada, la ficha nueva no aparece en ella y
+        # el grafo la deja suelta, que es como no haberla añadido.
+        #
+        # Y pasa justo al crecer, que es cuando toca. Hay 86 firmas con una sola
+        # obra, o sea 86 paginas esperando a que llegue la segunda: cada tanda
+        # que se mete estrena unas cuantas y le añade obras a las que ya estan.
+        mapa = autores.obras_por_autor()
+        esperadas = {m.nombre_de_fichero(a): autores.pagina(a, o)
+                     for a, o in mapa.items() if len(o) >= 2}
+        carpeta = m.RAIZ / "content" / "autores"
+        en_disco = {md.stem for md in carpeta.glob("*.md")} if carpeta.exists() else set()
+
+        faltan = sorted(set(esperadas) - en_disco)
+        self.assertFalse(faltan, "sin pagina de autor y con dos obras o mas: "
+                                 f"{faltan}. Pasa scripts/autores.py")
+        sobran = sorted(en_disco - set(esperadas))
+        self.assertFalse(sobran, "paginas de autor que ya no agrupan dos obras: "
+                                 f"{sobran}. Pasa scripts/autores.py")
+        for nombre, contenido in esperadas.items():
+            actual = (carpeta / f"{nombre}.md").read_text(encoding="utf-8")
+            self.assertEqual(actual, contenido,
+                             f"{nombre}.md no lista lo que hay en la vault. "
+                             "Pasa scripts/autores.py")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
