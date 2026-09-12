@@ -175,14 +175,19 @@ def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True):
     # jugado: si no hay valor, no hay clave.
     orden = [c for c in orden if c not in SIN_HUECO or not vacio(campos.get(c))]
     lineas = [linea_yaml(c, campos.get(c)) for c in orden]
+    # Antes de insertar el titulo, que lo que va detras se cuenta por `orden`:
+    # con la linea de title delante, `lineas` lleva un elemento de mas y este
+    # indice caia sobre la clave anterior. Se comio el `portada:` de las fichas
+    # que llevan titulo aparte, y la cabecera acababa con dos `tags:` y sin
+    # portada -- que es un YAML invalido, y ahi Quartz ya no construye la ficha.
+    if campos.get("tags") is None:
+        lineas[orden.index("tags")] = "tags: []"
     if nombre_de_fichero(titulo) != titulo:
         # Un nombre de fichero no admite ":" ni "?", asi que "Spider-Man: Brand
         # New Day" se queda sin los dos puntos y con eso ya no se encuentra en
         # ningun catalogo. El titulo de verdad se apunta aparte: es el que
         # buscan los scripts y el que Quartz pone de encabezado en la web.
         lineas.insert(0, f"title: {yaml_valor(titulo)}")
-    if campos.get("tags") is None:
-        lineas[orden.index("tags")] = "tags: []"
     if borrador:
         # Quartz se salta las notas con draft; Obsidian las sigue enseñando.
         lineas.append("draft: true")
