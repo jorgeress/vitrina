@@ -22,17 +22,16 @@ estado: terminado                  # pendiente, en curso, terminado, abandonado
 favorito: true
 portada: "[[disco-elysium.webp]]"  # fichero de assets/portadas/
 tags:
-  - rpg
+  - rpg                            # siempre en inglés y sin tildes
 ---
 ```
 
 Las galerías no están escritas a mano. Son *Bases* de Obsidian (`.base`), que
 filtran y ordenan por esas propiedades, así que se actualizan solas en cuanto
-añado una ficha. Cada sección tiene cinco vistas: galería, tabla, favoritos,
-lo terminado y lo que queda, que es la watchlist de esa sección. Las dos
-últimas salen del campo `estado`, salvo en juegos: ahí Steam sabe cuántas horas
-les has echado y no si los terminaste, así que el reparto va por las horas y
-las pestañas son *Jugados* y *Por jugar*.
+añado una ficha. Cada sección tiene cuatro vistas: galería, tabla, favoritos y
+lo que queda, que es su watchlist. La última sale del campo `estado`, salvo en
+juegos: ahí Steam sabe cuántas horas les has echado y no si los terminaste, así
+que el reparto va por las horas y la pestaña es *Por jugar*.
 
 Lo que se ve en la web es exactamente lo mismo que veo en Obsidian, sin plugins
 de terceros ni un segundo formato que mantener.
@@ -50,26 +49,29 @@ maquetación ni orden ni el HTML de una tarjeta, solo los datos.
 
 **Los `.base` son las vistas.** Un `.base` no contiene fichas: contiene la
 *pregunta* («dame todo lo que tenga `tipo: juego`, ordenado por nota, en
-tarjetas de 220 px»). Están sueltos y no dentro de las notas justamente para
-que se puedan cambiar sin tocar ni una ficha: cambiar el criterio de
-*Favoritos*, o el orden de una galería, es editar un fichero, no noventa. Y como es un formato nativo de
-Obsidian, la misma vista se pinta igual en el editor y en la web; no hay una
-galería para mí y otra para el visitante.
+tarjetas de 220 px»). Están sueltos y no dentro de las notas justamente para que
+se puedan cambiar sin tocar ni una ficha: cambiar el criterio de *Favoritos*, o
+el orden de una galería, es editar un fichero, no ciento veintisiete. Y como es
+un formato nativo de Obsidian, la misma vista se pinta igual en el editor y en
+la web.
 
 **`public/` es el resultado.** Lo escupe Quartz al construir y está en el
 `.gitignore` a propósito: es material derivado, se regenera entero en cada
-`build` y versionarlo solo serviría para llenar el historial de HTML y meter
-conflictos absurdos en cada commit. Se borra sin miedo. En GitHub lo reconstruye
-la Action en cada push y lo sube a Pages; la carpeta local es solo para verlo
-antes de publicar.
+`build` y versionarlo solo serviría para llenar el historial de HTML. Se borra
+sin miedo. En GitHub lo reconstruye la Action en cada push y lo sube a Pages; la
+carpeta local es solo para verlo antes de publicar.
 
-**`plugins/` es lo que Quartz no trae.** Dos cosas, y las dos por lo mismo:
-para que la maquetación siga fuera de las notas. Una es la cabecera de cada
-ficha, que pinta la carátula, los datos y el enlace a la fuente leyendo el
-`tipo`, la `nota`, el `appid`… de la nota, sin escribir nada en ella. La otra
-saca del buscador las cinco páginas sueltas que Quartz emite por cada `.base`,
-que eran una copia en blanco de la galería que ya está en el índice de su
-sección.
+**`plugins/vitrina/` es lo que Quartz no trae**, y todo por lo mismo: para que
+la maquetación siga fuera de las notas. Son tres cosas:
+
+- La **cabecera de cada ficha**, que pinta la carátula, los datos y el enlace a
+  la fuente leyendo el `tipo`, la `nota`, el `appid`… de la nota, sin escribir
+  nada en ella. Y el enlace a la página de autor, que tampoco vive en el campo.
+- El **grafo de la portada**, grande y entero, en vez de la vista pequeña de la
+  barra. Y que el sitio abra en oscuro si no has elegido otra cosa.
+- Sacar del buscador las cinco páginas sueltas que Quartz emite por cada
+  `.base`, que eran una copia en blanco de la galería que ya está en el índice
+  de su sección.
 
 La otra carpeta grande, `quartz/`, es el generador: no es contenido, es el
 programa. Este repo es un *fork* de Quartz con la vault dentro, que es como se
@@ -88,15 +90,13 @@ usa Quartz normalmente.
 - Trae ya hechos el buscador, el modo oscuro, el grafo, los *backlinks* y las
   previsualizaciones al pasar el ratón.
 
-No es la única forma de hacerlo, pero cualquier alternativa (Dataview + un
-exportador, una base de datos, Notion) rompe alguna de esas cuatro cosas.
-
 ## Estructura
 
 ```
 content/            la vault de Obsidian: lo único que se escribe a mano
   index.md          portada
   juegos/  pelis/  libros/  musica/
+  autores/          derivadas: las escribe autores.py, no se tocan a mano
   *.base            las vistas de cada sección
   _plantillas/      plantilla de ficha (no se publica)
   assets/portadas/  imágenes
@@ -114,10 +114,11 @@ scripts/
   vistazo.py        levanta el sitio con los borradores dentro
   estado.py         qué hay, qué falta y qué se publica
   pruebas.py        las pruebas de todo lo anterior, sin red
-requirements.txt    Pillow, lo unico que los scripts piden fuera de la estandar
-plugins/vitrina/    la cabecera de las fichas y las .base fuera del buscador
-quartz/             el generador (fork de Quartz, no se toca)
-quartz.config.yaml  configuración del sitio
+requirements.txt    Pillow, lo único que los scripts piden fuera de la estándar
+plugins/vitrina/    la cabecera de las fichas, el grafo de la portada y el tema
+quartz.config.yaml  configuración del sitio: colores, tipografías y plugins
+quartz/             el generador (fork de Quartz). De aquí solo se toca
+                    styles/custom.scss, que son los retoques de estilo propios
 public/             lo que genera el build; no se versiona
 ```
 
@@ -149,118 +150,25 @@ Los dos detalles que no son evidentes:
 
 Para editar las notas: en Obsidian, `Abrir carpeta como almacén` apuntando a
 `content/` (a `content/`, no a la raíz del repo). La configuración de la vault
-(plantillas y plugins nativos activos) viene versionada, así que las Bases
-funcionan desde el primer arranque.
+viene versionada, así que las Bases funcionan desde el primer arranque.
 
 ### Publicarlo bajo tu propia cuenta
 
 1. Haz un *fork* del repo, o clónalo y súbelo al tuyo.
 2. En `quartz.config.yaml`, cambia `baseUrl` por `tuusuario.github.io/vitrina`.
 3. En `Settings → Pages` del repo, pon *Source* en **GitHub Actions**.
-4. Empuja a `main`. El workflow de `.github/workflows/deploy.yaml` construye y
-   despliega solo.
+4. Empuja a `main`. El workflow de `.github/workflows/deploy.yaml` revisa tipos
+   y formato, pasa las pruebas de los scripts, construye y despliega solo.
 
 El workflow se salta el despliegue mientras el repositorio sea privado, porque
 Pages no está disponible en repos privados con el plan gratuito. En cuanto lo
 pases a público se activa solo, sin tocar nada.
 
-## Añadir una ficha
+## Añadir una obra
 
-Buscándola, que es una línea:
-
-```bash
-scripts/nueva.py juego "hollow knight"
-scripts/nueva.py peli "parasite" --nota 10 --favorito
-scripts/nueva.py album "in rainbows"
-scripts/nueva.py libro "el nombre del viento"
-```
-
-Enseña los candidatos, eliges tú, y deja la ficha entera —año, autor, tags y
-la portada ya bajada—. Está contado en [Añadir una obra
-suelta](#añadir-una-obra-suelta).
-
-A mano también, con la plantilla de `_plantillas/Ficha.md` (`Ctrl+P` →
-*Insertar plantilla*) en la carpeta de su sección. En cuanto tenga `tipo`
-aparece sola en la galería y en la tabla, y si lleva `favorito: true`, también
-en *Lo mejor de lo mejor*. No hay que tocar ningún índice.
-
-## Traer lo que ya tienes en otros sitios
-
-`scripts/importar.py` crea fichas a partir de Letterboxd, Steam y Spotify. No
-pisa nunca una ficha que ya exista, así que se puede repetir cuando quieras
-para recoger solo lo nuevo, y avisa cuando algo se parece a lo que ya tienes
-(el *Witcher 3* de Steam se llama *The Witcher 3: Wild Hunt*, y esa la unes tú).
-
-```bash
-scripts/importar.py letterboxd-rss TU_USUARIO  # lo visto, sin cuenta de pago
-scripts/importar.py letterboxd-watchlist TU_USUARIO  # lo que tienes por ver
-scripts/importar.py letterboxd ~/Descargas/letterboxd-export.zip  # con Pro
-scripts/importar.py steam ~/Descargas/juegos.html  # tu página de juegos
-scripts/importar.py listenbrainz TU_USUARIO     # discos más escuchados
-scripts/importar.py spotify-export ~/Descargas/spotify.zip   # o desde el zip
-scripts/importar.py spotify-export ~/Descargas/spotify.zip --canciones  # tus me gusta, en discos
-scripts/importar.py libro "el nombre del viento"  # uno a uno, a mano
-scripts/importar.py --dry-run letterboxd ...   # dice qué haría, sin escribir
-```
-
-**Todo entra en borrador**, con `draft: true` y el cuerpo en blanco (la nota sí
-viene puesta en las películas, que es lo único que sabe Letterboxd). Quartz no
-publica lo que lleva `draft`, así que la web sigue enseñando solo lo que hayas
-ascendido a mano, mientras que en Obsidian se ven todas. Para ascender una
-ficha se le quita la línea `draft` y se le pone nota y las dos frases del
-porqué, que es lo único que estas fuentes no saben. Si prefieres que entren
-publicadas directamente, `--sin-borrador`.
-
-Por defecto va en **modo rápido**: solo entra lo que da alguna señal de haberte
-importado, 8 horas jugadas en Steam y 4 estrellas en Letterboxd. Lo que se queda
-fuera se cuenta por pantalla, no desaparece en silencio, y con `--completo`
-entra todo. Los umbrales se mueven con `--min-horas` y `--min-nota`.
-
-La watchlist es la excepción y no pasa por la criba: los umbrales están para
-separar lo que de verdad has usado de lo que sólo estaba en una lista, y en una
-watchlist no hay esa señal ni puede haberla, porque nada de lo que hay dentro
-lo has visto. La lista entera es la señal, y entra como `estado: pendiente`.
-Es lo que llena la pestaña *Por ver*, que importando sólo del diario se queda
-vacía: el RSS únicamente sabe lo que ya viste.
-
-Cada fuente da lo suyo, y ninguna lo da todo:
-
-| Fuente | Cómo | Qué trae |
-| --- | --- | --- |
-| Letterboxd | El RSS del perfil, o el export si tienes Pro | Título, año y **tu puntuación**, que pasa de estrellas a la escala de 1 a 10. La *watchlist* entra como `pendiente`. |
-| Steam | Guardar `steamcommunity.com/my/games?tab=all` con `Ctrl+S`, o el export de datos | Título y horas jugadas, en el campo `horas`. |
-| ListenBrainz | Tu nombre de usuario | Los discos más escuchados, con artista y el *mbid* de MusicBrainz. |
-| Spotify | El zip del export | Lo mismo, desde tu historial. Con `--completo`, los álbumes guardados; con `--canciones`, tus me gusta plegados en los discos que los llevan. |
-
-Letterboxd es la única de las tres que sabe si algo te gustó. Steam sabe cuánto
-jugaste, que no es lo mismo (por eso lo jugado no entra con ningún estado: eso
-no lo puede deducir nadie, y esa sección se reparte por las horas), y Spotify
-solo sabe que le diste a guardar. De ahí que el volcado sea un punto de partida
-y no el resultado.
-
-[ListenBrainz](https://listenbrainz.org) es el registro de escuchas de
-MusicBrainz, la misma gente del Cover Art Archive de donde salen las carátulas,
-y su API de estadísticas se lee sin registrar nada. Además devuelve el *mbid*
-del disco, así que la carátula se baja exacta y no por parecido de nombre. Para
-que tenga tus escuchas, se conecta Spotify en sus ajustes o se le sube el
-historial ampliado cuando llegue.
-
-Después de importar quedan dos pasos, los dos de una pasada y sin clave:
-`scripts/portadas.py` le pone carátula a todo lo nuevo, y `scripts/datos.py`
-rellena lo que la fuente no supo decir.
-
-**Nada de esto pide pagar, ni registrar una aplicación, ni una clave de API.**
-Fue una decisión, no una casualidad: el export CSV de Letterboxd está detrás de
-su cuenta Pro y la API de Spotify pide Premium desde febrero de 2026, así que
-las dos se cambiaron por vías abiertas. Lo que da y lo que no da cada fuente, y
-qué herramientas de otros hacen ya parte de esto, está en
-[`docs/importar.md`](docs/importar.md).
-
-## Añadir una obra suelta
-
-Volcar una galería entera se hace una vez. Lo que se hace siempre es añadir la
-película de anoche, el disco de esta semana, el juego que acabas de empezar.
-Eso es `scripts/nueva.py`, y funciona igual para los cuatro tipos:
+Lo que se hace siempre es añadir la película de anoche, el disco de esta semana,
+el juego que acabas de empezar. Eso es `scripts/nueva.py`, y funciona igual para
+los cuatro tipos:
 
 ```bash
 scripts/nueva.py juego "hollow knight"
@@ -271,10 +179,9 @@ scripts/nueva.py libro "sapiens" --elegir 2     # sin preguntar
 scripts/nueva.py peli "harakiri" --dry-run      # dice qué crearía
 ```
 
-Es lo que hace el buscador de Letterboxd o el de Spotify cuando escribes:
-enseñar candidatos con lo justo para distinguirlos, y guardarse **el
-identificador** de lo que elijas en vez del nombre. Cada tipo pregunta a la
-fuente que mejor lo conoce, y ninguna pide clave:
+Enseña los candidatos, eliges tú, y guarda **el identificador** de lo que
+elijas en vez del nombre. Cada tipo pregunta a la fuente que mejor lo conoce, y
+ninguna pide clave:
 
 | Tipo | Fuente | Guarda | Y trae |
 | --- | --- | --- | --- |
@@ -288,105 +195,73 @@ completa y no hay que pasar después ni `portadas.py` ni `datos.py`. Lo que la
 fuente no puede saber es lo tuyo, y va en las opciones: `--nota`, `--estado`,
 `--favorito`.
 
-### Un disco y sus canciones
-
-En el cuerpo de la ficha va la lista entera del disco, que escribe
-`scripts/textos.py` desde MusicBrainz:
-
-```yaml
----
-tipo: album
-year: 2007
-autor: Radiohead
-favorito: true
-favoritas: 2
-mbid: 6e335887-60ba-38f0-95af-fae7774336bf
----
-
-## Canciones
-
-1. 15 Step
-2. Bodysnatchers
-3. Nude
-4. Weird Fishes/Arpeggi
-5. All I Need
-```
-
-**Los favoritos son de disco entero, no de canción**, con el campo `favorito`
-como en las otras tres secciones. Marcar canciones sueltas obligaría a editar
-el fichero **y** pasar un script después, y eso no lo puede hacer nadie desde la
-web publicada; un `favorito` de disco se cambia en un gesto desde Obsidian y se
-ve online para todo el mundo, que es de lo que va esto. Las canciones siguen
-listadas, que es lo que valía la pena.
-
-Y hay un límite que no depende de las ganas: un `.base` consulta **fichas**, y
-una canción no es una ficha, es una línea dentro del disco que la lleva.
-Ninguna vista puede juntarlas; para eso haría falta una página escrita por un
-script.
-
-`favoritas` es un número y no una lista porque de ahí salió: cuando el
-importador pliega las dos mil canciones guardadas de un export de Spotify en
-los discos que las llevan (`importar.py spotify-export … --canciones`), lo
-único que le queda a cada disco es cuántas eran. Los nombres viven en el cuerpo,
-que es donde los encuentra el buscador de la web: indexa el texto de la ficha,
-no la cabecera.
-
-Es la única sección donde esto tiene sentido: en música tienes miles de cosas
-marcadas y ninguna nota, así que la cuenta hace el trabajo que en las otras
-secciones hace el 1-10.
-
-Entra publicada, no en borrador. El borrador existe para triar un volcado de
-cientos de fichas de golpe; si has escrito el título y has elegido de una
-lista, esa criba ya la has hecho. Con `--borrador` entra con `draft: true` como
-las importadas.
-
-El caso que mejor lo explica son los libros, que además es el único donde no
-hay nada que volcar: no existe un sitio donde tengas apuntado lo que has leído,
-y si existiera sería otra cuenta más. Enseña los resultados y eliges tú:
-
-```
-  1) The Name of the Wind — Patrick Rothfuss (2007)
-  2) The Wise Man's Fear — Patrick Rothfuss (2011)
-  3) El Nombre de la Ballena Coleccion Los Especiales de a la Orilla del V… — …
-  4) El origen de los nombres de los países del mundo — Edgardo D. Otero (2003)
-
-¿Cuál? (1-8, Enter para el 1, 0 si ninguno):
-```
-
-Con una película la lista es la misma y lo que las separa es el año, que es lo
-único que las distingue:
-
-```
-  1) Parasite (2019)
-  2) Parasite (1982)
-```
-
 **Elegir a mano es el punto, no un trámite.** Open Library devuelve la edición
-inglesa aunque busques en español, y con los títulos cortos se cuela cualquier
-cosa: mira el resultado 3. Pasa en las cuatro secciones: en Steam «Portal» saca
-antes el 2 que el 1, y hay tres películas llamadas *Parasite*. Quedarse con el
-primero a ciegas es exactamente lo que hace que una ficha acabe con los datos
-de otra obra.
+inglesa aunque busques en español, en Steam «Portal» saca antes el 2 que el 1 y
+hay tres películas llamadas *Parasite*. Quedarse con el primero a ciegas es
+exactamente lo que hace que una ficha acabe con los datos de otra obra. Con el
+identificador guardado, la portada y los datos salen exactos y se pueden rehacer
+siempre igual.
 
-De la edición que elijas se guarda su `coverid`, igual que el `appid` en los
-juegos, el `mbid` en los discos y el `letterboxd` en las películas. Con él, la
-portada que baja es la **de esa edición** y no una parecida de nombre, y se
-puede rehacer siempre igual.
+A mano también se puede, con la plantilla de `_plantillas/Ficha.md` (`Ctrl+P` →
+*Insertar plantilla*) en la carpeta de su sección. En cuanto tenga `tipo`
+aparece sola en la galería y en la tabla, y si lleva `favorito: true`, también
+en *Lo mejor de lo mejor*. No hay que tocar ningún índice.
 
-Es la misma API que usan los plugins de Obsidian que hacen esto, y tampoco pide
-clave ni registro. Está aquí y no en un plugin para que las fichas salgan
-directamente en el formato de la vault, sin un segundo esquema que mantener de
-acuerdo con el primero.
+Los cómics y la novela gráfica entran como `tipo: libro`, que Open Library los
+cataloga, **y el manga también**: se queda en libros con la etiqueta `manga` en
+`tags` y no tiene sección propia. Un `.base` filtra por etiqueta igual de bien
+que por carpeta, así que separarlos sería duplicar una sección entera para no
+ganar nada.
 
-`scripts/importar.py libro "…"` sigue funcionando, con el borrador por defecto
-como el resto del importador: es el mismo alta, llamando aquí.
+## Traer lo que ya tienes en otros sitios
 
-Sirve igual para cómics y novela gráfica, que Open Library cataloga: *Watchmen*,
-*Maus* y *Persépolis* salen con portada. Entran como `tipo: libro`, y **el manga
-también**: la convención es dejarlo en libros con la etiqueta `manga` en `tags`,
-no darle sección propia. Un `.base` filtra por etiqueta igual de bien que por
-carpeta, así que separarlos sería duplicar una sección entera para no ganar
-nada.
+`scripts/importar.py` crea fichas a partir de Letterboxd, Steam y Spotify. No
+pisa nunca una ficha que ya exista, así que se puede repetir cuando quieras para
+recoger solo lo nuevo, y avisa cuando algo se parece a lo que ya tienes (el
+*Witcher 3* de Steam se llama *The Witcher 3: Wild Hunt*, y esa la unes tú).
+
+```bash
+scripts/importar.py letterboxd-rss TU_USUARIO        # lo visto, sin cuenta de pago
+scripts/importar.py letterboxd-watchlist TU_USUARIO  # lo que tienes por ver
+scripts/importar.py letterboxd ~/Descargas/letterboxd-export.zip  # con Pro
+scripts/importar.py steam ~/Descargas/juegos.html    # tu página de juegos
+scripts/importar.py listenbrainz TU_USUARIO          # discos más escuchados
+scripts/importar.py spotify-export ~/Descargas/spotify.zip
+scripts/importar.py spotify-export ~/Descargas/spotify.zip --canciones
+scripts/importar.py --dry-run letterboxd ...         # dice qué haría
+```
+
+**Todo entra en borrador**, con `draft: true` y el cuerpo en blanco. Quartz no
+publica lo que lleva `draft`, así que la web sigue enseñando solo lo que hayas
+ascendido a mano, mientras que en Obsidian se ven todas. Para ascender una ficha
+se le quita la línea `draft` y se le pone nota y las dos frases del porqué, que
+es lo único que estas fuentes no saben. Si prefieres que entren publicadas,
+`--sin-borrador`.
+
+Por defecto va en **modo rápido**: solo entra lo que da alguna señal de haberte
+importado, 8 horas jugadas en Steam y 4 estrellas en Letterboxd. Lo que se queda
+fuera se cuenta por pantalla, no desaparece en silencio, y con `--completo` entra
+todo. Los umbrales se mueven con `--min-horas` y `--min-nota`. La watchlist es la
+excepción y no pasa por la criba: ahí no hay señal que valga, porque nada de lo
+que hay dentro lo has visto, y la lista entera es la señal. Entra como
+`estado: pendiente`, que es lo que llena la pestaña *Por ver*.
+
+| Fuente | Cómo | Qué trae |
+| --- | --- | --- |
+| Letterboxd | El RSS del perfil, o el export si tienes Pro | Título, año y **tu puntuación**, que pasa de estrellas a la escala de 1 a 10. La *watchlist* entra como `pendiente`. |
+| Steam | Guardar `steamcommunity.com/my/games?tab=all` con `Ctrl+S`, o el export de datos | Título y horas jugadas, en el campo `horas`. |
+| ListenBrainz | Tu nombre de usuario | Los discos más escuchados, con artista y el *mbid* de MusicBrainz. |
+| Spotify | El zip del export | Lo mismo, desde tu historial. Con `--completo`, los álbumes guardados; con `--canciones`, tus me gusta plegados en los discos que los llevan. |
+
+Después de importar quedan dos pasos, los dos de una pasada y sin clave:
+`scripts/portadas.py` le pone carátula a todo lo nuevo, y `scripts/datos.py`
+rellena lo que la fuente no supo decir.
+
+**Nada de esto pide pagar, ni registrar una aplicación, ni una clave de API.**
+Fue una decisión, no una casualidad: el export CSV de Letterboxd está detrás de
+su cuenta Pro y la API de Spotify pide Premium desde febrero de 2026, así que
+las dos se cambiaron por vías abiertas. Lo que da y lo que no da cada fuente está
+en [`docs/importar.md`](docs/importar.md).
 
 ## Portadas
 
@@ -398,20 +273,16 @@ portada: "[[disco-elysium.webp]]"
 ```
 
 Enlazar a la imagen de un servidor ajeno es más cómodo el primer día y peor
-todos los demás: las URLs se pudren, muchos CDN bloquean el *hotlinking*, la
-galería depende de que ese servidor esté vivo y en Obsidian, sin conexión, no se
-ve nada. Con el fichero dentro, la vault es autocontenida y funciona igual en el
-portátil sin internet que en la web. Y el formato importa: **WebP a 400 px de
-ancho** pesa entre 20 y 80 KB por carátula (las tarjetas miden 220 px, así que
-400 cubre pantallas 2x y de ahí para arriba solo se malgasta ancho de banda).
-Mil fichas siguen siendo unas pocas decenas de megas de repositorio.
+todos los demás: las URLs se pudren, muchos CDN bloquean el *hotlinking* y en
+Obsidian, sin conexión, no se ve nada. Con el fichero dentro, la vault es
+autocontenida. El formato es **WebP a 400 px de ancho**, entre 20 y 80 KB por
+carátula: las tarjetas miden 220 px, así que 400 cubre pantallas 2x y de ahí
+para arriba solo se malgasta ancho de banda.
 
 El enlace va entre corchetes y no como ruta suelta a posta: así Obsidian lo
-reconoce como enlace de verdad (y lo renombra solo si mueves la imagen), y
-Quartz lo resuelve a la ruta correcta desde cualquier página. Una ruta en texto
-plano se rompe en las subcarpetas.
-
-Bajarlas es un comando:
+reconoce como enlace de verdad y lo renombra solo si mueves la imagen, y Quartz
+lo resuelve desde cualquier página. Una ruta en texto plano se rompe en las
+subcarpetas.
 
 ```bash
 scripts/portadas.py                 # rellena las fichas que no tienen portada
@@ -420,8 +291,7 @@ scripts/portadas.py --force         # rehace también las que ya la tienen
 scripts/portadas.py --dry-run       # dice qué haría, sin tocar nada
 ```
 
-Cada sección tira de la fuente que mejor la conoce, y **ninguna pide clave ni
-registro**. Se clona el repositorio y funciona:
+Cada sección tira de la fuente que mejor la conoce, y **ninguna pide clave**:
 
 | Sección | Fuente |
 | --- | --- |
@@ -430,273 +300,88 @@ registro**. Se clona el repositorio y funciona:
 | Música | MusicBrainz + Cover Art Archive |
 | Películas | Letterboxd, identificada por Wikidata (Wikipedia de reserva) |
 
-Las películas fueron el caso difícil. Para libros y discos existen catálogos
-abiertos (Open Library es del Internet Archive, Cover Art Archive es de
-MusicBrainz) y los juegos los sirve la propia tienda, pero para cine no hay
-nada equivalente: las bases de datos de películas piden una clave detrás de un
-formulario que quiere nombre, teléfono y dirección postal, y los servicios que
-no la piden son CDN internos de aplicaciones de terceros, sin términos ni
-garantía de seguir ahí mañana.
+Las películas son el caso raro y conviene saberlo: no hay catálogo abierto de
+carteles, así que el cartel sale de Letterboxd, pero **el identificador lo dice
+Wikidata** (la propiedad `P6127`), porque la dirección de una película no se
+deduce del título: `/film/parasite/` es la de Charles Band de 1982. Con ese id se
+apunta en la ficha (`letterboxd: little-women-2019`) y ya no se vuelve a buscar.
+Wikipedia queda de reserva para lo que Wikidata todavía no sepa identificar, que
+en la práctica son los estrenos futuros, y de allí el póster llega a 220 px.
 
-La salida es **Letterboxd**, pero no por su buscador: por el identificador. La
-parte difícil del cine no es bajar el cartel, es saber de qué película. Su
-dirección no se puede deducir del título — `/film/parasite/` es la de Charles
-Band de 1982, y `/film/little-women/` la de 1933 —, así que el id no se adivina
-nunca: lo dice **Wikidata**, que guarda el identificador de Letterboxd (la
-propiedad `P6127`) junto al año de estreno, y que tampoco pide clave. Con ese
-id, la página de la película declara en su `JSON-LD` el cartel y quién dirige,
-en la misma petición. El cartel llega a 1000 px, así que en la tarjeta de 220
-entra nítido incluso en una pantalla de 3x.
-
-El id se apunta en la ficha (`letterboxd: little-women-2019`), igual que el
-`appid` en los juegos o el `mbid` en los discos: se busca una vez y ya no se
-vuelve a buscar. Las importadas del RSS ni eso necesitan, porque el diario ya
-trae el enlace a cada película y el importador lo guarda al vuelo.
-
-**Wikipedia queda de reserva** para lo que Wikidata todavía no sepa
-identificar, que en la práctica son los estrenos futuros. De allí el póster
-llega a unos 220 px, porque obliga a que el material no libre esté en baja
-resolución: es justo lo que mide la tarjeta, o sea que se ve, pero se queda
-blando en pantallas de mucha densidad. De las 37 películas de este repo, 36
-salen de Letterboxd y una — *The Odyssey*, que se estrena en 2026 — sigue en
-Wikipedia hasta que alguien le ponga su `P6127`.
-
-Si una ficha no se encuentra (la búsqueda va por el nombre del fichero), lo más
-rápido es dejar la imagen a mano en `assets/portadas/` y escribir el enlace en
-la cabecera. Con los libros pasa algo parecido: Open Library devuelve casi
-siempre la portada de la edición inglesa aunque la ficha esté en español
-(filtrar por idioma no cambia el resultado), así que si te importa la edición
-concreta, esa se pone a mano. Y si una queda sin portada tampoco pasa nada: la tarjeta se pinta
-con un degradado y la rejilla no se descuadra.
-
-Las relaciones de aspecto de cada galería están puestas para lo que enseñan:
-`0.67` (2:3, el formato de un póster o una portada de libro) en juegos,
-películas y libros, y `1` en música, que es un mosaico cuadrado. Las carátulas
-del repo lo confirman: las de juego miden 400x600 y las de disco 400x400.
-
-*Lo mejor de lo mejor* es la excepción y **no declara ninguna**, porque es la
-única página que mezcla las dos formas. `imageAspectRatio` recorta (`object-fit: cover`), así
-que fijarla a `0.67` le comería un tercio del ancho a cada portada de disco y
-fijarla a `1` le cortaría la cabeza a los pósters. Sin declararla, cada
-carátula se pinta entera con su forma y lo que se paga es que las tarjetas de
-una fila no midan todas lo mismo. Recortar es peor que descuadrar.
-
-## Qué falta por rellenar
-
-Las galerías enseñan lo que hay. Para saber por dónde seguir hace falta lo
-contrario, que es lo que **no** hay:
-
-```bash
-scripts/estado.py                  # el resumen
-scripts/estado.py --seccion pelis  # solo esa carpeta
-scripts/estado.py --detalle        # además, qué ficha le falta cada cosa
-```
-
-```
-FICHAS
-              total  borrador  publicadas  con texto
-  juegos         44         0          44         44
-  pelis          37         0          37         37
-  libros          3         0           3          3
-  musica          6         0           6          6
-             —————— ————————— ——————————— ——————————
-  total          90         0          90         90
-
-EN LA WEB  ████████████████████████  90 de 90
-
-SIN RELLENAR
-  nota         47   ███████████·············
-  tags          3   ███████████████████████·
-
-NOTAS      10:38  9:1  8:4
-
-ESTADOS
-              pendiente   en curso  terminado abandonado  sin poner
-  juegos              0          0          0          0         44
-  pelis               0          0         37          0          0
-  libros              0          0          3          0          0
-  musica              0          0          6          0          0
-  En juegos esa columna no es un hueco: sus dos vistas reparten
-  por horas jugadas, que es lo que la fuente sabe de verdad.
-
-FAVORITOS  ██████··················  21 de 90
-  juegos        6
-  pelis         6
-  libros        3
-  musica        6
-```
-
-Los bloques de **estados** y **favoritos** están por lo mismo: son las vistas
-que pueden salir vacías sin que nada falle, y una pestaña en blanco solo se ve
-entrando a mirarla. Una sección con 0 favoritos deja su pestaña *Favoritos*
-vacía; y en películas, libros y discos, una ficha sin `estado` no sale ni en la
-de lo terminado ni en la watchlist, aunque siga en la galería. Los 44 juegos sin
-estado no son ese caso, y por eso la tabla lo dice: esa sección reparte por
-horas y no le falta nada.
-
-Avisa además de dos cosas que no se ven de otra manera: fichas que apuntan a una
-imagen que ya no está, e imágenes en `assets/portadas/` que ya no usa ninguna
-ficha. No consulta nada por red ni escribe nada, así que se puede lanzar cuando
-sea.
-
-## Verlo antes de ascender
-
-Decidir qué asciendes mirando la web publicada no se puede, porque ahí todavía
-no está: es justo lo que aún no has ascendido. Y mirar ficha por ficha en
-Obsidian tampoco dice cómo va a quedar la galería entera.
-
-```bash
-scripts/vistazo.py               # el sitio completo, borradores incluidos
-scripts/vistazo.py --puerto 9000
-scripts/vistazo.py --solo-build  # construye y no levanta nada
-scripts/vistazo.py --tema rose-pine   # con ese tema de Obsidian, para verlo
-```
-
-Sale en <http://localhost:8081>, con las fichas en borrador dentro y un aviso
-en la portada para que no lo confundas con el sitio de verdad, que sigue en el
-8080. Puedes tener los dos abiertos a la vez y compararlos.
-
-No toca la vault: copia el contenido **fuera del repositorio**, le quita la
-línea `draft` a la copia y construye desde ahí. Ni cortándolo a mitad puede
-acabar publicando un borrador.
-
-`quartz.config.yaml` tampoco, salvo con `--tema`, y ahí es porque Quartz no
-tiene un `--config` que apunte a otro sitio: el tema sólo se puede cambiar en el
-fichero de verdad. Se enciende mientras dura el build y se restaura en un
-`finally`, que salta también con Ctrl+C, así que lo que se publica no se entera.
-Lo que sí deja rastro es `package.json`: el cargador de plugins se baja el tema
-la primera vez y se apunta ahí como dependencia. Sale en `git status`, y si el
-tema se queda en prueba, `git checkout package.json package-lock.json`. Que la copia salga
-fuera no es capricho: el `glob` de Quartz se salta los directorios que empiezan
-por punto, y además respeta el `.gitignore`, así que una copia dentro del repo
-y anotada ahí no se encontraría a sí misma.
-
-Es una foto fija, no recarga sola: si tocas una ficha, vuelve a lanzarlo.
+Si una ficha no se encuentra, lo más rápido es dejar la imagen a mano en
+`assets/portadas/` y escribir el enlace en la cabecera. Y si una se queda sin
+portada tampoco pasa nada: la tarjeta se pinta con un degradado y la rejilla no
+se descuadra.
 
 ## Lo que la fuente no sabe
 
-Ninguna de las fuentes de importación lo da todo, y lo que le falta a cada una
-no es casualidad. Tu página de juegos de Steam sabe cuántas horas les has
-echado, pero no de qué año es el juego, ni quién lo hizo, ni de qué va. El
-diario de Letterboxd sabe tu nota, pero no quién dirige. Así que lo importado
-entra con `year`, `autor` y `tags` en blanco: sin año la galería no se ordena
-por fecha, y sin tags la página de etiquetas y el grafo se quedan vacíos.
-
-Eso lo cierra `scripts/datos.py`, que sabe dónde está cada cosa:
+Lo importado entra con `year`, `autor` y `tags` en blanco: sin año la galería no
+se ordena por fecha, y sin tags la página de etiquetas y el grafo se quedan
+vacíos. Eso lo cierra `scripts/datos.py`, que sabe dónde está cada cosa:
 
 | Sección | Fuente | Qué rellena |
 | --- | --- | --- |
-| Juegos | Ficha de la tienda de Steam | `year`, `autor` (el estudio) y `tags` (los géneros) |
+| Juegos | Ficha de la tienda de Steam | `year`, `autor` (el estudio) y `tags` |
 | Películas | Ficha de Letterboxd | `autor`, o sea la dirección, y `tags` |
 | Música | MusicBrainz | `tags`, tal como los da |
 | Libros | Open Library | `tags`, los que reconozca una lista blanca de géneros |
 
-**Los tags salen en inglés de las cuatro**, y así se quedan: a Steam se le pide
-la ficha con `l=english` y las otras tres no saben darlos de otra manera. Está
-contado en [Por qué las etiquetas van en inglés](#por-qué-las-etiquetas-van-en-inglés).
-
 ```bash
 scripts/datos.py                    # rellena solo lo que esté vacío
 scripts/datos.py --force            # reescribe también lo que ya tenga valor
+scripts/datos.py --seccion juegos   # solo esa carpeta
 scripts/datos.py --dry-run          # dice qué pondría, sin tocar nada
 scripts/datos.py content/juegos/Hollow\ Knight.md   # una ficha suelta
 ```
 
-**La regla es no adivinar.** Los juegos van por el `appid` que el importador ya
-dejó guardado, no por el título: buscar «PEAK» o «skate.» por nombre en Steam no
-encuentra nada, y por `appid` sale siempre. Las películas van por el mismo
-`letterboxd` del que sale el cartel, que Wikidata solo da cuando no queda duda
-de cuál es: si hay dos candidatas del mismo año y nada que las separe, no elige
-ninguna. Antes que rellenar una ficha con los datos de otra obra, se queda
-vacía y lo dice.
+**La regla es no adivinar.** Todo va por el identificador que ya está en la
+ficha, no por el título: buscar «PEAK» o «skate.» por nombre en Steam no
+encuentra nada, y por `appid` sale siempre. Antes que rellenar una ficha con los
+datos de otra obra, se queda vacía y lo dice. Y no pisa nada de lo que hayas
+escrito tú: solo toca los campos vacíos, salvo con `--force`, y deja el resto de
+la cabecera igual y en el mismo orden.
 
-En la colección de este repo: 44 de 44 juegos y 37 de 37 películas. En libros,
-1 de 3, y en clásicos traducidos ésa es la proporción normal: ver abajo.
+Los libros dan menos que el resto, y no es un fallo. Lo que Open Library llama
+`subject` es la catalogación de una biblioteca: `L'étranger` trae sesenta, y ahí
+dentro están revueltos el género («Philosophical Novels»), el tema («Murder») y
+hasta el formato («Large type books»). Así que en vez de coger los primeros se
+mira cuáles están en una lista blanca corta, `GENEROS_OPENLIBRARY`, y lo que no
+esté no se escribe. La tabla es corta a propósito: cada vez que se le mete un
+género blando («classics», «adventure stories») empieza a acertar en los libros
+de género y a fallar en los demás. Si añades uno, las pruebas de
+`GenerosDeLibro` son el sitio donde comprobarlo.
 
-No pisa nada de lo que hayas escrito tú: solo toca los campos que estén
-vacíos, salvo que le pases `--force`, y deja el resto de la cabecera igual, en
-el mismo orden. Se puede repetir tantas veces como quieras; lo que ya está
-resuelto se salta sin gastar una petición.
+## Las etiquetas van en inglés, y todo en ASCII
 
-Los libros son el caso raro, y conviene saber por qué antes de esperar mucho de
-ellos. El identificador lo tienen — el `coverid`, que el buscador de Open
-Library admite como campo (`q=cover_i:13151269`) y resuelve a la obra de esa
-portada, una y sólo una —, así que tampoco aquí hay que adivinar por título. Lo
-que falla es lo que hay al otro lado: Steam y Letterboxd dan **géneros**, en
-lista cerrada y por orden, y de ahí basta con coger los primeros; lo que Open
-Library llama `subject` es la catalogación de una biblioteca. `L'étranger` trae
-sesenta, y ahí dentro están revueltos el género («Philosophical Novels»), el
-tema del argumento («Murder», «Death»), el idioma de una edición («French
-language materials») y el formato («Large type books»). Coger los cuatro
-primeros le pondría a Camus `ficción, asesinato, francés`.
+De cada etiqueta sale una página, y de cada página una dirección. **Una tilde
+ahí rompe la página**: se ve bien en la barra del navegador, pero por dentro
+viaja escapada, `tags/acci%C3%B3n`. El grafo busca la página por su nombre, no lo
+encuentra, y en vez de dibujar lo que lleva esa etiqueta dibuja un nodo suelto,
+sin nada alrededor y rotulado con la dirección en crudo.
 
-Así que los libros van al revés que las otras tres secciones: en vez de traducir
-lo que venga, se mira cuáles de esos sesenta están en una lista blanca corta de
-géneros, y lo que no esté no se escribe.
+Pasaba con `acción`, `fantasía`, `ciencia-ficción`, `animación` y `filosofía`,
+que venían de traducir al castellano los géneros de Steam y de Letterboxd. Y les
+pasaba lo mismo a los tres juegos con el símbolo ™ y a *El madrileño*.
 
-La mitad de los que valen no vienen sueltos, y esa es la parte que hay que
-saber. Lo que la editorial declara no llega como `horror` sino como **cabecera
-de BISAC** — «Fiction, Horror», «Fiction / Science Fiction / Hard Science
-Fiction», «Fiction, Mystery & Detective, General» —, que es el vocabulario con
-el que la industria del libro clasifica lo que publica. Es lista cerrada y el
-tramo del medio es justamente el género, así que esas se parten y se leen por
-tramos. Sólo ésas: un `subject` suelto se queda de una pieza a propósito, porque
-sale de que alguien puso el libro en un estante y no de la editorial — `1984`
-trae «fantasy» por su cuenta y salía de novela fantástica.
-
-Sobre catorce libros de prueba, **once** salieron etiquetados y ninguno con una
-etiqueta que no le tocara, que es el reparto que interesa: una ficha sin tags se
-ve y se arregla a mano, y una con `aventura` puesto por una máquina en «El
-extranjero» se queda ahí para siempre. Los tres que no salen son clásicos
-traducidos, y no por el idioma de la ficha: se probó a ir a la obra inglesa
-canónica por Wikidata (`P648`, que da el id de Open Library sin buscar por
-título) y el registro inglés de «Noches blancas» trae nueve subjects, ninguno de
-los cuales es un género. No es que esté en castellano; es que nadie lo ha
-clasificado.
-
-La tabla es corta a propósito, y está en `GENEROS_OPENLIBRARY`. Cada vez que se
-le mete un género blando — «classics», «history», «adventure stories»,
-«satire» — empieza a acertar en los libros de género y a fallar en los demás:
-con esos cuatro dentro, `1984` salía de comedia y «El extranjero» de aventuras.
-Si añades uno, las pruebas de `GenerosDeLibro` son el sitio donde comprobarlo.
-
-## Por qué las etiquetas van en inglés
-
-Al principio no iban: los géneros de Steam y los de Letterboxd se traducían al
-castellano con una tabla, para que *Action* y *Acción* cayeran las dos en la
-misma etiqueta, y sólo los discos venían en inglés porque la lista de
-MusicBrainz es abierta y traducirla sería inventar.
-
-Eso dejaba cinco etiquetas con tilde: `acción`, `fantasía`, `ciencia-ficción`,
-`animación` y `filosofía`. Y **una etiqueta con tilde rompe su propia página**.
-De cada etiqueta sale una dirección, y una tilde ahí se ve bien en la barra del
-navegador pero por dentro viaja escapada, `tags/acci%C3%B3n`. El grafo busca la
-página por su nombre, no lo encuentra, y en vez de dibujar lo que lleva esa
-etiqueta dibuja un nodo suelto, sin nada alrededor y rotulado con la dirección
-en crudo. Lo mismo les pasaba a los tres juegos con el símbolo ™ y a *El
-madrileño*.
-
-Así que ahora **los tags van en inglés en las cuatro secciones**, que es como
-los dan las cuatro fuentes: a Steam se le pide la ficha con `l=english` y las
-otras tres no saben decirlos de otra manera. El arreglo trae de propina lo que
-la tabla buscaba: con una sola lengua, el `action` de un juego y el de una
-película son la misma etiqueta sin que nadie traduzca nada. La única tabla que
-queda es la de los libros, porque ahí hay que elegir qué `subject` es un género
-y cuál no, y apunta a ese mismo vocabulario.
+Así que **los tags van en inglés en las cuatro secciones**, que es como los dan
+las cuatro fuentes: a Steam se le pide la ficha con `l=english` y las otras tres
+no saben decirlos de otra manera. De propina sale lo que la traducción buscaba:
+con una sola lengua, el `action` de un juego y el de una película son la misma
+etiqueta sin que nadie traduzca nada.
 
 **La regla, para lo que venga:** de un nombre de fichero y de una etiqueta sale
 una dirección, así que las dos se quedan en ASCII. Lo garantizan
-`nombre_de_fichero()` y `etiqueta()` en los scripts, y lo vigilan dos pruebas de
-`scripts/pruebas.py` que recorren la vault entera. El título de verdad no se
-pierde: cuando el nombre del fichero no puede ser igual que él, se apunta aparte
-en `title`, que es lo que pinta la web. Por eso la ficha se llama
-`DARK SOULS REMASTERED.md` y la página sigue diciendo *DARK SOULS™ REMASTERED*.
+`nombre_de_fichero()` y `etiqueta()`, y lo vigilan dos pruebas que recorren la
+vault entera. El título de verdad no se pierde: cuando el nombre del fichero no
+puede ser igual que él, se apunta aparte en `title`, que es lo que pinta la web.
+Por eso la ficha se llama `DARK SOULS REMASTERED.md` y la página sigue diciendo
+*DARK SOULS™ REMASTERED*.
 
 ## De qué va cada cosa
 
 Las fichas entraban con la cabecera completa y el cuerpo en blanco. El buscador
 las encontraba por el título, pero abrir una era abrir nada. `scripts/textos.py`
-lo cierra, y saca el texto de la misma fuente que ya identifica la ficha:
+lo cierra, sacando el texto de la misma fuente que ya identifica la ficha:
 
 | Sección | Fuente | Qué escribe |
 | --- | --- | --- |
@@ -712,20 +397,6 @@ scripts/textos.py --force            # reescribe también las que ya tengan text
 scripts/textos.py --seccion pelis    # solo esa carpeta
 scripts/textos.py --dry-run          # dice qué haría, sin pedir ni tocar nada
 ```
-
-En la colección de este repo: **las 90**.
-
-Lo recién estrenado no tiene artículo en la Wikipedia española, así que ahí se
-cae al respaldo: la sinopsis que Letterboxd enseña en su ficha. **Ese texto no
-es de Letterboxd, es de TMDB**, a quien enlazan en su propia página, así que es
-a TMDB a quien se cita. Viene en inglés y la cita lo dice.
-
-*The Odyssey* pedía además resolver su id a mano, porque Wikidata todavía no lo
-tiene: se aceptó `the-odyssey-2026` sólo después de comprobar contra su propia
-página que era de 2026 y de Christopher Nolan, que es lo que decía la ficha. El
-slug sin sufijo, `the-odyssey`, es la de 1997 de Konchalovsky.
-
-### Dónde va lo que escribes tú
 
 **Lo tuyo va arriba y lo generado debajo**, en las cuatro secciones. No hay que
 marcarlo con nada: escribes en el cuerpo, encima de la cita o de la lista de
@@ -744,90 +415,60 @@ Me reí con esta desde los catorce y no he parado.
 > → Wikipedia · CC BY-SA 4.0
 ```
 
-`textos.py` **sólo pisa lo que ha escrito él**: el bloque de la cita, y la
-lista de canciones de un disco desde su encabezado. Todo lo demás se conserva
-tal cual, incluso con `--force`. La sinopsis se puede volver a bajar mil veces;
-tu párrafo no, así que es lo único que el script no toca.
+`textos.py` **sólo pisa lo que ha escrito él**: el bloque de la cita, y la lista
+de canciones de un disco desde su encabezado. Todo lo demás se conserva tal cual,
+incluso con `--force`. La sinopsis se puede volver a bajar mil veces; tu párrafo
+no, así que es lo único que el script no toca. Y el orden también es a propósito:
+quien entra en una ficha lee primero por qué te gustó, que es para lo que existe
+el sitio, y luego la referencia.
 
-El orden también es a propósito: quien entra en una ficha lee primero por qué
-te gustó, que es para lo que existe el sitio, y luego la referencia. Antes vacía que con la sinopsis de otra.
-
-### Lo que no es tuyo va citado, y no todo lo necesita
-
-Es la parte que no es evidente, así que está decidida una vez y por escrito:
+### Lo que no es tuyo va citado
 
 - **Steam no da ninguna licencia.** Su descripción es texto suyo con todos los
-  derechos, así que va como cita breve, marcada como tal y con enlace a su
-  ficha de la tienda. La cita no es cortesía: es lo que la ampara.
+  derechos, así que va como cita breve, marcada como tal y con enlace a su ficha
+  de la tienda. La cita no es cortesía: es lo que la ampara.
 - **Wikipedia es CC BY-SA 4.0**, que sí da permiso a cambio de nombrar a los
   autores, enlazar la fuente y decir la licencia. Se cumplen las tres con el
   enlace al artículo, cuyo historial es la lista de autores, y el nombre de la
   licencia enlazado.
-- **MusicBrainz no pide nada.** Sus datos base — artistas, discos y listas de
-  canciones — son CC0, o sea dominio público. Y una lista de títulos son datos,
-  no prosa: no hay redacción de nadie que citar.
+- **MusicBrainz no pide nada.** Sus datos base son CC0, y una lista de títulos
+  son datos, no prosa: no hay redacción de nadie que citar.
 
-Lo que **no** se hace es parafrasear. Reescribir un párrafo ajeno cambiando
+Lo que **no** se hace es parafrasear: reescribir un párrafo ajeno cambiando
 cuatro palabras sigue siendo derivado de su texto, pero ya no parece una cita,
-así que pierde también el amparo. Y deja en la ficha un texto anónimo que
-aparenta ser tuyo, que es justo lo contrario de para lo que existe esto.
+así que pierde también el amparo. Por eso el texto de fuera va en un *callout*
+aparte y no suelto en el cuerpo.
 
-Por eso el texto de la fuente va en un *callout* aparte, y no suelto en el
-cuerpo: se ve de un vistazo qué es la sinopsis de fuera y qué escribes tú
-debajo.
-
-### Los discos, y por qué no se les pisa la lista
-
-El cuerpo de un disco lleva la lista entera con una estrella en las tuyas, y esa
-parte se lee del fichero antes de reescribirlo, porque es lo único de la ficha
-que no se puede volver a buscar en ningún sitio.
-
-Tiene tres trampas:
-
-- **El apóstrofo.** Si escribes `I Don't Love You` con el recto y MusicBrainz lo
-  tiene con el tipográfico, comparando en crudo esa favorita se queda sin
-  estrella y tu elección desaparece sin un aviso. Se compara con `normal()`,
-  que quita acentos y puntuación.
-- **Las ediciones a medias.** De *Three Cheers for Sweet Revenge* hay 19
-  ediciones y la primera no tiene ni una canción, así que se recorren hasta dar
-  con una que traiga la lista.
-- **Las canciones repetidas.** La edición de *My Beautiful Dark Twisted Fantasy*
-  trae «Runaway» dos veces, así que una sola favorita puede acabar con dos
-  estrellas.
-
-Y una favorita que no esté en la edición que lista MusicBrainz no se tira: se
-queda escrita al pie. Todo esto tiene prueba en `scripts/pruebas.py`, porque es
-donde un fallo es silencioso.
+En los discos, la lista lleva una estrella en tus favoritas y esa parte se lee
+del fichero antes de reescribirla, porque es lo único de la ficha que no se puede
+volver a buscar en ningún sitio. Los favoritos son **de disco entero**, con el
+campo `favorito` como en las otras tres secciones; `favoritas` es solo cuántas
+canciones tuyas hay en él, y los nombres viven en el cuerpo, que es donde los
+encuentra el buscador de la web.
 
 ## De Vitrina cuelga todo
 
 Una colección es, de partida, una nube de puntos sueltos. Una ficha no cita a
 ninguna otra, y la galería de su sección tampoco la cita a ella, porque el
-`![[Juegos.base]]` de `/juegos/` no es una lista de enlaces sino una pregunta
-que se resuelve al pintar. Así que el grafo salía partido en dos: Vitrina con
-sus secciones por un lado, que eso sí lo enlaza `index.md`, y las 127 fichas
-por otro, colgando sólo de sus etiquetas.
+`![[Juegos.base]]` de `/juegos/` no es una lista de enlaces sino una pregunta que
+se resuelve al pintar. Así que el grafo salía partido en dos: Vitrina con sus
+secciones por un lado y las 127 fichas por otro, colgando sólo de sus etiquetas.
 
-La arista que faltaba es la obvia, y va escrita en la cabecera de cada ficha:
+La arista que faltaba va escrita en la cabecera de cada ficha:
 
 ```yaml
 seccion: "[[juegos/index|Juegos]]"
 ```
 
-*Hollow Knight* cuelga de **Juegos**, Juegos cuelga de **Vitrina**, y las
-páginas de autor cuelgan de **Autores** por el mismo campo. Un árbol, y el
-mismo en Obsidian y en la web.
+*Hollow Knight* cuelga de **Juegos**, Juegos cuelga de **Vitrina**, y las páginas
+de autor cuelgan de **Autores** por el mismo campo. Un árbol, y el mismo en
+Obsidian y en la web.
 
-**Por qué en la cabecera y no en el cuerpo.** Porque dice de qué sección es la
-ficha, que es un dato como el año o la nota, y no maquetación. Porque Obsidian
-cuenta los enlaces de las propiedades igual que los del texto, así que sale en
-el grafo y en los *backlinks*. Y porque así no se pinta en la web, donde ese
-sitio ya lo ocupa la miga de pan.
-
-**Y por qué escrito, y no puesto al construir** como el enlace del autor.
-Porque el grafo de Obsidian sólo dibuja los `[[...]]` que están en la vault: un
-enlace que ponga el sitio al generarse se ve en la web y allí no, y la vault es
-la fuente. Quartz lo lee de la cabecera él solo, sin plugin que valga.
+Va en la cabecera y no en el cuerpo porque dice de qué sección es la ficha, que
+es un dato como el año o la nota, y no maquetación. Y va escrito en la nota, y no
+puesto al construir como el enlace del autor, porque el grafo de Obsidian sólo
+dibuja los `[[...]]` que están en la vault: un enlace que ponga el sitio al
+generarse se ve en la web y allí no.
 
 Nadie lo escribe a mano: lo ponen `nueva.py` e `importar.py` al crear la ficha,
 porque lo dice la carpeta en la que cae. `scripts/secciones.py` es para las que
@@ -839,20 +480,15 @@ scripts/secciones.py --dry-run  # dice qué haría, sin tocar nada
 scripts/secciones.py --deshacer # quita el campo de todas las fichas
 ```
 
-Eso es el tronco, y un tronco solo no junta una peli con un juego: entre ramas
-no hay ni un enlace. Lo que cruza la colección son los otros dos hilos, las
-etiquetas y las páginas de autor.
+Eso es el tronco, y un tronco solo no junta una peli con un juego. Lo que cruza
+la colección son los otros dos hilos: las etiquetas y las páginas de autor.
 
 ## Lo que comparte estudio, dirección o artista
 
 Obsidian agrupa por **enlaces**, no por campos: dos juegos con `autor:
-FromSoftware` escrito exactamente igual no están conectados de ninguna manera,
-ni en el grafo ni en los backlinks. `scripts/autores.py` escribe la página de
-cada autor con lo suyo listado, y el sitio se encarga del enlace de vuelta:
-
-```yaml
-autor: QLOC, FromSoftware, Inc.     # el campo es texto, siempre
-```
+FromSoftware` escrito exactamente igual no están conectados de ninguna manera.
+`scripts/autores.py` escribe la página de cada autor con lo suyo listado, y el
+sitio se encarga del enlace de vuelta:
 
 ```bash
 scripts/autores.py             # escribe las páginas de autor
@@ -861,56 +497,121 @@ scripts/autores.py --deshacer  # borra las páginas de autor
 scripts/autores.py --dry-run   # dice qué haría, sin tocar nada
 ```
 
-**El campo `autor` nunca lleva el enlace dentro.** Es un dato, igual que el año
-o la nota, y por lo mismo que una ficha no guarda ni el orden ni el HTML de su
-tarjeta: la maquetación vive fuera. Quien pone el enlace es `plugins/vitrina`,
-al pintar — busca dentro del texto los nombres que tengan página y los enlaza —,
-y el mismo plugin apunta esas páginas en los `links` de la ficha para que el
-grafo dibuje la arista.
+**El campo `autor` nunca lleva el enlace dentro**, ni siquiera cuando son dos:
+es un dato, igual que el año o la nota. Quien pone el enlace es
+`plugins/vitrina`, al pintar, buscando dentro del texto los nombres que tengan
+página, y el mismo plugin las apunta en los `links` de la ficha para que el grafo
+dibuje la arista. Así una ficha con varios autores los enlaza a todos, las
+tarjetas de la galería no se rompen con un enlace dentro de otro, y `datos.py` y
+`autores.py` no se pisan.
 
-Tenerlo así resuelve tres cosas de golpe:
+La coma del campo significa dos cosas a la vez, y ésa es la trampa:
+`"Mike Johnson, Tim Burton"` son dos directores y `"FromSoftware, Inc."` es un
+solo estudio. Lo que decide es si el trozo siguiente es un sufijo de empresa
+(`Inc.`, `Ltd.`, `S.L.`…), y tiene prueba, por si algún día alguien lo
+«simplifica»: partiendo por comas a secas, «Inc.» salía como el estudio con más
+juegos de la colección.
 
-- **Una ficha con varios autores los enlaza a todos**, porque el plugin busca
-  en el texto todos los nombres que tengan página en vez de depender de un
-  `[[...]]` escrito en el campo.
-- **Las galerías no se rompen.** Una tarjeta entera ya es un enlace, así que un
-  `[[...]]` dentro del campo metería un `<a>` dentro de otro; el navegador parte
-  eso al leerlo, y la portada acaba en una celda de la rejilla y el título en
-  otra.
-- **`datos.py` y `autores.py` no se pisan.** Los dos escriben texto plano, así
-  que no hay que volver a pasar el segundo después del primero.
+**Sólo tiene página quien tenga dos obras o más.** De los 119 autores de esta
+colección, repiten 13. Darle página a los otros 106 sería crear 106 callejones
+sin salida. Al crecer la colección basta con volver a pasarlo: el que llegue a
+dos la estrena solo. Las páginas de `content/autores/` son derivadas y se
+reescriben enteras en cada pasada, así que no se editan a mano; el campo `autor`
+sí es tuyo, y el script nunca cambia el nombre.
 
-**Sólo tiene página quien tenga dos obras o más.** De los 91 autores de esta
-colección, sólo 5 repiten: FromSoftware, My Chemical Romance, Radiohead, Hayao
-Miyazaki y Quentin Tarantino. Darle página a los otros 86 sería crear 86
-callejones sin salida y doblar el tamaño del sitio. Al crecer la colección basta
-con volver a pasarlo: el que llegue a dos la estrena solo.
+## Cómo se ve
 
-### La coma no vale como separador
+El aspecto vive en dos sitios, y ninguno es una nota:
 
-Es la trampa del campo, y significa las dos cosas a la vez:
+- **`quartz.config.yaml`**, en `theme`: los nueve colores de cada modo y las tres
+  tipografías, que salen de Google Fonts. La paleta es una vitrina a oscuras con
+  las piezas iluminadas (fondo casi negro con un punto cálido, texto hueso,
+  enlaces en gris azulado frío) y los titulares van en **Cinzel**, la capital
+  romana con la que se rotula una sala de museo. El claro va a juego, en papel.
+- **`quartz/styles/custom.scss`**, para lo que no es un color: el rótulo
+  «VITRINA» en capitales espaciadas, la portada con las secciones como renglones
+  de un índice, y el dorado.
+
+Tres cosas que conviene saber porque no se deducen del fichero:
+
+- **El sitio abre en oscuro** salvo que hayas elegido claro con el botón. El
+  script de Quartz le pregunta al sistema; esto se adelanta y apunta el oscuro
+  cuando no hay ninguna elección guardada.
+- **El dorado es de una sola página.** *Lo mejor de lo mejor* es la única que no
+  es ni una sección ni una obra, así que va en dorado con su estrella, allá
+  donde se la enlace, y las tarjetas de su galería llevan el mismo color. Por eso
+  los enlaces normales son grises y no dorados: si todo fuera dorado, no se
+  distinguiría.
+- **La portada pinta el grafo entero**, grande y debajo del título, en vez de la
+  vista pequeña de la barra. En las etiquetas y en las secciones el grafo sigue
+  en la barra, al lado, y ahí es donde se ve que una etiqueta cruza secciones.
+
+## Qué falta por rellenar
+
+Las galerías enseñan lo que hay. Para saber por dónde seguir hace falta lo
+contrario, que es lo que **no** hay:
+
+```bash
+scripts/estado.py                  # el resumen
+scripts/estado.py --seccion pelis  # solo esa carpeta
+scripts/estado.py --detalle        # además, qué ficha le falta cada cosa
+```
 
 ```
-"Mike Johnson, Tim Burton"        dos directores
-"FromSoftware, Inc."              un solo estudio
-"Nicalis, Inc., Edmund McMillen"  las dos cosas en el mismo campo
+FICHAS
+              total  borrador  publicadas  con texto
+  juegos         44         0          44         44
+  pelis          37         0          37         37
+  libros          9         0           9          8
+  musica         37         0          37         37
+             —————— ————————— ——————————— ——————————
+  total         127         0         127        126
+
+SIN RELLENAR
+  nota         84   ████████················
+  texto         1   ████████████████████████
+
+FAVORITOS  ████····················  21 de 127
 ```
 
-Partiendo por comas a secas, **«Inc.» salía como el estudio con más juegos de la
-colección**, cinco, por delante de FromSoftware. Lo que decide es si el trozo
-siguiente es un sufijo de empresa (`Inc.`, `Ltd.`, `S.L.`…), en cuyo caso se
-vuelve a pegar al anterior. Tiene prueba, por si algún día alguien lo
-«simplifica».
+Avisa además de dos cosas que no se ven de otra manera: fichas que apuntan a una
+imagen que ya no está, e imágenes en `assets/portadas/` que ya no usa ninguna
+ficha. No consulta nada por red ni escribe nada, así que se puede lanzar cuando
+sea.
 
-Esa lista de sufijos hace falta para *repartir* el campo en autores y saber
-quién merece página. Para *enlazar* no hace falta ninguna heurística: el plugin
-no parte el texto, busca dentro de él los nombres que ya tienen página, que se
-conocen enteros y exactos. Por eso «FromSoftware, Inc.» se enlaza con su coma
-incluida y «Burton» no se lleva el apellido de «Tim Burton».
+## Verlo antes de ascender
 
-Las páginas de `content/autores/` son derivadas y se reescriben enteras en cada
-pasada, así que no se editan a mano. El campo `autor` sí es tuyo: el script
-nunca cambia el nombre.
+Decidir qué asciendes mirando la web publicada no se puede, porque ahí todavía
+no está: es justo lo que aún no has ascendido.
+
+```bash
+scripts/vistazo.py               # el sitio completo, borradores incluidos
+scripts/vistazo.py --puerto 9000
+scripts/vistazo.py --solo-build  # construye y no levanta nada
+scripts/vistazo.py --tema rose-pine   # con ese tema de Obsidian, para verlo
+```
+
+Sale en <http://localhost:8081>, con las fichas en borrador dentro y un aviso en
+la portada para que no lo confundas con el sitio de verdad, que sigue en el 8080.
+No toca la vault: copia el contenido **fuera del repositorio**, le quita la línea
+`draft` a la copia y construye desde ahí, así que ni cortándolo a mitad puede
+acabar publicando un borrador. Es una foto fija: si tocas una ficha, vuelve a
+lanzarlo.
+
+## Las pruebas
+
+```bash
+python3 scripts/pruebas.py   # 64, sin salir a la red
+npm run check                # tipos del plugin y formato del código
+```
+
+No cubren todo a propósito. Cubren dos cosas: las funciones que deciden si una
+ficha se rellena o se queda vacía, que es donde un fallo es silencioso, y los
+casos concretos que ya mordieron una vez, cada uno con su historia escrita al
+lado. Además recorren la vault entera para que no se separe de lo que los
+scripts esperan de ella: que ninguna ficha se invente un estado, que cada una
+cuelgue de su sección, y que ni un nombre de fichero ni una etiqueta se salgan
+del ASCII. El CI pasa las dos cosas en cada push, antes de construir.
 
 ## Licencia y créditos
 
