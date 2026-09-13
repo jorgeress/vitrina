@@ -342,15 +342,22 @@ layout:
         left: []
         right: []
     content: {}
+    # Una galeria y una etiqueta se quedan sin el indice ni los retroenlaces: la
+    # primera lista lo que ya esta debajo y la segunda repite entera la lista de
+    # la pagina. El grafo si se queda, y es lo unico que hay en esa barra: en
+    # una etiqueta dibuja de golpe todo lo que la lleva, cruzando secciones, que
+    # es lo que no cuenta la lista; y en una seccion, la rama entera colgando de
+    # Vitrina. Antes la barra derecha se vaciaba a pelo y se llevaba el grafo
+    # por delante.
     folder:
       exclude:
         - reader-mode
-      positions:
-        right: []
+        - table-of-contents
+        - backlinks
     tag:
       exclude:
         - reader-mode
-      positions:
-        right: []
+        - table-of-contents
+        - backlinks
     canvas: {}
     bases: {}
