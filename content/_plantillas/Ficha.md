@@ -26,7 +26,8 @@ Campos:
 - `autor`: estudio, dirección, autor o artista según el caso.
 - `nota`: del 1 al 10, en número. Es opcional: ordena las galerías, y una ficha
   sin nota sale igual, al final.
-- `favorito`: true o false. Alimenta *Favoritos* y la vista «Solo favoritos» de
+- `favorito`: true o false. Alimenta *Lo mejor de lo mejor* y la pestaña
+  «Favoritos» de
   cada sección.
 - `favoritas`: solo en discos. Cuántas canciones tuyas hay en él. Sale en la
   ficha como «Canciones tuyas»; los nombres van en el cuerpo.

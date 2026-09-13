@@ -182,7 +182,7 @@ suelta](#añadir-una-obra-suelta).
 A mano también, con la plantilla de `_plantillas/Ficha.md` (`Ctrl+P` →
 *Insertar plantilla*) en la carpeta de su sección. En cuanto tenga `tipo`
 aparece sola en la galería y en la tabla, y si lleva `favorito: true`, también
-en *Favoritos*. No hay que tocar ningún índice.
+en *Lo mejor de lo mejor*. No hay que tocar ningún índice.
 
 ## Traer lo que ya tienes en otros sitios
 
@@ -474,8 +474,8 @@ Las relaciones de aspecto de cada galería están puestas para lo que enseñan:
 películas y libros, y `1` en música, que es un mosaico cuadrado. Las carátulas
 del repo lo confirman: las de juego miden 400x600 y las de disco 400x400.
 
-*Favoritos* es la excepción y **no declara ninguna**, porque es la única página
-que mezcla las dos formas. `imageAspectRatio` recorta (`object-fit: cover`), así
+*Lo mejor de lo mejor* es la excepción y **no declara ninguna**, porque es la
+única página que mezcla las dos formas. `imageAspectRatio` recorta (`object-fit: cover`), así
 que fijarla a `0.67` le comería un tercio del ancho a cada portada de disco y
 fijarla a `1` le cortaría la cabeza a los pósters. Sin declararla, cada
 carátula se pinta entera con su forma y lo que se paga es que las tarjetas de

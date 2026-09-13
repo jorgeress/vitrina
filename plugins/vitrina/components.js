@@ -314,7 +314,7 @@ body[data-slug="index"] .sidebar .graph {
 .ficha-datos > *:last-child { margin-bottom: 0; }
 .ficha-favorito {
   margin: 0 0 0.5rem;
-  color: var(--tertiary);
+  color: var(--dorado);
   font-weight: 600;
   font-size: 0.9rem;
 }

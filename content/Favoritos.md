@@ -1,5 +1,5 @@
 ---
-title: Favoritos
+title: Lo mejor de lo mejor
 ---
 
 Las cuatro secciones juntas, filtradas a lo que he marcado como favorito. Cada

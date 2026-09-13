@@ -152,16 +152,18 @@ plugins:
       # trae por defecto y este sustituye.
       filterFn: '(node) => node.slugSegment !== "tags" && !node.slugSegment.endsWith(".base")'
       # El arbol en el orden del sitio y no en el del abecedario. Por defecto
-      # ordena por nombre, y asi "autores" --que no es una seccion, sino lo que
-      # las cruza-- abria la lista por delante de Juegos. Va al final, detras de
-      # las cuatro, y las cuatro en el orden de la portada.
+      # ordena por nombre, y asi "autores", que no es una seccion sino lo que
+      # las cruza, abria la lista por delante de Juegos. La lista de aqui es el
+      # orden de la portada: las cuatro secciones, autores, y al final las dos
+      # paginas sueltas, con Lo mejor de lo mejor por delante de Creditos, que
+      # por nombre caian justo al reves.
       #
       # Es la misma via que filterFn: el componente serializa la funcion y el
       # cliente la rehace con new Function, asi que una cadena de YAML vale.
       # Dentro de las carpetas no se toca nada: alli sigue mandando el titulo.
       sortFn: |
         (a, b) => {
-          const orden = ["juegos", "pelis", "libros", "musica", "autores"]
+          const orden = ["juegos", "pelis", "libros", "musica", "autores", "favoritos", "creditos"]
           const ia = orden.indexOf(a.slugSegment)
           const ib = orden.indexOf(b.slugSegment)
           if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib)

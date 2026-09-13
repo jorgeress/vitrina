@@ -186,3 +186,36 @@ footer::before {
 .callout[data-callout="quote"] > .callout-title > .callout-title-inner {
   display: none;
 }
+
+// "Lo mejor de lo mejor" en dorado, con su estrella.
+//
+// Es la unica pagina que no es ni una seccion ni una obra: cruza las cuatro y
+// se queda con lo marcado como favorito. En una lista de enlaces todos iguales
+// no se distinguia de Creditos, que es la otra suelta y no tiene nada que ver.
+//
+// El dorado es el mismo en los dos temas, aclarado en el oscuro para que no se
+// apague contra el fondo. Y la estrella es la que ya lleva una ficha favorita
+// en su cabecera, asi que las dos dicen lo mismo en los dos sitios.
+:root {
+  --dorado: #a07b12;
+}
+
+:root[saved-theme="dark"] {
+  --dorado: #e0c063;
+}
+
+// En el arbol lateral el enlace no lleva `data-slug`, que lo fabrica el
+// explorador al vuelo, asi que se le busca por el final de la direccion.
+a[data-slug="favoritos"],
+a.nav-file-title[href$="favoritos"] {
+  color: var(--dorado);
+
+  &::before {
+    content: "★ ";
+  }
+}
+
+// El titulo de la pagina, del mismo color.
+body[data-slug="favoritos"] .article-title {
+  color: var(--dorado);
+}
