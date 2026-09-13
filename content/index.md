@@ -2,8 +2,8 @@
 title: Vitrina
 ---
 
-Mi colección personal de lo que juego, veo, leo y escucho. Sin pretensión de
-crítica: son notas para acordarme de por qué algo me gustó.
+Mi colección personal de lo que juego, veo, leo y escucho, con alguna nota
+interesante si me acuerdo.
 
 - [[juegos/index|Juegos]]
 - [[pelis/index|Películas]]
