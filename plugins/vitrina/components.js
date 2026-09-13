@@ -215,14 +215,25 @@ const GRAFO = {
   enableRadial: true,
 }
 
-function grafoDeCasa() {
+// El de una etiqueta: lo que la lleva y nada mas, que es de lo que va esa
+// pagina. A un salto, que en una etiqueta es exactamente su lista, y con el
+// rotulo mas grande porque son diez nodos y no trescientos.
+const GRAFO_ETIQUETA = {
+  ...GRAFO,
+  depth: 1,
+  scale: 1,
+  linkDistance: 30,
+  fontSize: 0.62,
+}
+
+function grafoGrande(cfg, clase) {
   return h(
     "div",
-    { class: "grafo-casa" },
+    { class: clase ? `grafo-grande ${clase}` : "grafo-grande" },
     h(
       "div",
       { class: "graph-outer" },
-      h("div", { class: "graph-container", "data-cfg": JSON.stringify(GRAFO) }),
+      h("div", { class: "graph-container", "data-cfg": JSON.stringify(cfg) }),
     ),
   )
 }
@@ -231,8 +242,15 @@ const Ficha = () => {
   function Ficha({ fileData, allFiles }) {
     const f = fileData.frontmatter ?? {}
     const tipo = TIPOS[f.tipo]
+    const pagina = String(fileData.slug ?? "")
     // La portada tampoco es una obra, pero su hueco no se queda vacio.
-    if (fileData.slug === "index") return grafoDeCasa()
+    if (pagina === "index") return grafoGrande(GRAFO)
+    // Y una etiqueta enseña arriba lo que la lleva, antes de la lista: es lo
+    // unico que dice de golpe que la etiqueta cruza secciones, porque la lista
+    // las reparte en bloques y el dibujo las junta.
+    if (pagina.startsWith("tags/") && pagina !== "tags/index") {
+      return grafoGrande(GRAFO_ETIQUETA, "grafo-etiqueta")
+    }
     // Los indices, los autores y los creditos no son obras: no llevan cabecera.
     if (!tipo) return null
 
@@ -297,6 +315,66 @@ if (!localStorage.getItem("theme")) {
   localStorage.setItem("theme", "dark")
   document.documentElement.setAttribute("saved-theme", "dark")
 }
+
+// El rotulo de un nodo, legible a cualquier distancia.
+//
+// Los rotulos van dentro del lienzo, asi que el zoom los encoge con todo lo
+// demas: al alejarte para ver el conjunto, el nombre del nodo que tienes debajo
+// del raton se queda en dos pixeles, que es justo cuando hace falta leerlo. El
+// grafo no trae ningun ajuste para esto: su \`fontSize\` es fijo.
+//
+// Asi que se le devuelve el tamaño desde fuera. En cada fotograma, un rotulo se
+// agranda tanto como el zoom lo haya encogido, y el que esta resaltado un poco
+// mas. De cerca no cambia nada, que ahi ya se lee bien.
+//
+// Va sobre PixiJS, que es quien dibuja, y no sobre el grafo: se envuelve su
+// Application para quedarse con el escenario cuando lo cree. Si algun dia el
+// plugin cambia por dentro, esto no encuentra lo que busca y no hace nada; el
+// grafo sigue funcionando igual.
+;(function () {
+  function vigilar(app) {
+    app.ticker.add(function () {
+      var lienzo = app.stage && app.stage.children && app.stage.children[0]
+      if (!lienzo || !lienzo.children) return
+      var k = lienzo.scale.x
+      var compensar = k < 1 ? 1 / k : 1
+      for (var i = 0; i < lienzo.children.length; i++) {
+        var capa = lienzo.children[i]
+        if (!capa.children) continue
+        for (var j = 0; j < capa.children.length; j++) {
+          var rotulo = capa.children[j]
+          // Los rotulos son los unicos que llevan texto; los nodos y las lineas
+          // son dibujos.
+          if (typeof rotulo.text !== "string") continue
+          if (rotulo.__base === undefined) rotulo.__base = rotulo.scale.x
+          // Solo el que esta debajo del raton llega a opaco del todo.
+          var resaltado = rotulo.alpha === 1 ? 1.15 : 1
+          rotulo.scale.set(rotulo.__base * compensar * resaltado)
+        }
+      }
+    })
+  }
+
+  var espera = setInterval(function () {
+    var P = window.PIXI
+    if (!P || !P.Application || P.__vitrina) return
+    clearInterval(espera)
+    P.__vitrina = true
+    var Base = P.Application
+    P.Application = class extends Base {
+      async init(opciones) {
+        var r = await super.init(opciones)
+        try {
+          vigilar(this)
+        } catch (e) {}
+        return r
+      }
+    }
+  }, 20)
+  setTimeout(function () {
+    clearInterval(espera)
+  }, 15000)
+})()
 `
 
   // El grafo, cuando la direccion lleva un simbolo o un acento.
@@ -332,16 +410,22 @@ if (decodeURI(location.pathname) !== location.pathname) {
 `
 
   Ficha.css = `
-/* El grafo de la portada, en grande y con la vista pequeña de la barra fuera:
-   dibujan lo mismo, y ahi al lado no cabe nada que se lea.
+/* El grafo grande: el de la portada y el de cada etiqueta.
 
    La caja tira a cuadrada porque el radio del dibujo sale de su lado corto: en
-   una tira ancha y baja, el grafo se queda en un circulito en medio. */
-.grafo-casa .graph-outer {
+   una tira ancha y baja, el grafo se queda en un circulito en medio. La de una
+   etiqueta es mas baja, que debajo va su lista y no hay que empujarla fuera de
+   la pantalla. */
+.grafo-grande .graph-outer {
   height: min(70vh, 520px);
   margin: 1.4rem 0 0;
 }
-body[data-slug="index"] .sidebar .graph {
+.grafo-etiqueta .graph-outer {
+  height: min(50vh, 360px);
+}
+/* Donde hay uno grande, fuera el pequeño de la barra: dibujan lo mismo, y ahi
+   al lado no cabe nada que se lea. */
+body:has(.grafo-grande) .sidebar .graph {
   display: none;
 }
 .ficha {
