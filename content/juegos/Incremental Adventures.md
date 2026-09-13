@@ -10,7 +10,7 @@ tags:
   - casual
   - free-to-play
   - indie
-  - rol
+  - rpg
 horas: 8
 appid: 1371630
 ---

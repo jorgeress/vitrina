@@ -8,7 +8,7 @@ favorito: false
 portada: "[[underworld-idle.webp]]"
 tags:
   - indie
-  - estrategia
+  - strategy
   - free-to-play
 horas: 49
 appid: 1540960

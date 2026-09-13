@@ -7,8 +7,8 @@ nota:
 favorito: false
 portada: "[[blasphemous.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
   - indie
 horas: 22
 appid: 774361

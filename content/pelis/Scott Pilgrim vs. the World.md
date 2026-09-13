@@ -9,8 +9,8 @@ favorito: false
 portada: "[[scott-pilgrim-vs-the-world.webp]]"
 tags:
   - romance
-  - acción
-  - comedia
+  - action
+  - comedy
 letterboxd: scott-pilgrim-vs-the-world
 ---
 

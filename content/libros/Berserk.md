@@ -9,8 +9,8 @@ favorito: false
 portada: "[[berserk.webp]]"
 tags:
   - manga
-  - fantasía
-  - terror
+  - fantasy
+  - horror
 coverid: 869205
 wikipedia: Berserk (manga)
 ---

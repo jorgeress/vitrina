@@ -1,4 +1,5 @@
 ---
+title: Idle Slayer – Incremental RPG
 tipo: juego
 seccion: "[[juegos/index|Juegos]]"
 year: 2020
@@ -9,7 +10,7 @@ portada: "[[idle-slayer-incremental-rpg.webp]]"
 tags:
   - casual
   - indie
-  - estrategia
+  - strategy
   - free-to-play
 horas: 95
 appid: 1353300

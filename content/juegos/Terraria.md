@@ -7,10 +7,10 @@ nota: 10
 favorito: true
 portada: "[[terraria.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
   - indie
-  - rol
+  - rpg
 horas: 343
 appid: 105600
 ---

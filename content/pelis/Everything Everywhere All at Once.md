@@ -8,10 +8,10 @@ estado: terminado
 favorito: false
 portada: "[[everything-everywhere-all-at-once.webp]]"
 tags:
-  - ciencia-ficción
-  - aventura
-  - comedia
-  - acción
+  - science-fiction
+  - adventure
+  - comedy
+  - action
 letterboxd: everything-everywhere-all-at-once
 ---
 

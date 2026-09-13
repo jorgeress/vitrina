@@ -7,7 +7,7 @@ nota:
 favorito: false
 portada: "[[bro-falls-ultimate-showdown.webp]]"
 tags:
-  - acción
+  - action
   - casual
   - free-to-play
   - indie

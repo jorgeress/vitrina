@@ -8,8 +8,8 @@ favorito: false
 portada: "[[stardew-valley.webp]]"
 tags:
   - indie
-  - rol
-  - simuladores
+  - rpg
+  - simulation
 horas: 142
 appid: 413150
 ---

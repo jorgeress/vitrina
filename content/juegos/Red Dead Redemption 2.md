@@ -7,8 +7,8 @@ nota:
 favorito: false
 portada: "[[red-dead-redemption-2.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
 horas: 42
 appid: 1174180
 ---

@@ -9,7 +9,7 @@ favorito: false
 portada: "[[buffalo-66.webp]]"
 tags:
   - drama
-  - comedia
+  - comedy
   - romance
 letterboxd: buffalo-66
 ---

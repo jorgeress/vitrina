@@ -7,8 +7,8 @@ nota:
 favorito: false
 portada: "[[dispatch.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
   - casual
   - indie
 horas: 9

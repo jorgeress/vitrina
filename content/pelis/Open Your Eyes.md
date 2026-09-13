@@ -8,9 +8,9 @@ estado: terminado
 favorito: false
 portada: "[[open-your-eyes.webp]]"
 tags:
-  - suspense
+  - thriller
   - drama
-  - ciencia-ficción
+  - science-fiction
 letterboxd: open-your-eyes
 ---
 

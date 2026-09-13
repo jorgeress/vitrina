@@ -7,8 +7,8 @@ nota:
 favorito: false
 portada: "[[moonlighter.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
   - indie
 horas: 26
 appid: 606150

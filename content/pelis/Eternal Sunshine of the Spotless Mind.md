@@ -8,7 +8,7 @@ estado: terminado
 favorito: true
 portada: "[[eternal-sunshine-of-the-spotless-mind.webp]]"
 tags:
-  - ciencia-ficción
+  - science-fiction
   - romance
   - drama
 letterboxd: eternal-sunshine-of-the-spotless-mind

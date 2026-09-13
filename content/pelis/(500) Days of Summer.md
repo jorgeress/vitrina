@@ -9,7 +9,7 @@ favorito: false
 portada: "[[500-days-of-summer.webp]]"
 tags:
   - romance
-  - comedia
+  - comedy
   - drama
 letterboxd: 500-days-of-summer
 ---

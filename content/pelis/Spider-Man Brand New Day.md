@@ -9,9 +9,9 @@ estado: terminado
 favorito: false
 portada: "[[spider-man-brand-new-day.webp]]"
 tags:
-  - ciencia-ficción
-  - acción
-  - aventura
+  - science-fiction
+  - action
+  - adventure
 letterboxd: spider-man-brand-new-day
 ---
 

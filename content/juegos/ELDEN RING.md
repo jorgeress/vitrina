@@ -7,8 +7,8 @@ nota: 10
 favorito: true
 portada: "[[elden-ring.webp]]"
 tags:
-  - acción
-  - rol
+  - action
+  - rpg
 horas: 134
 appid: 1245620
 ---

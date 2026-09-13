@@ -1,4 +1,5 @@
 ---
+title: Middle-earth™ Shadow of War™
 tipo: juego
 seccion: "[[juegos/index|Juegos]]"
 year: 2017
@@ -7,9 +8,9 @@ nota:
 favorito: false
 portada: "[[middle-earthtm-shadow-of-wartm.webp]]"
 tags:
-  - acción
-  - aventura
-  - rol
+  - action
+  - adventure
+  - rpg
 horas: 13
 appid: 356190
 ---

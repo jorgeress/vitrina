@@ -9,8 +9,8 @@ portada: "[[idle-spiral.webp]]"
 tags:
   - casual
   - indie
-  - simuladores
-  - estrategia
+  - simulation
+  - strategy
 horas: 37
 appid: 1827980
 ---

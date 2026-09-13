@@ -7,10 +7,10 @@ nota:
 favorito: false
 portada: "[[lost-ark.webp]]"
 tags:
-  - acción
-  - aventura
-  - multijugador-masivo
-  - rol
+  - action
+  - adventure
+  - massively-multiplayer
+  - rpg
 horas: 26
 appid: 1599340
 ---

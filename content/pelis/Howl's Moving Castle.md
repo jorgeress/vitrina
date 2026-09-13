@@ -8,9 +8,9 @@ estado: terminado
 favorito: false
 portada: "[[howl-s-moving-castle.webp]]"
 tags:
-  - animación
-  - fantasía
-  - aventura
+  - animation
+  - fantasy
+  - adventure
 letterboxd: howls-moving-castle
 ---
 

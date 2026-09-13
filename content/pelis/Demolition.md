@@ -9,7 +9,7 @@ favorito: false
 portada: "[[demolition.webp]]"
 tags:
   - drama
-  - comedia
+  - comedy
 letterboxd: demolition
 ---
 

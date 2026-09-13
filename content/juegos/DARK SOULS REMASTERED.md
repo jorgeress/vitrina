@@ -1,4 +1,5 @@
 ---
+title: DARK SOULS™ REMASTERED
 tipo: juego
 seccion: "[[juegos/index|Juegos]]"
 year: 2018
@@ -7,7 +8,7 @@ nota: 10
 favorito: true
 portada: "[[dark-soulstm-remastered.webp]]"
 tags:
-  - acción
+  - action
 horas: 38
 appid: 570940
 ---

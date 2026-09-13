@@ -586,10 +586,14 @@ Eso lo cierra `scripts/datos.py`, que sabe dónde está cada cosa:
 
 | Sección | Fuente | Qué rellena |
 | --- | --- | --- |
-| Juegos | Ficha de la tienda de Steam | `year`, `autor` (el estudio) y `tags` (los géneros, ya en español) |
+| Juegos | Ficha de la tienda de Steam | `year`, `autor` (el estudio) y `tags` (los géneros) |
 | Películas | Ficha de Letterboxd | `autor`, o sea la dirección, y `tags` |
-| Música | MusicBrainz | `tags`, en inglés y tal como los da |
+| Música | MusicBrainz | `tags`, tal como los da |
 | Libros | Open Library | `tags`, los que reconozca una lista blanca de géneros |
+
+**Los tags salen en inglés de las cuatro**, y así se quedan: a Steam se le pide
+la ficha con `l=english` y las otras tres no saben darlos de otra manera. Está
+contado en [Por qué las etiquetas van en inglés](#por-qué-las-etiquetas-van-en-inglés).
 
 ```bash
 scripts/datos.py                    # rellena solo lo que esté vacío
@@ -655,6 +659,38 @@ le mete un género blando — «classics», «history», «adventure stories»,
 «satire» — empieza a acertar en los libros de género y a fallar en los demás:
 con esos cuatro dentro, `1984` salía de comedia y «El extranjero» de aventuras.
 Si añades uno, las pruebas de `GenerosDeLibro` son el sitio donde comprobarlo.
+
+## Por qué las etiquetas van en inglés
+
+Al principio no iban: los géneros de Steam y los de Letterboxd se traducían al
+castellano con una tabla, para que *Action* y *Acción* cayeran las dos en la
+misma etiqueta, y sólo los discos venían en inglés porque la lista de
+MusicBrainz es abierta y traducirla sería inventar.
+
+Eso dejaba cinco etiquetas con tilde: `acción`, `fantasía`, `ciencia-ficción`,
+`animación` y `filosofía`. Y **una etiqueta con tilde rompe su propia página**.
+De cada etiqueta sale una dirección, y una tilde ahí se ve bien en la barra del
+navegador pero por dentro viaja escapada, `tags/acci%C3%B3n`. El grafo busca la
+página por su nombre, no lo encuentra, y en vez de dibujar lo que lleva esa
+etiqueta dibuja un nodo suelto, sin nada alrededor y rotulado con la dirección
+en crudo. Lo mismo les pasaba a los tres juegos con el símbolo ™ y a *El
+madrileño*.
+
+Así que ahora **los tags van en inglés en las cuatro secciones**, que es como
+los dan las cuatro fuentes: a Steam se le pide la ficha con `l=english` y las
+otras tres no saben decirlos de otra manera. El arreglo trae de propina lo que
+la tabla buscaba: con una sola lengua, el `action` de un juego y el de una
+película son la misma etiqueta sin que nadie traduzca nada. La única tabla que
+queda es la de los libros, porque ahí hay que elegir qué `subject` es un género
+y cuál no, y apunta a ese mismo vocabulario.
+
+**La regla, para lo que venga:** de un nombre de fichero y de una etiqueta sale
+una dirección, así que las dos se quedan en ASCII. Lo garantizan
+`nombre_de_fichero()` y `etiqueta()` en los scripts, y lo vigilan dos pruebas de
+`scripts/pruebas.py` que recorren la vault entera. El título de verdad no se
+pierde: cuando el nombre del fichero no puede ser igual que él, se apunta aparte
+en `title`, que es lo que pinta la web. Por eso la ficha se llama
+`DARK SOULS REMASTERED.md` y la página sigue diciendo *DARK SOULS™ REMASTERED*.
 
 ## De qué va cada cosa
 

@@ -8,9 +8,9 @@ estado: terminado
 favorito: false
 portada: "[[shutter-island.webp]]"
 tags:
-  - misterio
+  - mystery
   - drama
-  - suspense
+  - thriller
 letterboxd: shutter-island
 ---
 

@@ -7,8 +7,8 @@ nota:
 favorito: false
 portada: "[[peak.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
   - indie
 horas: 16
 appid: 3527290

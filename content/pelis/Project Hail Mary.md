@@ -8,9 +8,9 @@ estado: terminado
 favorito: false
 portada: "[[project-hail-mary.webp]]"
 tags:
-  - comedia
-  - ciencia-ficción
-  - aventura
+  - comedy
+  - science-fiction
+  - adventure
 letterboxd: project-hail-mary
 ---
 

@@ -8,9 +8,9 @@ estado: terminado
 favorito: false
 portada: "[[one-cut-of-the-dead.webp]]"
 tags:
-  - comedia
+  - comedy
   - drama
-  - terror
+  - horror
 letterboxd: one-cut-of-the-dead
 ---
 

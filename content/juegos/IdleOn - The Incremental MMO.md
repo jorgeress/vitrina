@@ -7,10 +7,10 @@ nota:
 favorito: false
 portada: "[[idleon-the-incremental-mmo.webp]]"
 tags:
-  - aventura
+  - adventure
   - casual
   - indie
-  - multijugador-masivo
+  - massively-multiplayer
 horas: 34
 appid: 1476970
 ---

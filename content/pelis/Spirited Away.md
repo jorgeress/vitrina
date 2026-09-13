@@ -8,9 +8,9 @@ estado: terminado
 favorito: true
 portada: "[[spirited-away.webp]]"
 tags:
-  - familia
-  - fantasía
-  - animación
+  - family
+  - fantasy
+  - animation
 letterboxd: spirited-away
 ---
 

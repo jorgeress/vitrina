@@ -8,8 +8,8 @@ estado: terminado
 favorito: false
 portada: "[[kill-bill-vol-1.webp]]"
 tags:
-  - crimen
-  - acción
+  - crime
+  - action
 letterboxd: kill-bill-vol-1
 ---
 

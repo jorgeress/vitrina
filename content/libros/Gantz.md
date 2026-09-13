@@ -9,8 +9,8 @@ favorito: false
 portada: "[[gantz.webp]]"
 tags:
   - manga
-  - ciencia-ficción
-  - terror
+  - science-fiction
+  - horror
 coverid: 10489138
 wikipedia: Gantz
 ---

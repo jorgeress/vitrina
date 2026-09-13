@@ -391,9 +391,13 @@ class TextosCitados(unittest.TestCase):
 
 
 class Etiquetas(unittest.TestCase):
-    def test_un_genero_se_vuelve_tag_sin_perder_los_acentos(self):
-        # "accion" al lado de "aventura" canta: son etiquetas que se leen.
-        self.assertEqual(datos.etiqueta("  Acción y Aventura "), "acción-y-aventura")
+    def test_un_genero_se_vuelve_tag_en_ascii(self):
+        # De cada etiqueta sale una pagina, y de la pagina una direccion: con
+        # tilde viaja escapada ("tags/acci%C3%B3n") y el grafo ya no la
+        # encuentra. Con las cuatro fuentes en ingles no deberia llegar ninguna
+        # con acento, pero esta es la ultima puerta antes de escribirla.
+        self.assertEqual(datos.etiqueta("  Science Fiction "), "science-fiction")
+        self.assertEqual(datos.etiqueta("Acción y Aventura"), "accion-y-aventura")
         self.assertEqual(datos.etiqueta(None), "")
 
     def test_sacar_se_queda_con_la_primera_clave_que_traiga_algo(self):
@@ -419,7 +423,7 @@ class GenerosDeLibro(unittest.TestCase):
         subjects = ["Philosophical Novels", "Murder", "Fiction", "French",
                     "Large type books", "Young men", "Death",
                     "Fictional Works [Publication Type]", "Translations into English"]
-        self.assertEqual(datos.generos_de_subjects(subjects), ["filosofía"])
+        self.assertEqual(datos.generos_de_subjects(subjects), ["philosophy"])
 
     def test_lo_que_no_esta_en_la_tabla_no_se_escribe(self):
         # El caso que decide el diseño: antes de dejarla asi, "adventure
@@ -435,12 +439,12 @@ class GenerosDeLibro(unittest.TestCase):
         # declara `horror`: declara "Fiction, Horror", y buscando la cadena
         # entera se tiraba entera. Open Library las escribe de las dos formas,
         # con comas y con barras, y las dos tienen que valer.
-        self.assertEqual(datos.generos_de_subjects(["Fiction, Horror"]), ["terror"])
+        self.assertEqual(datos.generos_de_subjects(["Fiction, Horror"]), ["horror"])
         self.assertEqual(
             datos.generos_de_subjects(["Fiction / Science Fiction / Hard Science Fiction"]),
-            ["ciencia-ficción"])
+            ["science-fiction"])
         self.assertEqual(datos.generos_de_subjects(["Fiction, Mystery & Detective, General"]),
-                         ["misterio"])
+                         ["mystery"])
 
     def test_un_subject_suelto_no_se_parte_aunque_lleve_coma(self):
         # El guardarrail de lo de arriba. `1984` trae "fantasy" por su cuenta,
@@ -454,17 +458,28 @@ class GenerosDeLibro(unittest.TestCase):
         # Casi todo libro de ciencia-ficcion trae varios de estos a la vez.
         self.assertEqual(
             datos.generos_de_subjects(["Science Fiction", "sci-fi", "science-fiction"]),
-            ["ciencia-ficción"])
+            ["science-fiction"])
+
+    # Los diecinueve generos de Letterboxd, que son lista cerrada y vienen en
+    # ingles. Estan aqui y no en el script porque el script ya no los traduce:
+    # los escribe tal cual. Son el vocabulario al que tiene que apuntar la tabla
+    # de los libros.
+    GENEROS_DEL_CINE = {
+        "action", "adventure", "animation", "comedy", "crime", "documentary",
+        "drama", "family", "fantasy", "history", "horror", "music", "mystery",
+        "romance", "science-fiction", "thriller", "tv-movie", "war", "western",
+    }
 
     def test_los_tags_caen_donde_los_de_las_pelis_y_los_juegos(self):
         # De esto vive una pagina de etiqueta: si un libro de terror pusiera
         # `horror` y una peli `terror`, serian dos paginas con una obra cada
-        # una en vez de una con las dos.
+        # una en vez de una con las dos. Con las cuatro fuentes en ingles se
+        # juntan solas, y lo unico que hay que vigilar es esta tabla, que es la
+        # unica que sigue eligiendo el nombre del tag.
         destinos = set(datos.GENEROS_OPENLIBRARY.values())
-        conocidos = set(datos.GENEROS_LETTERBOXD.values())
         # Los que no comparte con las pelis son los que el cine no tiene.
-        self.assertEqual(sorted(destinos - conocidos),
-                         ["biografía", "filosofía", "poesía"])
+        self.assertEqual(sorted(destinos - self.GENEROS_DEL_CINE),
+                         ["biography", "philosophy", "poetry"])
 
     def test_un_libro_sin_coverid_no_pregunta_por_titulo(self):
         # La raya del script: sin el id no hay obra, y buscar "Noches blancas"
@@ -534,6 +549,55 @@ class Coherencia(unittest.TestCase):
                     continue
                 self.assertIn(estado, m.ESTADOS,
                               f"{ficha.name} dice estado: {estado}")
+
+    def test_ningun_nombre_de_fichero_se_sale_del_ascii(self):
+        # Del nombre del fichero sale la direccion de su pagina, y una tilde o
+        # un simbolo ahi viaja escapado: "juegos/dark-souls%E2%84%A2-remastered".
+        # El grafo busca la pagina por su nombre, no lo encuentra y la dibuja
+        # como un nodo suelto, sin etiquetas y rotulada con la direccion en
+        # crudo. Paso de verdad con los tres juegos que llevaban el simbolo de
+        # marca registrada y con "El madrileño", y no se ve hasta que abres esa
+        # pagina: el titulo de verdad se apunta en `title` y ahi no se nota.
+        for carpeta in list(m.SECCIONES) + ["autores"]:
+            for ficha in (m.RAIZ / "content" / carpeta).glob("*.md"):
+                self.assertTrue(ficha.stem.isascii(),
+                                f"{ficha.name} lleva algo que no es ASCII en el nombre")
+
+    def test_ninguna_etiqueta_se_sale_del_ascii(self):
+        # Lo mismo, que de cada etiqueta sale tambien una pagina: `acción` daba
+        # "tags/acci%C3%B3n" y su grafo salia vacio. Por eso los tags van todos
+        # en ingles, que ademas es lo que junta las cuatro secciones en la misma
+        # etiqueta: `action` es la de los juegos y la de las pelis.
+        for carpeta in m.SECCIONES:
+            for ficha in (m.RAIZ / "content" / carpeta).glob("*.md"):
+                for tag in m.frontmatter(ficha.read_text(encoding="utf-8")).get("tags") or []:
+                    self.assertTrue(tag.isascii(),
+                                    f"{ficha.name} lleva la etiqueta {tag}")
+
+    def test_un_titulo_con_simbolo_o_tilde_da_un_nombre_de_fichero_ascii(self):
+        # Y el simbolo se quita antes de pasar a ASCII: al descomponerlo, "™"
+        # se convierte en "TM" y el fichero acababa siendo "DARK SOULSTM".
+        self.assertEqual(m.nombre_de_fichero("DARK SOULS™ REMASTERED"),
+                         "DARK SOULS REMASTERED")
+        self.assertEqual(m.nombre_de_fichero("El madrileño"), "El madrileno")
+        self.assertEqual(m.nombre_de_fichero("Idle Slayer – Incremental RPG"),
+                         "Idle Slayer - Incremental RPG")
+
+    def test_una_ficha_renombrada_conserva_su_titulo(self):
+        # El nombre de fichero pierde el simbolo, pero la ficha no: lo guarda en
+        # `title`, que es lo que pinta la web y lo que leen los scripts.
+        ficha = m.RAIZ / "content" / "juegos" / "DARK SOULS REMASTERED.md"
+        campos = m.frontmatter(ficha.read_text(encoding="utf-8"))
+        self.assertEqual(campos.get("title"), "DARK SOULS™ REMASTERED")
+
+    def test_los_generos_de_las_cuatro_fuentes_hablan_la_misma_lengua(self):
+        # Una etiqueta solo sirve si junta cosas, y para eso los cuatro sitios
+        # de donde salen tienen que escribirla igual. Si un dia alguien vuelve a
+        # traducir una tabla, esto lo dice.
+        self.assertEqual(datos.etiqueta("Science Fiction"), "science-fiction")
+        self.assertIn("science-fiction", datos.GENEROS_OPENLIBRARY.values())
+        for tag in datos.GENEROS_OPENLIBRARY.values():
+            self.assertTrue(tag.isascii(), f"la tabla de libros da {tag}")
 
     def test_cada_ficha_cuelga_de_su_seccion(self):
         # El campo `seccion` es lo unico que une una ficha con su galeria: la

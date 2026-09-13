@@ -18,8 +18,17 @@ Como todo lo demas de Vitrina, no pide clave ni registro.
 
   juegos  Steam, ficha de la tienda: year, autor y tags
   pelis   Letterboxd: autor (la direccion) y tags
-  musica  MusicBrainz: tags, en ingles y tal como los da
+  musica  MusicBrainz: tags, tal como los da
   libros  Open Library: tags, los que reconoce una lista blanca de generos
+
+**Los tags van todos en ingles**, en las cuatro secciones, y vienen ya asi de
+las cuatro fuentes: a Steam se le pide la ficha con `l=english` y las otras tres
+no saben decirlos de otra manera. Antes los juegos y las peliculas se traducian
+al castellano con una tabla, y eso dejaba etiquetas con tilde (`acción`,
+`fantasía`, `ciencia-ficción`) que rompian su propia pagina: de cada etiqueta
+sale una direccion, con tilde viaja escapada y el grafo ya no la encuentra.
+Ademas de arreglarlo, que sea una sola lengua junta las cuatro secciones en la
+misma etiqueta, que es de lo que sirve una etiqueta.
 
 Uso:
   scripts/datos.py                    rellena los campos vacios
@@ -36,8 +45,8 @@ import time
 from pathlib import Path
 
 from vitrina import (SECCIONES, VAULT, articulo_html, articulos_ingleses,
-                       asegurar_letterboxd, escribir_campos, ficha_letterboxd,
-                       frontmatter, pedir, vacio)
+                       ascii_plano, asegurar_letterboxd, escribir_campos,
+                       ficha_letterboxd, frontmatter, pedir, vacio)
 
 # La tienda de Steam corta sobre las 200 peticiones cada cinco minutos. Con una
 # biblioteca normal no se llega, pero se va sin prisa por si acaso.
@@ -47,12 +56,15 @@ MAX_TAGS = 4  # los generos de Steam vienen del mas general al mas concreto
 
 
 def etiqueta(texto):
-    """Un genero tal cual viene -> un tag: en minuscula y sin espacios.
+    """Un genero tal cual viene -> un tag: en minuscula, sin espacios y en ASCII.
 
-    Se dejan los acentos. Son etiquetas que se leen en la ficha y en la pagina
-    de tags, y "accion" al lado de "aventura" canta.
+    En ASCII porque de cada etiqueta sale una pagina, y de la pagina una
+    direccion: con tilde viaja escapada ("tags/acci%C3%B3n") y el grafo ya no
+    encuentra esa pagina por su nombre. Con las fuentes en ingles no deberia
+    aparecer ninguna, pero esto es lo ultimo que toca el texto antes de
+    escribirlo, asi que es donde se garantiza.
     """
-    return re.sub(r"\s+", "-", (texto or "").strip().lower())
+    return re.sub(r"\s+", "-", ascii_plano(texto).strip().lower())
 
 
 # --- fuentes -----------------------------------------------------------------
@@ -65,7 +77,7 @@ def datos_juego(titulo, campos, md):
         return {}, "la ficha no tiene appid; se pone a mano"
 
     respuesta = pedir("https://store.steampowered.com/api/appdetails"
-                      f"?appids={appid}&l=spanish&cc=es") or {}
+                      f"?appids={appid}&l=english&cc=es") or {}
     entrada = respuesta.get(str(appid)) or {}
     if not entrada.get("success"):
         # Pasa con lo retirado de la tienda y con lo que ya no es una app suya.
@@ -84,7 +96,9 @@ def datos_juego(titulo, campos, md):
     estudios = datos.get("developers") or datos.get("publishers") or []
     if estudios:
         valores["autor"] = ", ".join(estudios[:2])
-    # Los generos vienen ya en español, porque la ficha se pide con l=spanish.
+    # Los generos vienen ya en ingles, porque la ficha se pide con l=english.
+    # De aqui solo salen los generos y el año; el texto de "De que va" lo pide
+    # textos.py aparte, y ese si en español, que es lo que se lee en la ficha.
     generos = [etiqueta(g.get("description")) for g in datos.get("genres") or []]
     generos = [g for g in generos if g][:MAX_TAGS]
     if generos:
@@ -97,32 +111,10 @@ DIRECCION_RE = re.compile(r"<th[^>]*>\s*Directed by\s*</th>\s*<td[^>]*>(.*?)</td
                           re.S | re.I)
 
 
-# Los diecinueve generos de Letterboxd, que son lista cerrada, al castellano.
-# Una tabla y no una traduccion al vuelo: asi "Action" y el genero de Steam
-# caen los dos en `acción` y la pagina de esa etiqueta junta las peliculas con
-# los juegos, que es de lo que sirve una etiqueta. Lo que no este aqui se
-# escribe tal cual y se nota, que es mejor que inventarselo.
-GENEROS_LETTERBOXD = {
-    "action": "acción",
-    "adventure": "aventura",
-    "animation": "animación",
-    "comedy": "comedia",
-    "crime": "crimen",
-    "documentary": "documental",
-    "drama": "drama",
-    "family": "familia",
-    "fantasy": "fantasía",
-    "history": "historia",
-    "horror": "terror",
-    "music": "música",
-    "mystery": "misterio",
-    "romance": "romance",
-    "science fiction": "ciencia-ficción",
-    "thriller": "suspense",
-    "tv movie": "película-de-tv",
-    "war": "guerra",
-    "western": "western",
-}
+# Letterboxd da sus diecinueve generos en ingles y asi se quedan: "Science
+# Fiction" -> `science-fiction`. Antes habia aqui una tabla al castellano para
+# que "Action" y el genero de Steam cayeran los dos en `acción`; ahora caen los
+# dos en `action` solos, porque Steam tambien se pide en ingles.
 
 
 def datos_peli(titulo, campos, md):
@@ -145,8 +137,7 @@ def datos_peli(titulo, campos, md):
         direccion = ficha.get("direccion")
         if direccion:
             valores["autor"] = ", ".join(direccion[:2])
-        generos = [etiqueta(GENEROS_LETTERBOXD.get(g.strip().lower(), g))
-                   for g in ficha.get("generos") or []]
+        generos = [etiqueta(g) for g in ficha.get("generos") or []]
         generos = [g for g in generos if g][:MAX_TAGS]
         if generos:
             valores["tags"] = generos
@@ -176,12 +167,12 @@ def datos_album(titulo, campos, md):
     Rainbows trae diecisiete, de `alternative rock` a `krautrock`. Se cortan
     por MAX_TAGS, que deja los mas votados, que son los que describen el disco.
 
-    **Van en ingles, tal como los da MusicBrainz.** Es lo unico del sitio que
-    no esta en castellano, y es a proposito: los generos de Steam y los de
-    Letterboxd salen de listas cerradas que se pueden traducir de una vez, y el
-    de MusicBrainz es abierto y de miles de entradas. Traducir sobre la marcha
-    seria adivinar, y con los generos musicales encima se discute: `emo` o
-    `pop punk` no tienen version castellana que nadie use.
+    Van tal como los da MusicBrainz, que es en ingles, igual que los de las
+    otras tres secciones. Aqui ademas no habria otra: su lista es abierta y de
+    miles de entradas, asi que traducir seria adivinar, y con los generos
+    musicales encima se discute, que `emo` o `pop punk` no tienen version
+    castellana que nadie use. Lo que antes era la excepcion de musica es ahora
+    la regla de las cuatro.
     """
     del titulo  # manda el mbid, que identifica el disco sin dudas
     mbid = campos.get("mbid")
@@ -233,38 +224,38 @@ def datos_album(titulo, campos, md):
 # los libros de genero y a fallar en los demas: con esos cuatro dentro, `1984`
 # salia de comedia y `El extranjero` de aventuras.
 GENEROS_OPENLIBRARY = {
-    "science fiction": "ciencia-ficción",
-    "science-fiction": "ciencia-ficción",
-    "sci-fi": "ciencia-ficción",
-    "hard science-fiction": "ciencia-ficción",
-    "ciencia-ficción": "ciencia-ficción",
-    "fantasy fiction": "fantasía",
-    "epic fiction": "fantasía",
-    "horror": "terror",
-    "horror fiction": "terror",
-    "thrillers": "suspense",
-    "suspense": "suspense",
-    "mystery": "misterio",
-    "mystery fiction": "misterio",
-    "detective and mystery stories": "misterio",
+    "science fiction": "science-fiction",
+    "science-fiction": "science-fiction",
+    "sci-fi": "science-fiction",
+    "hard science-fiction": "science-fiction",
+    "fantasy fiction": "fantasy",
+    "epic fiction": "fantasy",
+    "horror": "horror",
+    "horror fiction": "horror",
+    "thrillers": "thriller",
+    "suspense": "thriller",
+    "mystery": "mystery",
+    "mystery fiction": "mystery",
+    "detective and mystery stories": "mystery",
     # Los tramos de BISAC, que no aparecen sueltos sino dentro de la cabecera:
     # "Fiction / Mystery & Detective / General".
-    "mystery & detective": "misterio",
-    "war & military": "guerra",
-    "american science fiction": "ciencia-ficción",
-    "american fantasy fiction": "fantasía",
-    "crime": "crimen",
+    "mystery & detective": "mystery",
+    "war & military": "war",
+    "american science fiction": "science-fiction",
+    "american fantasy fiction": "fantasy",
+    "crime": "crime",
     "love stories": "romance",
     "romance": "romance",
-    "historical fiction": "historia",
-    "war stories": "guerra",
+    "historical fiction": "history",
+    "war stories": "war",
     # Los dos unicos "blandos" que sobreviven, y por medido: son los que dejan
     # etiquetado a Camus sin tocar ninguno de los otros trece libros de prueba.
-    "philosophical novels": "filosofía",
-    "philosophical fiction": "filosofía",
-    "biography": "biografía",
-    "poetry": "poesía",
+    "philosophical novels": "philosophy",
+    "philosophical fiction": "philosophy",
+    "biography": "biography",
+    "poetry": "poetry",
 }
+
 
 
 # Una cabecera de BISAC, que es el vocabulario con el que las editoriales

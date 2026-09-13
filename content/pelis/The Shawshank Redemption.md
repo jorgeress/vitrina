@@ -8,7 +8,7 @@ estado: terminado
 favorito: false
 portada: "[[the-shawshank-redemption.webp]]"
 tags:
-  - crimen
+  - crime
   - drama
 letterboxd: the-shawshank-redemption
 ---

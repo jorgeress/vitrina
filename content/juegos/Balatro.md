@@ -9,7 +9,7 @@ portada: "[[balatro.webp]]"
 tags:
   - casual
   - indie
-  - estrategia
+  - strategy
 horas: 77
 appid: 2379780
 ---

@@ -9,8 +9,8 @@ favorito: false
 portada: "[[mulholland-drive.webp]]"
 tags:
   - drama
-  - misterio
-  - suspense
+  - mystery
+  - thriller
 letterboxd: mulholland-drive
 ---
 

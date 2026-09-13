@@ -7,10 +7,10 @@ nota:
 favorito: false
 portada: "[[undermine-2.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
   - indie
-  - rol
+  - rpg
 horas: 47
 appid: 1869780
 ---

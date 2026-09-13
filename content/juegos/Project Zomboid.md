@@ -8,9 +8,9 @@ favorito: false
 portada: "[[project-zomboid.webp]]"
 tags:
   - indie
-  - rol
-  - simuladores
-  - acceso-anticipado
+  - rpg
+  - simulation
+  - early-access
 horas: 9
 appid: 108600
 ---

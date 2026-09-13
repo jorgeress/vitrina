@@ -1,4 +1,5 @@
 ---
+title: El madrileño
 tipo: album
 seccion: "[[musica/index|Música]]"
 year: 2021

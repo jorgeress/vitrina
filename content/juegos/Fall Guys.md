@@ -7,10 +7,10 @@ nota:
 favorito: false
 portada: "[[fall-guys.webp]]"
 tags:
-  - acción
+  - action
   - casual
   - indie
-  - multijugador-masivo
+  - massively-multiplayer
 horas: 22
 appid: 1097150
 ---

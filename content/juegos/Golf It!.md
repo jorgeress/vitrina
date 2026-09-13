@@ -9,8 +9,8 @@ portada: "[[golf-it.webp]]"
 tags:
   - casual
   - indie
-  - simuladores
-  - deportes
+  - simulation
+  - sports
 horas: 21
 appid: 571740
 ---

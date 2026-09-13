@@ -7,10 +7,10 @@ nota:
 favorito: false
 portada: "[[tmodloader.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
   - indie
-  - rol
+  - rpg
 horas: 184
 appid: 1281930
 ---

@@ -7,10 +7,10 @@ nota:
 favorito: false
 portada: "[[brotato.webp]]"
 tags:
-  - acción
+  - action
   - casual
   - indie
-  - rol
+  - rpg
 horas: 38
 appid: 1942280
 ---

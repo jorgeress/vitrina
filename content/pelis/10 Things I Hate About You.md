@@ -8,7 +8,7 @@ estado: terminado
 favorito: false
 portada: "[[10-things-i-hate-about-you.webp]]"
 tags:
-  - comedia
+  - comedy
   - drama
   - romance
 letterboxd: 10-things-i-hate-about-you

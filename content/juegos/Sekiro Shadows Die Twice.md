@@ -1,4 +1,5 @@
 ---
+title: Sekiro™ Shadows Die Twice
 tipo: juego
 seccion: "[[juegos/index|Juegos]]"
 year: 2019
@@ -7,8 +8,8 @@ nota: 10
 favorito: true
 portada: "[[sekirotm-shadows-die-twice.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
 horas: 68
 appid: 814380
 ---

@@ -7,8 +7,8 @@ nota:
 favorito: false
 portada: "[[hollow-knight-silksong.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
   - indie
 horas: 56
 appid: 1030300

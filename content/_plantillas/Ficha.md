@@ -32,10 +32,13 @@ Campos:
 - `favoritas`: solo en discos. Cuántas canciones tuyas hay en él. Sale en la
   ficha como «Canciones tuyas»; los nombres van en el cuerpo.
 - `portada`: enlace a una imagen de `assets/portadas/`, entre corchetes.
-- `tags`: géneros o etiquetas libres, en minúscula y sin espacios. Los mangas
-  van aquí, con la etiqueta `manga`, y no en una sección aparte. Los rellena
-  `datos.py` salvo en libros: juegos y películas en castellano, discos en
-  inglés, que es como los da MusicBrainz.
+- `tags`: géneros o etiquetas libres, **en inglés**, en minúscula, sin espacios
+  y sin tildes ni símbolos. Los rellena `datos.py` con lo que digan Steam,
+  Letterboxd, MusicBrainz y Open Library, que ya los dan así. En inglés porque
+  de cada etiqueta sale una página: con tilde, su dirección viaja escapada
+  (`tags/acci%C3%B3n`) y el grafo deja de encontrarla; y porque una sola lengua
+  junta las cuatro secciones en la misma etiqueta. Los mangas van aquí, con la
+  etiqueta `manga`, y no en una sección aparte.
 - El identificador de la fuente, que lo pone el script y no se toca: `appid`
   (Steam), `letterboxd`, `mbid` (MusicBrainz) o `coverid` (Open Library). La
   ficha los usa para enlazar a la fuente al pie de sus datos.

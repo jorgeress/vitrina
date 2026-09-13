@@ -7,8 +7,8 @@ nota: 10
 favorito: true
 portada: "[[warframe.webp]]"
 tags:
-  - acción
-  - rol
+  - action
+  - rpg
   - free-to-play
 horas: 16
 appid: 230410

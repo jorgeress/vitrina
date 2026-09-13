@@ -9,7 +9,7 @@ favorito: false
 portada: "[[innocent.webp]]"
 tags:
   - manga
-  - historia
+  - history
   - drama
 coverid: 13481112
 wikipedia: Innocent (manga)

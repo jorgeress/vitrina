@@ -7,10 +7,10 @@ nota:
 favorito: false
 portada: "[[lethal-company.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
   - indie
-  - acceso-anticipado
+  - early-access
 horas: 48
 appid: 1966720
 ---

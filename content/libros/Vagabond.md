@@ -9,7 +9,7 @@ favorito: false
 portada: "[[vagabond.webp]]"
 tags:
   - manga
-  - historia
+  - history
 coverid: 8432432
 wikipedia: Vagabond (manga)
 ---

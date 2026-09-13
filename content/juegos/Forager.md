@@ -7,10 +7,10 @@ nota:
 favorito: false
 portada: "[[forager.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
   - indie
-  - simuladores
+  - simulation
 horas: 30
 appid: 751780
 ---

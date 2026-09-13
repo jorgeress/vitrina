@@ -9,7 +9,7 @@ favorito: false
 portada: "[[blame.webp]]"
 tags:
   - manga
-  - ciencia-ficción
+  - science-fiction
 coverid: 874491
 wikipedia: Blame!
 ---

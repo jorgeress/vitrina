@@ -8,7 +8,7 @@ estado: terminado
 favorito: true
 portada: "[[100-meters.webp]]"
 tags:
-  - animación
+  - animation
   - drama
 letterboxd: 100-meters-2025
 ---

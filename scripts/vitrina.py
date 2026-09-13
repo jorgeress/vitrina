@@ -137,9 +137,38 @@ def normal(s):
                   .encode("ascii", "ignore").decode().lower())
 
 
+# Simbolos que no son letras y no aportan nada a un nombre de fichero. Se
+# cambian antes de pasar a ASCII porque si no, "™" no desaparece: al
+# descomponerlo sale "TM", y "DARK SOULS™ REMASTERED" acababa siendo
+# "DARK SOULSTM REMASTERED".
+SIMBOLOS = str.maketrans({"™": "", "®": "", "©": "", "–": "-", "—": "-",
+                          "’": "'", "‘": "'", "“": '"', "”": '"', "…": "..."})
+
+
+def ascii_plano(texto):
+    """El mismo texto sin acentos ni simbolos raros: solo ASCII."""
+    return (unicodedata.normalize("NFKD", (texto or "").translate(SIMBOLOS))
+            .encode("ascii", "ignore").decode())
+
+
 def nombre_de_fichero(titulo):
-    """El titulo tal cual, sin lo que no admite un nombre de fichero."""
-    limpio = re.sub(r'[/\\:*?"<>|]', " ", titulo)
+    """El titulo, sin lo que no admiten un nombre de fichero y una direccion.
+
+    De aqui sale el nombre del fichero, y del nombre del fichero sale la
+    direccion de su pagina, asi que **tiene que quedar en ASCII**. Una tilde o
+    un simbolo en la direccion se ve bien en la barra del navegador, pero por
+    dentro viaja escapado ("dark-souls%E2%84%A2-remastered"), y ahi es donde se
+    rompen las cosas: el grafo busca la pagina por su nombre, no lo encuentra y
+    la dibuja como un nodo suelto, sin etiquetas y rotulado con la direccion en
+    crudo. Paso con los tres juegos que llevan el simbolo de marca registrada,
+    con "El madrileño" y con las cinco etiquetas que tenian tilde.
+
+    El titulo de verdad no se pierde: cuando el nombre de fichero no es igual
+    que el, `escribir_ficha` lo apunta aparte en `title`, que es de donde lo
+    sacan la web y los scripts. Es lo mismo que ya pasaba con los dos puntos de
+    "Spider-Man: Brand New Day".
+    """
+    limpio = re.sub(r'[/\\:*?"<>|]', " ", ascii_plano(titulo))
     return re.sub(r"\s+", " ", limpio).strip(" .") or "sin titulo"
 
 

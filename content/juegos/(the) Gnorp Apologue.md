@@ -9,8 +9,8 @@ portada: "[[the-gnorp-apologue.webp]]"
 tags:
   - casual
   - indie
-  - simuladores
-  - estrategia
+  - simulation
+  - strategy
 horas: 25
 appid: 1473350
 ---

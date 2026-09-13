@@ -7,7 +7,7 @@ nota:
 favorito: false
 portada: "[[marvel-rivals.webp]]"
 tags:
-  - acción
+  - action
   - free-to-play
 horas: 53
 appid: 2767030

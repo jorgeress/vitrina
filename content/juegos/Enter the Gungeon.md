@@ -7,8 +7,8 @@ nota:
 favorito: false
 portada: "[[enter-the-gungeon.webp]]"
 tags:
-  - acción
-  - aventura
+  - action
+  - adventure
   - indie
 horas: 10
 appid: 311690

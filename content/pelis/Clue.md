@@ -8,9 +8,9 @@ estado: terminado
 favorito: false
 portada: "[[clue.webp]]"
 tags:
-  - crimen
-  - comedia
-  - misterio
+  - crime
+  - comedy
+  - mystery
 letterboxd: clue
 ---
 
