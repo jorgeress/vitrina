@@ -219,3 +219,150 @@ a.nav-file-title[href$="favoritos"] {
 body[data-slug="favoritos"] .article-title {
   color: var(--dorado);
 }
+
+// --- La imagen de la casa ---------------------------------------------------
+
+// El rotulo "Vitrina", en la barra y en la portada.
+//
+// Capitales espaciadas en la letra de los titulares, que es Cinzel: una capital
+// romana, la de las salas de museo. Con el espaciado la palabra deja de leerse
+// como una etiqueta y pasa a leerse como el nombre grabado de la coleccion, que
+// es lo que hay que ver al entrar.
+.page-title a,
+body[data-slug="index"] .article-title {
+  font-family: var(--headerFont);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.page-title a {
+  font-size: 1rem;
+}
+
+body[data-slug="index"] .article-title {
+  font-size: clamp(1.9rem, 6vw, 3rem);
+  text-align: center;
+  // El espaciado se come el centrado: la ultima letra deja su hueco a la
+  // derecha y la palabra queda medio paso a la izquierda. Se devuelve.
+  text-indent: 0.22em;
+}
+
+// Un resplandor muy bajo, solo en oscuro: la letra parece iluminada desde
+// dentro de la caja. En claro no hace falta y encima ensucia el trazo.
+:root[saved-theme="dark"] {
+  .page-title a,
+  body[data-slug="index"] .article-title {
+    text-shadow: 0 0 24px rgb(236 231 221 / 22%);
+  }
+}
+
+// La portada: la frase centrada bajo el titulo, y las secciones como renglones
+// de un indice en vez de una lista con viñetas. Lo que las separa es una linea
+// fina, no un punto, y al pasar por encima el renglon se abre un paso hacia
+// dentro y enseña su flecha.
+body[data-slug="index"] article {
+  > p:first-of-type {
+    max-width: 34rem;
+    margin: 0 auto;
+    text-align: center;
+    color: var(--darkgray);
+  }
+
+  ul {
+    list-style: none;
+    margin: 2.2rem 0 0;
+    padding: 0;
+  }
+
+  li {
+    margin: 0;
+
+    &:first-child a {
+      border-top: 1px solid var(--lightgray);
+    }
+  }
+
+  li a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.85rem 0.25rem;
+    border-bottom: 1px solid var(--lightgray);
+    background-color: transparent;
+    font-family: var(--headerFont);
+    font-size: 1.05rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dark);
+    transition:
+      padding 0.15s ease,
+      color 0.15s ease;
+
+    // La flecha al extremo derecho, y la estrella de Lo mejor de lo mejor
+    // pegada a su nombre: con `space-between` los tres trozos se repartian el
+    // renglon y ese rotulo salia centrado y los otros cinco a la izquierda.
+    &::after {
+      content: "→";
+      margin-left: auto;
+      color: var(--lightgray);
+      transition: color 0.15s ease;
+    }
+
+    &:hover {
+      padding-left: 0.9rem;
+      color: var(--secondary);
+
+      &::after {
+        color: var(--secondary);
+      }
+    }
+  }
+
+  // El dorado de esa pagina, que si no lo pisa el color de los renglones: como
+  // selector, "cualquier enlace a favoritos" es mas flojo que "un enlace de la
+  // lista de la portada".
+  li a[data-slug="favoritos"] {
+    color: var(--dorado);
+
+    &:hover {
+      color: var(--dorado);
+
+      &::after {
+        color: var(--dorado);
+      }
+    }
+  }
+
+  // Creditos, en su sitio: fuera de la lista, al pie y en gris pequeño. No es
+  // una seccion de la coleccion, es la letra pequeña de la casa.
+  > p:last-of-type {
+    margin-top: 2.6rem;
+    text-align: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+
+    a {
+      color: var(--gray);
+      background-color: transparent;
+
+      &:hover {
+        color: var(--secondary);
+      }
+    }
+  }
+}
+
+// En Lo mejor de lo mejor todas las piezas son favoritas, asi que la reja
+// entera va en dorado: es la unica galeria donde el color no señala una tarjeta
+// frente a las demas, sino de que pagina es.
+body[data-slug="favoritos"] .bases-card {
+  border-color: color-mix(in srgb, var(--dorado) 45%, transparent);
+
+  &:hover {
+    border-color: var(--dorado);
+    box-shadow: 0 6px 18px rgb(160 123 18 / 18%);
+  }
+}

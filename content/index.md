@@ -10,5 +10,6 @@ crítica: son notas para acordarme de por qué algo me gustó.
 - [[libros/index|Libros]]
 - [[musica/index|Música]]
 - [[autores/index|Autores]]
+- [[Favoritos|Lo mejor de lo mejor]]
 
-[[Favoritos|Lo mejor de lo mejor]] · [[creditos|Créditos]]
+[[creditos|Créditos]]

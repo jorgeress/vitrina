@@ -280,6 +280,25 @@ const Ficha = () => {
     ])
   }
 
+  // El sitio abre en oscuro salvo que ya hayas elegido claro.
+  //
+  // El boton de la barra guarda tu eleccion en `theme`; el script de Quartz, si
+  // no hay ninguna, va a preguntarle al sistema, asi que a quien tenga el
+  // portatil en claro le abria en claro. La coleccion esta pensada al reves:
+  // es una vitrina a oscuras con las piezas iluminadas, y en claro las
+  // caratulas pierden la mitad de la gracia. Asi que cuando no hay eleccion se
+  // apunta la nuestra, y el boton sigue mandando en cuanto la toques.
+  //
+  // Esto va en `beforeDOMLoaded`, que se sirve en la cabecera y corre antes de
+  // que se pinte nada: el atributo se corrige en el mismo tic aunque el script
+  // del boton haya llegado antes, asi que no hay parpadeo.
+  Ficha.beforeDOMLoaded = `
+if (!localStorage.getItem("theme")) {
+  localStorage.setItem("theme", "dark")
+  document.documentElement.setAttribute("saved-theme", "dark")
+}
+`
+
   Ficha.css = `
 /* El grafo de la portada, en grande y con la vista pequeña de la barra fuera:
    dibujan lo mismo, y ahi al lado no cabe nada que se lea.
@@ -301,7 +320,7 @@ body[data-slug="index"] .sidebar .graph {
 }
 .ficha-portada {
   flex: 0 0 auto;
-  width: 150px;
+  width: 185px;
   max-width: 40%;
   border-radius: 5px;
   border: 1px solid var(--lightgray);
