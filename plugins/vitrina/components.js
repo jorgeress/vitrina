@@ -299,6 +299,38 @@ if (!localStorage.getItem("theme")) {
 }
 `
 
+  // El grafo, cuando la direccion lleva un simbolo o un acento.
+  //
+  // Al cargar una pagina de golpe, el grafo se pregunta cual es mirando
+  // `location.pathname`, y el navegador lo entrega escapado: Dark Souls llega
+  // como "juegos/dark-souls%E2%84%A2-remastered". Ese nombre no esta en el
+  // indice, pero el grafo lo dibuja igual porque la pagina actual siempre entra
+  // en el grafo, asi que salia un nodo suelto, sin etiquetas y rotulado con la
+  // direccion en crudo en vez del titulo.
+  //
+  // Pasaba en diez paginas: los tres juegos con el simbolo de marca registrada,
+  // "Idle Slayer" con su raya larga, "El Madrileño" con la eñe, y las cinco
+  // etiquetas con tilde (accion, fantasia, ciencia-ficcion, filosofia,
+  // animacion). Al llegar desde otra pagina del sitio no se veia, porque ahi el
+  // nombre se lo pasa el navegador interno ya en claro.
+  //
+  // El nombre bueno lo lleva siempre el `<body>`, asi que en esas paginas se
+  // vuelve a lanzar el aviso de "pagina nueva" con el que vale. Esto corre
+  // detras del grafo, que se carga antes, y no se toca nada de Quartz.
+  Ficha.afterDOMLoaded = `
+if (decodeURI(location.pathname) !== location.pathname) {
+  const avisar = () => {
+    const slug = document.body?.dataset?.slug
+    if (slug) document.dispatchEvent(new CustomEvent("nav", { detail: { url: slug } }))
+  }
+  // Al terminar de cargar, no antes: los scripts de la pagina se piden todos a
+  // la vez y ninguno sabe cual llega primero, asi que el del grafo puede no
+  // estar escuchando todavia. Cuando salta "load" ya se han ejecutado todos.
+  if (document.readyState === "complete") avisar()
+  else window.addEventListener("load", avisar, { once: true })
+}
+`
+
   Ficha.css = `
 /* El grafo de la portada, en grande y con la vista pequeña de la barra fuera:
    dibujan lo mismo, y ahi al lado no cabe nada que se lea.
