@@ -3,11 +3,12 @@ import { nombresEnTexto, paginasDeAutor } from "./components.js"
 /**
  * Lo que Vitrina necesita de Quartz y Quartz no trae.
  *
- * Son tres cosas sueltas que comparten fichero solo porque un plugin es la
+ * Son cuatro cosas sueltas que comparten fichero solo porque un plugin es la
  * unidad que Quartz sabe cargar, no porque tengan nada que ver:
  *
  *   - Aqui abajo, las cinco paginas `.base` fuera del buscador.
  *   - Tambien aqui, la arista de cada ficha a la pagina de su autor.
+ *   - Y la de Lo mejor de lo mejor a cada uno de sus favoritos.
  *   - En components.js, el componente `Ficha`, que pinta la cabecera de cada
  *     obra: la caratula, los datos y el enlace a la fuente.
  */
@@ -47,6 +48,40 @@ function enlazarAutores(content) {
 }
 
 /**
+ * De Lo mejor de lo mejor a cada favorito, por lo mismo.
+ *
+ * Esa pagina no enlaza a nada: lo que enseña es un `.base` filtrado por
+ * `favorito == true`, y una galeria se pinta al emitir, cuando los enlaces ya
+ * estan contados. Asi que su nodo colgaba de Vitrina y no llevaba a ninguna de
+ * las veintiuna fichas que lista: pinchar en el no enseñaba nada.
+ *
+ * Se le apuntan aqui, y en este sentido a proposito: de la pagina a cada
+ * favorito, como una pagina de autor a sus obras. Al reves, de la ficha a la
+ * pagina como hace el campo `seccion`, el grafo saldria igual --el cliente
+ * recorre las aristas en los dos sentidos-- pero los retroenlaces de Lo mejor
+ * de lo mejor repetirian entera la galeria que ya esta debajo, que es justo lo
+ * que se quito de las secciones. Asi cada favorito gana en cambio una linea que
+ * dice que esta ahi, al lado de la de su autor.
+ *
+ * La pagina se busca por su direccion y no por su titulo, que ya se ha llamado
+ * de dos maneras distintas y el fichero no se ha movido.
+ */
+function enlazarFavoritos(content) {
+  const pagina = content.find(([, vfile]) => vfile.data?.slug === "favoritos")
+  if (!pagina) return
+
+  const favoritos = content
+    .map(([, vfile]) => vfile.data)
+    .filter((data) => data?.frontmatter?.favorito === true)
+    .map((data) => data.slug)
+    .filter((slug) => slug)
+  if (favoritos.length === 0) return
+
+  const data = pagina[1].data
+  data.links = [...new Set([...(data.links ?? []), ...favoritos])]
+}
+
+/**
  * Las cinco paginas `.base` fuera del buscador.
  *
  * `includeEmptyFiles: true` esta puesto a proposito en content-index: una ficha
@@ -80,8 +115,8 @@ function enlazarAutores(content) {
  * se sigue pintando igual: lo unico que cambia es que dejan de salir al buscar.
  *
  * Ese mismo hueco -- fase 1, con todo parseado y antes de que emita nadie -- es
- * el que necesita `enlazarAutores`, y por eso viaja de gorra en este `generate`
- * en vez de tener un pageType para el solo.
+ * el que necesitan `enlazarAutores` y `enlazarFavoritos`, y por eso viajan de
+ * gorra en este `generate` en vez de tener un pageType para ellas.
  */
 const BasesFueraDelIndice = () => ({
   name: "VitrinaBasesFueraDelIndice",
@@ -98,6 +133,7 @@ const BasesFueraDelIndice = () => ({
     // content-index, que es quien vuelca los `links` al fichero que lee el
     // grafo, y esta fase 1 va entera por delante de los emisores.
     enlazarAutores(content)
+    enlazarFavoritos(content)
     return []
   },
   // Nunca se usan, porque `match` no reclama ninguna pagina, pero el

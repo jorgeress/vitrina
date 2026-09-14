@@ -66,7 +66,8 @@ la maquetación siga fuera de las notas. Son tres cosas:
 
 - La **cabecera de cada ficha**, que pinta la carátula, los datos y el enlace a
   la fuente leyendo el `tipo`, la `nota`, el `appid`… de la nota, sin escribir
-  nada en ella. Y el enlace a la página de autor, que tampoco vive en el campo.
+  nada en ella. Y los enlaces que no están escritos en ninguna nota: de cada
+  ficha a su autor, y de *Lo mejor de lo mejor* a cada uno de sus favoritos.
 - El **grafo de la portada**, grande y entero, en vez de la vista pequeña de la
   barra. Y que el sitio abra en oscuro si no has elegido otra cosa.
 - Sacar del buscador las cinco páginas sueltas que Quartz emite por cada
