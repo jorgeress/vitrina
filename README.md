@@ -74,13 +74,11 @@ la maquetación siga fuera de las notas. Son tres cosas:
   `.base`, que eran una copia en blanco de la galería que ya está en el índice
   de su sección.
 
-**`plugins/grafo/` es el grafo de Quartz con una línea cambiada.** El plugin
-pregunta al navegador en qué página estás, y en una sección no acierta: de
-`/juegos/` saca `juegos`, mientras que las fichas cuelgan del nodo `juegos/`,
-que es como queda `juegos/index` al simplificarlo. Como no encontraba ese nodo
-se inventaba uno vacío, y la sección dibujaba un punto suelto sin una sola
-arista. Esto le hace leer el `data-slug` del `body`, que es lo que Quartz lee de
-serie y viene sin escapar.
+**`plugins/grafo/` es el grafo de Quartz con una línea cambiada**, la que decide
+en qué página cree que está: sin ella, una sección dibujaba un punto suelto en
+vez de su rama. Es un envoltorio de veinte líneas y el porqué está escrito
+dentro; si algún día el plugin lo arregla por su cuenta, el `build` avisa y se
+vuelve al de serie.
 
 La otra carpeta grande, `quartz/`, es el generador: no es contenido, es el
 programa. Este repo es un *fork* de Quartz con la vault dentro, que es como se
@@ -155,8 +153,8 @@ Los dos detalles que no son evidentes:
   en las dependencias, y la instalación falla.
 - **`install-plugins` va aparte de `npm ci`.** Los plugins de Quartz se leen de
   `quartz.config.yaml`, no del `package.json`, así que se instalan en un segundo
-  paso. Si el sitio construye pero las galerías salen vacías, es que falta este
-  comando.
+  paso. Si el sitio construye pero las galerías salen vacías o no aparece el
+  grafo, es que falta este comando.
 
 Para editar las notas: en Obsidian, `Abrir carpeta como almacén` apuntando a
 `content/` (a `content/`, no a la raíz del repo). La configuración de la vault
@@ -363,15 +361,12 @@ de género y a fallar en los demás. Si añades uno, las pruebas de
 
 ## Las etiquetas van en inglés, y todo en ASCII
 
-De cada etiqueta sale una página, y de cada página una dirección. **Una tilde
-ahí rompe la página**: se ve bien en la barra del navegador, pero por dentro
-viaja escapada, `tags/acci%C3%B3n`. El grafo busca la página por su nombre, no lo
-encuentra, y en vez de dibujar lo que lleva esa etiqueta dibuja un nodo suelto,
-sin nada alrededor y rotulado con la dirección en crudo.
-
-Pasaba con `acción`, `fantasía`, `ciencia-ficción`, `animación` y `filosofía`,
-que venían de traducir al castellano los géneros de Steam y de Letterboxd. Y les
-pasaba lo mismo a los tres juegos con el símbolo ™ y a *El madrileño*.
+De cada etiqueta sale una página, y de cada página una dirección. **Una tilde ahí
+viaja escapada**: `tags/acción` se lee bien en la barra del navegador, pero por
+dentro es `tags/acci%C3%B3n`, y eso es lo que se copia y se comparte. Pasaba con
+`acción`, `fantasía`, `ciencia-ficción`, `animación` y `filosofía`, que venían de
+traducir al castellano los géneros de Steam y de Letterboxd, y lo mismo con los
+tres juegos del símbolo ™ y con *El madrileño*.
 
 Así que **los tags van en inglés en las cuatro secciones**, que es como los dan
 las cuatro fuentes: a Steam se le pide la ficha con `l=english` y las otras tres
@@ -553,8 +548,9 @@ Tres cosas que conviene saber porque no se deducen del fichero:
   los enlaces normales son grises y no dorados: si todo fuera dorado, no se
   distinguiría.
 - **La portada pinta el grafo entero**, grande y debajo del título, en vez de la
-  vista pequeña de la barra. En las etiquetas y en las secciones el grafo sigue
-  en la barra, al lado, y ahí es donde se ve que una etiqueta cruza secciones.
+  vista pequeña de la barra. En las demás páginas sigue en la barra, al lado, y
+  cada una dibuja lo suyo: una etiqueta, todo lo que la lleva cruzando secciones;
+  una sección, su rama entera; *Lo mejor de lo mejor*, sus favoritos.
 
 ## Qué falta por rellenar
 

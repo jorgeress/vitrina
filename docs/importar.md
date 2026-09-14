@@ -173,8 +173,9 @@ Lo que tampoco trae tu página de juegos es **el año, el estudio ni el género*
 solo el nombre, el `appid` y los minutos. Eso lo cierra un segundo paso,
 `scripts/datos.py`, que consulta la ficha pública de la tienda
 (`store.steampowered.com/api/appdetails`, sin clave) por ese mismo `appid` y
-escribe `year`, `autor` y `tags`. Los géneros vienen ya traducidos, porque la
-ficha se pide con `l=spanish`. Va despacio a propósito, que la tienda corta
+escribe `year`, `autor` y `tags`. Los géneros vienen en inglés, porque la ficha
+se pide con `l=english`: es lo que hace que el `action` de un juego y el de una
+película sean la misma etiqueta. Va despacio a propósito, que la tienda corta
 sobre las 200 peticiones cada cinco minutos.
 
 Los tags no son un adorno: son lo que hace que la página de etiquetas deje de
