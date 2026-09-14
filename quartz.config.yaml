@@ -342,22 +342,31 @@ layout:
         left: []
         right: []
     content: {}
-    # Una galeria y una etiqueta se quedan sin el indice ni los retroenlaces: la
-    # primera lista lo que ya esta debajo y la segunda repite entera la lista de
-    # la pagina. El grafo si se queda, y es lo unico que hay en esa barra: en
-    # una etiqueta dibuja de golpe todo lo que la lleva, cruzando secciones, que
-    # es lo que no cuenta la lista; y en una seccion, la rama entera colgando de
-    # Vitrina. Antes la barra derecha se vaciaba a pelo y se llevaba el grafo
-    # por delante.
+    # Una galeria y una etiqueta se quedan sin el indice ni los retroenlaces: el
+    # primero lista lo que ya esta debajo y los segundos repiten entera la lista
+    # de la pagina, ficha por ficha y debajo de la galeria que ya las enseña.
+    #
+    # El grafo se queda solo en la etiqueta, que es donde dibuja de golpe todo
+    # lo que la lleva cruzando secciones, que es lo que no cuenta la lista. En
+    # una seccion no dibujaba eso ni podia: para saber donde estas le pregunta
+    # la direccion al navegador, y de /pelis/ saca "pelis", mientras que las
+    # fichas cuelgan de "pelis/", que es como queda un index al simplificarlo.
+    # Como ese nodo no aparece por ningun lado, se inventaba uno vacio en el
+    # momento: un punto suelto, sin una sola arista, justo en la pagina donde el
+    # grafo tendria algo que contar. Fuera hasta que use el nodo de verdad.
+    #
+    # Los nombres llevan el paquete delante porque el filtro compara con la
+    # fuente entera, tal cual esta escrita arriba: "backlinks" a secas no quita
+    # nada, y asi es como estas tres listas llevaban sin hacer nada.
     folder:
+      positions:
+        right: []
       exclude:
-        - reader-mode
-        - table-of-contents
-        - backlinks
+        - "@quartz-community/reader-mode"
     tag:
       exclude:
-        - reader-mode
-        - table-of-contents
-        - backlinks
+        - "@quartz-community/reader-mode"
+        - "@quartz-community/table-of-contents"
+        - "@quartz-community/backlinks"
     canvas: {}
     bases: {}
