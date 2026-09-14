@@ -185,7 +185,11 @@ plugins:
     layout:
       position: left
       priority: 50
+  # Envuelto en ./plugins/grafo, que le arregla a que pagina cree que ha
+  # llegado. El paquete sigue siendo este y el porque esta alli.
   - source: "@quartz-community/graph"
+    enabled: false
+  - source: "./plugins/grafo"
     enabled: true
     options:
       # Las etiquetas, como nodos. El tronco lo pone el campo `seccion` de cada
@@ -346,23 +350,22 @@ layout:
     # primero lista lo que ya esta debajo y los segundos repiten entera la lista
     # de la pagina, ficha por ficha y debajo de la galeria que ya las enseña.
     #
-    # El grafo se queda solo en la etiqueta, que es donde dibuja de golpe todo
-    # lo que la lleva cruzando secciones, que es lo que no cuenta la lista. En
-    # una seccion no dibujaba eso ni podia: para saber donde estas le pregunta
-    # la direccion al navegador, y de /pelis/ saca "pelis", mientras que las
-    # fichas cuelgan de "pelis/", que es como queda un index al simplificarlo.
-    # Como ese nodo no aparece por ningun lado, se inventaba uno vacio en el
-    # momento: un punto suelto, sin una sola arista, justo en la pagina donde el
-    # grafo tendria algo que contar. Fuera hasta que use el nodo de verdad.
+    # El grafo si se queda, y es lo unico que hay en esa barra: en una etiqueta
+    # dibuja de golpe todo lo que la lleva, cruzando secciones, que es lo que no
+    # cuenta la lista; y en una seccion, su rama entera colgando de Vitrina.
+    # Esto ultimo solo dibuja algo desde que el grafo va envuelto en
+    # ./plugins/grafo: antes no encontraba el nodo de la seccion y se inventaba
+    # uno vacio, asi que la barra enseñaba un punto suelto sin una sola arista.
     #
     # Los nombres llevan el paquete delante porque el filtro compara con la
     # fuente entera, tal cual esta escrita arriba: "backlinks" a secas no quita
-    # nada, y asi es como estas tres listas llevaban sin hacer nada.
+    # nada, y asi es como estas dos listas llevaban desde el principio, sin
+    # quitar nada de nada.
     folder:
-      positions:
-        right: []
       exclude:
         - "@quartz-community/reader-mode"
+        - "@quartz-community/table-of-contents"
+        - "@quartz-community/backlinks"
     tag:
       exclude:
         - "@quartz-community/reader-mode"

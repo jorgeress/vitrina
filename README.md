@@ -73,6 +73,14 @@ la maquetación siga fuera de las notas. Son tres cosas:
   `.base`, que eran una copia en blanco de la galería que ya está en el índice
   de su sección.
 
+**`plugins/grafo/` es el grafo de Quartz con una línea cambiada.** El plugin
+pregunta al navegador en qué página estás, y en una sección no acierta: de
+`/juegos/` saca `juegos`, mientras que las fichas cuelgan del nodo `juegos/`,
+que es como queda `juegos/index` al simplificarlo. Como no encontraba ese nodo
+se inventaba uno vacío, y la sección dibujaba un punto suelto sin una sola
+arista. Esto le hace leer el `data-slug` del `body`, que es lo que Quartz lee de
+serie y viene sin escapar.
+
 La otra carpeta grande, `quartz/`, es el generador: no es contenido, es el
 programa. Este repo es un *fork* de Quartz con la vault dentro, que es como se
 usa Quartz normalmente.
@@ -116,6 +124,7 @@ scripts/
   pruebas.py        las pruebas de todo lo anterior, sin red
 requirements.txt    Pillow, lo único que los scripts piden fuera de la estándar
 plugins/vitrina/    la cabecera de las fichas, el grafo de la portada y el tema
+plugins/grafo/      el grafo de Quartz, sabiendo en qué página está
 quartz.config.yaml  configuración del sitio: colores, tipografías y plugins
 quartz/             el generador (fork de Quartz). De aquí solo se toca
                     styles/custom.scss, que son los retoques de estilo propios

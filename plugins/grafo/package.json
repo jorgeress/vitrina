@@ -1,0 +1,34 @@
+{
+  "name": "grafo-plugin",
+  "version": "1.0.0",
+  "description": "El grafo de Quartz, pero sabiendo en que pagina esta.",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": {
+      "import": "./components.js"
+    },
+    "./components": {
+      "import": "./components.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./components.js",
+  "quartz": {
+    "name": "grafo",
+    "displayName": "Grafo",
+    "category": "component",
+    "version": "1.0.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 50,
+    "defaultEnabled": true,
+    "components": {
+      "Grafo": {
+        "displayName": "Grafo",
+        "defaultPosition": "right",
+        "defaultPriority": 10
+      }
+    }
+  }
+}
