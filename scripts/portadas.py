@@ -139,8 +139,18 @@ def imagen_infobox(articulo):
     if not m:
         return None
     src = "https:" + m.group(1).split("?")[0].replace("&amp;", "&")
-    # De la miniatura al fichero original, que ya es pequeno de por si.
-    return re.sub(r"/thumb(/.*)/\d+px-[^/]+$", r"\1", src)
+    # De la miniatura al fichero original, que ya es pequeno de por si. Ojo con
+    # el host: Wikimedia sirve las miniaturas desde thumb.wikimedia.org y los
+    # originales desde upload.wikimedia.org, asi que quitar el tramo de
+    # miniatura sin cambiarlo devolvia una pagina de error de 250 KB --que pesa
+    # bastante mas que los 5.000 bytes con los que aqui se da por buena una
+    # imagen-- y Pillow reventaba al intentar abrirla.
+    original = re.sub(r"/thumb(/.*)/\d+px-[^/]+$", r"\1", src).replace(
+        "//thumb.wikimedia.org/", "//upload.wikimedia.org/")
+    # Salvo que el original sea un SVG --que es como esta subido el logotipo de
+    # unas cuantas obras-- que es lo unico que Pillow no sabe abrir. Ahi vale la
+    # miniatura tal cual viene, que Wikimedia ya la sirve rasterizada a PNG.
+    return src if original.lower().endswith(".svg") else original
 
 
 def portada_peli(titulo, campos, md):
