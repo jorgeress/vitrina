@@ -1,7 +1,7 @@
 # Vitrina
 
-Mi colección personal de juegos, películas, libros y discos, escrita en Obsidian
-y publicada como web estática.
+Mi colección personal de juegos, películas, series, libros y discos, escrita en
+Obsidian y publicada como web estática.
 
 La idea era simple: llevaba años recomendando las mismas cosas por WhatsApp y
 olvidándome de por qué me habían gustado. Quería un sitio donde apuntarlo una
@@ -13,7 +13,7 @@ Cada ficha es un fichero Markdown con unas pocas propiedades en la cabecera:
 
 ```yaml
 ---
-tipo: juego                        # juego, peli, libro o album
+tipo: juego                        # juego, peli, serie, libro o album
 seccion: "[[juegos/index|Juegos]]" # de qué sección cuelga; lo ponen los scripts
 year: 2019
 autor: ZA/UM                       # estudio, dirección, autor o artista
@@ -70,7 +70,7 @@ la maquetación siga fuera de las notas. Son tres cosas:
   ficha a su autor, y de *Lo mejor de lo mejor* a cada uno de sus favoritos.
 - El **grafo de la portada**, grande y entero, en vez de la vista pequeña de la
   barra. Y que el sitio abra en oscuro si no has elegido otra cosa.
-- Sacar del buscador las cinco páginas sueltas que Quartz emite por cada
+- Sacar del buscador las seis páginas sueltas que Quartz emite por cada
   `.base`, que eran una copia en blanco de la galería que ya está en el índice
   de su sección.
 
@@ -102,7 +102,7 @@ usa Quartz normalmente.
 ```
 content/            la vault de Obsidian: lo único que se escribe a mano
   index.md          portada
-  juegos/  pelis/  libros/  musica/
+  juegos/  pelis/  series/  libros/  musica/
   autores/          derivadas: las escribe autores.py, no se tocan a mano
   *.base            las vistas de cada sección
   _plantillas/      plantilla de ficha (no se publica)
@@ -176,11 +176,12 @@ pases a público se activa solo, sin tocar nada.
 
 Lo que se hace siempre es añadir la película de anoche, el disco de esta semana,
 el juego que acabas de empezar. Eso es `scripts/nueva.py`, y funciona igual para
-los cuatro tipos:
+los cinco tipos:
 
 ```bash
 scripts/nueva.py juego "hollow knight"
 scripts/nueva.py peli "parasite" --nota 10 --favorito
+scripts/nueva.py serie "breaking bad" --nota 10
 scripts/nueva.py album "in rainbows" --estado "en curso"
 scripts/nueva.py libro "dune" --nota 9 --estado terminado
 scripts/nueva.py libro "sapiens" --elegir 2     # sin preguntar
@@ -195,6 +196,7 @@ ninguna pide clave:
 | --- | --- | --- | --- |
 | `juego` | Steam | `appid` | año, estudio y géneros |
 | `peli` | Wikidata | `letterboxd` | año y dirección |
+| `serie` | TVmaze | `tvmaze` | año, quien la creó y géneros |
 | `album` | MusicBrainz | `mbid` | año y artista |
 | `libro` | Open Library | `coverid` | año y autor |
 
@@ -219,7 +221,9 @@ Los cómics y la novela gráfica entran como `tipo: libro`, que Open Library los
 cataloga, **y el manga también**: se queda en libros con la etiqueta `manga` en
 `tags` y no tiene sección propia. Un `.base` filtra por etiqueta igual de bien
 que por carpeta, así que separarlos sería duplicar una sección entera para no
-ganar nada.
+ganar nada. Lo mismo hace el anime con `anime` dentro de series: *Chainsaw Man*
+en manga y *Hunter x Hunter* en anime son dos fichas en dos secciones, porque
+son dos obras que se ven distinto, y no dos carpetas nuevas.
 
 ## Traer lo que ya tienes en otros sitios
 
@@ -307,6 +311,7 @@ Cada sección tira de la fuente que mejor la conoce, y **ninguna pide clave**:
 | Libros | Open Library (exacta, si la ficha trae `coverid`) |
 | Música | MusicBrainz + Cover Art Archive |
 | Películas | Letterboxd, identificada por Wikidata (Wikipedia de reserva) |
+| Series | TVmaze, por el `tvmaze` de la ficha |
 
 Las películas son el caso raro y conviene saberlo: no hay catálogo abierto de
 carteles, así que el cartel sale de Letterboxd, pero **el identificador lo dice
@@ -315,6 +320,13 @@ deduce del título: `/film/parasite/` es la de Charles Band de 1982. Con ese id 
 apunta en la ficha (`letterboxd: little-women-2019`) y ya no se vuelve a buscar.
 Wikipedia queda de reserva para lo que Wikidata todavía no sepa identificar, que
 en la práctica son los estrenos futuros, y de allí el póster llega a 220 px.
+
+Las series no tienen ese problema: **TVmaze** es un catálogo de televisión
+abierto, sin clave, con el anime dentro y con el cartel en vertical, que es
+justo el hueco que tiene la tarjeta. De la misma petición salen el año y los
+géneros, así que identificar la serie es tener ya media ficha. Lo que sí hay que
+elegir es cuál: hay tres *The Office* y dos *Hunter x Hunter*, y el cartel del
+de 1999 no es el del de 2011.
 
 Si una ficha no se encuentra, lo más rápido es dejar la imagen a mano en
 `assets/portadas/` y escribir el enlace en la cabecera. Y si una se queda sin
@@ -331,6 +343,7 @@ vacíos. Eso lo cierra `scripts/datos.py`, que sabe dónde está cada cosa:
 | --- | --- | --- |
 | Juegos | Ficha de la tienda de Steam | `year`, `autor` (el estudio) y `tags` |
 | Películas | Ficha de Letterboxd | `autor`, o sea la dirección, y `tags` |
+| Series | Ficha de TVmaze | `year`, `autor` (quien la creó) y `tags` |
 | Música | MusicBrainz | `tags`, tal como los da |
 | Libros | Open Library | `tags`, los que reconozca una lista blanca de géneros |
 
@@ -368,11 +381,11 @@ dentro es `tags/acci%C3%B3n`, y eso es lo que se copia y se comparte. Pasaba con
 traducir al castellano los géneros de Steam y de Letterboxd, y lo mismo con los
 tres juegos del símbolo ™ y con *El madrileño*.
 
-Así que **los tags van en inglés en las cuatro secciones**, que es como los dan
-las cuatro fuentes: a Steam se le pide la ficha con `l=english` y las otras tres
-no saben decirlos de otra manera. De propina sale lo que la traducción buscaba:
-con una sola lengua, el `action` de un juego y el de una película son la misma
-etiqueta sin que nadie traduzca nada.
+Así que **los tags van en inglés en las cinco secciones**, que es como los dan
+las cinco fuentes: a Steam se le pide la ficha con `l=english` y las otras
+cuatro no saben decirlos de otra manera. De propina sale lo que la traducción
+buscaba: con una sola lengua, el `action` de un juego y el de una película son
+la misma etiqueta sin que nadie traduzca nada.
 
 **La regla, para lo que venga:** de un nombre de fichero y de una etiqueta sale
 una dirección, así que las dos se quedan en ASCII. Lo garantizan
@@ -393,8 +406,16 @@ lo cierra, sacando el texto de la misma fuente que ya identifica la ficha:
 | Juegos | Steam, por `appid` | la descripción corta de la tienda, en español |
 | Películas | Wikipedia en español, por el `letterboxd` que resuelve Wikidata | el primer párrafo del artículo |
 | Películas sin artículo | TMDB, por la ficha de Letterboxd | su sinopsis, en inglés |
+| Series | Wikipedia en español, por el `tvmaze` que resuelve Wikidata | el primer párrafo del artículo |
+| Series sin artículo | TVmaze | su resumen, en inglés |
 | Música | MusicBrainz, por `mbid` | la lista de canciones del disco |
 | Libros | ninguna todavía | hace falta un campo `wikipedia` en la ficha |
+
+De las series, Wikidata enlaza con TVmaze poco más de la mitad —lo occidental
+casi siempre, el anime casi nunca—, así que una ficha puede decir ella misma
+cuál es su artículo con el campo `wikipedia`, igual que un libro, y eso manda
+sobre todo lo demás. Sin artículo queda el resumen de TVmaze, en inglés y
+avisando de que lo está.
 
 ```bash
 scripts/textos.py                    # solo las fichas que estén en blanco
@@ -403,7 +424,7 @@ scripts/textos.py --seccion pelis    # solo esa carpeta
 scripts/textos.py --dry-run          # dice qué haría, sin pedir ni tocar nada
 ```
 
-**Lo tuyo va arriba y lo generado debajo**, en las cuatro secciones. No hay que
+**Lo tuyo va arriba y lo generado debajo**, en las cinco secciones. No hay que
 marcarlo con nada: escribes en el cuerpo, encima de la cita o de la lista de
 canciones, y ya está.
 
@@ -438,6 +459,9 @@ el sitio, y luego la referencia.
   licencia enlazado.
 - **MusicBrainz no pide nada.** Sus datos base son CC0, y una lista de títulos
   son datos, no prosa: no hay redacción de nadie que citar.
+- **TVmaze es CC BY-SA**, y ellos mismos dicen que la atribución se cumple
+  enlazando a la ficha de la que sale el texto. Es lo que hace la cita, y de
+  paso la cabecera de cada serie enlaza a la suya.
 
 Lo que **no** se hace es parafrasear: reescribir un párrafo ajeno cambiando
 cuatro palabras sigue siendo derivado de su texto, pero ya no parece una cita,
@@ -447,7 +471,7 @@ aparte y no suelto en el cuerpo.
 En los discos, la lista lleva una estrella en tus favoritas y esa parte se lee
 del fichero antes de reescribirla, porque es lo único de la ficha que no se puede
 volver a buscar en ningún sitio. Los favoritos son **de disco entero**, con el
-campo `favorito` como en las otras tres secciones; `favoritas` es solo cuántas
+campo `favorito` como en las otras cuatro secciones; `favoritas` es solo cuántas
 canciones tuyas hay en él, y los nombres viven en el cuerpo, que es donde los
 encuentra el buscador de la web.
 

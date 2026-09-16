@@ -7,6 +7,7 @@ interesante si me acuerdo.
 
 - [[juegos/index|Juegos]]
 - [[pelis/index|Películas]]
+- [[series/index|Series]]
 - [[libros/index|Libros]]
 - [[musica/index|Música]]
 - [[autores/index|Autores]]

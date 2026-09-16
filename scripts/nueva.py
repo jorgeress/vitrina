@@ -3,6 +3,7 @@
 
   scripts/nueva.py juego "hollow knight"
   scripts/nueva.py peli "parasite"
+  scripts/nueva.py serie "breaking bad"
   scripts/nueva.py album "in rainbows"
   scripts/nueva.py libro "el nombre del viento"
 
@@ -15,6 +16,7 @@ Cada tipo pregunta a la fuente que mejor lo conoce, y ninguna pide clave:
 
   juego  Steam         guarda appid, y trae year, autor y tags
   peli   Wikidata      guarda letterboxd, y trae year y direccion
+  serie  TVmaze        guarda tvmaze, y trae year, quien la creo y tags
   album  MusicBrainz   guarda mbid, y trae year y artista
   libro  Open Library  guarda coverid, y trae year y autor
 
@@ -33,10 +35,11 @@ import re
 import sys
 import urllib.parse
 
-from datos import datos_juego
+from datos import datos_juego, datos_serie
 from vitrina import (ESTADOS, PORTADAS, SECCIONES, VAULT, escribir_campos,
                        escribir_ficha, ficha_letterboxd, nombre_de_fichero,
-                       parecidos, pedir, peliculas_wikidata, preguntar, slug)
+                       parecidos, pedir, peliculas_wikidata, preguntar,
+                       series_tvmaze, slug, año_tvmaze)
 from portadas import FUENTES as CARATULAS, guardar
 
 # Tipo de ficha -> carpeta de la vault. SECCIONES va al reves.
@@ -44,7 +47,7 @@ CARPETAS = {tipo: carpeta for carpeta, tipo in SECCIONES.items()}
 
 
 # --- buscadores --------------------------------------------------------------
-# Los cuatro devuelven lo mismo: una lista de candidatos, cada uno con lo que va
+# Los cinco devuelven lo mismo: una lista de candidatos, cada uno con lo que va
 # a la cabecera de la ficha y una linea con la que reconocerlo. Asi el resto del
 # script no tiene que saber de que catalogo viene ninguno.
 #
@@ -53,7 +56,7 @@ CARPETAS = {tipo: carpeta for carpeta, tipo in SECCIONES.items()}
 # catalogo esta caido", y decir lo primero cuando pasa lo segundo manda a
 # buscar el fallo justo donde no esta.
 
-NOMBRE_FUENTE = {"juego": "Steam", "peli": "Wikidata",
+NOMBRE_FUENTE = {"juego": "Steam", "peli": "Wikidata", "serie": "TVmaze",
                  "album": "MusicBrainz", "libro": "Open Library"}
 
 def candidato(titulo, year=None, autor=None, pista=None, **ids):
@@ -106,6 +109,26 @@ def buscar_peli(consulta, cuantos):
             for c in candidatas[:cuantos]]
 
 
+def buscar_serie(consulta, cuantos):
+    """TVmaze, que es un catalogo de television abierto y con el anime dentro.
+
+    Enseña el año y la cadena porque son lo que separa a las homonimas, que en
+    television son mas de las que parece: hay tres "The Office" --la inglesa, la
+    americana y una de 2024-- y dos "Hunter x Hunter", el del 99 y el del 2011.
+    Del titulo no se deduce cual es, y por eso se elige de una lista.
+    """
+    encontradas = series_tvmaze(consulta)
+    if encontradas is None:
+        return None
+    salida = []
+    for serie in encontradas[:cuantos]:
+        cadena = (serie.get("network") or serie.get("webChannel") or {}).get("name")
+        salida.append(candidato(serie.get("name"), year=año_tvmaze(serie),
+                                autor=cadena, pista=", ".join(serie.get("genres") or []),
+                                tvmaze=serie.get("id")))
+    return salida
+
+
 def buscar_album(consulta, cuantos):
     """MusicBrainz, por grupo de lanzamiento y no por edicion concreta.
 
@@ -154,7 +177,7 @@ def buscar_libro(consulta, cuantos):
     return salida
 
 
-BUSCADORES = {"juego": buscar_juego, "peli": buscar_peli,
+BUSCADORES = {"juego": buscar_juego, "peli": buscar_peli, "serie": buscar_serie,
               "album": buscar_album, "libro": buscar_libro}
 assert set(BUSCADORES) == set(NOMBRE_FUENTE)
 
@@ -174,6 +197,12 @@ def completar(tipo, elegido):
         if direccion:
             return {**campos, "autor": ", ".join(direccion[:2])}, "Letterboxd"
         return campos, "su ficha de Letterboxd no dice quien dirige"
+    if tipo == "serie":
+        # La lista ya trajo el año y la cadena; esto pide los generos y a quien
+        # se le atribuye la serie, que estan en su ficha y en su equipo. Lo que
+        # venga de aqui pisa a la cadena, que no es quien la hizo.
+        valores, detalle = datos_serie(elegido["titulo"], campos, None)
+        return {**campos, **valores}, detalle
     return campos, None
 
 
@@ -246,7 +275,11 @@ def alta(args):
 
     extra, detalle = completar(args.tipo, elegido)
     titulo = elegido["titulo"]
-    campos = {"tipo": args.tipo, "year": elegido["year"], "autor": elegido["autor"],
+    # En las series la columna de la izquierda es la cadena, que sirve para
+    # reconocer cual de las tres "The Office" es y no para firmar la obra: a la
+    # ficha solo va si `completar` trae a alguien.
+    autor = None if args.tipo == "serie" else elegido["autor"]
+    campos = {"tipo": args.tipo, "year": elegido["year"], "autor": autor,
               "nota": args.nota, "estado": args.estado, "favorito": args.favorito,
               "portada": None, "tags": None}
     # Lo que traiga la ficha de la obra manda sobre lo que trajo el buscador:

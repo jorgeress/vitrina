@@ -7,6 +7,7 @@ Cada seccion tira de la fuente que mejor la conoce:
   libros  Open Library (sin clave)
   musica  MusicBrainz + Cover Art Archive (sin clave)
   pelis   Letterboxd, identificada por Wikidata (sin clave)
+  series  TVmaze, por el `tvmaze` de la ficha (sin clave)
 
 Uso:
   scripts/portadas.py                 rellena las fichas sin portada
@@ -28,7 +29,7 @@ from PIL import Image
 
 from vitrina import (PORTADAS, SECCIONES, VAULT, articulo_html, articulos_ingleses,
                        asegurar_letterboxd, escribir_campos, ficha_letterboxd,
-                       frontmatter, normal, pedir, slug)
+                       frontmatter, normal, pedir, serie_tvmaze, slug)
 
 ANCHO = 400  # las tarjetas miden 220 px; 400 cubre pantallas 2x
 
@@ -184,7 +185,31 @@ def portada_peli(titulo, campos, md):
     return None, None
 
 
-FUENTES = {"juego": portada_juego, "peli": portada_peli,
+def portada_serie(titulo, campos, md):
+    """El cartel de TVmaze, que lo tiene en vertical y del tamano que hace falta.
+
+    Manda el `tvmaze`, que identifica la serie sin dudas: por titulo hay tres
+    "The Office" y dos "Hunter x Hunter", y de los dos Hunter el cartel no es el
+    mismo. Si la ficha no lo lleva no se busca a ciegas, igual que en las otras
+    cuatro secciones.
+    """
+    del titulo, md
+    tvid = campos.get("tvmaze")
+    if not tvid:
+        return None, None
+    serie = serie_tvmaze(tvid)
+    if serie is None:
+        return None, None
+    cartel = (serie.get("image") or {}).get("original")
+    if not cartel:
+        return None, None
+    img = pedir(cartel, binario=True)
+    if not img or len(img) <= 5000:
+        return None, None
+    return img, f"TVmaze ({serie.get('name') or tvid})"
+
+
+FUENTES = {"juego": portada_juego, "peli": portada_peli, "serie": portada_serie,
            "libro": portada_libro, "album": portada_album}
 
 

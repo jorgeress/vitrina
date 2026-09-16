@@ -28,7 +28,7 @@ CAMPOS = ("year", "autor", "nota", "portada", "tags")
 # Las secciones que reparten sus dos ultimas vistas por `estado`. Juegos no
 # esta: alli el reparto sale de las horas, porque Steam sabe cuanto has jugado y
 # no si lo terminaste, asi que una ficha suya sin estado no le falta nada.
-POR_ESTADO = ("pelis", "libros", "musica")
+POR_ESTADO = ("pelis", "series", "libros", "musica")
 
 # En assets/portadas/ vive tambien el .gitkeep, que no es una caratula huerfana.
 IMAGENES = {".webp", ".jpg", ".jpeg", ".png", ".gif", ".avif"}

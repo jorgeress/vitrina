@@ -12,7 +12,7 @@ formulas:
   # `tipo` guarda la clave, no el rotulo: agrupar por el crudo pintaba columnas
   # tituladas "peli" y "album". Los nombres de seccion viven aqui, en la vista,
   # y no en las noventa fichas.
-  seccion: if(note.tipo == "juego", "Juegos", if(note.tipo == "peli", "Películas", if(note.tipo == "libro", "Libros", "Música")))
+  seccion: if(note.tipo == "juego", "Juegos", if(note.tipo == "peli", "Películas", if(note.tipo == "serie", "Series", if(note.tipo == "libro", "Libros", "Música"))))
 filters:
   and:
     - note.favorito == true
@@ -21,9 +21,9 @@ properties:
     displayName: Título
   note.tipo:
     displayName: Tipo
-  # Es la unica pagina que mezcla los cuatro tipos: aqui el mismo campo es
+  # Es la unica pagina que mezcla los cinco tipos: aqui el mismo campo es
   # estudio, direccion, autor y artista, asi que el rotulo tiene que valer
-  # para los cuatro.
+  # para los cinco.
   note.autor:
     displayName: Autoría
   note.nota:
@@ -37,7 +37,7 @@ views:
     # Las mismas medidas que las galerias de seccion: entrar en Favoritos no
     # deberia cambiar el tamaño de la tarjeta.
     cardSize: 220
-    # Es la unica galeria que mezcla los cuatro tipos, y las caratulas no miden
+    # Es la unica galeria que mezcla los cinco tipos, y las caratulas no miden
     # igual: un cartel es 2:3 y la portada de un disco es cuadrada. Sin ratio,
     # el hueco de la imagen lo marca cada fichero, asi que un disco quedaba una
     # cuarta parte mas bajo que la pelicula de al lado y la fila salia dentada

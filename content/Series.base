@@ -1,0 +1,96 @@
+formulas:
+  # Lo mismo que en las otras galerias: el comparador de Bases manda los vacios
+  # al principio cuando el orden es DESC, asi que la seccion abria por lo que no
+  # he puntuado. Esto los baja a -1 para que caigan al final.
+  puntuacion: if(note.nota, note.nota, -1)
+  # La nota que se pinta, que no es la que se ordena. Sin esto, una tarjeta sin
+  # nota mide una fila menos que la de al lado y la rejilla sale dentada. El
+  # guion las iguala y dice ademas lo que es verdad -- que no la he puntuado --
+  # con el mismo signo que ya usan las tablas para una casilla vacia.
+  nota: if(note.nota, note.nota, "—")
+filters:
+  and:
+    - note.tipo == "serie"
+properties:
+  file.name:
+    displayName: Título
+  note.year:
+    displayName: Año
+  # Aqui el campo es a veces quien la creo y a veces el estudio que la anima,
+  # que es lo mismo que pasa en juegos con `autor`: el rotulo tiene que valer
+  # para los dos.
+  note.autor:
+    displayName: Creación
+  note.nota:
+    displayName: Nota
+views:
+  - type: cards
+    name: Galería
+    order:
+      - file.name
+      - note.autor
+      - note.year
+      - formula.nota
+    sort:
+      - property: formula.puntuacion
+        direction: DESC
+      - property: file.name
+        direction: ASC
+    image: note.portada
+    cardSize: 220
+    imageAspectRatio: 0.67
+  - type: table
+    name: Tabla
+    order:
+      - file.name
+      - note.autor
+      - note.year
+      - note.nota
+    sort:
+      - property: formula.puntuacion
+        direction: DESC
+      - property: file.name
+        direction: ASC
+  - type: cards
+    name: Favoritos
+    filters:
+      and:
+        - note.favorito == true
+    order:
+      - file.name
+      - note.autor
+      - note.year
+      - formula.nota
+    sort:
+      - property: formula.puntuacion
+        direction: DESC
+      - property: file.name
+        direction: ASC
+    image: note.portada
+    cardSize: 220
+    imageAspectRatio: 0.67
+  # No hay vista de lo ya visto: Galería ya lo enseña. Lo que si hace falta
+  # apartado es lo que queda, que es lo que esta pestaña enseña.
+  # "en curso" entra aqui, y en series es donde mas dice: una serie larga se
+  # pasa años a medias, y si se quedara fuera no saldria en ninguna de las dos.
+  # "abandonado" no, que eso ya no espera nada.
+  #
+  # Y sin nota, ni pintada ni en el orden: no la tiene nada de lo que todavia no
+  # has visto, asi que la fila serian guiones y el orden un empate a -1 que
+  # acabaria resolviendo el titulo igual. Se ordena por titulo directamente.
+  - type: cards
+    name: Por ver
+    filters:
+      or:
+        - note.estado == "pendiente"
+        - note.estado == "en curso"
+    order:
+      - file.name
+      - note.autor
+      - note.year
+    sort:
+      - property: file.name
+        direction: ASC
+    image: note.portada
+    cardSize: 220
+    imageAspectRatio: 0.67

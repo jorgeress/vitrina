@@ -14,7 +14,8 @@ VAULT = RAIZ / "content"
 PORTADAS = VAULT / "assets" / "portadas"
 
 # Carpeta de la vault -> valor del campo `tipo` de la ficha.
-SECCIONES = {"juegos": "juego", "pelis": "peli", "libros": "libro", "musica": "album"}
+SECCIONES = {"juegos": "juego", "pelis": "peli", "series": "serie",
+             "libros": "libro", "musica": "album"}
 
 UA = "vitrina/1.0 (https://github.com/jorgeress/vitrina)"
 
@@ -576,3 +577,59 @@ def asegurar_letterboxd(md, campos):
         escribir_campos(md, {"letterboxd": slug})
         campos["letterboxd"] = slug
     return slug, detalle
+
+
+# --- TVmaze ------------------------------------------------------------------
+# Las series no caben en ninguna de las otras cuatro fuentes: Steam es de
+# juegos, Letterboxd solo lleva cine --una temporada no tiene ficha alli--, y ni
+# Open Library ni MusicBrainz pintan nada. TVmaze si: es un catalogo de
+# television abierto, sin clave, con el anime dentro y con el cartel en vertical,
+# que es el hueco que tiene la tarjeta. De una sola peticion salen el cartel, el
+# año y los generos, asi que identificar la serie es tener ya media ficha.
+#
+# Sus datos son CC BY-SA, y ellos mismos dicen que la atribucion se cumple
+# enlazando a la ficha de la que salen: eso es lo que hace la cabecera de cada
+# serie con su `tvmaze`, igual que las otras cuatro secciones con su id.
+
+TVMAZE = "https://api.tvmaze.com"
+
+
+def series_tvmaze(consulta):
+    """Las series que se llaman asi, de la mas parecida a la menos.
+
+    Devolver None no es devolver una lista vacia: quiere decir que no se ha
+    podido preguntar. Lo mismo que en el resto de buscadores.
+    """
+    res = pedir(f"{TVMAZE}/search/shows?q=" + urllib.parse.quote(consulta))
+    if res is None:
+        return None
+    return [r["show"] for r in res if r.get("show")]
+
+
+def serie_tvmaze(tvid):
+    """La ficha de la serie por su id, que es de donde salen todos sus datos."""
+    return pedir(f"{TVMAZE}/shows/{tvid}")
+
+
+def creadores_tvmaze(tvid):
+    """Quien firma la serie: los creditos de tipo Creator, en orden.
+
+    Es lo mas parecido a la direccion de una pelicula que tiene una serie, y no
+    esta en la ficha sino en su equipo, que es otra peticion. En el anime suele
+    venir el autor del manga --Togashi en Hunter x Hunter-- y en unas cuantas no
+    viene nadie: entonces se queda vacio y se pone a mano, que es mejor que
+    poner la cadena, que no es quien la hizo.
+    """
+    equipo = pedir(f"{TVMAZE}/shows/{tvid}/crew") or []
+    return [c["person"]["name"] for c in equipo
+            if c.get("type") == "Creator" and (c.get("person") or {}).get("name")]
+
+
+def año_tvmaze(serie):
+    """El año de estreno, que TVmaze da como fecha entera ("2008-01-20")."""
+    estreno = str((serie or {}).get("premiered") or "")
+    return int(estreno[:4]) if estreno[:4].isdigit() else None
+
+
+def url_tvmaze(tvid):
+    return f"https://www.tvmaze.com/shows/{tvid}"

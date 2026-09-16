@@ -8,8 +8,8 @@ import { transformLink } from "@quartz-community/utils/path"
  * año en cada tarjeta, pero al entrar en una ficha no quedaba nada de eso: solo
  * el titulo y el parrafo de "De que va". Los datos estaban en la cabecera del
  * Markdown y no se pintaban en ninguna parte, y los identificadores de la
- * fuente (`appid`, `letterboxd`, `mbid`, `wikipedia`) se guardaban desde el
- * primer dia sin que nadie pudiera pinchar en ellos.
+ * fuente (`appid`, `letterboxd`, `tvmaze`, `mbid`, `wikipedia`) se guardaban
+ * desde el primer dia sin que nadie pudiera pinchar en ellos.
  *
  * Esto los lee y no los guarda: la ficha sigue teniendo solo datos, y la
  * maquetacion sigue viviendo fuera de la nota, igual que un `.base`.
@@ -27,6 +27,12 @@ const TIPOS = {
     autor: "Dirección",
     enlace: (f) =>
       f.letterboxd && ["Ficha en Letterboxd", `https://letterboxd.com/film/${f.letterboxd}/`],
+  },
+  serie: {
+    // A veces es quien la creo y a veces el estudio que la anima, igual que en
+    // los juegos: el rotulo tiene que valer para los dos.
+    autor: "Creación",
+    enlace: (f) => f.tvmaze && ["Ficha en TVmaze", `https://www.tvmaze.com/shows/${f.tvmaze}`],
   },
   libro: {
     autor: "Autor",

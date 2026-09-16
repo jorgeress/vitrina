@@ -9,15 +9,16 @@ añade cuando se sepa, y los scripts saben crear una clave que no existía.
 
 Campos:
 
-- `tipo`: juego, peli, libro o album. Debe coincidir con la carpeta.
+- `tipo`: juego, peli, serie, libro o album. Debe coincidir con la carpeta.
 - `seccion`: el enlace a la galería de su sección, `"[[juegos/index|Juegos]]"`.
   Es lo que cuelga la ficha de su sección en el grafo, y de ahí de Vitrina.
   No se escribe a mano: lo ponen los scripts al crear la ficha, y
   `scripts/secciones.py` repara el de las que falten o cambien de carpeta.
 - `estado`: pendiente, en curso, terminado, abandonado. Es lo que reparte
-  películas, libros y discos en sus dos últimas pestañas: lo terminado en una,
-  y lo pendiente y lo empezado en la otra, que es la lista de lo que queda; una
-  ficha sin él sale en la galería y en ninguna de las dos. Los juegos no lo
+  películas, series, libros y discos en sus dos últimas pestañas: lo terminado
+  en una, y lo pendiente y lo empezado en la otra, que es la lista de lo que
+  queda; una ficha sin él sale en la galería y en ninguna de las dos. En series
+  es donde más dice, que una serie larga se pasa años en «en curso». Los juegos no lo
   llevan y no les hace falta: allí las dos pestañas se reparten por las `horas`,
   porque de un juego ninguna fuente sabe si lo terminaste y los 44 acabaron
   diciendo lo mismo. Por eso es el único campo que no deja hueco vacío: si no
@@ -37,14 +38,17 @@ Campos:
   Letterboxd, MusicBrainz y Open Library, que ya los dan así. En inglés porque
   de cada etiqueta sale una página: con tilde, su dirección viaja escapada
   (`tags/acci%C3%B3n`) y el grafo deja de encontrarla; y porque una sola lengua
-  junta las cuatro secciones en la misma etiqueta. Los mangas van aquí, con la
-  etiqueta `manga`, y no en una sección aparte.
+  junta las cinco secciones en la misma etiqueta. Los mangas van en libros, con
+  la etiqueta `manga`, y el anime en series, con la etiqueta `anime`: ninguno de
+  los dos tiene sección aparte.
 - El identificador de la fuente, que lo pone el script y no se toca: `appid`
-  (Steam), `letterboxd`, `mbid` (MusicBrainz) o `coverid` (Open Library). La
-  ficha los usa para enlazar a la fuente al pie de sus datos.
-- `wikipedia`: solo en libros, el nombre de su artículo en la Wikipedia en
-  español. `coverid` identifica la portada y no la obra, así que es lo único
-  con lo que un libro puede enlazar a algún sitio.
+  (Steam), `letterboxd`, `tvmaze`, `mbid` (MusicBrainz) o `coverid` (Open
+  Library). La ficha los usa para enlazar a la fuente al pie de sus datos.
+- `wikipedia`: en libros y en series, el nombre de su artículo en la Wikipedia
+  en español. En un libro es lo único con lo que puede enlazar a algún sitio,
+  porque `coverid` identifica la portada y no la obra. En una serie es opcional:
+  solo hace falta cuando Wikidata no enlaza su `tvmaze` con ningún artículo, que
+  es lo que pasa con casi todo el anime.
 
 El cuerpo de la ficha es para lo tuyo: por qué te gustó, o qué canciones son
 las que te sabes. Es lo único que ninguna fuente puede rellenar, y lo único que

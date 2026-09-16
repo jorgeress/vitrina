@@ -282,8 +282,8 @@ scripts/nueva.py libro "sapiens" --elegir 2   # sin preguntar
 ```
 
 Los libros fueron el primer sitio donde hizo falta, pero la forma sirve para
-las cuatro secciones, así que vive en `scripts/nueva.py` y vale igual para un
-juego, una película o un disco. `scripts/importar.py libro "…"` sigue siendo el
+las cinco secciones, así que vive en `scripts/nueva.py` y vale igual para un
+juego, una película, una serie o un disco. `scripts/importar.py libro "…"` sigue siendo el
 mismo alta, con el nombre de antes.
 
 Enseña los resultados y eliges tú. **Eso no es un trámite que se pueda saltar**:
@@ -296,7 +296,7 @@ para en vez de inventarse una respuesta.
 
 Se guarda el `coverid` de la edición elegida, así que la portada se baja exacta
 y se puede rehacer siempre igual, igual que con el `appid` de Steam, el `mbid`
-de MusicBrainz y el `letterboxd` de las películas. Y se baja ya, en la misma
+de MusicBrainz, el `letterboxd` de las películas y el `tvmaze` de las series. Y se baja ya, en la misma
 pasada: la ficha sale completa sin tener que llamar después a `portadas.py`.
 
 Lo que **no** se puede: sacar una nota tuya, porque no hay cuenta de la que

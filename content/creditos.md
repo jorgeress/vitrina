@@ -8,6 +8,9 @@ para identificar cada obra dentro del catálogo.
 - Los carteles de películas vienen de [Letterboxd](https://letterboxd.com),
   identificados por [Wikidata](https://www.wikidata.org). Los de estrenos que
   Wikidata todavía no identifica, de [Wikipedia](https://en.wikipedia.org).
+- Los carteles de series, de [TVmaze](https://www.tvmaze.com), de donde salen
+  también su año y sus géneros. Sus datos son CC BY-SA, y la atribución se
+  cumple enlazando a la ficha: cada serie enlaza a la suya.
 - Las portadas de libros, de [Open Library](https://openlibrary.org), que es el
   catálogo del Internet Archive.
 - Las de discos, de [Cover Art Archive](https://coverartarchive.org), y los

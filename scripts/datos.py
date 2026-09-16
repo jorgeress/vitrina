@@ -6,28 +6,29 @@ pagina de juegos de Steam sabe cuanto has jugado pero no de que año es el juego
 quien lo hizo ni de que va; el diario de Letterboxd sabe tu nota pero no quien
 dirige. Todo eso esta en otro sitio, publico y sin clave, y esto va a buscarlo.
 
-La regla es la misma en las tres secciones: **no adivinar**. Los juegos se
+La regla es la misma en todas las secciones: **no adivinar**. Los juegos se
 resuelven por el `appid` que el importador ya guardo, que identifica la obra sin
 lugar a dudas; las peliculas por el mismo id de Letterboxd del que sale el
-cartel, que Wikidata solo da cuando no hay duda de cual es; los discos por su
-`mbid`; y los libros por el `coverid`, que el buscador de Open Library admite
-como campo y resuelve a la obra de esa portada. Antes que rellenar una ficha con
+cartel, que Wikidata solo da cuando no hay duda de cual es; las series por su
+`tvmaze`; los discos por su `mbid`; y los libros por el `coverid`, que el
+buscador de Open Library admite como campo y resuelve a la obra de esa portada. Antes que rellenar una ficha con
 los datos de otra obra, se deja vacia.
 
 Como todo lo demas de Vitrina, no pide clave ni registro.
 
   juegos  Steam, ficha de la tienda: year, autor y tags
   pelis   Letterboxd: autor (la direccion) y tags
+  series  TVmaze: year, autor (quien la creo) y tags
   musica  MusicBrainz: tags, tal como los da
   libros  Open Library: tags, los que reconoce una lista blanca de generos
 
-**Los tags van todos en ingles**, en las cuatro secciones, y vienen ya asi de
-las cuatro fuentes: a Steam se le pide la ficha con `l=english` y las otras tres
-no saben decirlos de otra manera. Antes los juegos y las peliculas se traducian
-al castellano con una tabla, y eso dejaba etiquetas con tilde (`acción`,
+**Los tags van todos en ingles**, en las cinco secciones, y vienen ya asi de
+las cinco fuentes: a Steam se le pide la ficha con `l=english` y las otras
+cuatro no saben decirlos de otra manera. Antes los juegos y las peliculas se
+traducian al castellano con una tabla, y eso dejaba etiquetas con tilde (`acción`,
 `fantasía`, `ciencia-ficción`) que rompian su propia pagina: de cada etiqueta
 sale una direccion, con tilde viaja escapada y el grafo ya no la encuentra.
-Ademas de arreglarlo, que sea una sola lengua junta las cuatro secciones en la
+Ademas de arreglarlo, que sea una sola lengua junta las cinco secciones en la
 misma etiqueta, que es de lo que sirve una etiqueta.
 
 Uso:
@@ -45,8 +46,9 @@ import time
 from pathlib import Path
 
 from vitrina import (SECCIONES, VAULT, articulo_html, articulos_ingleses,
-                       ascii_plano, asegurar_letterboxd, escribir_campos,
-                       ficha_letterboxd, frontmatter, pedir, vacio)
+                       ascii_plano, asegurar_letterboxd, creadores_tvmaze,
+                       escribir_campos, ficha_letterboxd, frontmatter, pedir,
+                       serie_tvmaze, vacio, año_tvmaze)
 
 # La tienda de Steam corta sobre las 200 peticiones cada cinco minutos. Con una
 # biblioteca normal no se llega, pero se va sin prisa por si acaso.
@@ -158,6 +160,49 @@ def datos_peli(titulo, campos, md):
         if nombres:
             return {"autor": ", ".join(nombres)}, f"Wikipedia ({articulo})"
     return {}, (detalle if not slug_lb else "su ficha de Letterboxd no dice quien dirige")
+
+
+def datos_serie(titulo, campos, md):
+    """El año, quien la creo y los generos, de la ficha de TVmaze.
+
+    Manda el `tvmaze`, que identifica la serie sin dudas: hay tres "The Office"
+    y dos "Hunter x Hunter", y ni el año ni los generos son los mismos.
+
+    Los generos vienen de una lista cerrada y en ingles --"Science-Fiction",
+    "Anime"--, asi que caen en las mismas etiquetas que los de Steam y los de
+    Letterboxd sin traducir nada. Y `anime` hace en las series lo que `manga`
+    hace en los libros: distingue sin abrir una seccion aparte.
+
+    Quien firma esta en el equipo, que es otra peticion, y solo se pide si hace
+    falta. En el anime a menudo no viene nadie: entonces no se escribe, que la
+    cadena que la emite no es quien la hizo.
+    """
+    del titulo  # manda el tvmaze, que lleva a una serie y no a dos
+    del md
+    tvid = campos.get("tvmaze")
+    if not tvid:
+        return {}, "la ficha no tiene tvmaze; se pone a mano"
+
+    serie = serie_tvmaze(tvid)
+    if serie is None:
+        return {}, f"TVmaze no responde por el id {tvid}"
+    if not serie.get("name"):
+        return {}, f"TVmaze no tiene ficha del id {tvid}"
+
+    valores = {}
+    año = año_tvmaze(serie)
+    if año:
+        valores["year"] = año
+    generos = [etiqueta(g) for g in serie.get("genres") or []]
+    generos = [g for g in generos if g][:MAX_TAGS]
+    if generos:
+        valores["tags"] = generos
+    creadores = creadores_tvmaze(tvid)
+    if creadores:
+        valores["autor"] = ", ".join(creadores[:2])
+    if not valores:
+        return {}, f"su ficha de TVmaze esta vacia ({tvid})"
+    return valores, f"TVmaze ({serie.get('name')})"
 
 
 def datos_album(titulo, campos, md):
@@ -338,6 +383,7 @@ def datos_libro(titulo, campos, md):
 # Que sabe rellenar cada seccion, y en que campos.
 FUENTES = {"juego": (datos_juego, ("year", "autor", "tags")),
            "peli": (datos_peli, ("autor", "tags")),
+           "serie": (datos_serie, ("year", "autor", "tags")),
            "album": (datos_album, ("tags",)),
            "libro": (datos_libro, ("tags",))}
 

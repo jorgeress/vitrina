@@ -7,6 +7,7 @@ de que va cada obra, sacado de la misma fuente que ya identifica la ficha.
 
   juegos  Steam, por `appid`     la descripcion corta de la tienda, en español
   pelis   Wikipedia ES, por el `letterboxd` que resuelve Wikidata
+  series  Wikipedia ES por el `tvmaze`, y si no lo enlaza, TVmaze en ingles
   musica  MusicBrainz, por `mbid`   la lista de canciones del disco
   libros  nada todavia, hace falta un `wikipedia` en la ficha; ver abajo
 
@@ -26,6 +27,8 @@ Lo que no es tuyo va citado y enlazado, y no todo lo necesita:
   MusicBrainz nada. Sus datos base -artistas, discos y listas de canciones-
               son CC0, o sea dominio publico. Y una lista de titulos son
               datos, no prosa.
+  TVmaze      CC BY-SA, y ellos mismos dicen que la atribucion se cumple
+              enlazando a la ficha de la que sale el texto. Se enlaza.
 
 Los libros se quedan fuera a proposito. Solo guardan `coverid`, que identifica
 la portada y no la obra; cruzandolo se llega a la obra en Open Library, pero
@@ -52,7 +55,8 @@ import urllib.parse
 from pathlib import Path
 
 from vitrina import (FRONT_RE, SECCIONES, VAULT, asegurar_letterboxd,
-                     ficha_letterboxd, frontmatter, pedir)
+                     ficha_letterboxd, frontmatter, pedir, serie_tvmaze,
+                     url_tvmaze)
 
 ESPERA = 1.5  # la tienda de Steam corta sobre las 200 peticiones cada 5 minutos
 
@@ -191,6 +195,43 @@ def texto_peli(titulo, campos, md):
     return None, f"el articulo «{articulo}» no trae resumen"
 
 
+def texto_serie(titulo, campos, md):
+    """De que va la serie, de la Wikipedia en español si se llega hasta ella.
+
+    Se llega por el `tvmaze`, igual que una pelicula por su id de Letterboxd:
+    Wikidata guarda el identificador de TVmaze (P8600) y de ahi sale el
+    articulo, sin buscar por titulo. Solo que de las series lo tiene puesto
+    menos de la mitad --lo occidental casi siempre, el anime casi nunca--, asi
+    que una ficha puede decir ella misma cual es su articulo con el campo
+    `wikipedia`, que es lo mismo que ya hacen los libros y que manda sobre todo
+    lo demas.
+
+    Si no hay articulo queda el resumen de TVmaze, que viene en ingles y se
+    avisa. Sus datos son CC BY-SA con la atribucion cumplida enlazando a la
+    ficha, que es lo que hace la cita.
+    """
+    del titulo, md
+    articulo = campos.get("wikipedia") or None
+    if not articulo and campos.get("tvmaze"):
+        articulo = articulo_es("P8600", campos["tvmaze"])
+    if articulo:
+        sinopsis = resumen_wikipedia(articulo)
+        if sinopsis:
+            return cita(sinopsis, credito_wikipedia(articulo)), f"Wikipedia ({articulo})"
+
+    tvid = campos.get("tvmaze")
+    if not tvid:
+        return None, "la ficha no tiene tvmaze; se pone a mano"
+    serie = serie_tvmaze(tvid) or {}
+    sinopsis = limpio(serie.get("summary"))
+    if sinopsis:
+        return cita(sinopsis, f"[TVmaze]({url_tvmaze(tvid)}) · CC BY-SA · en inglés"), \
+            f"TVmaze ({serie.get('name') or tvid})"
+    if not articulo:
+        return None, f"ni articulo en español ni resumen en TVmaze ({tvid})"
+    return None, f"el articulo «{articulo}» no trae resumen"
+
+
 def texto_libro(titulo, campos, md):
     """Igual que una pelicula, pero solo si alguien ha dicho cual es el articulo.
 
@@ -271,7 +312,7 @@ def cuerpo_disco(titulos):
     return "## Canciones\n\n" + "\n".join(lineas)
 
 
-FUENTES = {"juego": texto_juego, "peli": texto_peli,
+FUENTES = {"juego": texto_juego, "peli": texto_peli, "serie": texto_serie,
            "album": texto_album, "libro": texto_libro}
 
 

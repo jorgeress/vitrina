@@ -27,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import datos
 import importar
 import autores
+import portadas
 import textos
 import vitrina as m
 import nueva
@@ -211,6 +212,14 @@ class FuenteCaida(unittest.TestCase):
         self._pedir(lambda *a, **k: {"release-groups": []})
         self.assertEqual(nueva.buscar_album("lo que sea", 5), [])
 
+    def test_una_serie_sin_responder_no_se_confunde_con_ninguna(self):
+        # TVmaze caido devuelve None, igual que Steam o MusicBrainz, y no una
+        # lista vacia, que querria decir que esa serie no existe.
+        self._pedir(lambda *a, **k: None)
+        self.assertIsNone(nueva.buscar_serie("lo que sea", 5))
+        self._pedir(lambda *a, **k: [])
+        self.assertEqual(nueva.buscar_serie("lo que sea", 5), [])
+
     def test_un_juego_sin_appid_no_entra(self):
         # Sin appid la caratula no se puede bajar y la ficha se queda a medias.
         self._pedir(lambda *a, **k: [{"name": "Con id", "appid": 400},
@@ -219,9 +228,12 @@ class FuenteCaida(unittest.TestCase):
                          ["Con id"])
 
     def _pedir(self, falso):
-        original = nueva.pedir
-        nueva.pedir = falso
-        self.addCleanup(setattr, nueva, "pedir", original)
+        # En los dos modulos: unos buscadores piden desde nueva.py y otros --el
+        # de series-- desde el ayudante que vive en vitrina.py.
+        for modulo in (nueva, m):
+            original = modulo.pedir
+            modulo.pedir = falso
+            self.addCleanup(setattr, modulo, "pedir", original)
 
 
 class CancionesEnDiscos(unittest.TestCase):
@@ -500,7 +512,7 @@ class Coherencia(unittest.TestCase):
     def test_cada_seccion_escribe_el_tipo_que_su_base_filtra(self):
         # Si una .base filtra por un tipo que ningun script escribe, la seccion
         # sale vacia en la web sin que falle nada.
-        bases = {"juegos": "Juegos", "pelis": "Peliculas",
+        bases = {"juegos": "Juegos", "pelis": "Peliculas", "series": "Series",
                  "libros": "Libros", "musica": "Musica"}
         for carpeta, base in bases.items():
             ruta = m.RAIZ / "content" / f"{base}.base"
@@ -515,7 +527,7 @@ class Coherencia(unittest.TestCase):
         # vistas de cada seccion --lo terminado y lo que queda-- filtran por un
         # valor escrito a mano. Con una letra de mas la pestaña sale vacia y no
         # falla nada.
-        for base in ("Peliculas", "Libros", "Musica"):
+        for base in ("Peliculas", "Series", "Libros", "Musica"):
             ruta = m.RAIZ / "content" / f"{base}.base"
             if not ruta.exists():
                 continue
@@ -526,8 +538,24 @@ class Coherencia(unittest.TestCase):
                 self.assertIn(estado, m.ESTADOS,
                               f'{base}.base filtra por "{estado}", que no existe')
 
+    def test_cada_tipo_tiene_fuente_en_los_cuatro_scripts(self):
+        # Una seccion nueva se añade en varios sitios a la vez, y olvidarse de
+        # uno no falla: la ficha se crea igual y lo que se queda vacio es la
+        # portada, o los tags, o el cuerpo, cada uno por su lado y sin decir por
+        # que. Aqui se ve de golpe. `nueva` no entra: sin buscador no hay ni
+        # ficha, asi que ese olvido se nota a la primera.
+        for tipo in m.SECCIONES.values():
+            self.assertIn(tipo, nueva.BUSCADORES, f"{tipo} no se puede dar de alta")
+            self.assertIn(tipo, portadas.FUENTES, f"{tipo} no sabe de donde sacar portada")
+            self.assertIn(tipo, textos.FUENTES, f"{tipo} no sabe de donde sacar el texto")
+        # datos.py es el unico que admite quedarse fuera: hay tipos cuyos campos
+        # se ponen todos a mano. Pero si esta, tiene que decir que campos llena.
+        for tipo, (fuente, campos) in datos.FUENTES.items():
+            self.assertIn(tipo, m.SECCIONES.values(), f"datos.py rellena {tipo}, que no existe")
+            self.assertTrue(campos, f"{tipo} no declara que campos rellena")
+
     def test_juegos_reparte_por_las_horas_y_no_por_el_estado(self):
-        # La excepcion de las cuatro secciones, y esta puesta a proposito: en
+        # La excepcion de las cinco secciones, y esta puesta a proposito: en
         # juegos no hay `estado` que mirar --Steam sabe cuanto has jugado, no si
         # lo terminaste-- asi que sus dos ultimas vistas van por `horas`. Si
         # alguna volviera a filtrar por estado, saldria vacia, que es como no
