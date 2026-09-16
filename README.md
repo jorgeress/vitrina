@@ -227,8 +227,9 @@ son dos obras que se ven distinto, y no dos carpetas nuevas.
 
 ## Traer lo que ya tienes en otros sitios
 
-`scripts/importar.py` crea fichas a partir de Letterboxd, Steam y Spotify. No
-pisa nunca una ficha que ya exista, así que se puede repetir cuando quieras para
+`scripts/importar.py` crea fichas a partir de Letterboxd, Steam y Spotify. De
+libros y de series no hay volcado que valga, así que van una a una con
+`nueva.py`. No pisa nunca una ficha que ya exista, así que se puede repetir cuando quieras para
 recoger solo lo nuevo, y avisa cuando algo se parece a lo que ya tienes (el
 *Witcher 3* de Steam se llama *The Witcher 3: Wild Hunt*, y esa la unes tú).
 
@@ -605,9 +606,10 @@ SIN RELLENAR
 FAVORITOS  ███·····················  21 de 155
 ```
 
-Avisa además de dos cosas que no se ven de otra manera: fichas que apuntan a una
-imagen que ya no está, e imágenes en `assets/portadas/` que ya no usa ninguna
-ficha. No consulta nada por red ni escribe nada, así que se puede lanzar cuando
+Avisa además de tres cosas que no se ven de otra manera: fichas que apuntan a
+una imagen que ya no está, imágenes en `assets/portadas/` que ya no usa ninguna
+ficha, y cuántas se quedan fuera de las dos últimas pestañas de su sección por
+no tener `estado`. No consulta nada por red ni escribe nada, así que se puede lanzar cuando
 sea.
 
 ## Verlo antes de ascender

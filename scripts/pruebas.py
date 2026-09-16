@@ -406,7 +406,7 @@ class Etiquetas(unittest.TestCase):
     def test_un_genero_se_vuelve_tag_en_ascii(self):
         # De cada etiqueta sale una pagina, y de la pagina una direccion: con
         # tilde viaja escapada ("tags/acci%C3%B3n") y el grafo ya no la
-        # encuentra. Con las cuatro fuentes en ingles no deberia llegar ninguna
+        # encuentra. Con las cinco fuentes en ingles no deberia llegar ninguna
         # con acento, pero esta es la ultima puerta antes de escribirla.
         self.assertEqual(datos.etiqueta("  Science Fiction "), "science-fiction")
         self.assertEqual(datos.etiqueta("Acción y Aventura"), "accion-y-aventura")
@@ -485,7 +485,7 @@ class GenerosDeLibro(unittest.TestCase):
     def test_los_tags_caen_donde_los_de_las_pelis_y_los_juegos(self):
         # De esto vive una pagina de etiqueta: si un libro de terror pusiera
         # `horror` y una peli `terror`, serian dos paginas con una obra cada
-        # una en vez de una con las dos. Con las cuatro fuentes en ingles se
+        # una en vez de una con las dos. Con las cinco fuentes en ingles se
         # juntan solas, y lo unico que hay que vigilar es esta tabla, que es la
         # unica que sigue eligiendo el nombre del tag.
         destinos = set(datos.GENEROS_OPENLIBRARY.values())
@@ -495,7 +495,7 @@ class GenerosDeLibro(unittest.TestCase):
 
     def test_un_libro_sin_coverid_no_pregunta_por_titulo(self):
         # La raya del script: sin el id no hay obra, y buscar "Noches blancas"
-        # a ver que sale es justo lo que no hace ninguna de las cuatro fuentes.
+        # a ver que sale es justo lo que no hace ninguna de las cinco fuentes.
         def no_llamar(*a, **k):
             self.fail("ha salido a la red sin id")
         original = datos.pedir
@@ -594,7 +594,7 @@ class Coherencia(unittest.TestCase):
     def test_ninguna_etiqueta_se_sale_del_ascii(self):
         # Lo mismo, que de cada etiqueta sale tambien una pagina: `acción` daba
         # "tags/acci%C3%B3n" y su grafo salia vacio. Por eso los tags van todos
-        # en ingles, que ademas es lo que junta las cuatro secciones en la misma
+        # en ingles, que ademas es lo que junta las cinco secciones en la misma
         # etiqueta: `action` es la de los juegos y la de las pelis.
         for carpeta in m.SECCIONES:
             for ficha in (m.RAIZ / "content" / carpeta).glob("*.md"):
@@ -618,8 +618,8 @@ class Coherencia(unittest.TestCase):
         campos = m.frontmatter(ficha.read_text(encoding="utf-8"))
         self.assertEqual(campos.get("title"), "DARK SOULS™ REMASTERED")
 
-    def test_los_generos_de_las_cuatro_fuentes_hablan_la_misma_lengua(self):
-        # Una etiqueta solo sirve si junta cosas, y para eso los cuatro sitios
+    def test_los_generos_de_las_cinco_fuentes_hablan_la_misma_lengua(self):
+        # Una etiqueta solo sirve si junta cosas, y para eso los cinco sitios
         # de donde salen tienen que escribirla igual. Si un dia alguien vuelve a
         # traducir una tabla, esto lo dice.
         self.assertEqual(datos.etiqueta("Science Fiction"), "science-fiction")

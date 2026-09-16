@@ -177,7 +177,7 @@ function portada(valor, slug) {
  * El grafo de la portada, entero y en grande.
  *
  * La vista pequeña de la barra lateral dibuja lo que hay a un salto de la
- * pagina, y en la portada eso son solo las cinco secciones: el arbol entero,
+ * pagina, y en la portada eso son solo las seis secciones: el arbol entero,
  * que es lo que tiene gracia enseñar en casa, habia que ir a buscarlo al boton
  * de pantalla completa. Aqui se pinta de entrada, y la vista pequeña se quita
  * de la barra para no dibujar dos veces lo mismo.

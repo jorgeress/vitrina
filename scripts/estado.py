@@ -160,7 +160,7 @@ def main():
         for i in inventados:
             print(f"    ✗ {i}")
 
-    # Favoritos.base junta las cuatro secciones y cada .base tiene ademas su
+    # Favoritos.base junta las cinco secciones y cada .base tiene ademas su
     # vista "Favoritos". Si aqui sale 0, esas paginas salen vacias.
     print(f"\nFAVORITOS  {barra(sum(favoritos.values()), hay)}  "
           f"{sum(favoritos.values())} de {hay}")

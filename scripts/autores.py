@@ -20,7 +20,7 @@ sin partir el campo por comas, que no se puede hacer a ojo: la coma separa
 "Mike Johnson, Tim Burton" y no separa "FromSoftware, Inc.".
 
 **Solo tiene pagina quien tenga dos obras o mas** (`--minimo`). Con una sola, la
-pagina no agrupa nada, y son 92 autores para 90 fichas: el sitio doblaria de
+pagina no agrupa nada, y son 152 autores para 155 fichas: el sitio doblaria de
 tamaño en paginas muertas. Al crecer la coleccion basta con volver a pasarlo y
 el que llegue a dos la estrena.
 

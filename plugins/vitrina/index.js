@@ -6,7 +6,7 @@ import { nombresEnTexto, paginasDeAutor } from "./components.js"
  * Son cuatro cosas sueltas que comparten fichero solo porque un plugin es la
  * unidad que Quartz sabe cargar, no porque tengan nada que ver:
  *
- *   - Aqui abajo, las cinco paginas `.base` fuera del buscador.
+ *   - Aqui abajo, las seis paginas `.base` fuera del buscador.
  *   - Tambien aqui, la arista de cada ficha a la pagina de su autor.
  *   - Y la de Lo mejor de lo mejor a cada uno de sus favoritos.
  *   - En components.js, el componente `Ficha`, que pinta la cabecera de cada
@@ -95,8 +95,8 @@ function enlazarFavoritos(content) {
  * marcarlas. Lo dificil es *donde*, y por eso esto es un pageType y no un
  * transformador, que era lo primero que parecia:
  *
- *   Un `.base` no es un fichero de entrada. Quartz parsea 102 ficheros y
- *   ninguno de los cinco esta entre ellos; sus paginas las fabrica bases-page
+ *   Un `.base` no es un fichero de entrada. Quartz parsea los .md de la vault
+ *   y ninguno de los seis esta entre ellos; sus paginas las fabrica bases-page
  *   en `generate()`, ya emitiendo, y salen de ahi como *paginas virtuales*. Un
  *   `markdownPlugins` nunca las ve.
  *

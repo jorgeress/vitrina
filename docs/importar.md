@@ -355,8 +355,9 @@ scripts/importar.py --dry-run ...                               # sin escribir
    `--completo`.
 7. **Y a partir de ahí, el día a día no es esto.** Volcar una galería se hace
    una vez; lo que se hace siempre es añadir la película de anoche, con
-   `scripts/nueva.py peli "…"`. Los libros nunca pasan por el volcado: van uno
-   a uno desde el principio.
+   `scripts/nueva.py peli "…"`. Los libros y las series nunca pasan por el
+   volcado: van uno a uno desde el principio, porque no hay de dónde volcarlos
+   —de lo visto en televisión no hay export que valga.
 
 ## Personalizarlo
 
@@ -365,6 +366,12 @@ scripts/importar.py --dry-run ...                               # sin escribir
 - Los campos de la ficha se controlan desde `CAMPOS`, en `scripts/importar.py`;
   las fuentes de carátula desde `FUENTES`, en `scripts/portadas.py`, y las de
   relleno desde el `FUENTES` de `scripts/datos.py`, donde cada sección dice qué
-  campos sabe completar. Añadir
-  una sección nueva es añadir una entrada en `SECCIONES`, en
-  `scripts/vitrina.py`, y un `.base` que la filtre.
+  campos sabe completar.
+- **Una sección nueva** son siete sitios, y la última vez fueron estos: la
+  entrada en `SECCIONES` (`scripts/vitrina.py`), el `.base` que la filtra y su
+  `index.md`, el enlace en la portada, el orden del árbol lateral en
+  `quartz.config.yaml`, la entrada en `TIPOS` de `plugins/vitrina` —el rótulo de
+  su `autor` y a dónde enlaza su ficha— y la fuente en `nueva.py`,
+  `portadas.py`, `datos.py` y `textos.py`. La prueba
+  `test_cada_tipo_tiene_fuente_en_los_cuatro_scripts` avisa de los cuatro
+  últimos, que son los que se olvidan sin que falle nada.

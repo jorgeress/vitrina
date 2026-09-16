@@ -217,7 +217,7 @@ def datos_album(titulo, campos, md):
     miles de entradas, asi que traducir seria adivinar, y con los generos
     musicales encima se discute, que `emo` o `pop punk` no tienen version
     castellana que nadie use. Lo que antes era la excepcion de musica es ahora
-    la regla de las cuatro.
+    la regla de las cinco.
     """
     del titulo  # manda el mbid, que identifica el disco sin dudas
     mbid = campos.get("mbid")

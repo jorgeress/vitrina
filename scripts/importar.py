@@ -514,7 +514,7 @@ def importar_libro(args):
     Las otras fuentes vuelcan tu biblioteca entera de golpe porque es tuya y ya
     esta elegida. Con los libros no hay biblioteca que volcar: hay un catalogo
     publico, asi que la eleccion la haces tu obra a obra, como en un buscador.
-    Eso es exactamente lo que hace nueva.py con los cuatro tipos, asi que aqui
+    Eso es exactamente lo que hace nueva.py con los cinco tipos, asi que aqui
     solo se traducen las opciones y se llama alli; el nombre se queda por
     costumbre y porque esta documentado.
     """

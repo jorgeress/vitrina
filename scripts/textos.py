@@ -338,7 +338,7 @@ def lo_suyo(cuerpo):
 def escribir_cuerpo(md, cuerpo):
     """Pone lo generado sin tocar lo que haya escrito el.
 
-    **Lo suyo va arriba y lo generado debajo**, siempre, en las cuatro
+    **Lo suyo va arriba y lo generado debajo**, siempre, en las cinco
     secciones. Asi hay un sitio fijo donde escribir que ningun script pisa, y
     quien entra en una ficha lee primero por que le gusto y luego la referencia.
     """
