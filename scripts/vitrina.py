@@ -5,6 +5,7 @@ import json
 import re
 import time
 import unicodedata
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -22,18 +23,38 @@ UA = "vitrina/1.0 (https://github.com/jorgeress/vitrina)"
 FRONT_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 
 
-def pedir(url, headers=None, binario=False, datos=None, reintentos=3):
+def pedir(url, headers=None, binario=False, datos=None, reintentos=3, no_existe=None):
+    """La respuesta ya leida, o None si no se ha podido preguntar.
+
+    Un 404 es otra cosa: la fuente ha contestado, y lo que ha dicho es que eso
+    no existe. No se reintenta, que va a decir lo mismo tres veces, y devuelve
+    `no_existe`, que por defecto es None para no cambiarle nada a quien no lo
+    distinga. Quien si lo distingue pasa `{}`: asi un id mal copiado en una
+    ficha no se cuenta como "la fuente no responde", que es mandar a buscar el
+    fallo a la red cuando esta en la ficha.
+
+    Un 429 es la fuente pidiendo aire. TVmaze lo da en cuanto pasas de veinte
+    peticiones en diez segundos, y dice cuanto esperar; se le hace caso.
+    """
     cabeceras = {"User-Agent": UA, **(headers or {})}
     for intento in range(reintentos):
+        espera = 1.5 * (intento + 1)
         try:
             req = urllib.request.Request(url, headers=cabeceras, data=datos)
             with urllib.request.urlopen(req, timeout=20) as r:
                 cuerpo = r.read()
             return cuerpo if binario else json.loads(cuerpo)
+        except urllib.error.HTTPError as e:
+            e.close()  # lleva la respuesta abierta dentro, aunque no se lea
+            if e.code in (404, 410):
+                return no_existe
+            if e.code == 429:
+                pide = e.headers.get("Retry-After", "")
+                espera = min(int(pide), 30) if pide.isdigit() else 10
         except Exception:
-            if intento == reintentos - 1:
-                return None
-            time.sleep(1.5 * (intento + 1))
+            pass
+        if intento < reintentos - 1:
+            time.sleep(espera)
     return None
 
 
@@ -594,21 +615,77 @@ def asegurar_letterboxd(md, campos):
 TVMAZE = "https://api.tvmaze.com"
 
 
+# Lo que TVmaze tambien cataloga y no es una serie que se apunte en una
+# mediateca: "hunter x hunter" trae los Winter X Games. No se quitan, que
+# alguno puede ser justo lo que buscas, pero van al final de la lista.
+NO_FICCION = {"Sports", "News", "Talk Show", "Game Show", "Award Show",
+              "Variety", "Panel Show"}
+
+
 def series_tvmaze(consulta):
     """Las series que se llaman asi, de la mas parecida a la menos.
 
     Devolver None no es devolver una lista vacia: quiere decir que no se ha
     podido preguntar. Lo mismo que en el resto de buscadores.
+
+    TVmaze busca por el titulo con el que la cataloga, que casi siempre es el
+    ingles, y por unos pocos alias: "juego de tronos" la encuentra y "el juego
+    del calamar" no. Cuando nada de lo que devuelve se llama como lo buscado,
+    se le pregunta a Wikidata, que tiene el titulo en español y el id de TVmaze
+    (P8600) en la misma entidad, y lo que encuentre va delante.
     """
     res = pedir(f"{TVMAZE}/search/shows?q=" + urllib.parse.quote(consulta))
     if res is None:
         return None
-    return [r["show"] for r in res if r.get("show")]
+    series = [r["show"] for r in res if r.get("show")]
+    if not any(encaja(consulta, s.get("name") or "") for s in series):
+        vistas = {s.get("id") for s in series}
+        series = [s for s in series_wikidata(consulta)
+                  if s.get("id") not in vistas] + series
+    # sorted es estable: dentro de cada grupo se queda el orden de TVmaze.
+    return sorted(series, key=lambda s: s.get("type") in NO_FICCION)
+
+
+def series_wikidata(consulta):
+    """Las series de TVmaze a las que Wikidata llama asi, en español o en ingles.
+
+    Si Wikidata no contesta no pasa nada: esto es la reserva de un buscador que
+    ya ha contestado, asi que se queda en lista vacia y no en None.
+    """
+    ids = []
+    for idioma in ("es", "en"):
+        datos = wikidata({"action": "wbsearchentities", "search": consulta,
+                          "language": idioma, "uselang": idioma,
+                          "type": "item", "limit": 10})
+        ids += [r["id"] for r in (datos or {}).get("search", [])]
+    ids = list(dict.fromkeys(ids))
+    if not ids:
+        return []
+    datos = wikidata({"action": "wbgetentities", "ids": "|".join(ids[:50]),
+                      "props": "claims|labels|aliases", "languages": "en|es"}) or {}
+    tvids = []
+    for entidad in (datos.get("entities") or {}).values():
+        claims = entidad.get("claims") or {}
+        if "P8600" not in claims:
+            continue
+        nombres = [v["value"] for v in (entidad.get("labels") or {}).values()]
+        nombres += [a["value"] for lista in (entidad.get("aliases") or {}).values()
+                    for a in lista]
+        if not encaja(consulta, *nombres):
+            continue
+        valor = claims["P8600"][0].get("mainsnak", {}).get("datavalue", {}).get("value")
+        if str(valor or "").isdigit():
+            tvids.append(int(valor))
+    series = (serie_tvmaze(tvid) for tvid in dict.fromkeys(tvids))
+    return [s for s in series if s and s.get("name")]
 
 
 def serie_tvmaze(tvid):
-    """La ficha de la serie por su id, que es de donde salen todos sus datos."""
-    return pedir(f"{TVMAZE}/shows/{tvid}")
+    """La ficha de la serie por su id, que es de donde salen todos sus datos.
+
+    None si TVmaze no contesta y {} si contesta que ese id no existe.
+    """
+    return pedir(f"{TVMAZE}/shows/{tvid}", no_existe={})
 
 
 def creadores_tvmaze(tvid):

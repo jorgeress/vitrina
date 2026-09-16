@@ -14,6 +14,7 @@ Hace falta Pillow, como el resto de los scripts: portadas.py lo importa al
 cargarse y de ahi cuelga media cadena de imports. Esta en requirements.txt.
 """
 
+import io
 import json
 import re
 import sys
@@ -234,6 +235,100 @@ class FuenteCaida(unittest.TestCase):
             original = modulo.pedir
             modulo.pedir = falso
             self.addCleanup(setattr, modulo, "pedir", original)
+
+
+class BuscarSeries(unittest.TestCase):
+    """El buscador de series: que no se equivoque de cual, ni de por que falla."""
+
+    def test_un_404_no_se_reintenta_ni_se_cuenta_como_caida(self):
+        # pedir() se tragaba el 404 igual que un corte de red: reintentaba tres
+        # veces y devolvia None. Con un `tvmaze` mal copiado, datos.py decia
+        # "TVmaze no responde" y mandaba a buscar el fallo a la red.
+        llamadas = self._urlopen(404)
+        self.assertEqual(m.pedir("https://x/shows/1", no_existe={}), {})
+        self.assertIsNone(m.pedir("https://x/shows/1"))
+        self.assertEqual(len(llamadas), 2)
+
+    def test_un_429_se_reintenta(self):
+        # TVmaze corta a las veinte peticiones en diez segundos.
+        llamadas = self._urlopen(429)
+        self.assertIsNone(m.pedir("https://x/shows/1", reintentos=3))
+        self.assertEqual(len(llamadas), 3)
+
+    def test_datos_distingue_id_inexistente_de_fuente_caida(self):
+        self._serie(None)
+        self.assertIn("no responde", datos.datos_serie("x", {"tvmaze": "1"}, None)[1])
+        self._serie({})
+        self.assertIn("no tiene ficha", datos.datos_serie("x", {"tvmaze": "1"}, None)[1])
+
+    def test_lo_que_no_es_ficcion_va_al_final(self):
+        # "hunter x hunter" trae los Winter X Games delante del anime del 99.
+        self._buscar([{"id": 1, "name": "Winter X Games", "type": "Sports"},
+                      {"id": 2, "name": "Hunter x Hunter", "type": "Animation"}])
+        self.assertEqual([s["id"] for s in m.series_tvmaze("hunter x hunter")], [2, 1])
+
+    def test_wikidata_solo_cuando_nada_se_llama_asi(self):
+        # "el juego del calamar" no la encuentra TVmaze, que la tiene como
+        # Squid Game; Wikidata si, por el titulo en español.
+        pedidas = []
+        original = m.series_wikidata
+        m.series_wikidata = lambda q: pedidas.append(q) or [{"id": 9, "name": "Squid Game"}]
+        self.addCleanup(setattr, m, "series_wikidata", original)
+
+        self._buscar([{"id": 5, "name": "Breaking Bad"}])
+        self.assertEqual([s["id"] for s in m.series_tvmaze("breaking bad")], [5])
+        self.assertEqual(pedidas, [])
+
+        self._buscar([])
+        self.assertEqual([s["id"] for s in m.series_tvmaze("el juego del calamar")], [9])
+        self._buscar(None)
+        self.assertIsNone(m.series_tvmaze("el juego del calamar"))
+
+    def test_la_pista_separa_las_dos_one_piece(self):
+        # Las dos son Action y Adventure: con los generos solos no se sabia
+        # cual era el anime y cual la de Netflix con actores.
+        anime = {"type": "Animation", "genres": ["Action"],
+                 "network": {"country": {"code": "JP"}}}
+        actores = {"type": "Scripted", "genres": ["Action"], "language": "English",
+                   "webChannel": {"name": "Netflix", "country": None}}
+        self.assertEqual(nueva.pista_serie(anime), "JP · animación · Action")
+        self.assertEqual(nueva.pista_serie(actores), "English · Action")
+
+    def test_la_misma_serie_con_otro_nombre_no_entra_dos_veces(self):
+        # "shingeki no kyojin" encuentra Attack on Titan, que ya estaba: el
+        # nombre de fichero no coincide y el id si.
+        with tempfile.TemporaryDirectory() as tmp:
+            (Path(tmp) / "series").mkdir()
+            (Path(tmp) / "series" / "Attack on Titan.md").write_text(
+                "---\ntipo: serie\ntvmaze: 919\n---\n", encoding="utf-8")
+            original = nueva.VAULT
+            nueva.VAULT = Path(tmp)
+            self.addCleanup(setattr, nueva, "VAULT", original)
+            self.assertEqual(nueva.ficha_con_id("series", {"tvmaze": 919}),
+                             "Attack on Titan")
+            self.assertIsNone(nueva.ficha_con_id("series", {"tvmaze": 920}))
+
+    def _urlopen(self, codigo):
+        import urllib.error
+        llamadas = []
+
+        def falso(req, timeout=None):
+            llamadas.append(req)
+            raise urllib.error.HTTPError(req.full_url, codigo, "", {}, io.BytesIO())
+
+        for modulo, nombre, valor in ((m.urllib.request, "urlopen", falso),
+                                      (m.time, "sleep", lambda s: None)):
+            self.addCleanup(setattr, modulo, nombre, getattr(modulo, nombre))
+            setattr(modulo, nombre, valor)
+        return llamadas
+
+    def _serie(self, respuesta):
+        self.addCleanup(setattr, datos, "serie_tvmaze", datos.serie_tvmaze)
+        datos.serie_tvmaze = lambda tvid: respuesta
+
+    def _buscar(self, shows):
+        self.addCleanup(setattr, m, "pedir", m.pedir)
+        m.pedir = lambda *a, **k: None if shows is None else [{"show": s} for s in shows]
 
 
 class CancionesEnDiscos(unittest.TestCase):

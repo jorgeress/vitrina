@@ -37,9 +37,9 @@ import urllib.parse
 
 from datos import datos_juego, datos_serie
 from vitrina import (ESTADOS, PORTADAS, SECCIONES, VAULT, escribir_campos,
-                       escribir_ficha, ficha_letterboxd, nombre_de_fichero,
-                       parecidos, pedir, peliculas_wikidata, preguntar,
-                       series_tvmaze, slug, año_tvmaze)
+                       escribir_ficha, ficha_letterboxd, frontmatter,
+                       nombre_de_fichero, parecidos, pedir, peliculas_wikidata,
+                       preguntar, series_tvmaze, slug, año_tvmaze)
 from portadas import FUENTES as CARATULAS, guardar
 
 # Tipo de ficha -> carpeta de la vault. SECCIONES va al reves.
@@ -112,21 +112,47 @@ def buscar_peli(consulta, cuantos):
 def buscar_serie(consulta, cuantos):
     """TVmaze, que es un catalogo de television abierto y con el anime dentro.
 
-    Enseña el año y la cadena porque son lo que separa a las homonimas, que en
-    television son mas de las que parece: hay tres "The Office" --la inglesa, la
-    americana y una de 2024-- y dos "Hunter x Hunter", el del 99 y el del 2011.
+    Enseña el año, la cadena y el pais porque son lo que separa a las homonimas,
+    que en television son mas de las que parece: hay cinco "The Office" --la
+    americana, la inglesa, la australiana, la india y una de 1995-- y dos
+    "Hunter x Hunter", el del 99 y el del 2011.
     Del titulo no se deduce cual es, y por eso se elige de una lista.
     """
     encontradas = series_tvmaze(consulta)
     if encontradas is None:
         return None
-    salida = []
-    for serie in encontradas[:cuantos]:
-        cadena = (serie.get("network") or serie.get("webChannel") or {}).get("name")
-        salida.append(candidato(serie.get("name"), year=año_tvmaze(serie),
-                                autor=cadena, pista=", ".join(serie.get("genres") or []),
-                                tvmaze=serie.get("id")))
-    return salida
+    return [candidato(serie.get("name"), year=año_tvmaze(serie),
+                      autor=(emisora(serie) or {}).get("name"),
+                      pista=pista_serie(serie), tvmaze=serie.get("id"))
+            for serie in encontradas[:cuantos]]
+
+
+def emisora(serie):
+    return serie.get("network") or serie.get("webChannel")
+
+
+# Solo lo que no es una serie de ficcion con actores se dice: eso es lo normal
+# y ponerlo en cada linea seria ruido.
+TIPOS_SERIE = {"Animation": "animación", "Documentary": "documental",
+               "Reality": "reality"}
+
+
+def pista_serie(serie):
+    """El pais, si es de animacion y los generos: lo que separa a las homonimas.
+
+    Con los generos solos no bastaba. Las dos "One Piece" son Action y
+    Adventure, y lo que las separa es que una es el anime del 99 y la otra la
+    de Netflix con actores; las cuatro "The Office" son Comedy, y lo que las
+    separa es el pais. La que todavia no se ha estrenado lo dice, que no tiene
+    año con el que reconocerla.
+    """
+    pais = ((emisora(serie) or {}).get("country") or {}).get("code")
+    tipo = serie.get("type")
+    partes = [pais or serie.get("language"),
+              TIPOS_SERIE.get(tipo, tipo.lower() if tipo and tipo != "Scripted" else None),
+              "sin estrenar" if serie.get("status") == "In Development" else None,
+              ", ".join(serie.get("genres") or [])]
+    return " · ".join(p for p in partes if p)
 
 
 def buscar_album(consulta, cuantos):
@@ -208,6 +234,16 @@ def completar(tipo, elegido):
 
 # --- alta --------------------------------------------------------------------
 
+def ficha_con_id(carpeta, ids):
+    """La ficha de la carpeta que ya lleva alguno de esos ids, si la hay."""
+    buscados = {(c, str(v)) for c, v in ids.items() if v}
+    for md in sorted((VAULT / carpeta).glob("*.md")):
+        campos = frontmatter(md.read_text(encoding="utf-8"))
+        if any(campos.get(c) == v for c, v in buscados):
+            return md.stem
+    return None
+
+
 def caratula(tipo, md, campos, titulo):
     """La portada de la ficha recien creada, con el id que se acaba de guardar."""
     img, fuente = CARATULAS[tipo](titulo, campos, md)
@@ -272,6 +308,14 @@ def alta(args):
         if elegido is None:
             print("No se ha creado nada.")
             return 0
+
+    # La misma obra con otro nombre de fichero no la para escribir_ficha, que
+    # compara titulos: "Shingeki no Kyojin" a mano y "Attack on Titan" desde
+    # TVmaze son dos ficheros y una serie. El id si es el mismo.
+    repetida = ficha_con_id(carpeta, elegido["ids"])
+    if repetida:
+        print(f"\nEsa ya la tienes: content/{carpeta}/{repetida}.md lleva el mismo id.")
+        return 0
 
     extra, detalle = completar(args.tipo, elegido)
     titulo = elegido["titulo"]
