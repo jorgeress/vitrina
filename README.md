@@ -541,8 +541,8 @@ solo estudio. Lo que decide es si el trozo siguiente es un sufijo de empresa
 «simplifica»: partiendo por comas a secas, «Inc.» salía como el estudio con más
 juegos de la colección.
 
-**Sólo tiene página quien tenga dos obras o más.** De los 119 autores de esta
-colección, repiten 13. Darle página a los otros 106 sería crear 106 callejones
+**Sólo tiene página quien tenga dos obras o más.** De los 152 autores de esta
+colección, repiten 15. Darle página a los otros 137 sería crear 137 callejones
 sin salida. Al crecer la colección basta con volver a pasarlo: el que llegue a
 dos la estrena solo. Las páginas de `content/autores/` son derivadas y se
 reescriben enteras en cada pasada, así que no se editan a mano; el campo `autor`
@@ -592,16 +592,17 @@ FICHAS
               total  borrador  publicadas  con texto
   juegos         44         0          44         44
   pelis          37         0          37         37
-  libros          9         0           9          8
+  series         26         0          26         26
+  libros         11         0          11         10
   musica         37         0          37         37
              —————— ————————— ——————————— ——————————
-  total         127         0         127        126
+  total         155         0         155        154
 
 SIN RELLENAR
-  nota         84   ████████················
+  nota        112   ███████·················
   texto         1   ████████████████████████
 
-FAVORITOS  ████····················  21 de 127
+FAVORITOS  ███·····················  21 de 155
 ```
 
 Avisa además de dos cosas que no se ven de otra manera: fichas que apuntan a una
