@@ -45,22 +45,15 @@ from vitrina import (SECCIONES, VAULT, escribir_campos, frontmatter,
 
 AUTORES = VAULT / "autores"
 
-# El indice de la carpeta. Sin el, quien la fabrica es el plugin folder-page de
-# Quartz, que la titula con el nombre crudo del directorio: en el arbol lateral
-# salia "autores" en minuscula, entre secciones que van en mayuscula. Y de paso
-# la carpeta deja de ser una lista sin explicar.
+# El indice de la carpeta, que es solo el titulo. Sin el, quien la fabrica es el
+# plugin folder-page de Quartz, que la titula con el nombre crudo del
+# directorio: en el arbol lateral salia "autores" en minuscula, entre secciones
+# que van en mayuscula. La lista de paginas la pone el plugin debajo.
 #
 # Va aqui y no a mano porque main() borra la carpeta entera en cada pasada.
 INDICE = """---
 title: Autores
 ---
-
-Quien se repite en la colección. Hay página de cada estudio, dirección, autoría
-o artista con **dos obras o más**: con una sola no agruparía nada, y serían más
-de cien páginas para no juntar a nadie.
-
-No se escriben a mano. Las hace `scripts/autores.py` leyendo el campo `autor`
-de las fichas, y se rehacen enteras en cada pasada.
 """
 
 # Un `autor` enlazado de cuando el enlace vivia en el campo: "[[autores/X|X]]".
