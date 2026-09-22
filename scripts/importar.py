@@ -521,6 +521,8 @@ def importar_libro(args):
     args.tipo = "libro"
     args.favorito = False
     args.borrador = not args.sin_borrador
+    # Open Library devuelve el titulo en latino, asi que aqui nunca hace falta.
+    args.fichero = None
     return nueva.alta(args)
 
 

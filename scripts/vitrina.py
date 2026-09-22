@@ -163,7 +163,11 @@ def normal(s):
 # cambian antes de pasar a ASCII porque si no, "™" no desaparece: al
 # descomponerlo sale "TM", y "DARK SOULS™ REMASTERED" acababa siendo
 # "DARK SOULSTM REMASTERED".
+# Los guiones largos ya estaban; faltaban los dos guiones tipograficos cortos,
+# que no se ven distintos de un guion normal y no se descomponen a ASCII: se
+# perdian en vez de convertirse, y "BUCK‐TICK" acababa siendo "BUCKTICK".
 SIMBOLOS = str.maketrans({"™": "", "®": "", "©": "", "–": "-", "—": "-",
+                          "‐": "-", "‑": "-",
                           "’": "'", "‘": "'", "“": '"', "”": '"', "…": "..."})
 
 
@@ -193,6 +197,16 @@ def nombre_de_fichero(titulo):
     limpio = re.sub(r'[/\\:*?"<>|]', " ", ascii_plano(titulo))
     return re.sub(r"\s+", " ", limpio).strip(" .") or "sin titulo"
 
+
+def sin_letras_latinas(titulo):
+    """True si de ese titulo no puede salir un nombre de fichero.
+
+    Pasa con los discos japoneses de MusicBrainz, que se catalogan con el
+    titulo original: de "アダンの風" no queda nada al pasar a ASCII. No es lo
+    mismo que llevar tildes o un simbolo raro, que de eso si queda algo; aqui
+    hay que preguntarle a la fuente como se llama la obra en latino.
+    """
+    return not re.search(r"[A-Za-z0-9]", ascii_plano(titulo))
 
 
 def enlace_seccion(carpeta):
@@ -234,9 +248,20 @@ def fichas_existentes(carpeta):
             if p.stem != "index"}
 
 
-def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True):
-    """Deja la ficha en su carpeta. Devuelve None si ya existia."""
-    destino = VAULT / carpeta / f"{nombre_de_fichero(titulo)}.md"
+def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True, fichero=None):
+    """Deja la ficha en su carpeta. Devuelve None si ya existia.
+
+    `fichero` es de donde sale el nombre cuando no puede salir del titulo. Uno
+    escrito entero fuera del alfabeto latino no deja ni una letra al pasar a
+    ASCII, asi que "アダンの風" y "悪の華" daban los dos el mismo
+    "sin titulo.md": el primero se creaba con un nombre que no es de nadie y el
+    segundo ya no se creaba, porque el fichero existia. Quien llama si sabe
+    como se llama esa obra en latino --MusicBrainz lo guarda como alias-- y lo
+    pasa por aqui. El titulo de verdad no se pierde: se apunta en `title`, que
+    es lo que pinta la web, igual que con "El madrileño".
+    """
+    nombre = nombre_de_fichero(fichero or titulo)
+    destino = VAULT / carpeta / f"{nombre}.md"
     if destino.exists():
         return None
     # Misma obra escrita distinto ("Parásitos" y "Parasitos"): no se duplica.
@@ -258,7 +283,7 @@ def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True):
     # portada -- que es un YAML invalido, y ahi Quartz ya no construye la ficha.
     if campos.get("tags") is None:
         lineas[orden.index("tags")] = "tags: []"
-    if nombre_de_fichero(titulo) != titulo:
+    if nombre != titulo:
         # Un nombre de fichero no admite ":" ni "?", asi que "Spider-Man: Brand
         # New Day" se queda sin los dos puntos y con eso ya no se encuentra en
         # ningun catalogo. El titulo de verdad se apunta aparte: es el que

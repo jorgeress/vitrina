@@ -115,6 +115,24 @@ class NombresYParecidos(unittest.TestCase):
             self.assertIn('title: "Spider-Man: Brand New Day"',
                           ficha.read_text(encoding="utf-8"))
 
+    def test_dos_discos_japoneses_no_caen_en_el_mismo_fichero(self):
+        # "アダンの風" y "悪の華" no dejan ni una letra al pasar a ASCII, asi
+        # que los dos daban "sin titulo.md": el primero se creaba con un nombre
+        # que no es de nadie y el segundo ya no se creaba. El nombre en latino
+        # lo dice MusicBrainz, y el titulo de verdad se queda en `title`.
+        self.assertTrue(m.sin_letras_latinas("アダンの風"))
+        self.assertFalse(m.sin_letras_latinas("El madrileño"))
+        with tempfile.TemporaryDirectory() as tmp:
+            self._vault(tmp)
+            m.escribir_ficha("musica", "アダンの風", {"tipo": "album"},
+                             fichero="Windswept Adan")
+            m.escribir_ficha("musica", "悪の華", {"tipo": "album"},
+                             fichero="Aku no Hana")
+            nombres = sorted(p.stem for p in (Path(tmp) / "musica").glob("*.md"))
+            self.assertEqual(nombres, ["Aku no Hana", "Windswept Adan"])
+            ficha = Path(tmp) / "musica" / "Windswept Adan.md"
+            self.assertIn("title: アダンの風", ficha.read_text(encoding="utf-8"))
+
     def test_un_titulo_aparte_no_se_come_la_clave_de_encima(self):
         # La linea de `title` se insertaba delante antes de poner el `tags: []`,
         # y el indice de tags se calculaba sin contarla: caia sobre `portada` y
@@ -227,6 +245,19 @@ class FuenteCaida(unittest.TestCase):
                                      {"name": "Sin id"}])
         self.assertEqual([c["titulo"] for c in nueva.buscar_juego("x", 5)],
                          ["Con id"])
+
+    def test_un_disco_sin_nombre_en_latino_se_para_en_vez_de_llamarse_nada(self):
+        # "悪の華" no deja ni una letra al pasar a ASCII y MusicBrainz no le
+        # conoce alias en ingles. Antes salia "sin titulo.md" con la portada
+        # ".webp": una ficha que no se llama de nada, y una imagen que se
+        # pisarian entre ellas todas las que cayeran ahi. Ahora se para y lo
+        # pide, que como se llama en latino no se adivina.
+        elegido = nueva.candidato("悪の華", year="1990", mbid="8d0a2aaa")
+        self._pedir(lambda *a, **k: {"aliases": []})
+        self.assertIsNone(nueva.nombre_latino("album", elegido))
+        self._pedir(lambda *a, **k: {"aliases": [{"locale": "en",
+                                                  "name": "Aku no Hana"}]})
+        self.assertEqual(nueva.nombre_latino("album", elegido), "Aku no Hana")
 
     def _pedir(self, falso):
         # En los dos modulos: unos buscadores piden desde nueva.py y otros --el

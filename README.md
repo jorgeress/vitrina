@@ -205,6 +205,19 @@ completa y no hay que pasar después ni `portadas.py` ni `datos.py`. Lo que la
 fuente no puede saber es lo tuyo, y va en las opciones: `--nota`, `--estado`,
 `--favorito`.
 
+Un caso que aparece en cuanto entra música japonesa: MusicBrainz cataloga esos
+discos con su título original, y de *アダンの風* o *悪の華* no queda ni una letra
+al pasar a ASCII, así que de ahí no sale nombre de fichero. Si el catálogo sabe
+cómo se llama la obra en alfabeto latino, lo usa y lo dice; si no lo sabe, se
+para y lo pides tú, que eso no se adivina:
+
+```bash
+scripts/nueva.py album "aku no hana buck-tick" --fichero "Aku no Hana"
+```
+
+El título de verdad no se pierde: se guarda en `title`, que es lo que pinta la
+web, igual que con *El madrileño*.
+
 **Elegir a mano es el punto, no un trámite.** Open Library devuelve la edición
 inglesa aunque busques en español, en Steam «Portal» saca antes el 2 que el 1 y
 hay tres películas llamadas *Parasite*. Quedarse con el primero a ciegas es

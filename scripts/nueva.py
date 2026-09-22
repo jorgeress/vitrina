@@ -26,6 +26,10 @@ Lo que la fuente no sabe es lo tuyo, y va en las opciones:
   --estado "en curso" pendiente, en curso, terminado, abandonado
   --favorito          la marca como favorita: entra en Favoritos
   --elegir 2          sin preguntar: el resultado numero 2
+  --fichero "Aku no Hana"  como se llama el fichero cuando del titulo no sale
+                      uno: los discos japoneses se catalogan en japones, y de
+                      "悪の華" no queda nada al pasar a ASCII. El titulo de
+                      verdad se guarda igual, en `title`.
   --borrador          entra con draft: true, o sea sin salir en la web
   --dry-run           dice que crearia, sin tocar nada
 """
@@ -39,7 +43,8 @@ from datos import datos_juego, datos_serie
 from vitrina import (ESTADOS, PORTADAS, SECCIONES, VAULT, escribir_campos,
                        escribir_ficha, ficha_letterboxd, frontmatter,
                        nombre_de_fichero, parecidos, pedir, peliculas_wikidata,
-                       preguntar, series_tvmaze, slug, año_tvmaze)
+                       preguntar, series_tvmaze, sin_letras_latinas, slug,
+                       año_tvmaze)
 from portadas import FUENTES as CARATULAS, guardar
 
 # Tipo de ficha -> carpeta de la vault. SECCIONES va al reves.
@@ -232,6 +237,31 @@ def completar(tipo, elegido):
     return campos, None
 
 
+# --- el nombre en latino -----------------------------------------------------
+# De un titulo japones no sale nombre de fichero: "アダンの風" y "悪の華" se
+# quedan en nada al pasar a ASCII, y los dos daban el mismo "sin titulo.md".
+# El nombre no se inventa ni se translitera, que eso seria adivinar: se le
+# pregunta a la misma fuente que ya identifico la obra, que lo tiene apuntado.
+
+def nombre_latino(tipo, elegido):
+    """Como se llama esa obra en alfabeto latino, si la fuente lo sabe.
+
+    Solo se pregunta cuando hace falta, que es casi nunca, asi que es una
+    peticion mas y solo la del candidato que hayas dicho tu, igual que
+    `completar`. Si la fuente no lo sabe se devuelve None y quien llama decide:
+    antes un nombre raro que uno inventado.
+    """
+    if tipo != "album":
+        # De las otras cuatro fuentes no ha hecho falta todavia: Steam, TVmaze,
+        # Wikidata y Open Library devuelven ya el titulo en latino.
+        return None
+    datos = pedir(f"https://musicbrainz.org/ws/2/release-group/{elegido['ids']['mbid']}"
+                  "?fmt=json&inc=aliases", no_existe={})
+    alias = [a.get("name") for a in (datos or {}).get("aliases") or []
+             if a.get("locale") == "en" and a.get("name")]
+    return next((a for a in alias if not sin_letras_latinas(a)), None)
+
+
 # --- alta --------------------------------------------------------------------
 
 def ficha_con_id(carpeta, ids):
@@ -245,11 +275,18 @@ def ficha_con_id(carpeta, ids):
 
 
 def caratula(tipo, md, campos, titulo):
-    """La portada de la ficha recien creada, con el id que se acaba de guardar."""
+    """La portada de la ficha recien creada, con el id que se acaba de guardar.
+
+    La imagen se llama como el fichero de la ficha y no como su titulo, que no
+    siempre da un nombre: de "悪の華" sale un `slug` vacio, o sea una portada
+    llamada ".webp" que se pisarian entre ellas todas las que cayeran ahi. El
+    nombre del fichero, en cambio, siempre vale: de eso se encarga quien lo
+    eligio.
+    """
     img, fuente = CARATULAS[tipo](titulo, campos, md)
     if not img:
         return None
-    nombre = f"{slug(titulo)}.webp"
+    nombre = f"{slug(md.stem)}.webp"
     peso = guardar(img, PORTADAS / nombre)
     escribir_campos(md, {"portada": f"[[{nombre}]]"})
     return f"{nombre}, {peso // 1024} KB, {fuente}"
@@ -266,6 +303,8 @@ def main():
     p.add_argument("--elegir", type=int, metavar="N",
                    help="sin preguntar: el resultado numero N")
     p.add_argument("--resultados", type=int, default=8, metavar="N")
+    p.add_argument("--fichero", metavar="NOMBRE",
+                   help="como se llama el fichero, si del titulo no sale uno")
     p.add_argument("--borrador", action="store_true",
                    help="entra con draft: true, o sea sin salir en la web")
     p.add_argument("--dry-run", action="store_true", help="no escribe ni baja nada")
@@ -319,6 +358,26 @@ def alta(args):
 
     extra, detalle = completar(args.tipo, elegido)
     titulo = elegido["titulo"]
+    # De donde sale el nombre del fichero. Casi siempre del titulo; cuando el
+    # titulo no tiene ni una letra latina, de como lo llame la fuente en ingles.
+    fichero = args.fichero or titulo
+    if sin_letras_latinas(fichero):
+        fichero = nombre_latino(args.tipo, elegido)
+        if not fichero:
+            # Ni el titulo ni la fuente dan un nombre de fichero. Antes salia
+            # "sin titulo.md" con la portada ".webp", que es una ficha que no
+            # se llama de nada y una imagen que se pisan entre ellas todas las
+            # que caigan ahi. Como llamarla en latino no se adivina: se pide.
+            print(f"\n«{titulo}» no tiene ni una letra latina, y "
+                  f"{NOMBRE_FUENTE[args.tipo]} no sabe cómo se llama fuera\n"
+                  "de su alfabeto, así que de ahí no sale un nombre de fichero.\n"
+                  "Dilo tú, repitiendo la orden con --fichero y el nombre que le des:\n"
+                  f"  scripts/nueva.py {args.tipo} \"{args.titulo}\" "
+                  f"--elegir {args.elegir or 1} --fichero \"Aku no Hana\"\n"
+                  "El título de verdad se guarda igual, en `title`.")
+            return 1
+        print(f"  El título no da un nombre de fichero; {NOMBRE_FUENTE[args.tipo]}"
+              f" lo llama «{fichero}».")
     # En las series la columna de la izquierda es la cadena, que sirve para
     # reconocer cual de las tres "The Office" es y no para firmar la obra: a la
     # ficha solo va si `completar` trae a alguien.
@@ -331,7 +390,7 @@ def alta(args):
     campos.update({c: v for c, v in extra.items() if v})
 
     if args.dry_run:
-        print(f"\nSe crearía content/{carpeta}/{nombre_de_fichero(titulo)}.md")
+        print(f"\nSe crearía content/{carpeta}/{nombre_de_fichero(fichero)}.md")
         for clave, valor in campos.items():
             if valor not in (None, "", False):
                 print(f"  {clave}: {valor}")
@@ -339,7 +398,8 @@ def alta(args):
             print(f"  ({detalle})")
         return 0
 
-    md = escribir_ficha(carpeta, titulo, campos, borrador=args.borrador)
+    md = escribir_ficha(carpeta, titulo, campos, borrador=args.borrador,
+                        fichero=fichero)
     if not md:
         print(f"\n«{titulo}» ya estaba en content/{carpeta}/.")
         return 0

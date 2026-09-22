@@ -261,7 +261,10 @@ def main():
             fallidas += 1
             continue
 
-        nombre = f"{slug(titulo)}.webp"
+        # Del titulo, salvo cuando de el no sale nada: "悪の華" daria ".webp",
+        # y esa se la pisan entre ellas todas las demas. Ahi manda el nombre del
+        # fichero, que ya esta en latino.
+        nombre = f"{slug(titulo) or slug(md.stem)}.webp"
         peso = guardar(img, PORTADAS / nombre)
         escribir_campos(md, {"portada": f"[[{nombre}]]"})
         print(f"  ✓  {etiqueta}: {nombre}, {peso // 1024} KB, {fuente}")
