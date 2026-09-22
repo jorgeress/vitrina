@@ -26,6 +26,7 @@ from types import SimpleNamespace
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import datos
+import estado
 import importar
 import autores
 import portadas
@@ -97,6 +98,45 @@ class Cabeceras(unittest.TestCase):
             self.assertFalse(m.escribir_campos(md, {"nota": 9}))
             self.assertEqual(md.read_text(encoding="utf-8"),
                              "una nota sin cabecera\n")
+
+
+class CifrasDelReadme(unittest.TestCase):
+    """El bloque de cifras del README sale de la vault, no de contar a mano.
+
+    Escrito a mano se quedaba viejo solo: llego a decir 155 fichas cuando ya
+    habia 210. Las cifras que no pueden salir de aqui no se ponen en ningun
+    sitio.
+    """
+
+    RESUMEN = ("FICHAS\n  juegos  46\n\n"
+               "EN LA WEB  ████  210 de 210\n\n"
+               "SIN RELLENAR\n  nota  164\n\n"
+               "NOTAS      10:38  9:2\n\n"
+               "FAVORITOS  ██  21 de 210\n  juegos  6\n")
+
+    def test_el_bloque_es_el_resumen_recortado(self):
+        bloque = estado.bloque_readme(self.RESUMEN)
+        self.assertIn("FICHAS", bloque)
+        self.assertIn("SIN RELLENAR", bloque)
+        # De FAVORITOS solo el titular; el reparto por secciones no ilustra nada.
+        self.assertIn("FAVORITOS  ██  21 de 210", bloque)
+        self.assertNotIn("juegos  6", bloque)
+        # Y lo que el README no enseña no se cuela.
+        self.assertNotIn("EN LA WEB", bloque)
+        self.assertNotIn("NOTAS", bloque)
+
+    def test_el_bloque_cae_donde_estaba_y_no_toca_el_resto(self):
+        texto = "# Vitrina\n\n```\nFICHAS\n  viejo\n```\n\nLo de después.\n"
+        nuevo = estado.BLOQUE_RE.sub(
+            lambda _: estado.bloque_readme(self.RESUMEN), texto, count=1)
+        self.assertIn("juegos  46", nuevo)
+        self.assertNotIn("viejo", nuevo)
+        self.assertTrue(nuevo.startswith("# Vitrina"))
+        self.assertTrue(nuevo.endswith("Lo de después.\n"))
+
+    def test_un_readme_sin_bloque_no_se_toca(self):
+        # Antes que meter el bloque donde no va, no se escribe y se dice.
+        self.assertIsNone(estado.BLOQUE_RE.search("# Vitrina\n\nSin cifras.\n"))
 
 
 class NombresYParecidos(unittest.TestCase):

@@ -12,14 +12,23 @@ Uso:
   scripts/estado.py                  el resumen
   scripts/estado.py --seccion pelis  solo esa carpeta
   scripts/estado.py --detalle        ademas, que ficha le falta cada cosa
+  scripts/estado.py --readme         reescribe el bloque de cifras del README
+
+El README enseña un trozo de este resumen como ejemplo. Escrito a mano se queda
+viejo a la semana siguiente -- paso, y acabo diciendo 155 fichas cuando ya habia
+210 --, asi que no se escribe a mano: `--readme` lo vuelve a sacar de la vault y
+lo mete en su sitio. Las cifras que no pueden salir de aqui, como las de los
+comentarios de los `.base`, sencillamente no se ponen.
 """
 
 import argparse
+import contextlib
+import io
 import re
 import sys
 from collections import Counter, defaultdict
 
-from vitrina import (ESTADOS, FRONT_RE, PORTADAS, SECCIONES, VAULT,
+from vitrina import (ESTADOS, FRONT_RE, PORTADAS, RAIZ, SECCIONES, VAULT,
                      frontmatter, vacio)
 
 # Los que hacen falta para que una ficha este completa de verdad.
@@ -53,13 +62,68 @@ def barra(hechas, total, ancho=24):
     return "█" * llenas + "·" * (ancho - llenas)
 
 
+# El bloque del README es este resumen recortado: las tres cosas que se leen de
+# un vistazo. El reparto por estados y el recuento de notas se quedan fuera
+# porque ahi ocupan media pantalla y no es lo que el README esta contando.
+PARTES_README = ("FICHAS", "SIN RELLENAR", "FAVORITOS")
+
+# El bloque de cifras del README, que es el unico cercado que empieza por FICHAS.
+BLOQUE_RE = re.compile(r"(?<=```\n)FICHAS\n.*?(?=\n```)", re.S)
+
+
+def bloque_readme(salida):
+    """El resumen recortado a lo que el README enseña.
+
+    De FAVORITOS solo la primera linea: el reparto por secciones que viene
+    debajo es para trabajar, no para ilustrar.
+    """
+    bloques = {t.split("\n")[0].split("  ")[0]: t
+               for t in salida.strip().split("\n\n")}
+    partes = [bloques.get(nombre, "") for nombre in PARTES_README]
+    if partes[-1]:
+        partes[-1] = partes[-1].split("\n")[0]
+    return "\n\n".join(p for p in partes if p)
+
+
+def escribir_readme(salida):
+    """Mete el bloque en el README. Devuelve si ha cambiado algo."""
+    readme = RAIZ / "README.md"
+    texto = readme.read_text(encoding="utf-8")
+    if not BLOQUE_RE.search(texto):
+        print("No encuentro el bloque de cifras en el README: tiene que ser un\n"
+              "cercado que empiece por una linea «FICHAS».")
+        return None
+    nuevo = BLOQUE_RE.sub(lambda _: bloque_readme(salida), texto, count=1)
+    if nuevo == texto:
+        print("El README ya estaba al dia.")
+        return False
+    readme.write_text(nuevo, encoding="utf-8")
+    print(f"Actualizado el bloque de cifras de {readme.name}.")
+    return True
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--seccion", choices=list(SECCIONES), help="solo una carpeta")
     p.add_argument("--detalle", action="store_true",
                    help="lista las fichas a las que les falta algo")
+    p.add_argument("--readme", action="store_true",
+                   help="reescribe el bloque de cifras del README")
     args = p.parse_args()
+
+    if args.readme:
+        # La vault entera y sin detalle: el README enseña el resumen, no la
+        # lista de lo que le falta a cada ficha.
+        args.seccion = args.detalle = None
+        salida = io.StringIO()
+        with contextlib.redirect_stdout(salida):
+            resumen(args)
+        return 0 if escribir_readme(salida.getvalue()) is not None else 1
+    return resumen(args)
+
+
+def resumen(args):
 
     carpetas = [args.seccion] if args.seccion else list(SECCIONES)
     total = Counter()

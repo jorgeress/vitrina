@@ -155,9 +155,71 @@ Los dos detalles que no son evidentes:
   paso. Si el sitio construye pero las galerías salen vacías o no aparece el
   grafo, es que falta este comando.
 
-Para editar las notas: en Obsidian, `Abrir carpeta como almacén` apuntando a
-`content/` (a `content/`, no a la raíz del repo). La configuración de la vault
-viene versionada, así que las Bases funcionan desde el primer arranque.
+### En Obsidian
+
+`Abrir carpeta como almacén` apuntando a **`content/`** — a `content/`, no a la
+raíz del repo: si abres la raíz, Obsidian se traga `quartz/`, `plugins/` y
+`public/`, que son programa y no notas.
+
+La configuración de la vault viene versionada, en **`content/.obsidian/`**, así
+que no hay que activar ni instalar nada: *Bases*, *Plantillas* y el grafo son
+plugins del propio Obsidian y ya vienen encendidos, la carpeta de plantillas ya
+apunta a `_plantillas` y los adjuntos a `assets`. (La otra `.obsidian`, la de la
+raíz del repo, está en el `.gitignore`: es tu estado local, no configuración del
+proyecto.) Al abrir la vault ves lo mismo que hay en el repo, sin paso
+intermedio:
+
+- Las cinco carpetas con sus fichas, y `autores/`, que la escriben los scripts.
+- Los `.base` de la raíz. Ábrelos y verás las galerías, las tablas y las
+  pestañas exactamente como salen en la web.
+- El grafo, los *backlinks* y la página de cada etiqueta, que son de Obsidian.
+
+Para escribir una ficha nueva, `Ctrl+P` → *Insertar plantilla* mete
+`_plantillas/Ficha.md`, que es la carpeta que ya tiene apuntada. Esa carpeta no
+se publica: está en `ignorePatterns` de la configuración de Quartz.
+
+**No necesitas Obsidian para nada de esto.** Las fichas son Markdown plano y los
+scripts solo leen ficheros. Obsidian es la forma cómoda de editar, y las Bases
+la de ver las galerías sin construir el sitio; con un editor de texto normal
+funciona igual, salvo que las galerías las verás al construir.
+
+### ¿Se ve igual en local que publicado?
+
+**Sí.** No hay dos versiones ni dos configuraciones: `npx quartz build --serve`
+levanta en <http://localhost:8080> lo mismo que la Action sube a Pages, con el
+mismo `quartz.config.yaml`, los mismos plugins y la misma paleta. Quartz emite
+las rutas relativas a cada página, así que no importa que aquí esté en la raíz y
+allí cuelgue de `/vitrina/`.
+
+Cuatro diferencias, todas pequeñas y ninguna de aspecto:
+
+- **Las fechas de las fichas sin commitear.** Quartz saca «creado» y
+  «modificado» del historial de git. Una ficha recién escrita todavía no está
+  ahí, y el build lo avisa: `isn't yet tracked by git, dates will be
+  inaccurate`. En la Action no pasa porque clona con `fetch-depth: 0`.
+- **Los borradores no salen en ninguno de los dos.** Quartz se salta lo que
+  lleve `draft: true`, aquí y allí. Para verlos, `scripts/vistazo.py`.
+- **La página 404** es la única que se construye con la dirección completa
+  (`/vitrina/...`), porque se sirve desde cualquier profundidad y no sabe dónde
+  está. En local no la vas a ver: un servidor de ficheros a secas no la usa.
+- **Las tipografías vienen de Google Fonts** en los dos casos, así que sin
+  conexión el sitio se ve con la letra del sistema.
+
+Lo que **no** es igual es Obsidian y la web, que es otra pregunta. Las galerías
+sí: Bases pinta las mismas tarjetas, **con carátula incluida**, en la misma
+rejilla y con las mismas pestañas, porque el `image: note.portada` del `.base` lo
+entienden los dos. Las etiquetas y el grafo, también.
+
+Lo que solo está en la web es **la cabecera de cada ficha** —la carátula
+grande, la lista de datos y el enlace a la fuente—, los enlaces al autor y el
+grafo grande de la portada. Eso lo pinta `plugins/vitrina` al construir, y
+Obsidian no ejecuta plugins de Quartz. Los datos siguen ahí de todas formas: son
+el panel de propiedades de la nota, con los mismos campos y sin maquetar.
+
+Igualarlo del todo se podría, pero saldría caro: habría que escribir la
+cabecera dentro de cada nota, que es exactamente lo que «Por qué está partido en
+tres» existe para evitar. Serían 210 notas cargando con maquetación, y `datos.py`
+y `portadas.py` teniendo que reescribir el cuerpo cada vez que cambia un campo.
 
 ### Publicarlo bajo tu propia cuenta
 
@@ -224,10 +286,62 @@ exactamente lo que hace que una ficha acabe con los datos de otra obra. Con el
 identificador guardado, la portada y los datos salen exactos y se pueden rehacer
 siempre igual.
 
-A mano también se puede, con la plantilla de `_plantillas/Ficha.md` (`Ctrl+P` →
-*Insertar plantilla*) en la carpeta de su sección. En cuanto tenga `tipo`
-aparece sola en la galería y en la tabla, y si lleva `favorito: true`, también
-en *Lo mejor de lo mejor*. No hay que tocar ningún índice.
+### A mano, sin scripts
+
+No hace falta ningún script: una ficha es un `.md` con cabecera, y se puede
+escribir entera en Obsidian o en cualquier editor. Creas el fichero en la
+carpeta de su sección y ya está:
+
+```markdown
+---
+tipo: juego
+year: 2024
+autor: LocalThunk
+nota: 9
+estado: terminado
+favorito: true
+tags:
+  - indie
+  - strategy
+---
+
+Por qué me gustó, en dos frases. Esto es lo único que ninguna herramienta
+puede rellenar por ti.
+```
+
+De todos esos campos **el único obligatorio es `tipo`**, porque es lo que decide
+en qué galería sale; el resto se añade cuando se sepa. Qué significa cada uno
+está en `_plantillas/Ficha.md`, que además es una plantilla de Obsidian: `Ctrl+P`
+→ *Insertar plantilla* la pega con los huecos puestos.
+
+En cuanto tenga `tipo` aparece sola en la galería y en la tabla, y si lleva
+`favorito: true`, también en *Lo mejor de lo mejor*. **No hay que tocar ningún
+índice**, porque no hay ninguno que tocar: las galerías son `.base`, o sea
+preguntas que se resuelven al pintar.
+
+Tres cosas que se escapan y no dan error, solo salen mal:
+
+- **La carpeta manda tanto como el `tipo`.** Un `tipo: album` guardado en
+  `juegos/` sale en la galería de música y cuelga de Juegos en el grafo.
+- **El nombre del fichero se queda en ASCII**, porque de él sale la dirección de
+  la página. Si el título lleva tildes o dos puntos, el fichero va sin ellos y
+  el título de verdad se apunta aparte, en `title`.
+- **`seccion` no se escribe a mano.** Lo pone `scripts/secciones.py`, que se
+  puede pasar cuantas veces quieras y solo toca lo que falte.
+
+Así que después de escribirla a mano, estos dos dejan la ficha como si la
+hubiera creado un script, y los dos son seguros de repetir:
+
+```bash
+scripts/secciones.py    # le pone el campo `seccion`, que la cuelga de su sección
+scripts/portadas.py     # le busca la carátula por el título
+```
+
+La carátula sale mejor si la ficha lleva el identificador de su fuente
+(`appid`, `mbid`, `coverid`, `tvmaze`, `letterboxd`): entonces se baja exacta en
+vez de por parecido de nombre. Si no lo lleva, se busca por título, que acierta
+casi siempre y falla justo con los títulos raros. Y si no aparece, dejas la
+imagen en `assets/portadas/` y escribes `portada: "[[loquesea.webp]]"`.
 
 Los cómics y la novela gráfica entran como `tipo: libro`, que Open Library los
 cataloga, **y el manga también**: se queda en libros con la etiqueta `manga` en
@@ -554,9 +668,10 @@ solo estudio. Lo que decide es si el trozo siguiente es un sufijo de empresa
 «simplifica»: partiendo por comas a secas, «Inc.» salía como el estudio con más
 juegos de la colección.
 
-**Sólo tiene página quien tenga dos obras o más.** De los 152 autores de esta
-colección, repiten 15. Darle página a los otros 137 sería crear 137 callejones
-sin salida. Al crecer la colección basta con volver a pasarlo: el que llegue a
+**Sólo tiene página quien tenga dos obras o más.** La gran mayoría de los
+autores de esta colección aparecen una sola vez, y darle página a cada uno sería
+crear cientos de callejones sin salida. Cuántos repiten lo dice el propio script
+al terminar. Al crecer la colección basta con volver a pasarlo: el que llegue a
 dos la estrena solo. Las páginas de `content/autores/` son derivadas y se
 reescriben enteras en cada pasada, así que no se editan a mano; el campo `autor`
 sí es tuyo, y el script nunca cambia el nombre.
@@ -598,25 +713,34 @@ contrario, que es lo que **no** hay:
 scripts/estado.py                  # el resumen
 scripts/estado.py --seccion pelis  # solo esa carpeta
 scripts/estado.py --detalle        # además, qué ficha le falta cada cosa
+scripts/estado.py --readme         # reescribe el bloque de aquí abajo
 ```
 
 ```
 FICHAS
               total  borrador  publicadas  con texto
-  juegos         44         0          44         44
+  juegos         46         0          46         45
   pelis          37         0          37         37
   series         26         0          26         26
   libros         11         0          11         10
-  musica         37         0          37         37
+  musica         90         0          90         90
              —————— ————————— ——————————— ——————————
-  total         155         0         155        154
+  total         210         0         210        208
 
 SIN RELLENAR
-  nota        112   ███████·················
-  texto         1   ████████████████████████
+  nota        163   █████···················
+  portada       1   ████████████████████████
+  tags          7   ███████████████████████·
+  texto         2   ████████████████████████
 
-FAVORITOS  ███·····················  21 de 155
+FAVORITOS  ██······················  21 de 210
 ```
+
+**Ese bloque no está escrito a mano.** Lo pone `estado.py --readme`, que lo
+vuelve a sacar de la vault y lo mete en su sitio. Escrito a mano se quedaba
+viejo solo: llegó a decir 155 fichas cuando ya había 210. La regla que sale de
+ahí vale para todo el repo: una cifra o se saca de la vault cuando hace falta,
+o no se escribe. Por eso los comentarios de los `.base` ya no llevan ninguna.
 
 Avisa además de tres cosas que no se ven de otra manera: fichas que apuntan a
 una imagen que ya no está, imágenes en `assets/portadas/` que ya no usa ninguna

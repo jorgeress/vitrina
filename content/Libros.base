@@ -1,11 +1,11 @@
 formulas:
-  # `nota` esta vacia en casi la mitad de las fichas, y el comparador de Bases
+  # `nota` esta vacia en la mayoria de las fichas, y el comparador de Bases
   # manda los vacios al principio cuando el orden es DESC: la galeria abria con
   # lo que no he puntuado. Esto los baja a -1 para que caigan al final.
   puntuacion: if(note.nota, note.nota, -1)
-  # La nota que se pinta, que no es la que se ordena. Falta en 47 de las 90
-  # fichas, y en una rejilla eso se nota: las tarjetas sin ella median una fila
-  # menos y las filas de la galeria quedaban dentadas. El guion las iguala, y
+  # La nota que se pinta, que no es la que se ordena. Falta en la mayoria, y
+  # en una rejilla eso se nota: las tarjetas sin ella median una fila menos y
+  # las filas de la galeria quedaban dentadas. El guion las iguala, y
   # dice ademas lo que es verdad -- que no la he puntuado -- con el mismo signo
   # que ya usan las tablas para una casilla vacia.
   nota: if(note.nota, note.nota, "—")
