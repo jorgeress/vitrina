@@ -9,7 +9,6 @@ portada: "[[elden-ring.webp]]"
 tags:
   - action
   - rpg
-horas: 134
 appid: 1245620
 ---
 

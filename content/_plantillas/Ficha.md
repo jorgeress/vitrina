@@ -14,15 +14,14 @@ Campos:
   Es lo que cuelga la ficha de su sección en el grafo, y de ahí de Vitrina.
   No se escribe a mano: lo ponen los scripts al crear la ficha, y
   `scripts/secciones.py` repara el de las que falten o cambien de carpeta.
-- `estado`: pendiente, en curso, terminado, abandonado. Es lo que reparte
-  películas, series, libros y discos en sus dos últimas pestañas: lo terminado
-  en una, y lo pendiente y lo empezado en la otra, que es la lista de lo que
-  queda; una ficha sin él sale en la galería y en ninguna de las dos. En series
-  es donde más dice, que una serie larga se pasa años en «en curso». Los juegos no lo
-  llevan y no les hace falta: allí las dos pestañas se reparten por las `horas`,
-  porque de un juego ninguna fuente sabe si lo terminaste y los 44 acabaron
-  diciendo lo mismo. Por eso es el único campo que no deja hueco vacío: si no
-  lo sabes, la clave no va.
+- `estado`: pendiente, en curso, terminado, abandonado. Es lo que reparte las
+  cinco secciones en sus dos últimas pestañas: lo terminado en una, y lo
+  pendiente y lo empezado en la otra, que es la lista de lo que queda; una ficha
+  sin él sale en la galería y en ninguna de las dos. En series es donde más
+  dice, que una serie larga se pasa años en «en curso». En juegos lo pones tú
+  entero: Steam sabe cuántas horas le has echado a uno, no si lo terminaste, así
+  que de un volcado solo sale `pendiente` para lo que no has abierto nunca. Es
+  el único campo que no deja hueco vacío: si no lo sabes, la clave no va.
 - `year`: año de la obra, no el de la edición que tengas.
 - `autor`: estudio, dirección, autor o artista según el caso.
 - `nota`: del 1 al 10, en número. Es opcional: ordena las galerías, y una ficha

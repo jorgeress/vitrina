@@ -8,7 +8,6 @@ favorito: true
 portada: "[[the-binding-of-isaac-rebirth.webp]]"
 tags:
   - action
-horas: 361
 appid: 250900
 ---
 

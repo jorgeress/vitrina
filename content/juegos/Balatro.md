@@ -10,7 +10,6 @@ tags:
   - casual
   - indie
   - strategy
-horas: 77
 appid: 2379780
 ---
 

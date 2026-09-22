@@ -11,7 +11,6 @@ tags:
   - free-to-play
   - indie
   - rpg
-horas: 8
 appid: 1371630
 ---
 

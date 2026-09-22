@@ -11,7 +11,6 @@ tags:
   - casual
   - indie
   - rpg
-horas: 38
 appid: 1942280
 ---
 

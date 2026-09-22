@@ -10,7 +10,6 @@ tags:
   - action
   - adventure
   - indie
-horas: 22
 appid: 774361
 ---
 

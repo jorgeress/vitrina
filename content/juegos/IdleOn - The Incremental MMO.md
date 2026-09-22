@@ -11,7 +11,6 @@ tags:
   - casual
   - indie
   - massively-multiplayer
-horas: 34
 appid: 1476970
 ---
 

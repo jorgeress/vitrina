@@ -166,8 +166,10 @@ La vía rápida alternativa sería la clave de la Web API de Steam
 (`GetOwnedGames`), que es instantánea y da lo mismo. Está descartada por
 decisión propia: aquí no se usan APIs con clave.
 
-Lo que **no** se puede: saber si terminaste un juego. Por eso lo jugado entra
-como `en curso` y nunca como `terminado`.
+Lo que **no** se puede: saber si terminaste un juego. Por eso las horas deciden
+qué entra pero no se guardan en la ficha, y de un volcado solo sale `estado:
+pendiente` para lo que no has abierto nunca. Lo jugado se queda con el estado en
+blanco, que lo pones tú.
 
 Lo que tampoco trae tu página de juegos es **el año, el estudio ni el género**:
 solo el nombre, el `appid` y los minutos. Eso lo cierra un segundo paso,

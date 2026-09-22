@@ -11,7 +11,6 @@ tags:
   - adventure
   - indie
   - rpg
-horas: 343
 appid: 105600
 ---
 

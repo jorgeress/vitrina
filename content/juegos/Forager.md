@@ -11,7 +11,6 @@ tags:
   - adventure
   - indie
   - simulation
-horas: 30
 appid: 751780
 ---
 

@@ -8,7 +8,6 @@ favorito: false
 portada: "[[jojo-s-bizarre-adventure-all-star-battle-r.webp]]"
 tags:
   - action
-horas: 11
 appid: 1372110
 ---
 

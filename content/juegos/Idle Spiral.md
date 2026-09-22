@@ -11,7 +11,6 @@ tags:
   - indie
   - simulation
   - strategy
-horas: 37
 appid: 1827980
 ---
 

@@ -21,8 +21,6 @@ properties:
     displayName: Estudio
   note.nota:
     displayName: Nota
-  note.horas:
-    displayName: Horas
 views:
   - type: cards
     name: Galería
@@ -46,7 +44,6 @@ views:
       - note.autor
       - note.year
       - note.nota
-      - note.horas
     sort:
       - property: formula.puntuacion
         direction: DESC
@@ -73,9 +70,12 @@ views:
   # No hay vista de lo ya jugado: Galería ya los enseña, y con casi todo
   # jugado seria la misma lista con otro nombre. Lo que si hace falta
   # apartado es lo que queda, que es lo que esta pestaña enseña.
-  # Lo que no has abierto nunca, que es con lo que entra del import: sin horas y
-  # con `estado: pendiente`. Se mira la hora y no el estado porque asi vale
-  # igual para un juego apuntado a mano, que no trae ni lo uno ni lo otro.
+  #
+  # Va por `estado`, como las otras cuatro secciones. Antes iba por `horas`, que
+  # es lo que sabe Steam, pero eso ataba la pestaña a un campo que solo tenia
+  # sentido viniendo de alli: un juego apuntado a mano no traia horas y caia
+  # aqui aunque lo hubieras terminado. El estado lo pones tu, que eres el unico
+  # que sabe si lo dejaste a medias.
   #
   # Y sin nota, ni pintada ni en el orden: no la tiene nada de lo que todavia no
   # has jugado, asi que la fila serian guiones y el orden un empate a -1 que
@@ -83,8 +83,9 @@ views:
   - type: cards
     name: Por jugar
     filters:
-      not:
-        - note.horas
+      or:
+        - note.estado == "pendiente"
+        - note.estado == "en curso"
     order:
       - file.name
       - note.autor

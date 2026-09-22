@@ -10,7 +10,6 @@ portada: "[[sekirotm-shadows-die-twice.webp]]"
 tags:
   - action
   - adventure
-horas: 68
 appid: 814380
 ---
 

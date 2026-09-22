@@ -11,7 +11,6 @@ tags:
   - adventure
   - indie
   - early-access
-horas: 48
 appid: 1966720
 ---
 

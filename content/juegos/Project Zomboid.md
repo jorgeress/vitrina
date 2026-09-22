@@ -11,7 +11,6 @@ tags:
   - rpg
   - simulation
   - early-access
-horas: 9
 appid: 108600
 ---
 

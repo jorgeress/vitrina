@@ -9,7 +9,6 @@ portada: "[[sol-cesto.webp]]"
 tags:
   - indie
   - strategy
-horas: 10
 appid: 2738490
 ---
 

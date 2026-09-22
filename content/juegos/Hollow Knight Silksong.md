@@ -10,7 +10,6 @@ tags:
   - action
   - adventure
   - indie
-horas: 56
 appid: 1030300
 capsula: 93637c34351160eaa7d7ff0cce69cb4312abb819/library_capsule.jpg
 ---

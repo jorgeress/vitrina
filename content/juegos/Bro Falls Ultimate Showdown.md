@@ -11,7 +11,6 @@ tags:
   - casual
   - free-to-play
   - indie
-horas: 12
 appid: 1590320
 ---
 

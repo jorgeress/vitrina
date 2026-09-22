@@ -10,7 +10,6 @@ tags:
   - indie
   - rpg
   - simulation
-horas: 142
 appid: 413150
 ---
 

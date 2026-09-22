@@ -11,7 +11,6 @@ tags:
   - action
   - adventure
   - rpg
-horas: 13
 appid: 356190
 ---
 

@@ -11,7 +11,6 @@ tags:
   - adventure
   - massively-multiplayer
   - rpg
-horas: 26
 appid: 1599340
 ---
 

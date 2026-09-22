@@ -324,6 +324,12 @@ def importar_steam(args):
             # decian lo mismo: un campo que contesta igual siempre no es un
             # dato, y desde que la ficha lo enseña encima cantaba.
             "estado": "pendiente" if dato["minutos"] == 0 else None,
+            # Las horas deciden que entra en el modo rapido, y ahi se quedan:
+            # no van a la ficha. Eran el unico campo que solo sabia rellenar
+            # una fuente, y ataban la seccion a Steam --un juego apuntado a
+            # mano no las traia y caia en "Por jugar" aunque lo hubieras
+            # terminado--. Lo que reparte la seccion es `estado`, como en las
+            # otras cuatro.
             "horas": horas or None,
             "appid": dato.get("appid"),
             "capsula": dato.get("capsula"),
@@ -559,8 +565,6 @@ def volcar(elementos, carpeta, tipo, args, cribar=True):
                   "nota": dato.get("nota"), "estado": dato.get("estado"),
                   "favorito": dato.get("favorito", False),
                   "portada": None, "tags": None}
-        if dato.get("horas"):
-            campos["horas"] = dato["horas"]
         if dato.get("favoritas"):
             # Cuantas de tus canciones guardadas lleva el disco. Es lo que
             # ordena la vista "Por tus canciones" de Musica.base.

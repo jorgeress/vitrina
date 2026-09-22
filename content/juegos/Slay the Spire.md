@@ -9,7 +9,6 @@ portada: "[[slay-the-spire.webp]]"
 tags:
   - indie
   - strategy
-horas: 81
 appid: 646570
 ---
 

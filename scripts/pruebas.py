@@ -680,15 +680,26 @@ class Coherencia(unittest.TestCase):
             self.assertIn(tipo, m.SECCIONES.values(), f"datos.py rellena {tipo}, que no existe")
             self.assertTrue(campos, f"{tipo} no declara que campos rellena")
 
-    def test_juegos_reparte_por_las_horas_y_no_por_el_estado(self):
-        # La excepcion de las cinco secciones, y esta puesta a proposito: en
-        # juegos no hay `estado` que mirar --Steam sabe cuanto has jugado, no si
-        # lo terminaste-- asi que sus dos ultimas vistas van por `horas`. Si
-        # alguna volviera a filtrar por estado, saldria vacia, que es como no
-        # estar.
-        texto = (m.RAIZ / "content" / "Juegos.base").read_text(encoding="utf-8")
-        self.assertIn("- note.horas", texto)
-        self.assertNotIn("note.estado", texto)
+    def test_las_cinco_secciones_reparten_por_el_mismo_campo(self):
+        # Juegos era la excepcion: sus dos ultimas vistas iban por `horas`, que
+        # es lo que sabe Steam. Eso ataba la seccion a una sola fuente --un
+        # juego apuntado a mano no traia horas y caia en "Por jugar" aunque lo
+        # hubieras terminado-- asi que ahora las cinco van por `estado`. Si
+        # volviera a quedar un `note.horas` suelto en un .base, la vista
+        # filtraria por un campo que ya no escribe nadie: saldria vacia, que es
+        # como no estar.
+        for base in ("Juegos", "Peliculas", "Series", "Libros", "Musica"):
+            texto = (m.RAIZ / "content" / f"{base}.base").read_text(encoding="utf-8")
+            self.assertIn('note.estado == "pendiente"', texto, base)
+            self.assertNotIn("- note.horas", texto, base)
+
+    def test_ninguna_ficha_guarda_ya_las_horas(self):
+        # Las horas siguen decidiendo que entra del volcado de Steam, pero no
+        # llegan a la ficha: eran el unico campo que solo sabia rellenar una
+        # fuente. Si vuelven a colarse, la cabecera las pintaria otra vez.
+        for ficha in (m.RAIZ / "content" / "juegos").glob("*.md"):
+            campos = m.frontmatter(ficha.read_text(encoding="utf-8"))
+            self.assertIsNone(campos.get("horas"), ficha.name)
 
     def test_ninguna_ficha_se_inventa_un_estado(self):
         # Una ficha con un estado fuera de la lista no sale ni en la vista de lo

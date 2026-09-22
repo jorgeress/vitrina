@@ -10,7 +10,6 @@ tags:
   - indie
   - strategy
   - free-to-play
-horas: 49
 appid: 1540960
 ---
 

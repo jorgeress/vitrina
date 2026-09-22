@@ -29,9 +29,8 @@ tags:
 Las galerías no están escritas a mano. Son *Bases* de Obsidian (`.base`), que
 filtran y ordenan por esas propiedades, así que se actualizan solas en cuanto
 añado una ficha. Cada sección tiene cuatro vistas: galería, tabla, favoritos y
-lo que queda, que es su watchlist. La última sale del campo `estado`, salvo en
-juegos: ahí Steam sabe cuántas horas les has echado y no si los terminaste, así
-que el reparto va por las horas y la pestaña es *Por jugar*.
+lo que queda, que es su watchlist. La última sale del campo `estado` en las
+cinco; en juegos la pestaña se llama *Por jugar* y nada más.
 
 Lo que se ve en la web es exactamente lo mismo que veo en Obsidian, sin plugins
 de terceros ni un segundo formato que mantener.
@@ -275,7 +274,7 @@ que hay dentro lo has visto, y la lista entera es la señal. Entra como
 | Fuente | Cómo | Qué trae |
 | --- | --- | --- |
 | Letterboxd | El RSS del perfil, o el export si tienes Pro | Título, año y **tu puntuación**, que pasa de estrellas a la escala de 1 a 10. La *watchlist* entra como `pendiente`. |
-| Steam | Guardar `steamcommunity.com/my/games?tab=all` con `Ctrl+S`, o el export de datos | Título y horas jugadas, en el campo `horas`. |
+| Steam | Guardar `steamcommunity.com/my/games?tab=all` con `Ctrl+S`, o el export de datos | Título, y las horas jugadas, que deciden qué entra pero no se guardan en la ficha. Lo que no has abierto nunca entra como `pendiente`. |
 | ListenBrainz | Tu nombre de usuario | Los discos más escuchados, con artista y el *mbid* de MusicBrainz. |
 | Spotify | El zip del export | Lo mismo, desde tu historial. Con `--completo`, los álbumes guardados; con `--canciones`, tus me gusta plegados en los discos que los llevan. |
 

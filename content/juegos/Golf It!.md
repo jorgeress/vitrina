@@ -11,7 +11,6 @@ tags:
   - indie
   - simulation
   - sports
-horas: 21
 appid: 571740
 ---
 

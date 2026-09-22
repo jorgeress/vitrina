@@ -25,10 +25,11 @@ from vitrina import (ESTADOS, FRONT_RE, PORTADAS, SECCIONES, VAULT,
 # Los que hacen falta para que una ficha este completa de verdad.
 CAMPOS = ("year", "autor", "nota", "portada", "tags")
 
-# Las secciones que reparten sus dos ultimas vistas por `estado`. Juegos no
-# esta: alli el reparto sale de las horas, porque Steam sabe cuanto has jugado y
-# no si lo terminaste, asi que una ficha suya sin estado no le falta nada.
-POR_ESTADO = ("pelis", "series", "libros", "musica")
+# Las secciones que reparten sus dos ultimas vistas por `estado`, que desde que
+# los juegos dejaron de guardar las horas son las cinco. Antes juegos no estaba:
+# alli el reparto salia de las horas, y una ficha suya sin estado no le faltaba
+# nada. Ahora si: un juego sin estado no sale en ninguna de las dos.
+POR_ESTADO = ("juegos", "pelis", "series", "libros", "musica")
 
 # En assets/portadas/ vive tambien el .gitkeep, que no es una caratula huerfana.
 IMAGENES = {".webp", ".jpg", ".jpeg", ".png", ".gif", ".avif"}
@@ -151,9 +152,6 @@ def main():
     if sin_poner:
         print(f"  {sin_poner} ficha(s) sin estado: no salen ni en la vista de lo")
         print("  terminado ni en la lista de lo que queda.")
-    if estados["juegos"]["sin poner"]:
-        print("  En juegos esa columna no es un hueco: sus dos vistas reparten")
-        print("  por horas jugadas, que es lo que la fuente sabe de verdad.")
     if inventados:
         print(f"  {len(inventados)} ficha(s) con un estado que no existe, que es")
         print("  la otra manera de no salir en ninguna de las dos:")

@@ -61,7 +61,7 @@ const ESTADOS = {
 
 const WIKILINK = /^\[\[([^\]|]+)(?:\|([^\]]+))?\]\]$/
 
-/** ¿Hay algo? `nota: ` vacia llega como null, y `horas: 0` es un cero de verdad. */
+/** ¿Hay algo? `nota: ` vacia llega como null, y `nota: 0` seria un cero de verdad. */
 const hay = (v) => v !== undefined && v !== null && v !== ""
 
 /**
@@ -258,7 +258,6 @@ const Ficha = () => {
     // salia en todas repitiendo lo que se da por supuesto al tenerlo aqui. Lo
     // que informa es lo contrario: que este pendiente, a medias o abandonado.
     if (f.estado !== "terminado") dato("Estado", ESTADOS[f.estado])
-    if (f.tipo === "juego") dato("Horas", hay(f.horas) ? `${f.horas} h` : null)
 
     const enlace = tipo.enlace(f) || null
     const img = hay(f.portada) ? portada(f.portada, slug) : null
