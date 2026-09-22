@@ -16,6 +16,11 @@ mbid: 6e335887-60ba-38f0-95af-fae7774336bf
 favoritas: 2
 ---
 
+Comentario de prueba, para ver cómo se lee lo tuyo encima de lo que ponen los
+scripts. Ocupa tres o cuatro líneas, que es más o menos lo que ocupa uno de
+verdad, y no hay que marcarlo con nada: basta con escribirlo aquí arriba.
+Bórralo cuando pongas el de verdad.
+
 ## Canciones
 
 1. 15 Step

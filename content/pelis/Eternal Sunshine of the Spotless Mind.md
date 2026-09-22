@@ -14,6 +14,11 @@ tags:
 letterboxd: eternal-sunshine-of-the-spotless-mind
 ---
 
+Comentario de prueba, para ver cómo se lee lo tuyo encima de lo que ponen los
+scripts. Ocupa tres o cuatro líneas, que es más o menos lo que ocupa uno de
+verdad, y no hay que marcarlo con nada: basta con escribirlo aquí arriba.
+Bórralo cuando pongas el de verdad.
+
 > [!quote] De qué va
 > Eternal Sunshine of the Spotless Mind es una película estadounidense del
 > año 2004, de los géneros de drama, romance y ciencia ficción. Está
