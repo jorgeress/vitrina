@@ -11,7 +11,9 @@
 Con el enlace no hay nada que buscar ni que elegir: lleva dentro el
 identificador. Valen los de Steam, Letterboxd (tambien los cortos, boxd.it),
 TVmaze, MusicBrainz, Open Library y los discos de Spotify, que se buscan en
-MusicBrainz por su enlace.
+MusicBrainz por su enlace. Y los de IMDb, TMDB, FilmAffinity, MyAnimeList,
+AniList, Goodreads, Apple Music, Deezer, Discogs, IGDB, HowLongToBeat,
+Wikipedia y Wikidata, que pasan por Wikidata para llegar a una de las otras.
 
 Es lo que hace el buscador de Letterboxd o el de Spotify cuando escribes:
 enseñar candidatos con lo justo para distinguirlos, y guardarse el
@@ -56,7 +58,7 @@ from datos import datos_juego, datos_serie
 from vitrina import (ESTADOS, PORTADAS, SECCIONES, UA, VAULT, entrada_steam,
                        escribir_campos, escribir_ficha, ficha_letterboxd, frontmatter,
                        nombre_de_fichero, parecidos, pedir, peliculas_wikidata,
-                       preguntar, serie_tvmaze, series_tvmaze, sin_letras_latinas, slug,
+                       preguntar, serie_tvmaze, series_tvmaze, sin_letras_latinas, slug, wikidata,
                        año_tvmaze)
 from portadas import FUENTES as CARATULAS, guardar
 
@@ -361,6 +363,159 @@ def leer_enlace(enlace):
     return None
 
 
+# --- por enlace, pasando por Wikidata ----------------------------------------
+# IMDb, Filmaffinity, MyAnimeList, Goodreads... no son fuentes de Vitrina: una
+# ficha no guarda su id ni se le puede pedir nada sin clave. Pero Wikidata si
+# guarda sus ids, y en la misma entidad los de las cinco fuentes que si usamos.
+# Asi que el enlace de IMDb de Breaking Bad lleva a la entidad de Breaking Bad,
+# y de ahi a su id de TVmaze, que es el enlace que ya sabiamos leer.
+#
+# Lo que Wikidata no tenga enlazado no se encuentra, y se dice: no se busca
+# por el titulo, que es justo lo que el enlace venia a evitar.
+
+# El id de cada fuente de Vitrina en Wikidata, y como se sigue desde el. El
+# orden es el de preferencia cuando una entidad trae dos: el anime de Death
+# Note lleva el de TVmaze y tambien el de Letterboxd de la pelicula. Serie antes
+# que peli porque TVmaze no cataloga peliculas, asi que su id es la señal mas
+# fuerte; libro antes que disco por lo mismo con Open Library, que El Hobbit
+# trae tambien el disco del audiolibro. `nueva.py peli <enlace>` elige a mano.
+NATIVAS = {
+    "P1733": ("juego", juego_por_appid),
+    "P8600": ("serie", serie_por_id),
+    "P6127": ("peli", peli_por_slug),
+    "P648": ("libro", lambda ol: (libro_por_obra if ol.endswith("W")
+                                  else libro_por_edicion)(ol)),
+    "P436": ("album", album_por_grupo),
+}
+
+# Enlace -> la propiedad de Wikidata que guarda ese id, el sitio, y el tipo que
+# suele ser, para decir por donde buscar si Wikidata no llega.
+PUENTES = [
+    (r"imdb\.com/title/(tt\d+)", "P345", "IMDb", "peli"),
+    (r"themoviedb\.org/movie/(\d+)", "P4947", "TMDB", "peli"),
+    (r"themoviedb\.org/tv/(\d+)", "P4983", "TMDB", "serie"),
+    (r"filmaffinity\.com/[a-z]{2}/film(\d+)\.html", "P480", "FilmAffinity", "peli"),
+    (r"myanimelist\.net/anime/(\d+)", "P4086", "MyAnimeList", "serie"),
+    (r"myanimelist\.net/manga/(\d+)", "P4087", "MyAnimeList", "libro"),
+    (r"anilist\.co/anime/(\d+)", "P8729", "AniList", "serie"),
+    (r"anilist\.co/manga/(\d+)", "P8731", "AniList", "libro"),
+    (r"goodreads\.com/(?:[a-z]+/)?book/show/(\d+)", "P2969", "Goodreads", "libro"),
+    (r"goodreads\.com/work/\w+/(\d+)", "P8383", "Goodreads", "libro"),
+    (r"music\.apple\.com/[a-z]{2}/album/(?:[^/?#]+/)?(\d+)", "P2281", "Apple Music", "album"),
+    (r"deezer\.com/(?:[a-z]{2}/)?album/(\d+)", "P2722", "Deezer", "album"),
+    (r"discogs\.com/(?:[a-z]{2}/)?master/(\d+)", "P1954", "Discogs", "album"),
+    (r"igdb\.com/games/([a-z0-9-]+)", "P5794", "IGDB", "juego"),
+    (r"howlongtobeat\.com/game/(\d+)", "P2816", "HowLongToBeat", "juego"),
+]
+WIKIPEDIA_RE = re.compile(r"([a-z-]+)\.(?:m\.)?wikipedia\.org/wiki/([^?#]+)")
+WIKIDATA_RE = re.compile(r"wikidata\.org/wiki/(Q\d+)")
+
+
+def puente_de(enlace):
+    """Por donde se entra en Wikidata con ese enlace, o None si no se puede.
+
+    Devuelve los parametros de la consulta, el nombre del sitio y el tipo que
+    suele ser (None si puede ser cualquiera), sin preguntar nada todavia: asi
+    se prueba sin red.
+    """
+    for patron, propiedad, sitio, tipo in PUENTES:
+        m = re.search(patron, enlace)
+        if m:
+            return {"propiedad": propiedad, "valor": m.group(1)}, sitio, tipo
+    m = WIKIPEDIA_RE.search(enlace)
+    if m:
+        titulo = urllib.parse.unquote(m.group(2)).replace("_", " ")
+        return {"sitio": m.group(1).replace("-", "_") + "wiki", "titulo": titulo}, "Wikipedia", None
+    m = WIKIDATA_RE.search(enlace)
+    if m:
+        return {"entidad": m.group(1)}, "Wikidata", None
+    return None
+
+
+def ids_nativos(entidad):
+    """Los ids de las fuentes de Vitrina que trae la entidad, en orden."""
+    claims = (entidad or {}).get("claims") or {}
+    salida = {}
+    for propiedad in NATIVAS:
+        for claim in claims.get(propiedad) or []:
+            valor = claim.get("mainsnak", {}).get("datavalue", {}).get("value")
+            if isinstance(valor, str) and valor:
+                salida[propiedad] = valor
+                break
+    return salida
+
+
+def elegir_nativo(ids, preferido=None):
+    """(tipo, fuente, id) del id que manda: el del tipo pedido, o el primero."""
+    for propiedad, valor in ids.items():
+        tipo, fuente = NATIVAS[propiedad]
+        if preferido in (None, tipo):
+            return tipo, fuente, valor
+    return None
+
+
+def entidades(ids):
+    datos = wikidata({"action": "wbgetentities", "ids": "|".join(ids), "props": "claims"})
+    return None if datos is None else list((datos.get("entities") or {}).values())
+
+
+def por_wikidata(consulta, preferido=None):
+    """(tipo, fuente, id) de la obra a la que lleva el enlace, o un porque.
+
+    Devuelve un texto en vez de la tupla cuando no se llega: que Wikidata no
+    conteste, que no tenga ese id o que la obra no este en ninguna fuente.
+    """
+    if "entidad" in consulta:
+        encontradas = entidades([consulta["entidad"]])
+    elif "sitio" in consulta:
+        datos = wikidata({"action": "wbgetentities", "sites": consulta["sitio"],
+                          "titles": consulta["titulo"], "props": "claims",
+                          "normalize": 1})
+        encontradas = None if datos is None else [
+            e for e in (datos.get("entities") or {}).values() if "missing" not in e]
+    else:
+        datos = wikidata({"action": "query", "list": "search", "srlimit": 3,
+                          "srsearch": f"haswbstatement:{consulta['propiedad']}="
+                                      f"{consulta['valor']}"})
+        ids = [r["title"] for r in ((datos or {}).get("query") or {}).get("search") or []]
+        encontradas = None if datos is None else (entidades(ids) if ids else [])
+    if encontradas is None:
+        return "Wikidata no contesta ahora mismo; inténtalo dentro de un rato"
+    if not encontradas:
+        return "Wikidata no tiene esa obra enlazada"
+    for entidad in encontradas:
+        ids = ids_nativos(entidad)
+        # Una edicion de Goodreads es una entidad aparte, sin los ids de la
+        # obra: estan en la obra, a la que apunta con "edicion de" (P629).
+        if not ids:
+            obra = entidad.get("claims", {}).get("P629") or []
+            valor = obra[0].get("mainsnak", {}).get("datavalue", {}).get("value", {}) if obra else {}
+            if valor.get("id"):
+                ids = ids_nativos((entidades([valor["id"]]) or [{}])[0])
+        leido = elegir_nativo(ids, preferido)
+        if leido:
+            return leido
+    if preferido:
+        return f"Wikidata no enlaza esa obra con la fuente de {CARPETAS[preferido]}"
+    return ("Wikidata la conoce, pero sin id de Steam, Letterboxd, TVmaze, "
+            "Open Library ni MusicBrainz")
+
+
+def resolver_enlace(enlace, preferido=None):
+    """(tipo, fuente, id), o (None, porque, tipo probable), o None si no se reconoce."""
+    leido = leer_enlace(enlace)
+    if leido:
+        return leido
+    puente = puente_de(enlace)
+    if not puente:
+        return None
+    consulta, sitio, probable = puente
+    resultado = por_wikidata(consulta, preferido)
+    if isinstance(resultado, str):
+        return None, f"{resultado} (enlace de {sitio})", preferido or probable
+    return resultado
+
+
 def destino(enlace):
     """A donde lleva un enlace corto: boxd.it/2bg8 es letterboxd.com/film/heat-1995/.
 
@@ -485,15 +640,26 @@ def main():
     escrito = next((a for a in (args.tipo, args.titulo) if es_enlace(a)), None)
     args.enlace = escrito and destino(escrito)
     if args.enlace:
-        leido = leer_enlace(args.enlace)
+        preferido = args.tipo if args.tipo in BUSCADORES else None
+        leido = resolver_enlace(args.enlace, preferido)
         if not leido:
-            p.error("ese enlace no es de ninguna fuente que sepa leer: Steam, "
-                    "Letterboxd, TVmaze, MusicBrainz, Spotify u Open Library")
+            p.error("ese enlace no es de ningún sitio que sepa leer. Los que sí: "
+                    "Steam, Letterboxd, TVmaze, MusicBrainz, Spotify, Open Library, "
+                    "IMDb, TMDB, FilmAffinity, MyAnimeList, AniList, Goodreads, "
+                    "Apple Music, Deezer, Discogs, IGDB, HowLongToBeat, Wikipedia "
+                    "y Wikidata")
+        if leido[0] is None:
+            _, porque, probable = leido
+            print(porque[0].upper() + porque[1:] + ".\nBúscala por el título: "
+                  f"scripts/nueva.py {probable or 'TIPO'} \"el título\"")
+            return 1
         if args.tipo != escrito and args.tipo != leido[0]:
             p.error(f"ese enlace es de {CARPETAS[leido[0]]}, no de "
                     f"{CARPETAS.get(args.tipo, args.tipo)}")
         args.tipo = leido[0]
         args.titulo = args.enlace
+        # Resuelto una vez: por Wikidata son dos o tres peticiones.
+        args.leido = leido
     elif args.tipo not in BUSCADORES:
         p.error(f"el tipo es uno de estos: {', '.join(BUSCADORES)}; o un enlace")
     elif not args.titulo:
@@ -510,7 +676,7 @@ def alta(args):
     carpeta = CARPETAS[args.tipo]
     enlace = getattr(args, "enlace", None)
     if enlace:
-        _, fuente, ident = leer_enlace(enlace)
+        _, fuente, ident = getattr(args, "leido", None) or leer_enlace(enlace)
         candidatos = fuente(ident)
     else:
         candidatos = BUSCADORES[args.tipo](args.titulo, args.resultados)

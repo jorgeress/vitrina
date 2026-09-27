@@ -48,6 +48,25 @@ autor y las cifras del README.
 Un disco de Spotify solo se encuentra si alguien lo ha enlazado en MusicBrainz;
 si no, búscalo por título.
 
+Los enlaces de otros sitios pasan por Wikidata, que guarda sus ids junto a los
+de las cinco fuentes de arriba. Si Wikidata no tiene la obra enlazada, lo dice
+y hay que buscarla por título.
+
+| Sitio | Enlaces | Suele dar |
+| --- | --- | --- |
+| IMDb | `imdb.com/title/tt…` | película o serie |
+| TMDB | `themoviedb.org/movie/…`, `/tv/…` | película, serie |
+| FilmAffinity | `filmaffinity.com/es/film….html` | película |
+| MyAnimeList, AniList | `/anime/…`, `/manga/…` | serie; el manga casi nunca |
+| Goodreads | `goodreads.com/book/show/…`, `/work/…` | libro |
+| Apple Music, Deezer, Discogs | `/album/…`, `discogs.com/master/…` | disco |
+| IGDB, HowLongToBeat | `igdb.com/games/…`, `howlongtobeat.com/game/…` | juego (si está en Steam) |
+| Wikipedia, Wikidata | cualquier artículo, en cualquier idioma | cualquiera |
+
+Si la obra tiene ids de dos fuentes (el anime de *Death Note* tiene serie y
+película), gana la serie; para elegir, pon el tipo delante:
+`scripts/nueva.py peli https://myanimelist.net/anime/1535`.
+
 Opciones: `--nota 1-10`, `--estado`, `--favorito`, `--borrador`, `--elegir N`
 y `--fichero NOMBRE`. Esta última hace falta cuando el título no tiene letras
 latinas (`悪の華`) y la fuente no sabe cómo se llama en latino.

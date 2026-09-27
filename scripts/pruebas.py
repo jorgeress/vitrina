@@ -714,6 +714,34 @@ class PorEnlace(unittest.TestCase):
         self.assertTrue(nueva.es_enlace("boxd.it/2bg8"))
         self.assertIsNone(nueva.leer_enlace("https://example.com/film/x"))
 
+    def test_los_enlaces_de_otros_sitios_entran_por_wikidata(self):
+        casos = {
+            "https://www.imdb.com/title/tt0903747/": ("P345", "tt0903747", "IMDb"),
+            "https://m.imdb.com/title/tt0111161/?ref_=x": ("P345", "tt0111161", "IMDb"),
+            "https://www.filmaffinity.com/es/film809297.html": ("P480", "809297", "FilmAffinity"),
+            "https://myanimelist.net/anime/1535/Death_Note": ("P4086", "1535", "MyAnimeList"),
+            "https://www.goodreads.com/book/show/5907.The_Hobbit": ("P2969", "5907", "Goodreads"),
+            "https://music.apple.com/es/album/ok-computer/1097861387": ("P2281", "1097861387", "Apple Music"),
+        }
+        for enlace, (propiedad, valor, sitio) in casos.items():
+            consulta, leido, _ = nueva.puente_de(enlace)
+            self.assertEqual((consulta, leido), ({"propiedad": propiedad, "valor": valor}, sitio), enlace)
+
+    def test_un_articulo_de_wikipedia_se_lee_en_su_idioma(self):
+        consulta, _, _ = nueva.puente_de("https://es.m.wikipedia.org/wiki/El_se%C3%B1or_de_los_anillos")
+        self.assertEqual(consulta, {"sitio": "eswiki", "titulo": "El señor de los anillos"})
+
+    def test_con_dos_ids_manda_el_tipo_pedido_y_si_no_la_serie(self):
+        # El anime de Death Note trae el de TVmaze y el de Letterboxd de la
+        # pelicula de 2006. Sin decir nada es la serie; con "peli", la pelicula.
+        entidad = {"claims": {
+            "P6127": [{"mainsnak": {"datavalue": {"value": "death-note-2006"}}}],
+            "P8600": [{"mainsnak": {"datavalue": {"value": "40"}}}]}}
+        ids = nueva.ids_nativos(entidad)
+        self.assertEqual(nueva.elegir_nativo(ids)[0], "serie")
+        self.assertEqual(nueva.elegir_nativo(ids, "peli")[2], "death-note-2006")
+        self.assertIsNone(nueva.elegir_nativo(ids, "juego"))
+
     def test_steam_puede_contestar_con_otra_clave(self):
         # Hollow Knight llego bajo el appid de uno de sus DLC, con el juego
         # dentro. Mirando solo la clave se daba por retirado de la tienda.

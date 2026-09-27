@@ -42,13 +42,15 @@ scripts/nueva.py album "in rainbows" --estado "en curso"
 scripts/nueva.py libro "dune"
 ```
 
-Valen los enlaces de Steam, Letterboxd, TVmaze, MusicBrainz, Open Library y los
-discos de Spotify. Si buscas por título, te enseña los candidatos y eliges tú.
-La ficha sale completa: portada, año, autor, géneros y el identificador de la
-fuente.
-
-Después escribe en la ficha, encima de la cita de «De qué va», por qué te
-gustó. Es lo único que ningún script sabe poner.
+Valen los enlaces de Steam, Letterboxd, TVmaze, MusicBrainz, Open Library y
+Spotify, y también los de IMDb, TMDB, FilmAffinity, MyAnimeList, AniList,
+Goodreads, Apple Music, Deezer, Discogs, IGDB, HowLongToBeat y Wikipedia, que
+pasan por Wikidata (la lista con ejemplos, en
+[`docs/scripts.md`](docs/scripts.md)). Si buscas por título, te enseña los
+candidatos y eliges tú.
+La ficha sale completa: portada, año, autor, géneros, el «De qué va» y el
+identificador de la fuente. Lo único que no puede poner es por qué te gustó:
+eso lo pide `repasar.py`, o lo escribes en la ficha encima de la cita.
 
 ### A mano
 
