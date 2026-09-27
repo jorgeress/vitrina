@@ -1,17 +1,9 @@
-formulas:
-  # `nota` esta vacia en la mayoria de las fichas, y el comparador de Bases
-  # manda los vacios al principio cuando el orden es DESC: la galeria abria con
-  # lo que no he puntuado. Esto los baja a -1 para que caigan al final.
-  puntuacion: if(note.nota, note.nota, -1)
-  # La nota que se pinta, que no es la que se ordena. Falta en la mayoria, y
-  # en una rejilla eso se nota: las tarjetas sin ella median una fila menos y
-  # las filas de la galeria quedaban dentadas. El guion las iguala, y
-  # dice ademas lo que es verdad -- que no la he puntuado -- con el mismo signo
-  # que ya usan las tablas para una casilla vacia.
-  nota: if(note.nota, note.nota, "—")
 filters:
   and:
     - note.tipo == "juego"
+formulas:
+  puntuacion: if(note.nota, note.nota, -1)
+  nota: if(note.nota, note.nota, "—")
 properties:
   file.name:
     displayName: Título
@@ -26,8 +18,8 @@ views:
     name: Galería
     order:
       - file.name
-      - note.autor
-      - note.year
+      - autor
+      - year
       - formula.nota
     sort:
       - property: formula.puntuacion
@@ -41,9 +33,9 @@ views:
     name: Tabla
     order:
       - file.name
-      - note.autor
-      - note.year
-      - note.nota
+      - autor
+      - year
+      - nota
     sort:
       - property: formula.puntuacion
         direction: DESC
@@ -56,8 +48,8 @@ views:
         - note.favorito == true
     order:
       - file.name
-      - note.autor
-      - note.year
+      - autor
+      - year
       - formula.nota
     sort:
       - property: formula.puntuacion
@@ -67,19 +59,6 @@ views:
     image: note.portada
     cardSize: 220
     imageAspectRatio: 0.67
-  # No hay vista de lo ya jugado: Galería ya los enseña, y con casi todo
-  # jugado seria la misma lista con otro nombre. Lo que si hace falta
-  # apartado es lo que queda, que es lo que esta pestaña enseña.
-  #
-  # Va por `estado`, como las otras cuatro secciones. Antes iba por `horas`, que
-  # es lo que sabe Steam, pero eso ataba la pestaña a un campo que solo tenia
-  # sentido viniendo de alli: un juego apuntado a mano no traia horas y caia
-  # aqui aunque lo hubieras terminado. El estado lo pones tu, que eres el unico
-  # que sabe si lo dejaste a medias.
-  #
-  # Y sin nota, ni pintada ni en el orden: no la tiene nada de lo que todavia no
-  # has jugado, asi que la fila serian guiones y el orden un empate a -1 que
-  # acabaria resolviendo el titulo igual. Se ordena por titulo directamente.
   - type: cards
     name: Por jugar
     filters:
@@ -88,8 +67,8 @@ views:
         - note.estado == "en curso"
     order:
       - file.name
-      - note.autor
-      - note.year
+      - autor
+      - year
     sort:
       - property: file.name
         direction: ASC

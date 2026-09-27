@@ -13,10 +13,7 @@ coverid: 13151269
 wikipedia: El extranjero
 ---
 
-Comentario de prueba, para ver cómo se lee lo tuyo encima de lo que ponen los
-scripts. Ocupa tres o cuatro líneas, que es más o menos lo que ocupa uno de
-verdad, y no hay que marcarlo con nada: basta con escribirlo aquí arriba.
-Bórralo cuando pongas el de verdad.
+En el ciclo de lo absurdo un hombre recorre toda su vida siendo extranjero a su propia vida, que agrio debe ser ver la vida a traves de un fino velo con indiferencia.
 
 > [!quote] De qué va
 > El extranjero es una novela publicada en 1942, la primera del escritor
