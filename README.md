@@ -70,8 +70,8 @@ Por qué me gustó.
 ```
 
 La plantilla con todos los campos está en `content/_plantillas/Ficha.md`
-(`Ctrl+P` → *Insertar plantilla* en Obsidian). Después, `scripts/secciones.py`
-y `scripts/portadas.py` la dejan como si la hubiera creado `nueva.py`.
+(`Ctrl+P` → *Insertar plantilla* en Obsidian). Después, `scripts/al-dia.py` la
+deja como si la hubiera creado `nueva.py`.
 
 ## Ponerle nota a lo que ya tienes
 
@@ -82,7 +82,8 @@ scripts/repasar.py
 Al empezar enseña una guía con los atajos (y `?` la repite). Luego va una a una
 por las fichas sin nota o sin estado, y contestas en una línea:
 `9 f` es un 9 y favorita, `t` es terminado, `p` pendiente, Enter la salta y `q`
-para. Guarda cada respuesta al momento.
+para. Si la ficha no tiene nada tuyo escrito, después te pide la frase de por
+qué, que va arriba del todo en la ficha. Guarda cada respuesta al momento.
 
 ## Traer tu colección de otros sitios
 
@@ -98,8 +99,13 @@ Lo importado entra **en borrador**: se ve en Obsidian pero no en la web hasta
 que le quitas la línea `draft: true`. Después, para completarlo:
 
 ```bash
-scripts/portadas.py && scripts/datos.py && scripts/textos.py && scripts/autores.py
+scripts/al-dia.py
 ```
+
+`al-dia.py` pasa, en orden, todo lo que los scripts saben rellenar: sección,
+fecha de alta, portada, año, autor, tags, texto, páginas de autor y las cifras
+del README. Solo toca lo que falta, así que se puede lanzar siempre que quieras;
+con `--sin-red` hace solo lo que no pregunta a nadie.
 
 Para ver los borradores en el sitio antes de publicarlos, `scripts/vistazo.py`
 (<http://localhost:8081>). Qué trae cada fuente está en
@@ -189,9 +195,8 @@ npm run check                # tipos y formato
 ## Por hacer
 
 - **Importar solo cada noche.** Una Action programada que pase
-  `importar.py letterboxd-rss` y `listenbrainz` y después portadas, datos y
-  textos, y abra un PR con los borradores nuevos para revisarlos.
-- **Texto de los libros.** Solo sale si la ficha lleva el campo `wikipedia`.
+  `importar.py letterboxd-rss` y `listenbrainz` y después `al-dia.py`, y abra
+  un PR con los borradores nuevos para revisarlos.
 
 ## Licencia
 

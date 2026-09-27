@@ -20,6 +20,7 @@ import re
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -720,6 +721,53 @@ class PorEnlace(unittest.TestCase):
                                 "data": {"steam_appid": 367520, "name": "Hollow Knight"}}}
         self.assertEqual(m.entrada_steam(respuesta, 367520)["data"]["name"], "Hollow Knight")
         self.assertEqual(m.entrada_steam(respuesta, "999"), {})
+
+
+class TuTexto(unittest.TestCase):
+    """Lo tuyo arriba y lo generado debajo, lo escriba quien lo escriba."""
+
+    CITA = "> [!quote] De qué va\n> Una serie.\n>\n> → Wikipedia · CC BY-SA 4.0\n"
+
+    def test_la_frase_va_encima_de_la_cita_y_la_cita_se_queda(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            md = Path(tmp) / "Arcane.md"
+            md.write_text("---\ntipo: serie\n---\n\n" + self.CITA, encoding="utf-8")
+            textos.escribir_lo_suyo(md, "La mejor animación que he visto.")
+            texto = md.read_text(encoding="utf-8")
+            self.assertLess(texto.index("La mejor"), texto.index("[!quote]"))
+            self.assertIn("→ Wikipedia", texto)
+            self.assertTrue(texto.startswith("---\ntipo: serie\n---\n"))
+
+    def test_en_una_ficha_vacia_queda_solo_la_frase(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            md = Path(tmp) / "Baki.md"
+            md.write_text("---\ntipo: serie\n---\n", encoding="utf-8")
+            textos.escribir_lo_suyo(md, "  Absurda y perfecta.  ")
+            self.assertEqual(md.read_text(encoding="utf-8"),
+                             "---\ntipo: serie\n---\n\nAbsurda y perfecta.\n")
+
+
+class LibroPorPortada(unittest.TestCase):
+    """De la portada a la obra, y de la obra al articulo: sin buscar por titulo."""
+
+    def test_una_portada_da_su_obra(self):
+        respuesta = {"docs": [{"key": "/works/OL1230613W"}]}
+        with mock.patch.object(textos, "pedir", return_value=respuesta):
+            self.assertEqual(textos.obra_de_portada(13151269), "OL1230613W")
+
+    def test_si_la_portada_sale_en_dos_obras_no_se_elige(self):
+        # Antes vacia que con el articulo de otro libro.
+        respuesta = {"docs": [{"key": "/works/OL1W"}, {"key": "/works/OL2W"}]}
+        with mock.patch.object(textos, "pedir", return_value=respuesta):
+            self.assertIsNone(textos.obra_de_portada(1))
+
+    def test_el_campo_wikipedia_manda_y_no_pregunta_a_nadie(self):
+        with mock.patch.object(textos, "obra_de_portada") as obra, \
+             mock.patch.object(textos, "resumen_wikipedia", return_value="Una novela."):
+            cuerpo, _ = textos.texto_libro("x", {"wikipedia": "El extranjero",
+                                                 "coverid": "1"}, None)
+        obra.assert_not_called()
+        self.assertIn("Una novela.", cuerpo)
 
 
 class Repasar(unittest.TestCase):

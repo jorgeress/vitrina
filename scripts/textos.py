@@ -9,7 +9,7 @@ de que va cada obra, sacado de la misma fuente que ya identifica la ficha.
   pelis   Wikipedia ES, por el `letterboxd` que resuelve Wikidata
   series  Wikipedia ES por el `tvmaze`, y si no lo enlaza, TVmaze en ingles
   musica  MusicBrainz, por `mbid`   la lista de canciones del disco
-  libros  nada todavia, hace falta un `wikipedia` en la ficha; ver abajo
+  libros  Wikipedia ES, por la obra de Open Library que dice su `coverid`
 
 La regla es la de siempre: **no adivinar**. Cada obra se busca por el
 identificador que ya tiene apuntado, nunca por parecido de nombre. Si no lo
@@ -30,12 +30,13 @@ Lo que no es tuyo va citado y enlazado, y no todo lo necesita:
   TVmaze      CC BY-SA, y ellos mismos dicen que la atribucion se cumple
               enlazando a la ficha de la que sale el texto. Se enlaza.
 
-Los libros se quedan fuera a proposito. Solo guardan `coverid`, que identifica
-la portada y no la obra; cruzandolo se llega a la obra en Open Library, pero
-alli 1 de 3 tiene descripcion y esta en frances, y Wikidata solo enlaza 1 de 3.
-Llegar al articulo desde lo que hay hoy exige adivinar por titulo. Cuando una
-ficha de libro tenga un campo `wikipedia` con el nombre del articulo, esto lo
-rellena igual que una pelicula.
+Los libros solo guardan `coverid`, que identifica la portada y no la obra. Pero
+una portada es de una sola obra, y Open Library la dice si se le pregunta por
+ella (`cover_i:`); con la obra, Wikidata da el articulo por su id de Open
+Library (P648), igual que con el de Letterboxd en las pelis. No se adivina
+nada: si Wikidata no tiene la obra enlazada, no sale articulo y se dice. El
+articulo que salga se apunta en el campo `wikipedia`, que es tambien donde se
+pone a mano cuando Wikidata no lo sabe, y que manda sobre todo lo demas.
 
 Uso:
   scripts/textos.py                    escribe solo las fichas en blanco
@@ -55,8 +56,8 @@ import urllib.parse
 from pathlib import Path
 
 from vitrina import (FRONT_RE, SECCIONES, VAULT, asegurar_letterboxd, entrada_steam,
-                     ficha_letterboxd, frontmatter, pedir, serie_tvmaze,
-                     url_tvmaze)
+                     escribir_campos, ficha_letterboxd, frontmatter, pedir,
+                     serie_tvmaze, url_tvmaze)
 
 ESPERA = 1.5  # la tienda de Steam corta sobre las 200 peticiones cada 5 minutos
 
@@ -232,15 +233,33 @@ def texto_serie(titulo, campos, md):
     return None, f"el articulo «{articulo}» no trae resumen"
 
 
-def texto_libro(titulo, campos, md):
-    """Igual que una pelicula, pero solo si alguien ha dicho cual es el articulo.
+def obra_de_portada(coverid):
+    """La obra de Open Library a la que pertenece esa portada, como OL...W."""
+    datos = pedir("https://openlibrary.org/search.json?fields=key"
+                  f"&q=cover_i:{coverid}") or {}
+    claves = [d.get("key", "") for d in datos.get("docs") or []]
+    # Una portada es de una sola obra. Si salieran dos, no se elige.
+    if len(claves) != 1 or not claves[0].startswith("/works/"):
+        return None
+    return claves[0].rsplit("/", 1)[-1]
 
-    Ver la explicacion de arriba: desde el `coverid` no se llega sin adivinar.
+
+def texto_libro(titulo, campos, md):
+    """Igual que una pelicula: el articulo sale del id, via Wikidata.
+
+    Ver la explicacion de arriba. Lo que se encuentre se apunta en `wikipedia`,
+    asi la siguiente pasada no pregunta y se ve en la ficha de donde sale.
     """
-    del titulo, md
+    del titulo
     articulo = campos.get("wikipedia")
+    if not articulo and campos.get("coverid"):
+        obra = obra_de_portada(campos["coverid"])
+        articulo = obra and articulo_es("P648", obra)
+        if articulo and md:
+            escribir_campos(md, {"wikipedia": articulo})
     if not articulo:
-        return None, "sin campo `wikipedia`; hay que decirle cual es el articulo"
+        return None, ("Wikidata no enlaza este libro con la Wikipedia en español; "
+                      "pon el campo `wikipedia` a mano")
     sinopsis = resumen_wikipedia(articulo)
     if not sinopsis:
         return None, f"el articulo «{articulo}» no trae resumen"
@@ -348,6 +367,22 @@ def escribir_cuerpo(md, cuerpo):
         raise ValueError(f"{md} no tiene cabecera")
     suyo = lo_suyo(texto[m.end():])
     nuevo = (suyo + "\n\n" if suyo else "") + cuerpo.rstrip()
+    md.write_text(m.group(0) + "\n" + nuevo + "\n", encoding="utf-8")
+
+
+def escribir_lo_suyo(md, suyo):
+    """Pone tu parrafo arriba y deja debajo lo que haya generado el script.
+
+    Es la otra mitad de `escribir_cuerpo`: aquella cambia lo generado sin
+    tocar lo tuyo, y esta lo tuyo sin tocar lo generado.
+    """
+    texto = md.read_text(encoding="utf-8")
+    m = FRONT_RE.match(texto)
+    if not m:
+        raise ValueError(f"{md} no tiene cabecera")
+    generado = "\n\n".join(g.group(0).strip()
+                            for g in GENERADO_RE.finditer(texto[m.end():]))
+    nuevo = suyo.strip() + ("\n\n" + generado if generado else "")
     md.write_text(m.group(0) + "\n" + nuevo + "\n", encoding="utf-8")
 
 

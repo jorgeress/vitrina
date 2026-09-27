@@ -8,8 +8,9 @@ que falta.
 | Script | Para qué |
 | --- | --- |
 | `nueva.py` | Da de alta una obra, buscándola o desde su enlace |
-| `repasar.py` | Pone nota, estado y favorito ficha a ficha |
+| `repasar.py` | Pone nota, estado, favorito y tu frase, ficha a ficha |
 | `importar.py` | Vuelca Letterboxd, Steam, ListenBrainz o Spotify |
+| `al-dia.py` | Pasa todos los de abajo en orden, hasta `autores.py` |
 | `portadas.py` | Baja las carátulas que falten |
 | `datos.py` | Rellena año, autor y tags |
 | `textos.py` | Escribe el «De qué va» y las canciones de cada disco |
@@ -32,8 +33,9 @@ scripts/nueva.py boxd.it/2bg8                    # el enlace corto de Letterboxd
 ```
 
 Con un título enseña candidatos y eliges tú. Con un enlace no pregunta, porque
-el enlace ya dice cuál es. Guarda el identificador de la obra, baja la portada y
-pone al día las páginas de autor y las cifras del README.
+el enlace ya dice cuál es. Guarda el identificador de la obra y la fecha de
+alta, baja la portada, escribe el «De qué va» y pone al día las páginas de
+autor y las cifras del README.
 
 | Tipo | Fuente | Guarda | Enlaces que entiende |
 | --- | --- | --- | --- |
@@ -69,7 +71,22 @@ Por cada ficha contestas en una línea, en cualquier orden:
 | `q` | para; lo contestado ya está guardado |
 
 Con nota y sin estado se entiende `terminado`, salvo que la ficha ya dijera
-`en curso` o `abandonado`.
+`en curso` o `abandonado`. Después, si la ficha no tiene nada tuyo escrito,
+pide la frase de por qué y la pone arriba del todo, encima de la cita. Enter la
+salta.
+
+## al-dia.py
+
+```bash
+scripts/al-dia.py                   # todo
+scripts/al-dia.py --seccion libros  # solo esa carpeta, en lo que va por carpeta
+scripts/al-dia.py --sin-red         # solo secciones, fechas, autores y README
+scripts/al-dia.py --dry-run
+```
+
+Pasa `secciones`, `fechas`, `portadas`, `datos`, `textos` y `autores`, en ese
+orden, y al final `estado.py --readme`. Si un paso falla sigue con los demás y
+lo dice al terminar.
 
 ## importar.py
 
@@ -99,18 +116,22 @@ salvo con `--force`. Aceptan `--seccion CARPETA`.
 | Películas | Letterboxd | Letterboxd | Wikipedia en español; si no hay, TMDB |
 | Series | TVmaze | TVmaze | Wikipedia en español; si no hay, TVmaze |
 | Música | Cover Art Archive | MusicBrainz (tags) | Lista de canciones |
-| Libros | Open Library | Open Library (tags) | Wikipedia, si la ficha lleva `wikipedia` |
+| Libros | Open Library | Open Library (tags) | Wikipedia en español, vía Wikidata |
 
 `textos.py` solo reescribe lo que escribió él: la cita de «De qué va» y la
 lista de canciones. Lo que escribas encima se queda.
 
-## autores.py y secciones.py
+En los libros, el artículo sale de la obra de Open Library a la que pertenece
+el `coverid`, y se apunta en el campo `wikipedia`. Si Wikidata no tiene la obra
+enlazada, pon ese campo a mano con el nombre del artículo.
 
-El campo `seccion` lo escriben `nueva.py` e `importar.py` al crear la ficha, y
-`nueva.py` pasa `autores.py` al terminar. A mano hacen falta después de
-escribir o mover fichas fuera de los scripts, y `autores.py` también después de
-`datos.py`, que es quien rellena el autor de lo importado. Da página a quien
-tenga dos obras o más (`--minimo N` lo cambia). Las páginas de `content/autores/` se
+## autores.py, secciones.py y fechas.py
+
+Los campos `seccion` y `alta` los escriben `nueva.py` e `importar.py` al crear
+la ficha, y `nueva.py` pasa `autores.py` al terminar. Para lo escrito o movido a
+mano, `al-dia.py` los pasa los tres. `autores.py` da página a quien tenga dos
+obras o más (`--minimo N` lo cambia). `fechas.py` saca la fecha del commit en
+que entró cada ficha, y nunca cambia una que ya esté puesta. Las páginas de `content/autores/` se
 reescriben enteras en cada pasada: no se editan a mano.
 
 ## estado.py

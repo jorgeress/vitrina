@@ -51,6 +51,7 @@ import urllib.request
 
 import autores
 import estado
+import textos
 from datos import datos_juego, datos_serie
 from vitrina import (ESTADOS, PORTADAS, SECCIONES, UA, VAULT, entrada_steam,
                        escribir_campos, escribir_ficha, ficha_letterboxd, frontmatter,
@@ -612,6 +613,13 @@ def alta(args):
 
     hecha = caratula(args.tipo, md, campos, titulo)
     print("  portada: " + (hecha or "no la he encontrado; se pone a mano"))
+    # El texto, de la misma fuente que pasaria textos.py despues. Con los
+    # campos del disco y no los de aqui: la portada y el id ya estan escritos.
+    cuerpo, detalle = textos.FUENTES[args.tipo](
+        titulo, frontmatter(md.read_text(encoding="utf-8")), md)
+    if cuerpo:
+        textos.escribir_cuerpo(md, cuerpo)
+    print("  texto: " + (detalle if cuerpo else f"sin texto ({detalle})"))
     for aviso in parecidos(carpeta, [titulo]):
         print("  Se parece a una que ya tenías: " + aviso)
     if args.borrador:

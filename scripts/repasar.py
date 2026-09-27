@@ -22,6 +22,9 @@ Por cada ficha se contesta con lo que quieras poner, en cualquier orden:
   que es lo que suele querer decir haberle puesto nota; "9 a" la deja como
   abandonada.
 
+Despues, si la ficha no tiene nada escrito por ti, pide la frase del porque:
+lo que se lee arriba del todo al abrirla. Enter la salta.
+
 Cada respuesta se escribe en el momento, asi que cortarlo a medias no pierde
 nada. Al terminar pone al dia el bloque de cifras del README.
 """
@@ -30,7 +33,8 @@ import argparse
 import sys
 
 import estado
-from vitrina import (ESTADOS, SECCIONES, VAULT, escribir_campos, frontmatter,
+import textos
+from vitrina import (ESTADOS, FRONT_RE, SECCIONES, VAULT, escribir_campos, frontmatter,
                      vacio, yaml_valor)
 
 try:
@@ -60,6 +64,9 @@ Cómo contestar, en una línea y en cualquier orden:
              c       → en curso, sin nota todavía
   Con nota y sin estado se entiende terminado, salvo que ya dijera en curso
   o abandonado.
+
+  Después, si la ficha no tiene nada tuyo escrito, te pide por qué te gustó
+  (o no). Va arriba del todo en la ficha. Enter la salta.
 """
 
 ATAJOS = {"p": "pendiente", "c": "en curso", "t": "terminado", "a": "abandonado",
@@ -105,6 +112,32 @@ def completar(campos, cambios):
     return cambios
 
 
+def tiene_lo_suyo(md):
+    texto = md.read_text(encoding="utf-8")
+    return bool(textos.lo_suyo(FRONT_RE.sub("", texto, count=1)))
+
+
+def pedir_frase(md):
+    """La frase del porque, si la ficha no tiene ya una. Devuelve si la ha puesto.
+
+    Se pide aqui, justo despues de la nota, porque es cuando se tiene en la
+    cabeza. Suelta en Obsidian, despues, no la escribe nadie: de 210 fichas
+    habia 5 con algo tuyo, y 4 eran de prueba.
+    """
+    if tiene_lo_suyo(md):
+        return False
+    try:
+        frase = input("  por qué (Enter para saltar): ").strip()
+    except (EOFError, KeyboardInterrupt):
+        print()
+        return False
+    if not frase:
+        return False
+    textos.escribir_lo_suyo(md, frase)
+    print("  ✓ escrito")
+    return True
+
+
 def pendientes(carpetas, todas):
     for carpeta in carpetas:
         for md in sorted((VAULT / carpeta).glob("*.md")):
@@ -146,7 +179,7 @@ def main():
     print(GUIA)
     print(f"{len(lista)} fichas por repasar.\n")
 
-    tocadas = 0
+    tocadas = frases = 0
     for i, (carpeta, md, campos) in enumerate(lista, 1):
         print(f"[{i}/{len(lista)}] {describir(carpeta, md, campos)}")
         while True:
@@ -168,12 +201,13 @@ def main():
             escribir_campos(md, cambios)
             tocadas += 1
             print("  ✓ " + ", ".join(f"{c}: {yaml_valor(v)}" for c, v in cambios.items()))
+            frases += pedir_frase(md)
             break
         if respuesta.lower() == "q":
             break
         print()
 
-    print(f"{tocadas} ficha(s) cambiadas.")
+    print(f"{tocadas} ficha(s) cambiadas, {frases} con frase nueva.")
     if tocadas and estado.actualizar_readme(callado=True):
         print("Puesto al día el bloque de cifras del README.")
     return 0
