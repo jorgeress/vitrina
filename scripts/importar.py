@@ -43,6 +43,7 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree
 
+import estado
 import nueva
 from vitrina import ESTADOS, escribir_ficha, parecidos, pedir
 
@@ -676,7 +677,12 @@ def main():
     se.set_defaults(func=importar_spotify_export)
 
     args = p.parse_args()
-    return args.func(args)
+    salida = args.func(args)
+    if not args.dry_run:
+        # Lo nuevo cambia las cifras del README aunque entre en borrador. Las
+        # paginas de autor no: lo importado llega sin autor hasta datos.py.
+        estado.actualizar_readme(callado=True)
+    return salida
 
 
 if __name__ == "__main__":

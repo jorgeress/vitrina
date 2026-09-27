@@ -138,7 +138,7 @@ def pagina(autor, obras):
     return "\n".join(lineas)
 
 
-def main():
+def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--minimo", type=int, default=2,
@@ -146,7 +146,7 @@ def main():
     p.add_argument("--deshacer", action="store_true",
                    help="borra las paginas de autor")
     p.add_argument("--dry-run", action="store_true", help="no escribe nada")
-    args = p.parse_args()
+    args = p.parse_args(argv)
 
     mapa = obras_por_autor()
     enlazables = ({} if args.deshacer

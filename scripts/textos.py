@@ -54,7 +54,7 @@ import time
 import urllib.parse
 from pathlib import Path
 
-from vitrina import (FRONT_RE, SECCIONES, VAULT, asegurar_letterboxd,
+from vitrina import (FRONT_RE, SECCIONES, VAULT, asegurar_letterboxd, entrada_steam,
                      ficha_letterboxd, frontmatter, pedir, serie_tvmaze,
                      url_tvmaze)
 
@@ -105,7 +105,7 @@ def texto_juego(titulo, campos, md):
 
     respuesta = pedir("https://store.steampowered.com/api/appdetails"
                       f"?appids={appid}&l=spanish&cc=es") or {}
-    entrada = respuesta.get(str(appid)) or {}
+    entrada = entrada_steam(respuesta, appid)
     if not entrada.get("success"):
         return None, f"la tienda no tiene ficha del appid {appid}"
 

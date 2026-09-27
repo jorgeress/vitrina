@@ -30,6 +30,7 @@ import estado
 import importar
 import autores
 import portadas
+import repasar
 import textos
 import vitrina as m
 import nueva
@@ -672,6 +673,74 @@ class GenerosDeLibro(unittest.TestCase):
         self.assertIn("coverid", detalle)
 
 
+class PorEnlace(unittest.TestCase):
+    """El enlace ya lleva el id: de ahi sale el tipo y la obra, sin buscar."""
+
+    def test_cada_enlace_dice_su_tipo_y_su_id(self):
+        casos = {
+            "https://store.steampowered.com/app/367520/Hollow_Knight/": ("juego", "367520"),
+            "https://letterboxd.com/film/heat-1995/": ("peli", "heat-1995"),
+            # Abierta desde el diario de otro, con el usuario delante.
+            "https://letterboxd.com/alguien/film/parasite-2019/": ("peli", "parasite-2019"),
+            "https://www.tvmaze.com/shows/82/game-of-thrones": ("serie", "82"),
+            "https://open.spotify.com/intl-es/album/6dVIqQ8qmQ5GBnJ9shOYGE?si=x":
+                ("album", "6dVIqQ8qmQ5GBnJ9shOYGE"),
+            "https://openlibrary.org/works/OL27448W/The_Lord_of_the_Rings": ("libro", "OL27448W"),
+        }
+        for enlace, (tipo, ident) in casos.items():
+            leido = nueva.leer_enlace(enlace)
+            self.assertIsNotNone(leido, enlace)
+            self.assertEqual((leido[0], leido[2]), (tipo, ident), enlace)
+
+    def test_una_edicion_sube_a_la_obra_y_no_se_confunde_con_ella(self):
+        grupo = "musicbrainz.org/release-group/f5093c06-23e3-404f-aeaa-40f72885ee3a"
+        edicion = "musicbrainz.org/release/b84ee12a-09ef-421b-82de-0441a926375b"
+        self.assertIs(nueva.leer_enlace(grupo)[1], nueva.album_por_grupo)
+        self.assertIs(nueva.leer_enlace(edicion)[1], nueva.album_por_edicion)
+
+    def test_un_titulo_no_es_un_enlace(self):
+        self.assertFalse(nueva.es_enlace("hollow knight"))
+        self.assertFalse(nueva.es_enlace("peli"))
+        self.assertTrue(nueva.es_enlace("boxd.it/2bg8"))
+        self.assertIsNone(nueva.leer_enlace("https://example.com/film/x"))
+
+    def test_steam_puede_contestar_con_otra_clave(self):
+        # Hollow Knight llego bajo el appid de uno de sus DLC, con el juego
+        # dentro. Mirando solo la clave se daba por retirado de la tienda.
+        respuesta = {"916000": {"success": True,
+                                "data": {"steam_appid": 367520, "name": "Hollow Knight"}}}
+        self.assertEqual(m.entrada_steam(respuesta, 367520)["data"]["name"], "Hollow Knight")
+        self.assertEqual(m.entrada_steam(respuesta, "999"), {})
+
+
+class Repasar(unittest.TestCase):
+    """Una linea por ficha: lo que no se entiende no se escribe a medias."""
+
+    def test_nota_estado_y_favorita_en_cualquier_orden(self):
+        self.assertEqual(repasar.interpretar("f 8 t"),
+                         {"favorito": True, "nota": 8, "estado": "terminado"})
+        self.assertEqual(repasar.interpretar("en curso"), {"estado": "en curso"})
+        self.assertEqual(repasar.interpretar("-f"), {"favorito": False})
+
+    def test_una_nota_fuera_de_escala_no_se_escribe(self):
+        with self.assertRaises(ValueError):
+            repasar.interpretar("11")
+        with self.assertRaises(ValueError):
+            repasar.interpretar("8 terminao")
+
+    def test_poner_nota_a_lo_pendiente_lo_da_por_terminado(self):
+        self.assertEqual(repasar.completar({"estado": ""}, {"nota": 9}),
+                         {"nota": 9, "estado": "terminado"})
+        self.assertEqual(repasar.completar({"estado": "pendiente"}, {"nota": 9}),
+                         {"nota": 9, "estado": "terminado"})
+
+    def test_lo_abandonado_sigue_abandonado_aunque_tenga_nota(self):
+        self.assertEqual(repasar.completar({"estado": "abandonado"}, {"nota": 4}),
+                         {"nota": 4})
+        self.assertEqual(repasar.completar({}, {"nota": 4, "estado": "abandonado"}),
+                         {"nota": 4, "estado": "abandonado"})
+
+
 class Coherencia(unittest.TestCase):
     """Que la vault y lo que los scripts esperan de ella no se separen."""
 
@@ -754,6 +823,28 @@ class Coherencia(unittest.TestCase):
                     continue
                 self.assertIn(estado, m.ESTADOS,
                               f"{ficha.name} dice estado: {estado}")
+
+    def test_los_campos_tuyos_llevan_un_valor_que_las_bases_entienden(self):
+        # Son los que se escriben a mano, en Obsidian o con repasar.py, y un
+        # valor raro no da error en ningun sitio: "nota: 8,5" o "nota: 9/10"
+        # no es un numero y la galeria la ordena al final; "favorito: si" no
+        # es true y la ficha no sale en Favoritos. Se ve la web bien, con una
+        # obra de menos donde tocaba.
+        validos = {"nota": re.compile(r"^(?:[1-9]|10)$"),
+                   "year": re.compile(r"^\d{4}$"),
+                   "favorito": re.compile(r"^(?:true|false)$"),
+                   "draft": re.compile(r"^(?:true|false)$")}
+        for carpeta in m.SECCIONES:
+            for ficha in (m.RAIZ / "content" / carpeta).glob("*.md"):
+                if ficha.stem == "index":
+                    continue
+                campos = m.frontmatter(ficha.read_text(encoding="utf-8"))
+                for campo, patron in validos.items():
+                    valor = campos.get(campo)
+                    if m.vacio(valor):
+                        continue
+                    self.assertRegex(str(valor), patron,
+                                     f"{ficha.name} dice {campo}: {valor}")
 
     def test_ningun_nombre_de_fichero_se_sale_del_ascii(self):
         # Del nombre del fichero sale la direccion de su pagina, y una tilde o

@@ -46,7 +46,7 @@ import time
 from pathlib import Path
 
 from vitrina import (SECCIONES, VAULT, articulo_html, articulos_ingleses,
-                       ascii_plano, asegurar_letterboxd, creadores_tvmaze,
+                       ascii_plano, asegurar_letterboxd, creadores_tvmaze, entrada_steam,
                        escribir_campos, ficha_letterboxd, frontmatter, pedir,
                        serie_tvmaze, vacio, año_tvmaze)
 
@@ -80,7 +80,7 @@ def datos_juego(titulo, campos, md):
 
     respuesta = pedir("https://store.steampowered.com/api/appdetails"
                       f"?appids={appid}&l=english&cc=es") or {}
-    entrada = respuesta.get(str(appid)) or {}
+    entrada = entrada_steam(respuesta, appid)
     if not entrada.get("success"):
         # Pasa con lo retirado de la tienda y con lo que ya no es una app suya.
         return {}, f"la tienda no tiene ficha del appid {appid}"

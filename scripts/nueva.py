@@ -6,6 +6,12 @@
   scripts/nueva.py serie "breaking bad"
   scripts/nueva.py album "in rainbows"
   scripts/nueva.py libro "el nombre del viento"
+  scripts/nueva.py https://store.steampowered.com/app/367520/Hollow_Knight/
+
+Con el enlace no hay nada que buscar ni que elegir: lleva dentro el
+identificador. Valen los de Steam, Letterboxd (tambien los cortos, boxd.it),
+TVmaze, MusicBrainz, Open Library y los discos de Spotify, que se buscan en
+MusicBrainz por su enlace.
 
 Es lo que hace el buscador de Letterboxd o el de Spotify cuando escribes:
 enseñar candidatos con lo justo para distinguirlos, y guardarse el
@@ -35,15 +41,21 @@ Lo que la fuente no sabe es lo tuyo, y va en las opciones:
 """
 
 import argparse
+import contextlib
+import io
 import re
 import sys
+import urllib.error
 import urllib.parse
+import urllib.request
 
+import autores
+import estado
 from datos import datos_juego, datos_serie
-from vitrina import (ESTADOS, PORTADAS, SECCIONES, VAULT, escribir_campos,
-                       escribir_ficha, ficha_letterboxd, frontmatter,
+from vitrina import (ESTADOS, PORTADAS, SECCIONES, UA, VAULT, entrada_steam,
+                       escribir_campos, escribir_ficha, ficha_letterboxd, frontmatter,
                        nombre_de_fichero, parecidos, pedir, peliculas_wikidata,
-                       preguntar, series_tvmaze, sin_letras_latinas, slug,
+                       preguntar, serie_tvmaze, series_tvmaze, sin_letras_latinas, slug,
                        año_tvmaze)
 from portadas import FUENTES as CARATULAS, guardar
 
@@ -126,10 +138,13 @@ def buscar_serie(consulta, cuantos):
     encontradas = series_tvmaze(consulta)
     if encontradas is None:
         return None
-    return [candidato(serie.get("name"), year=año_tvmaze(serie),
-                      autor=(emisora(serie) or {}).get("name"),
-                      pista=pista_serie(serie), tvmaze=serie.get("id"))
-            for serie in encontradas[:cuantos]]
+    return [candidato_serie(serie) for serie in encontradas[:cuantos]]
+
+
+def candidato_serie(serie):
+    return candidato(serie.get("name"), year=año_tvmaze(serie),
+                     autor=(emisora(serie) or {}).get("name"),
+                     pista=pista_serie(serie), tvmaze=serie.get("id"))
 
 
 def emisora(serie):
@@ -172,16 +187,16 @@ def buscar_album(consulta, cuantos):
     datos = pedir(url)
     if datos is None:
         return None
-    salida = []
-    for grupo in datos.get("release-groups", []):
-        fecha = grupo.get("first-release-date") or ""
-        artistas = [a["artist"]["name"] for a in grupo.get("artist-credit", [])
-                    if isinstance(a, dict) and a.get("artist")]
-        salida.append(candidato(grupo.get("title"), year=fecha[:4] or None,
-                                autor=", ".join(artistas[:2]) or None,
-                                pista=grupo.get("primary-type") or "",
-                                mbid=grupo["id"]))
-    return salida
+    return [candidato_album(grupo) for grupo in datos.get("release-groups", [])]
+
+
+def candidato_album(grupo):
+    fecha = grupo.get("first-release-date") or ""
+    artistas = [a["artist"]["name"] for a in grupo.get("artist-credit", [])
+                if isinstance(a, dict) and a.get("artist")]
+    return candidato(grupo.get("title"), year=fecha[:4] or None,
+                     autor=", ".join(artistas[:2]) or None,
+                     pista=grupo.get("primary-type") or "", mbid=grupo["id"])
 
 
 CAMPOS_OL = "title,author_name,cover_i,first_publish_year"
@@ -199,18 +214,172 @@ def buscar_libro(consulta, cuantos):
     datos = pedir(url)
     if datos is None:
         return None
-    salida = []
-    for doc in datos.get("docs") or []:
-        salida.append(candidato(doc.get("title"), year=doc.get("first_publish_year"),
-                                autor=(doc.get("author_name") or [None])[0],
-                                pista="" if doc.get("cover_i") else "(sin portada)",
-                                coverid=doc.get("cover_i")))
-    return salida
+    return [candidato_libro(doc) for doc in datos.get("docs") or []]
+
+
+def candidato_libro(doc):
+    return candidato(doc.get("title"), year=doc.get("first_publish_year"),
+                     autor=(doc.get("author_name") or [None])[0],
+                     pista="" if doc.get("cover_i") else "(sin portada)",
+                     coverid=doc.get("cover_i"))
 
 
 BUSCADORES = {"juego": buscar_juego, "peli": buscar_peli, "serie": buscar_serie,
               "album": buscar_album, "libro": buscar_libro}
 assert set(BUSCADORES) == set(NOMBRE_FUENTE)
+
+
+# --- por enlace --------------------------------------------------------------
+# Casi siempre que añades algo lo tienes delante: la pagina de Steam, la de
+# Letterboxd, el disco abierto en Spotify. Buscarlo otra vez por el titulo es
+# volver a elegir entre las tres "Parasite" algo que ya estaba elegido, porque
+# el enlace lleva dentro el identificador. Asi que se saca de ahi y la lista de
+# candidatos se queda en uno.
+#
+# Devuelven lo mismo que los buscadores: None si la fuente no contesta, lista
+# vacia si contesta que eso no existe.
+
+UUID = r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+MUSICBRAINZ = "https://musicbrainz.org/ws/2"
+
+
+def juego_por_appid(appid):
+    # Aqui solo hace falta el nombre: el año, el estudio y los generos los pide
+    # `completar`, como con cualquier juego elegido de la lista.
+    res = pedir("https://store.steampowered.com/api/appdetails"
+                f"?appids={appid}&l=english")
+    if res is None:
+        return None
+    entrada = entrada_steam(res, appid)
+    if not entrada.get("success"):
+        return []
+    nombre = (entrada.get("data") or {}).get("name")
+    return [candidato(nombre, pista=f"appid {appid}", appid=int(appid))]
+
+
+def peli_por_slug(slug):
+    # Una pagina que no se ha podido leer y una que no existe dan lo mismo,
+    # {}, asi que aqui no se distinguen: las dos acaban en "no encuentro nada".
+    ficha = ficha_letterboxd(slug)
+    if not ficha.get("titulo"):
+        return []
+    return [candidato(ficha["titulo"], year=ficha.get("year"),
+                      autor=", ".join(ficha.get("direccion", [])[:2]) or None,
+                      letterboxd=slug)]
+
+
+def serie_por_id(tvid):
+    serie = serie_tvmaze(tvid)
+    if serie is None:
+        return None
+    return [candidato_serie(serie)] if serie.get("name") else []
+
+
+def album_por_grupo(mbid):
+    grupo = pedir(f"{MUSICBRAINZ}/release-group/{mbid}?fmt=json&inc=artist-credits",
+                  no_existe={})
+    if grupo is None:
+        return None
+    return [candidato_album(grupo)] if grupo.get("id") else []
+
+
+def album_por_edicion(mbid):
+    # Una edicion concreta (un /release/) no es lo que se apunta: la ficha va
+    # por el grupo, que es el disco como obra. Se sube a el y se sigue igual.
+    edicion = pedir(f"{MUSICBRAINZ}/release/{mbid}?fmt=json&inc=release-groups",
+                    no_existe={})
+    if edicion is None:
+        return None
+    grupo = (edicion.get("release-group") or {}).get("id")
+    return album_por_grupo(grupo) if grupo else []
+
+
+def album_por_spotify(spotify_id):
+    """El disco de MusicBrainz que tiene enlazado ese album de Spotify.
+
+    Spotify no se puede preguntar sin cuenta de desarrollador, pero no hace
+    falta: MusicBrainz guarda de cada edicion sus enlaces de streaming, y se le
+    puede preguntar al reves, por el enlace. Lo que no este enlazado alli no se
+    encuentra, y entonces se busca por el titulo, como siempre.
+    """
+    url = urllib.parse.quote(f"https://open.spotify.com/album/{spotify_id}", safe="")
+    datos = pedir(f"{MUSICBRAINZ}/url?resource={url}&inc=release-rels&fmt=json",
+                  no_existe={})
+    if datos is None:
+        return None
+    ediciones = [r["release"]["id"] for r in datos.get("relations") or []
+                 if (r.get("release") or {}).get("id")]
+    return album_por_edicion(ediciones[0]) if ediciones else []
+
+
+def libro_por_obra(obra):
+    url = (f"https://openlibrary.org/search.json?fields={CAMPOS_OL}"
+           f"&q=key:/works/{obra}")
+    datos = pedir(url)
+    if datos is None:
+        return None
+    return [candidato_libro(doc) for doc in (datos.get("docs") or [])[:1]]
+
+
+def libro_por_edicion(edicion):
+    # Las paginas de /books/ son una edicion; la ficha va por la obra, que es
+    # la que da el año de la primera publicacion y no el de esa reimpresion.
+    datos = pedir(f"https://openlibrary.org/books/{edicion}.json", no_existe={})
+    if datos is None:
+        return None
+    obras = [w.get("key", "").rsplit("/", 1)[-1] for w in datos.get("works") or []]
+    return libro_por_obra(obras[0]) if obras and obras[0] else []
+
+
+# Cada fuente, con el trozo del enlace donde va el identificador. En el de
+# Letterboxd cabe un usuario delante (letterboxd.com/alguien/film/heat-1995/),
+# que es como sale al abrirla desde el diario de otro; y en el de Spotify, el
+# idioma (open.spotify.com/intl-es/album/...).
+ENLACES = [
+    (r"(?:store\.steampowered|steamcommunity)\.com/app/(\d+)", "juego", juego_por_appid),
+    (r"letterboxd\.com/(?:[^/]+/)?film/([^/?#]+)", "peli", peli_por_slug),
+    (r"tvmaze\.com/shows/(\d+)", "serie", serie_por_id),
+    (rf"musicbrainz\.org/release-group/({UUID})", "album", album_por_grupo),
+    (rf"musicbrainz\.org/release/({UUID})", "album", album_por_edicion),
+    (r"open\.spotify\.com/(?:intl-[a-z]+/)?album/([A-Za-z0-9]+)", "album", album_por_spotify),
+    (r"openlibrary\.org/works/(OL\d+W)", "libro", libro_por_obra),
+    (r"openlibrary\.org/books/(OL\d+M)", "libro", libro_por_edicion),
+]
+
+
+def es_enlace(texto):
+    return bool(re.match(r"https?://|(?:www\.)?[a-z0-9.-]+\.[a-z]{2,}/", texto or ""))
+
+
+def leer_enlace(enlace):
+    """El tipo, la fuente y el id del enlace, o None si no es de ninguna."""
+    for patron, tipo, fuente in ENLACES:
+        m = re.search(patron, enlace)
+        if m:
+            return tipo, fuente, m.group(1)
+    return None
+
+
+def destino(enlace):
+    """A donde lleva un enlace corto: boxd.it/2bg8 es letterboxd.com/film/heat-1995/.
+
+    Es lo que copia el boton de compartir de Letterboxd en el movil, asi que es
+    el enlace que se tiene a mano mas veces. Lo que no redirige se queda igual.
+    """
+    if not re.match(r"(?:https?://)?boxd\.it/", enlace):
+        return enlace
+    if not enlace.startswith("http"):
+        enlace = "https://" + enlace
+    try:
+        req = urllib.request.Request(enlace, headers={"User-Agent": UA}, method="HEAD")
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return r.geturl()
+    except urllib.error.HTTPError as e:
+        # Letterboxd contesta a veces un 403 a las peticiones HEAD, pero ya
+        # en la pagina de destino: la redireccion se ha seguido igual.
+        return e.geturl()
+    except (urllib.error.URLError, TimeoutError):
+        return enlace
 
 
 # --- completar ---------------------------------------------------------------
@@ -295,8 +464,9 @@ def caratula(tipo, md, campos, titulo):
 def main():
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("tipo", choices=list(BUSCADORES))
-    p.add_argument("titulo", help="lo que escribirias en un buscador")
+    p.add_argument("tipo", metavar="tipo|enlace",
+                   help=f"{', '.join(BUSCADORES)}, o el enlace de la obra")
+    p.add_argument("titulo", nargs="?", help="lo que escribirias en un buscador")
     p.add_argument("--nota", type=int, choices=range(1, 11), metavar="1-10")
     p.add_argument("--estado", choices=ESTADOS, default="pendiente")
     p.add_argument("--favorito", action="store_true")
@@ -308,7 +478,26 @@ def main():
     p.add_argument("--borrador", action="store_true",
                    help="entra con draft: true, o sea sin salir en la web")
     p.add_argument("--dry-run", action="store_true", help="no escribe ni baja nada")
-    return alta(p.parse_args())
+    args = p.parse_args()
+    # El enlace puede ir solo o detras del tipo: "nueva.py <enlace>" y
+    # "nueva.py peli <enlace>" hacen lo mismo, y el tipo lo dice el enlace.
+    escrito = next((a for a in (args.tipo, args.titulo) if es_enlace(a)), None)
+    args.enlace = escrito and destino(escrito)
+    if args.enlace:
+        leido = leer_enlace(args.enlace)
+        if not leido:
+            p.error("ese enlace no es de ninguna fuente que sepa leer: Steam, "
+                    "Letterboxd, TVmaze, MusicBrainz, Spotify u Open Library")
+        if args.tipo != escrito and args.tipo != leido[0]:
+            p.error(f"ese enlace es de {CARPETAS[leido[0]]}, no de "
+                    f"{CARPETAS.get(args.tipo, args.tipo)}")
+        args.tipo = leido[0]
+        args.titulo = args.enlace
+    elif args.tipo not in BUSCADORES:
+        p.error(f"el tipo es uno de estos: {', '.join(BUSCADORES)}; o un enlace")
+    elif not args.titulo:
+        p.error("falta qué buscar")
+    return alta(args)
 
 
 def alta(args):
@@ -318,10 +507,20 @@ def alta(args):
     alta de una obra suelta, con otro nombre y con el borrador por defecto.
     """
     carpeta = CARPETAS[args.tipo]
-    candidatos = BUSCADORES[args.tipo](args.titulo, args.resultados)
+    enlace = getattr(args, "enlace", None)
+    if enlace:
+        _, fuente, ident = leer_enlace(enlace)
+        candidatos = fuente(ident)
+    else:
+        candidatos = BUSCADORES[args.tipo](args.titulo, args.resultados)
     if candidatos is None:
         print(f"No he podido hablar con {NOMBRE_FUENTE[args.tipo]}. No es que no esté:\n"
               "es que ahora mismo no contesta. Inténtalo dentro de un rato.")
+        return 1
+    if not candidatos and enlace:
+        print(f"{NOMBRE_FUENTE[args.tipo]} no tiene nada en ese enlace. Prueba a "
+              "buscarla por el título:\n"
+              f"  scripts/nueva.py {args.tipo} \"el título\"")
         return 1
     if not candidatos:
         print(f"No encuentro nada con «{args.titulo}».")
@@ -331,7 +530,11 @@ def alta(args):
             print("Prueba con el título original: es el que suele estar en Wikidata.")
         return 1
 
-    if args.elegir:
+    if enlace:
+        # El enlace ya es la eleccion: no hay lista entre la que dudar.
+        elegido = candidatos[0]
+        print(f"  {describir(elegido)}")
+    elif args.elegir:
         if not 1 <= args.elegir <= len(candidatos):
             print(f"Solo hay {len(candidatos)} resultados.")
             return 1
@@ -372,9 +575,11 @@ def alta(args):
                   f"{NOMBRE_FUENTE[args.tipo]} no sabe cómo se llama fuera\n"
                   "de su alfabeto, así que de ahí no sale un nombre de fichero.\n"
                   "Dilo tú, repitiendo la orden con --fichero y el nombre que le des:\n"
-                  f"  scripts/nueva.py {args.tipo} \"{args.titulo}\" "
-                  f"--elegir {args.elegir or 1} --fichero \"Aku no Hana\"\n"
-                  "El título de verdad se guarda igual, en `title`.")
+                  + (f"  scripts/nueva.py {enlace} --fichero \"Aku no Hana\"\n"
+                     if enlace else
+                     f"  scripts/nueva.py {args.tipo} \"{args.titulo}\" "
+                     f"--elegir {args.elegir or 1} --fichero \"Aku no Hana\"\n")
+                  + "El título de verdad se guarda igual, en `title`.")
             return 1
         print(f"  El título no da un nombre de fichero; {NOMBRE_FUENTE[args.tipo]}"
               f" lo llama «{fichero}».")
@@ -413,9 +618,23 @@ def alta(args):
         print("Entra con draft: true, así que no sale en la web hasta que le quites\n"
               "la línea. En Obsidian se ve ya.")
     if args.nota is None:
-        print("Sin nota: ponla en Obsidian cuando la tengas, que es por lo que\n"
-              "ordenan las galerías.")
+        print("Sin nota: ponla con scripts/repasar.py o en Obsidian cuando la\n"
+              "tengas, que es por lo que ordenan las galerías.")
+    al_dia()
     return 0
+
+
+def al_dia():
+    """Lo que cuelga de la vault y no pide red: autores y cifras del README.
+
+    Una ficha nueva puede ser la segunda de un autor, que entonces estrena
+    pagina, y siempre cambia las cifras del README. Las dos cosas se quedaban
+    esperando a que alguien pasara autores.py y estado.py, y las pruebas y el
+    CI lo notaban antes que nadie. Son dos pasadas sin red que tardan nada.
+    """
+    with contextlib.redirect_stdout(io.StringIO()):
+        autores.main([])
+    estado.actualizar_readme(callado=True)
 
 
 if __name__ == "__main__":

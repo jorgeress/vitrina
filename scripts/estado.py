@@ -13,6 +13,7 @@ Uso:
   scripts/estado.py --seccion pelis  solo esa carpeta
   scripts/estado.py --detalle        ademas, que ficha le falta cada cosa
   scripts/estado.py --readme         reescribe el bloque de cifras del README
+  scripts/estado.py --comprobar      avisa de lo que se ha quedado atras
 
 El README enseña un trozo de este resumen como ejemplo. Escrito a mano se queda
 viejo a la semana siguiente -- paso, y acabo diciendo 155 fichas cuando ya habia
@@ -24,6 +25,7 @@ comentarios de los `.base`, sencillamente no se ponen.
 import argparse
 import contextlib
 import io
+import os
 import re
 import sys
 from collections import Counter, defaultdict
@@ -110,17 +112,73 @@ def main():
                    help="lista las fichas a las que les falta algo")
     p.add_argument("--readme", action="store_true",
                    help="reescribe el bloque de cifras del README")
+    p.add_argument("--comprobar", action="store_true",
+                   help="avisa de lo que se ha quedado atras, sin tocar nada")
     args = p.parse_args()
 
     if args.readme:
-        # La vault entera y sin detalle: el README enseña el resumen, no la
-        # lista de lo que le falta a cada ficha.
-        args.seccion = args.detalle = None
-        salida = io.StringIO()
-        with contextlib.redirect_stdout(salida):
-            resumen(args)
-        return 0 if escribir_readme(salida.getvalue()) is not None else 1
+        return 0 if actualizar_readme() is not None else 1
+    if args.comprobar:
+        return comprobar()
     return resumen(args)
+
+
+def resumen_entero():
+    """El resumen de la vault entera y sin detalle, como texto.
+
+    Es lo que enseña el README: el resumen, no la lista de lo que le falta a
+    cada ficha.
+    """
+    salida = io.StringIO()
+    with contextlib.redirect_stdout(salida):
+        resumen(argparse.Namespace(seccion=None, detalle=None))
+    return salida.getvalue()
+
+
+def actualizar_readme(callado=False):
+    """Vuelve a sacar el bloque de cifras y lo mete en el README.
+
+    Lo llaman tambien nueva.py, repasar.py e importar.py al terminar, que son
+    los que cambian las cifras: asi el bloque no depende de que alguien se
+    acuerde de pasar esto, que es justo lo que lo dejaba viejo.
+    """
+    if not callado:
+        return escribir_readme(resumen_entero())
+    with contextlib.redirect_stdout(io.StringIO()):
+        return escribir_readme(resumen_entero())
+
+
+def comprobar():
+    """Lo que se ha quedado atras y no rompe nada, dicho como aviso.
+
+    Es el paso del CI que va antes de construir. Lo que rompe el sitio --un
+    estado inventado, una portada que no esta, una ficha sin seccion-- ya lo
+    paran las pruebas. Esto es lo otro: lo que el build publica igual y nadie
+    nota, como el README contando fichas de hace un mes. No falla, porque
+    parar el despliegue por una cifra vieja seria castigar a la web por algo
+    que solo se ve en GitHub; en la Action sale como aviso amarillo en el
+    resumen del run.
+    """
+    en_action = bool(os.environ.get("GITHUB_ACTIONS"))
+    avisos = []
+    texto = (RAIZ / "README.md").read_text(encoding="utf-8")
+    actual = BLOQUE_RE.search(texto)
+    if actual and actual.group(0) != bloque_readme(resumen_entero()):
+        avisos.append("El bloque de cifras del README no dice lo que hay en la "
+                      "vault. Pasa scripts/estado.py --readme")
+    usadas = {re.sub(r"^\[\[|\]\]$", "", campos.get("portada") or "")
+              for carpeta in SECCIONES for _, campos, _ in leer(carpeta)}
+    sueltas = sorted(p.name for p in PORTADAS.glob("*")
+                     if p.is_file() and p.suffix.lower() in IMAGENES
+                     and p.name not in usadas)
+    if sueltas:
+        avisos.append(f"{len(sueltas)} portada(s) que ya no usa ninguna ficha: "
+                      + ", ".join(sueltas[:5]) + (" …" if len(sueltas) > 5 else ""))
+    for aviso in avisos:
+        print(f"::warning::{aviso}" if en_action else f"  ! {aviso}")
+    if not avisos and not en_action:
+        print("Nada atrasado.")
+    return 0
 
 
 def resumen(args):

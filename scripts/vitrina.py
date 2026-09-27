@@ -625,6 +625,24 @@ def asegurar_letterboxd(md, campos):
     return slug, detalle
 
 
+# --- Steam -------------------------------------------------------------------
+
+def entrada_steam(respuesta, appid):
+    """La entrada de ese appid en la respuesta de appdetails.
+
+    Steam la devuelve con el appid de clave, salvo cuando no: Hollow Knight
+    (367520) llego en septiembre de 2026 bajo "916000", que es uno de sus DLC,
+    con el juego bueno dentro. Buscar solo por la clave lo daba por retirado de
+    la tienda. Lo que vale es el `steam_appid` de dentro.
+    """
+    if str(appid) in respuesta:
+        return respuesta[str(appid)] or {}
+    for entrada in respuesta.values():
+        if str(((entrada or {}).get("data") or {}).get("steam_appid")) == str(appid):
+            return entrada
+    return {}
+
+
 # --- TVmaze ------------------------------------------------------------------
 # Las series no caben en ninguna de las otras cuatro fuentes: Steam es de
 # juegos, Letterboxd solo lleva cine --una temporada no tiene ficha alli--, y ni

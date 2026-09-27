@@ -13,3 +13,8 @@ node_modules
 # como YAML. Lo de quartz/ viene formateado de upstream con este mismo
 # .prettierrc, asi que no hace falta apartarlo.
 **/*.md
+
+# La configuracion de la vault la escribe Obsidian cada vez que tocas un ajuste,
+# con su formato: tabuladores y sin salto de linea al final. Formatearla aqui
+# no dura mas que hasta el siguiente cambio, y mientras tanto tumba el CI.
+content/.obsidian

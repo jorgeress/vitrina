@@ -47,6 +47,12 @@ jobs:
           pip install --quiet -r requirements.txt
           python3 scripts/pruebas.py
 
+      # Lo que se publica igual pero se ha quedado atras: el bloque de cifras
+      # del README, portadas que ya no usa nadie. No para el despliegue; sale
+      # como aviso en el resumen del run.
+      - name: Comprobar la vault
+        run: python3 scripts/estado.py --comprobar
+
       - name: Construir el sitio
         run: npx quartz build
 
