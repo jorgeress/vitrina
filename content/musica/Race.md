@@ -13,6 +13,7 @@ tags:
   - lo-fi
   - pop
 mbid: 1b6f453c-0889-473e-b6cf-6bb559928f25
+alta: 2026-09-23
 ---
 
 ## Canciones

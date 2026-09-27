@@ -240,6 +240,15 @@ class NombresYParecidos(unittest.TestCase):
             self.assertIn("draft: true", texto)
             self.assertIn("tags: []", texto)
 
+    def test_una_ficha_nueva_nace_con_su_fecha_de_alta(self):
+        # De ella sale "Ultimas añadidas" en la portada. Sin fecha, la ficha
+        # no llegaria nunca a esa lista por mucho que fuera la ultima.
+        with tempfile.TemporaryDirectory() as tmp:
+            self._vault(tmp)
+            m.escribir_ficha("juegos", "Hades", {"tipo": "juego"})
+            campos = m.frontmatter((Path(tmp) / "juegos" / "Hades.md").read_text(encoding="utf-8"))
+            self.assertRegex(campos.get("alta", ""), r"^\d{4}-\d{2}-\d{2}$")
+
     def test_encaja_admite_que_el_titulo_baile_pero_no_otra_pelicula(self):
         # El buscador de Wikipedia siempre devuelve algo, aunque no tenga nada
         # que ver: sin esta comprobacion una ficha se queda con el cartel de
@@ -833,7 +842,8 @@ class Coherencia(unittest.TestCase):
         validos = {"nota": re.compile(r"^(?:[1-9]|10)$"),
                    "year": re.compile(r"^\d{4}$"),
                    "favorito": re.compile(r"^(?:true|false)$"),
-                   "draft": re.compile(r"^(?:true|false)$")}
+                   "draft": re.compile(r"^(?:true|false)$"),
+                   "alta": re.compile(r"^\d{4}-\d{2}-\d{2}$")}
         for carpeta in m.SECCIONES:
             for ficha in (m.RAIZ / "content" / carpeta).glob("*.md"):
                 if ficha.stem == "index":

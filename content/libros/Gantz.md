@@ -13,6 +13,7 @@ tags:
   - horror
 coverid: 10489138
 wikipedia: Gantz
+alta: 2026-09-12
 ---
 
 > [!quote] De qué va

@@ -9,6 +9,7 @@ portada: "[[jojo-s-bizarre-adventure-all-star-battle-r.webp]]"
 tags:
   - action
 appid: 1372110
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

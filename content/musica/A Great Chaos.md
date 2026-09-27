@@ -13,6 +13,7 @@ tags:
   - rage
   - gangsta-rap
 mbid: dac1ca48-7c71-4ba7-92bd-fd82445c280e
+alta: 2026-09-23
 ---
 
 ## Canciones

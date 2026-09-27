@@ -13,6 +13,7 @@ tags:
   - heavy-metal
   - avant-garde-metal
 mbid: 72035143-d6ec-308b-8ee5-070b8703902a
+alta: 2026-09-23
 ---
 
 ## Canciones

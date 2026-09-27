@@ -12,6 +12,7 @@ tags:
   - indie
 appid: 1030300
 capsula: 93637c34351160eaa7d7ff0cce69cb4312abb819/library_capsule.jpg
+alta: 2026-09-02
 ---
 
 Comentario de prueba, para ver cómo se lee lo tuyo encima de lo que ponen los

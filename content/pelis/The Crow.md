@@ -12,6 +12,7 @@ tags:
   - thriller
   - fantasy
 letterboxd: the-crow
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

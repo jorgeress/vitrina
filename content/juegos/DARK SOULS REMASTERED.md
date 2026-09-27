@@ -10,6 +10,7 @@ portada: "[[dark-soulstm-remastered.webp]]"
 tags:
   - action
 appid: 570940
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

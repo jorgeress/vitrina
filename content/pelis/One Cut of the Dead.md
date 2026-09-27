@@ -12,6 +12,7 @@ tags:
   - drama
   - horror
 letterboxd: one-cut-of-the-dead
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

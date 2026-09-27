@@ -131,6 +131,12 @@ SIN RELLENAR
 FAVORITOS  ██······················  21 de 210
 ```
 
+## La portada
+
+Enseña las secciones y las **últimas 12 fichas añadidas**, ordenadas por el
+campo `alta`, que llevan todas. Lo pone `nueva.py` al crear la ficha, y
+`al-dia.py` a las escritas a mano. Abajo está el enlace al RSS del sitio.
+
 ## Publicar
 
 Cada push a `main` pasa las pruebas y construye y publica el sitio en GitHub

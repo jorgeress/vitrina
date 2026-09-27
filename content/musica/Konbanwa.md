@@ -9,6 +9,7 @@ favorito: false
 portada: "[[konbanwa.webp]]"
 tags: []
 mbid: 1e7d61f0-111b-46bd-9217-6eb182102694
+alta: 2026-09-23
 ---
 
 ## Canciones

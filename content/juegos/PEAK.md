@@ -12,6 +12,7 @@ tags:
   - indie
 appid: 3527290
 capsula: 480bd879ac737921bfa2529a6fea15961267ad21/library_600x900.jpg
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

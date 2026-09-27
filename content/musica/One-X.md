@@ -13,6 +13,7 @@ tags:
   - alternative-rock
   - blues
 mbid: be475d52-1eb0-3d96-91b0-f5a19a462ed7
+alta: 2026-09-23
 ---
 
 ## Canciones

@@ -13,6 +13,7 @@ tags:
   - alternative-rock
   - new-wave
 mbid: 43ca5aa6-92de-47e9-8f0b-9112e4881426
+alta: 2026-09-23
 ---
 
 ## Canciones

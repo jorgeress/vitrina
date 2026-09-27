@@ -13,6 +13,7 @@ tags:
   - rock
   - alternative-metal
 mbid: b5b4bb4b-8ba5-3acf-88cb-4cae2699d8da
+alta: 2026-09-12
 ---
 
 ## Canciones

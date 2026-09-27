@@ -10,6 +10,7 @@ portada: "[[the-perks-of-being-a-wallflower.webp]]"
 tags:
   - drama
 letterboxd: the-perks-of-being-a-wallflower
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

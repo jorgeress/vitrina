@@ -12,6 +12,7 @@ tags:
   - chicago-drill
   - gangsta-rap
 mbid: 249eeae3-9e0f-4d19-a580-9b80bf054f41
+alta: 2026-09-23
 ---
 
 ## Canciones

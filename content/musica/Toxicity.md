@@ -13,6 +13,7 @@ tags:
   - nu-metal
   - avant-garde-metal
 mbid: f50fbcb4-bfcd-3784-b4c9-44f4793e66b2
+alta: 2026-09-23
 ---
 
 ## Canciones

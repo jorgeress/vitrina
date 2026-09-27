@@ -13,6 +13,7 @@ tags:
   - rock
   - blues-rock
 mbid: a348ba2f-f8b3-4686-b928-e63d8d94d543
+alta: 2026-09-12
 ---
 
 ## Canciones

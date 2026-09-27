@@ -11,6 +11,7 @@ tags:
   - post-punk
   - darkwave
 mbid: 35b3ba99-8df6-4330-8da4-3b929878dde1
+alta: 2026-09-12
 ---
 
 ## Canciones

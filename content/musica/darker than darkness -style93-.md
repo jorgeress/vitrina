@@ -13,6 +13,7 @@ tags:
   - hard-rock
   - rock
 mbid: 7087d4d7-6e49-318c-ab9f-7094535b3713
+alta: 2026-09-23
 ---
 
 ## Canciones

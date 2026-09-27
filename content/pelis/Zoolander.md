@@ -10,6 +10,7 @@ portada: "[[zoolander.webp]]"
 tags:
   - comedy
 letterboxd: zoolander
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

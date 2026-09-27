@@ -12,6 +12,7 @@ tags:
   - fantasy
   - animation
 letterboxd: spirited-away
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

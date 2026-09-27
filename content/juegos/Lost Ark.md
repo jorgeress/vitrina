@@ -12,6 +12,7 @@ tags:
   - massively-multiplayer
   - rpg
 appid: 1599340
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

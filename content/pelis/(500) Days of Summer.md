@@ -12,6 +12,7 @@ tags:
   - comedy
   - drama
 letterboxd: 500-days-of-summer
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

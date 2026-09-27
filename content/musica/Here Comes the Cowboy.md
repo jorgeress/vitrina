@@ -13,6 +13,7 @@ tags:
   - folk-pop
   - indie-folk
 mbid: e3319d41-37c3-442c-bfe9-e8d55537a7ad
+alta: 2026-09-12
 ---
 
 ## Canciones

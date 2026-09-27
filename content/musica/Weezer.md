@@ -13,6 +13,7 @@ tags:
   - power-pop
   - pop-punk
 mbid: c7b245c9-8099-32ea-af95-893acedde2cf
+alta: 2026-09-12
 ---
 
 ## Canciones

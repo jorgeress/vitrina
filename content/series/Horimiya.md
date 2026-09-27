@@ -11,6 +11,7 @@ tags:
   - anime
   - romance
 tvmaze: 52001
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

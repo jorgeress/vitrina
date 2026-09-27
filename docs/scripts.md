@@ -15,6 +15,7 @@ que falta.
 | `textos.py` | Escribe el «De qué va» y las canciones de cada disco |
 | `autores.py` | Escribe las páginas de autor |
 | `secciones.py` | Cuelga cada ficha de su sección (campo `seccion`) |
+| `fechas.py` | Apunta la fecha de alta (campo `alta`) de las que no la tienen |
 | `estado.py` | Qué hay y qué falta; actualiza las cifras del README |
 | `vistazo.py` | Levanta el sitio con los borradores dentro |
 | `pruebas.py` | Las pruebas, sin red |
@@ -122,8 +123,8 @@ scripts/estado.py --comprobar  # avisa de lo que se ha quedado atrás
 ```
 
 `--comprobar` es el paso del CI que va antes de construir. Avisa si las cifras
-del README ya no son las de la vault o si hay portadas que no usa ninguna
-ficha. No para el despliegue.
+del README ya no son las de la vault, si hay portadas que no usa ninguna ficha
+o fichas sin fecha de alta. No para el despliegue.
 
 ## vistazo.py
 

@@ -13,6 +13,7 @@ tags:
   - alternative-rock
   - rap-rock
 mbid: 09474d62-17dd-3a4f-98fb-04c65f38a479
+alta: 2026-09-12
 ---
 
 ## Canciones

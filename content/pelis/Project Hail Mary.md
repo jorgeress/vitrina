@@ -12,6 +12,7 @@ tags:
   - science-fiction
   - adventure
 letterboxd: project-hail-mary
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

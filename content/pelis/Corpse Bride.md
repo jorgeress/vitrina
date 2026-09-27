@@ -12,6 +12,7 @@ tags:
   - animation
   - romance
 letterboxd: corpse-bride
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

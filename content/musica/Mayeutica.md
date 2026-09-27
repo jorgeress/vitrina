@@ -11,6 +11,7 @@ portada: "[[mayeutica.webp]]"
 tags:
   - rock
 mbid: 6a685d75-be79-44c2-816d-fa9751e1cf7e
+alta: 2026-09-23
 ---
 
 ## Canciones

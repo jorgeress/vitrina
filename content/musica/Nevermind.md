@@ -13,6 +13,7 @@ tags:
   - rock
   - punk-rock
 mbid: 1b022e01-4da6-387b-8658-8678046e4cef
+alta: 2026-09-23
 ---
 
 ## Canciones

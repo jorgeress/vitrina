@@ -11,6 +11,7 @@ tags:
   - philosophy
 coverid: 13151269
 wikipedia: El extranjero
+alta: 2026-09-04
 ---
 
 En el ciclo de lo absurdo un hombre recorre toda su vida siendo extranjero a su propia vida, que agrio debe ser ver la vida a traves de un fino velo con indiferencia.

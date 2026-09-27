@@ -11,6 +11,7 @@ tags:
   - comedy
   - romance
 letterboxd: how-to-lose-a-guy-in-10-days
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

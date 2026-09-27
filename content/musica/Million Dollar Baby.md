@@ -9,6 +9,7 @@ favorito: false
 portada: "[[million-dollar-baby.webp]]"
 tags: []
 mbid: 97b279b3-1a16-4ae5-9841-cb1e6cb1f8bf
+alta: 2026-09-23
 ---
 
 ## Canciones

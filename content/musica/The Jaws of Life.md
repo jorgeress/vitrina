@@ -13,6 +13,7 @@ tags:
   - post-hardcore
   - melodic-hardcore
 mbid: da9d53c0-2116-4368-b234-b3403073aca7
+alta: 2026-09-23
 ---
 
 ## Canciones

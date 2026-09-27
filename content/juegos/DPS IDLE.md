@@ -11,6 +11,7 @@ tags:
   - indie
   - free-to-play
 appid: 1349540
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

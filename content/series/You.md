@@ -11,6 +11,7 @@ tags:
   - romance
   - thriller
 tvmaze: 26856
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

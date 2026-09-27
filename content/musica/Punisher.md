@@ -13,6 +13,7 @@ tags:
   - indie-folk
   - singer-songwriter
 mbid: cf75fd5a-ca84-4371-94d7-27410360f06b
+alta: 2026-09-23
 ---
 
 ## Canciones

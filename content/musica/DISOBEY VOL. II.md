@@ -9,6 +9,7 @@ favorito: false
 portada: "[[disobey-vol-ii.webp]]"
 tags: []
 mbid: 2aadf3d9-fa43-49db-8342-87e2f8c48de3
+alta: 2026-09-23
 ---
 
 ## Canciones

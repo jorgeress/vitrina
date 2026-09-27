@@ -13,6 +13,7 @@ tags:
   - action
   - adventure
 letterboxd: spider-man-brand-new-day
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -12,6 +12,7 @@ tags:
   - indie
   - rpg
 appid: 1942280
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

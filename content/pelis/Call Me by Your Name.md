@@ -11,6 +11,7 @@ tags:
   - romance
   - drama
 letterboxd: call-me-by-your-name
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

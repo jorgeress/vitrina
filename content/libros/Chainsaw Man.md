@@ -12,6 +12,7 @@ tags:
   - horror
 coverid: 11432953
 wikipedia: Chainsaw Man
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

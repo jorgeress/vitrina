@@ -13,6 +13,7 @@ tags:
   - emo
   - emo-pop
 mbid: 6cd32445-c8a6-4bda-a92e-ec4f9b3dda61
+alta: 2026-09-12
 ---
 
 ## Canciones

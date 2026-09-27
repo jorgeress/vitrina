@@ -13,6 +13,7 @@ tags:
   - horror
 coverid: 869205
 wikipedia: Berserk (manga)
+alta: 2026-09-12
 ---
 
 > [!quote] De qué va

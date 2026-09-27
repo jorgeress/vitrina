@@ -14,6 +14,7 @@ tags:
   - post-punk
   - rock
 mbid: 8d0a2aaa-0ad7-3e51-ad4b-8ae249ffbea9
+alta: 2026-09-23
 ---
 
 ## Canciones

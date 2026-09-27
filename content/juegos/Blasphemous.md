@@ -11,6 +11,7 @@ tags:
   - adventure
   - indie
 appid: 774361
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

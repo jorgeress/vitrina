@@ -12,6 +12,7 @@ tags:
   - simulation
   - strategy
 appid: 1473350
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

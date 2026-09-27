@@ -11,6 +11,7 @@ tags:
   - blackgaze
   - death-metal
 mbid: 38faaa8f-d18e-405e-8a7c-44d7ccde55ac
+alta: 2026-09-23
 ---
 
 ## Canciones

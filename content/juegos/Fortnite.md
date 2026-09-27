@@ -11,5 +11,6 @@ tags:
   - action
   - free-to-play
   - massively-multiplayer
+alta: 2026-09-23
 ---
 

@@ -13,6 +13,7 @@ tags:
   - art-rock
   - emo
 mbid: 857a42ee-8c55-4784-a702-e9e79e737ca3
+alta: 2026-09-12
 ---
 
 ## Canciones

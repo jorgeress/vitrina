@@ -12,6 +12,7 @@ tags:
   - science-fiction
 coverid: 874491
 wikipedia: Blame!
+alta: 2026-09-12
 ---
 
 > [!quote] De qué va

@@ -9,6 +9,7 @@ portada: "[[the-binding-of-isaac-rebirth.webp]]"
 tags:
   - action
 appid: 250900
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

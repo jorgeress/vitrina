@@ -10,6 +10,7 @@ portada: "[[la-haine.webp]]"
 tags:
   - drama
 letterboxd: la-haine
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

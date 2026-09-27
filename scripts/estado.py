@@ -174,6 +174,14 @@ def comprobar():
     if sueltas:
         avisos.append(f"{len(sueltas)} portada(s) que ya no usa ninguna ficha: "
                       + ", ".join(sueltas[:5]) + (" …" if len(sueltas) > 5 else ""))
+    sin_alta = [f"{carpeta}/{md.stem}" for carpeta in SECCIONES
+                for md, campos, _ in leer(carpeta) if vacio(campos.get("alta"))]
+    if sin_alta:
+        # Solo las deja fuera de "Ultimas añadidas", que no es para parar nada.
+        avisos.append(f"{len(sin_alta)} ficha(s) sin fecha de alta, que no saldran "
+                      "en Ultimas añadidas: " + ", ".join(sin_alta[:5])
+                      + (" …" if len(sin_alta) > 5 else "")
+                      + ". Pasa scripts/fechas.py")
     for aviso in avisos:
         print(f"::warning::{aviso}" if en_action else f"  ! {aviso}")
     if not avisos and not en_action:

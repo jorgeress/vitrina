@@ -10,6 +10,7 @@ portada: "[[12-angry-men.webp]]"
 tags:
   - drama
 letterboxd: 12-angry-men
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -14,6 +14,7 @@ tags:
   - punk
 mbid: 1d563513-87dc-308f-8bac-418fab4054cf
 favoritas: 1
+alta: 2026-09-04
 ---
 
 ## Canciones

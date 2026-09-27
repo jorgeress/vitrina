@@ -12,6 +12,7 @@ tags:
   - indie
   - massively-multiplayer
 appid: 1097150
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

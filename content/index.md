@@ -13,4 +13,8 @@ interesante si me acuerdo.
 - [[autores/index|Autores]]
 - [[Favoritos|Lo mejor de lo mejor]]
 
-[[creditos|Créditos]]
+## Últimas añadidas
+
+![[Recientes.base]]
+
+[[creditos|Créditos]] · [RSS](index.xml)

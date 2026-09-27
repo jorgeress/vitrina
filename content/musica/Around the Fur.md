@@ -12,6 +12,7 @@ tags:
   - nu-metal
   - heavy-metal
 mbid: 6f935b80-160f-3787-97d6-a4ce342cf8c5
+alta: 2026-09-12
 ---
 
 ## Canciones

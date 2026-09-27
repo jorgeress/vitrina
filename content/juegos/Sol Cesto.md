@@ -10,6 +10,7 @@ tags:
   - indie
   - strategy
 appid: 2738490
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

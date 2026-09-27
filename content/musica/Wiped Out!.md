@@ -13,6 +13,7 @@ tags:
   - pop-rock
   - rock
 mbid: 89299f62-9c70-4bff-a42c-8df2ba512422
+alta: 2026-09-12
 ---
 
 ## Canciones

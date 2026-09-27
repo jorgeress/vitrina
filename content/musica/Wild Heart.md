@@ -9,6 +9,7 @@ favorito: false
 portada: "[[wild-heart.webp]]"
 tags: []
 mbid: aea86a6a-ff03-4e56-9f04-1cf63ff70725
+alta: 2026-09-23
 ---
 
 ## Canciones

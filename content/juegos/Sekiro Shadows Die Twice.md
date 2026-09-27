@@ -11,6 +11,7 @@ tags:
   - action
   - adventure
 appid: 814380
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -11,6 +11,7 @@ tags:
   - anime
   - science-fiction
 tvmaze: 37673
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

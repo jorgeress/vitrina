@@ -1,0 +1,40 @@
+# Lo ultimo que ha entrado, para la portada: es lo unico de ella que cambia de
+# una semana a otra. Va por `alta`, que esta escrita en cada ficha; la fecha del
+# fichero no vale, que un `git clone` las deja todas en la hora del clon.
+filters:
+  or:
+    - note.tipo == "juego"
+    - note.tipo == "peli"
+    - note.tipo == "serie"
+    - note.tipo == "libro"
+    - note.tipo == "album"
+formulas:
+  nota: if(note.nota, note.nota, "—")
+  seccion: if(note.tipo == "juego", "Juegos", if(note.tipo == "peli", "Películas", if(note.tipo == "serie", "Series", if(note.tipo == "libro", "Libros", "Música"))))
+properties:
+  file.name:
+    displayName: Título
+  note.autor:
+    displayName: Autoría
+  formula.seccion:
+    displayName: Sección
+views:
+  - type: cards
+    name: Últimas añadidas
+    image: note.portada
+    # Mezcla carteles 2:3 y discos cuadrados, como Favoritos, y por lo mismo:
+    # ratio fijo para que la fila no salga dentada, y `contain` para que el
+    # disco no pierda los lados.
+    cardSize: 220
+    imageAspectRatio: 0.67
+    imageFit: contain
+    limit: 12
+    order:
+      - file.name
+      - formula.seccion
+      - note.autor
+    sort:
+      - property: note.alta
+        direction: DESC
+      - property: file.name
+        direction: ASC

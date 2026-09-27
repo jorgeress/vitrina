@@ -13,6 +13,7 @@ tags:
   - indie-rock
   - lo-fi
 mbid: a1851b11-5c14-497a-af7a-fa04c0946c78
+alta: 2026-09-23
 ---
 
 ## Canciones

@@ -13,6 +13,7 @@ tags:
   - electropunk
   - chiptune
 mbid: 3fd716f5-2f67-3890-95ec-20c4032511c8
+alta: 2026-09-12
 ---
 
 ## Canciones

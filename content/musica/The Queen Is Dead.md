@@ -13,6 +13,7 @@ tags:
   - indie-rock
   - post-punk
 mbid: d8dde278-482c-3cc8-a530-fea70476f3a5
+alta: 2026-09-23
 ---
 
 ## Canciones

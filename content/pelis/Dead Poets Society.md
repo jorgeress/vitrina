@@ -10,6 +10,7 @@ portada: "[[dead-poets-society.webp]]"
 tags:
   - drama
 letterboxd: dead-poets-society
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

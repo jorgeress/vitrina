@@ -11,6 +11,7 @@ tags:
   - strategy
   - free-to-play
 appid: 1540960
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

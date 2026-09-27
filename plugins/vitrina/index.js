@@ -6,7 +6,7 @@ import { nombresEnTexto, paginasDeAutor } from "./components.js"
  * Son cuatro cosas sueltas que comparten fichero solo porque un plugin es la
  * unidad que Quartz sabe cargar, no porque tengan nada que ver:
  *
- *   - Aqui abajo, las seis paginas `.base` fuera del buscador.
+ *   - Aqui abajo, las paginas `.base` fuera del buscador.
  *   - Tambien aqui, la arista de cada ficha a la pagina de su autor.
  *   - Y la de Lo mejor de lo mejor a cada uno de sus favoritos.
  *   - En components.js, el componente `Ficha`, que pinta la cabecera de cada
@@ -82,7 +82,7 @@ function enlazarFavoritos(content) {
 }
 
 /**
- * Las cinco paginas `.base` fuera del buscador.
+ * Las paginas `.base` fuera del buscador.
  *
  * `includeEmptyFiles: true` esta puesto a proposito en content-index: una ficha
  * sin texto sigue teniendo titulo, y quien busca "Elden Ring" espera

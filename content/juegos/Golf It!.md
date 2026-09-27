@@ -12,6 +12,7 @@ tags:
   - simulation
   - sports
 appid: 571740
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

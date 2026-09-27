@@ -13,6 +13,7 @@ tags:
   - early-access
 appid: 3354750
 capsula: 8dd654efd195e289b91d1d3afe1cbb24123fe6b5/library_capsule.jpg
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

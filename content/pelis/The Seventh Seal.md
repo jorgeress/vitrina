@@ -11,6 +11,7 @@ tags:
   - fantasy
   - drama
 letterboxd: the-seventh-seal
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

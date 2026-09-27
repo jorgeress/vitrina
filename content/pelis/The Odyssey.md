@@ -12,6 +12,7 @@ tags:
   - action
   - fantasy
 letterboxd: the-odyssey-2026
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

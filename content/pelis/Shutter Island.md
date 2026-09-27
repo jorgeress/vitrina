@@ -12,6 +12,7 @@ tags:
   - drama
   - thriller
 letterboxd: shutter-island
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

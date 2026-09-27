@@ -11,6 +11,7 @@ tags:
   - rpg
   - simulation
 appid: 413150
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

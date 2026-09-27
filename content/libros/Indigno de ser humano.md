@@ -11,6 +11,7 @@ tags:
   - drama
 coverid: 13003444
 wikipedia: Indigno de ser humano
+alta: 2026-09-04
 ---
 
 > [!quote] De qué va

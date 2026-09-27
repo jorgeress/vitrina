@@ -12,6 +12,7 @@ tags:
   - drama
   - romance
 letterboxd: 10-things-i-hate-about-you
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

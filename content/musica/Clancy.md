@@ -13,6 +13,7 @@ tags:
   - indie-pop
   - pop-rock
 mbid: dbecf03e-18ab-4d35-8371-a30c1dc356ba
+alta: 2026-09-12
 ---
 
 ## Canciones

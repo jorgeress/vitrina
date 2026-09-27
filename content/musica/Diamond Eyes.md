@@ -13,6 +13,7 @@ tags:
   - post-metal
   - shoegaze
 mbid: f21cec66-4e3a-42fc-b7e4-59b17bed0cca
+alta: 2026-09-12
 ---
 
 ## Canciones

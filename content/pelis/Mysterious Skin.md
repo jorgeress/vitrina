@@ -10,6 +10,7 @@ portada: "[[mysterious-skin.webp]]"
 tags:
   - drama
 letterboxd: mysterious-skin
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

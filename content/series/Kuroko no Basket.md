@@ -11,6 +11,7 @@ tags:
   - sports
 tvmaze: 6873
 wikipedia: Kuroko no Basket
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

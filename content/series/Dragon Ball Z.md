@@ -12,6 +12,7 @@ tags:
   - anime
   - fantasy
 tvmaze: 2103
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

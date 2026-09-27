@@ -14,6 +14,7 @@ tags:
   - indie-folk
   - indie-rock
 mbid: dfb85157-313b-3f5f-8739-a5162bcb6345
+alta: 2026-09-23
 ---
 
 ## Canciones

@@ -13,6 +13,7 @@ tags:
   - rock
   - psychedelic-pop
 mbid: 08aa7a6c-3e43-4459-87b2-e47faf3a088a
+alta: 2026-09-23
 ---
 
 ## Canciones

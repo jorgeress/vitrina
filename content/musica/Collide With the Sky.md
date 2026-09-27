@@ -13,6 +13,7 @@ tags:
   - emo-pop
   - alternative-rock
 mbid: fbe216fc-3443-4425-8c99-e538b44e60ac
+alta: 2026-09-23
 ---
 
 ## Canciones

@@ -11,6 +11,7 @@ tags:
   - early-access
 appid: 3241660
 capsula: 46b4813ef1cd20664299c9e5de847f3579b44f2e/library_600x900.jpg
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

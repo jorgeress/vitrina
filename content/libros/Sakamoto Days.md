@@ -12,6 +12,7 @@ tags:
   - comedy
 coverid: 12748278
 wikipedia: Sakamoto Days
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

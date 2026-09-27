@@ -12,6 +12,7 @@ tags:
   - drama
   - action
 letterboxd: harakiri
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

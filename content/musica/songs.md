@@ -12,6 +12,7 @@ tags:
   - folk
   - singer-songwriter
 mbid: 5ff627e4-b8a0-43af-8ee2-4d84adf4541f
+alta: 2026-09-23
 ---
 
 ## Canciones

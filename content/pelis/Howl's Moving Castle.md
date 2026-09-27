@@ -12,6 +12,7 @@ tags:
   - fantasy
   - adventure
 letterboxd: howls-moving-castle
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

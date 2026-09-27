@@ -13,6 +13,7 @@ tags:
   - hardcore-hip-hop
   - jazz-rap
 mbid: c65de046-7a48-4269-b4e5-4db0ed328f47
+alta: 2026-09-12
 ---
 
 ## Canciones

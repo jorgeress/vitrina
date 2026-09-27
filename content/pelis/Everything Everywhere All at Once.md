@@ -13,6 +13,7 @@ tags:
   - comedy
   - action
 letterboxd: everything-everywhere-all-at-once
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

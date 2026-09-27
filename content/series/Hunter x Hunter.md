@@ -13,6 +13,7 @@ tags:
   - fantasy
 tvmaze: 1536
 wikipedia: Hunter × Hunter
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

@@ -13,6 +13,7 @@ tags:
   - hard-rock
   - progressive-rock
 mbid: b0ba36a8-dcdf-341c-af35-281fb159072b
+alta: 2026-09-23
 ---
 
 ## Canciones

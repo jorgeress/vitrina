@@ -10,6 +10,7 @@ portada: "[[manchester-by-the-sea.webp]]"
 tags:
   - drama
 letterboxd: manchester-by-the-sea
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -12,6 +12,7 @@ tags:
   - thriller
 tvmaze: 40
 wikipedia: Death Note
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

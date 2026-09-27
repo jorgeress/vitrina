@@ -13,6 +13,7 @@ tags:
   - garage-rock-revival
   - garage-rock
 mbid: efea26d1-a016-30f6-b8e2-bc8c02336b0a
+alta: 2026-09-23
 ---
 
 ## Canciones

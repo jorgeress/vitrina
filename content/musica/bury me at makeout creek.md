@@ -13,6 +13,7 @@ tags:
   - alternative-rock
   - garage-rock
 mbid: a2499c0a-6c87-413c-9f4f-f08a67ab4441
+alta: 2026-09-12
 ---
 
 ## Canciones

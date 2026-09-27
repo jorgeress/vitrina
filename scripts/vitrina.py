@@ -5,6 +5,7 @@ import json
 import re
 import time
 import unicodedata
+from datetime import date
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -238,7 +239,7 @@ def enlace_seccion(carpeta):
 ESTADOS = ["pendiente", "en curso", "terminado", "abandonado"]
 
 CAMPOS = ["tipo", "seccion", "year", "autor", "nota", "estado", "favorito",
-          "portada", "tags"]
+          "portada", "tags", "alta"]
 
 # Los que no dejan la clave vacia si no hay valor. Ver escribir_ficha().
 SIN_HUECO = {"estado"}
@@ -268,7 +269,9 @@ def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True, fichero=No
     if normal(titulo) in fichas_existentes(carpeta).values():
         return None
     # La seccion no se pregunta ni se pasa: la dice la carpeta en la que cae.
-    campos = {**campos, "seccion": enlace_seccion(carpeta)}
+    # Y el alta es hoy, que es cuando entra; de ella sale "Ultimas añadidas".
+    campos = {"alta": date.today().isoformat(), **campos,
+              "seccion": enlace_seccion(carpeta)}
     orden = CAMPOS + [c for c in campos if c not in CAMPOS]
     # Casi todos los campos se escriben aunque vengan vacios: la clave suelta es
     # el hueco donde luego pones el dato, y Obsidian lo ofrece en el editor de

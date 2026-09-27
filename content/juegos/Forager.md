@@ -12,6 +12,7 @@ tags:
   - indie
   - simulation
 appid: 751780
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

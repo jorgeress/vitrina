@@ -10,6 +10,7 @@ portada: "[[el-bola.webp]]"
 tags:
   - drama
 letterboxd: pellet-2000
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

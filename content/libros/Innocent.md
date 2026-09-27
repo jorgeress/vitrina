@@ -13,6 +13,7 @@ tags:
   - drama
 coverid: 13481112
 wikipedia: Innocent (manga)
+alta: 2026-09-12
 ---
 
 > [!quote] De qué va

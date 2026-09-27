@@ -14,6 +14,7 @@ tags:
   - supernatural
 tvmaze: 18019
 wikipedia: Saiki Kusuo no Psi-nan
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

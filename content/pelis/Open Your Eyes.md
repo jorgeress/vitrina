@@ -12,6 +12,7 @@ tags:
   - drama
   - science-fiction
 letterboxd: open-your-eyes
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -13,6 +13,7 @@ tags:
   - blackgaze
   - depressive-black-metal
 mbid: e279999e-4865-4919-94c4-d0938e72feb1
+alta: 2026-09-23
 ---
 
 ## Canciones

@@ -13,6 +13,7 @@ tags:
   - alternative-rock
   - punk
 mbid: cd367c59-eb86-384b-bbc7-62f6d2d677b9
+alta: 2026-09-12
 ---
 
 ## Canciones

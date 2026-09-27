@@ -12,6 +12,7 @@ tags:
   - action
   - comedy
 letterboxd: scott-pilgrim-vs-the-world
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

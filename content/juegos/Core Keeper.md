@@ -13,6 +13,7 @@ tags:
   - rpg
 appid: 1621690
 capsula: 8e1f05bc29b662fc85a8847457a7d0eed312fbff/library_capsule.jpg
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

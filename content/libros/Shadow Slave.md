@@ -11,5 +11,6 @@ tags:
   - web-novel
   - fantasy
 coverid: 15173101
+alta: 2026-09-12
 ---
 

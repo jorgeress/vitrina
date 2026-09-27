@@ -12,6 +12,7 @@ tags:
   - simulation
   - early-access
 appid: 108600
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -14,6 +14,7 @@ tags:
   - free-to-play
 appid: 1353300
 capsula: 722290ef250a94cc84535249d99b87c5d3b98b83/library_600x900.jpg
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

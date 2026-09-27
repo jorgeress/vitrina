@@ -10,6 +10,7 @@ tags:
   - action
   - rpg
 appid: 1245620
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

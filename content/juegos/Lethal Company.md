@@ -12,6 +12,7 @@ tags:
   - indie
   - early-access
 appid: 1966720
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

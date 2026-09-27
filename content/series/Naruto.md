@@ -13,6 +13,7 @@ tags:
   - fantasy
 tvmaze: 495
 wikipedia: Naruto
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

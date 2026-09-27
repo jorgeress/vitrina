@@ -11,6 +11,7 @@ tags:
   - indie-pop
   - pop
 mbid: e9030f66-9494-418d-8bc9-02b7e9014834
+alta: 2026-09-12
 ---
 
 ## Canciones

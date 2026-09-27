@@ -14,6 +14,7 @@ tags:
   - electronic
 mbid: 6e335887-60ba-38f0-95af-fae7774336bf
 favoritas: 2
+alta: 2026-08-31
 ---
 
 Comentario de prueba, para ver cómo se lee lo tuyo encima de lo que ponen los

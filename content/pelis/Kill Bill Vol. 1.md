@@ -11,6 +11,7 @@ tags:
   - crime
   - action
 letterboxd: kill-bill-vol-1
+alta: 2026-09-02
 ---
 
 > [!quote] De qué va

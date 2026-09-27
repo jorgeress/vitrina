@@ -13,6 +13,7 @@ tags:
   - progressive-pop
   - rock
 mbid: 23a9b1c2-3dd1-408e-89cb-ca0b81429176
+alta: 2026-09-12
 ---
 
 ## Canciones

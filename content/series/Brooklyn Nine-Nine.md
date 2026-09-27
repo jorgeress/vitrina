@@ -11,6 +11,7 @@ tags:
   - action
   - crime
 tvmaze: 49
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va

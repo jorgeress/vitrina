@@ -11,6 +11,7 @@ tags:
   - adventure
   - anime
 tvmaze: 8287
+alta: 2026-09-16
 ---
 
 > [!quote] De qué va
