@@ -13,7 +13,7 @@ interesante si me acuerdo.
 - [[autores/index|Autores]]
 - [[Favoritos|Lo mejor de lo mejor]]
 
-## Últimas añadidas
+## Recién llegadas a la vitrina
 
 ![[Recientes.base]]
 

@@ -28,6 +28,7 @@ SCRIPTS = Path(__file__).resolve().parent
 PASOS = [
     ("secciones.py", "cuelga cada ficha de su sección", False, False),
     ("fechas.py", "apunta la fecha de alta que falte", False, False),
+    ("enmarcar.py", "pone en su cartela lo que hayas escrito suelto", False, False),
     ("portadas.py", "baja las carátulas que falten", True, True),
     ("datos.py", "rellena año, autor y tags", True, True),
     ("textos.py", "escribe el «De qué va»", True, True),

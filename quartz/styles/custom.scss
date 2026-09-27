@@ -187,6 +187,37 @@ footer::before {
   display: none;
 }
 
+// La cartela: lo que has escrito tu, "Por qué está en la vitrina".
+//
+// Es la que lleva al lado cada pieza de un museo, y tiene que verse distinta de
+// la cita de la fuente, que va justo debajo: antes eran dos parrafos seguidos y
+// lo unico que decia cual era tuyo era que el otro llevaba comillas. Asi que
+// va en caja --un paso por delante del fondo, como lo que se pone encima de
+// algo-- con el rotulo en las capitales espaciadas de "VITRINA" y un filo a
+// la izquierda. Sin dorado, que es de Lo mejor de lo mejor y nada mas. El
+// icono es una piedra tallada: la pieza que se guarda en la vitrina.
+.callout[data-callout="vitrina"] {
+  --color: var(--dark);
+  --border: var(--lightgray);
+  --bg: var(--caja);
+  --callout-icon: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9Z"></path><path d="M11 3 8 9l4 13 4-13-3-6"></path><path d="M2 9h20"></path></svg>');
+  border-left: 3px solid var(--darkgray);
+  margin-bottom: 1.5rem;
+
+  & > .callout-title > .callout-title-inner > p {
+    font-family: var(--headerFont);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  & > .callout-content {
+    color: var(--dark);
+    font-size: 1.05rem;
+  }
+}
+
 // "Lo mejor de lo mejor" en dorado, con su estrella.
 //
 // Es la unica pagina que no es ni una seccion ni una obra: cruza las cuatro y

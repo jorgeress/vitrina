@@ -17,6 +17,7 @@ que falta.
 | `autores.py` | Escribe las páginas de autor |
 | `secciones.py` | Cuelga cada ficha de su sección (campo `seccion`) |
 | `fechas.py` | Apunta la fecha de alta (campo `alta`) de las que no la tienen |
+| `enmarcar.py` | Mete en su cartela lo que hayas escrito suelto |
 | `estado.py` | Qué hay y qué falta; actualiza las cifras del README |
 | `vistazo.py` | Levanta el sitio con los borradores dentro |
 | `pruebas.py` | Las pruebas, sin red |
@@ -91,19 +92,19 @@ Por cada ficha contestas en una línea, en cualquier orden:
 
 Con nota y sin estado se entiende `terminado`, salvo que la ficha ya dijera
 `en curso` o `abandonado`. Después, si la ficha no tiene nada tuyo escrito,
-pide la frase de por qué y la pone arriba del todo, encima de la cita. Enter la
-salta.
+pide por qué está en la vitrina y lo pone arriba del todo, en su cartela
+(`> [!vitrina] Por qué está en la vitrina`), encima de la cita. Enter la salta.
 
 ## al-dia.py
 
 ```bash
 scripts/al-dia.py                   # todo
 scripts/al-dia.py --seccion libros  # solo esa carpeta, en lo que va por carpeta
-scripts/al-dia.py --sin-red         # solo secciones, fechas, autores y README
+scripts/al-dia.py --sin-red         # solo secciones, fechas, cartelas, autores y README
 scripts/al-dia.py --dry-run
 ```
 
-Pasa `secciones`, `fechas`, `portadas`, `datos`, `textos` y `autores`, en ese
+Pasa `secciones`, `fechas`, `enmarcar`, `portadas`, `datos`, `textos` y `autores`, en ese
 orden, y al final `estado.py --readme`. Si un paso falla sigue con los demás y
 lo dice al terminar.
 

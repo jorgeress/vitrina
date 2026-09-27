@@ -65,8 +65,9 @@ Cómo contestar, en una línea y en cualquier orden:
   Con nota y sin estado se entiende terminado, salvo que ya dijera en curso
   o abandonado.
 
-  Después, si la ficha no tiene nada tuyo escrito, te pide por qué te gustó
-  (o no). Va arriba del todo en la ficha. Enter la salta.
+  Después, si la ficha no tiene nada tuyo escrito, te pide por qué está en
+  la vitrina: lo que te dejó, bueno o malo. Va arriba del todo en la ficha,
+  en su cartela. Enter la salta.
 """
 
 ATAJOS = {"p": "pendiente", "c": "en curso", "t": "terminado", "a": "abandonado",
@@ -127,7 +128,7 @@ def pedir_frase(md):
     if tiene_lo_suyo(md):
         return False
     try:
-        frase = input("  por qué (Enter para saltar): ").strip()
+        frase = input("  por qué está en la vitrina (Enter para saltar): ").strip()
     except (EOFError, KeyboardInterrupt):
         print()
         return False

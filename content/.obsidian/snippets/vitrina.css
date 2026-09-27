@@ -1,0 +1,7 @@
+/* La cartela de lo tuyo, "Por qué está en la vitrina": el callout [!vitrina].
+   En la web la pinta quartz/styles/custom.scss; esto es lo mismo en Obsidian,
+   que sin el le daria el color y el lapiz de una nota cualquiera. */
+.callout[data-callout="vitrina"] {
+  --callout-color: 120, 110, 98;
+  --callout-icon: lucide-gem;
+}

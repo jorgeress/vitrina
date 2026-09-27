@@ -14,10 +14,11 @@ tvmaze: 169
 alta: 2026-09-16
 ---
 
-Comentario de prueba, para ver cómo se lee lo tuyo encima de lo que ponen los
-scripts. Ocupa tres o cuatro líneas, que es más o menos lo que ocupa uno de
-verdad, y no hay que marcarlo con nada: basta con escribirlo aquí arriba.
-Bórralo cuando pongas el de verdad.
+> [!vitrina] Por qué está en la vitrina
+> Comentario de prueba, para ver cómo se lee lo tuyo encima de lo que ponen los
+> scripts. Ocupa tres o cuatro líneas, que es más o menos lo que ocupa uno de
+> verdad, y no hay que marcarlo con nada: basta con escribirlo aquí arriba.
+> Bórralo cuando pongas el de verdad.
 
 > [!quote] De qué va
 > Breaking Bad es una serie de televisión estadounidense que se emitió entre

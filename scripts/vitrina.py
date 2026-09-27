@@ -269,7 +269,7 @@ def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True, fichero=No
     if normal(titulo) in fichas_existentes(carpeta).values():
         return None
     # La seccion no se pregunta ni se pasa: la dice la carpeta en la que cae.
-    # Y el alta es hoy, que es cuando entra; de ella sale "Ultimas añadidas".
+    # Y el alta es hoy, que es cuando entra; de ella sale "Recien llegadas".
     campos = {"alta": date.today().isoformat(), **campos,
               "seccion": enlace_seccion(carpeta)}
     orden = CAMPOS + [c for c in campos if c not in CAMPOS]

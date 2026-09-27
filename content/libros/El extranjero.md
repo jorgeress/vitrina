@@ -14,7 +14,8 @@ wikipedia: El extranjero
 alta: 2026-09-04
 ---
 
-En el ciclo de lo absurdo un hombre recorre toda su vida siendo extranjero a su propia vida, que agrio debe ser ver la vida a traves de un fino velo con indiferencia.
+> [!vitrina] Por qué está en la vitrina
+> En el ciclo de lo absurdo, un hombre recorre toda su vida siendo extranjero a su propia vida, que agrio debe ser ver la vida a través de un fino velo de indiferencia.
 
 > [!quote] De qué va
 > El extranjero es una novela publicada en 1942, la primera del escritor

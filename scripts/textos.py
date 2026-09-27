@@ -370,11 +370,33 @@ def escribir_cuerpo(md, cuerpo):
     md.write_text(m.group(0) + "\n" + nuevo + "\n", encoding="utf-8")
 
 
+# --- lo tuyo -----------------------------------------------------------------
+# Lo que escribes tu va en su propio marco, igual que la cita de la fuente va en
+# el suyo: una cartela, como la que lleva al lado cada pieza de un museo. Sin
+# el, tu parrafo y el de Wikipedia eran dos parrafos seguidos, y lo unico que
+# decia cual era tuyo era que el otro llevaba comillas. Es un callout y no algo
+# que pinte el sitio al construir para que se vea igual en Obsidian, donde el
+# snippet de .obsidian/snippets/vitrina.css le da su color.
+
+MARCO = "> [!vitrina] Por qué está en la vitrina"
+
+
+def marco(suyo):
+    """Tu texto dentro de la cartela, tal cual: sin reajustar lineas ni listas."""
+    lineas = suyo.strip().splitlines()
+    return MARCO + "\n" + "\n".join(f"> {l}".rstrip() for l in lineas)
+
+
+def enmarcado(suyo):
+    return suyo.lstrip().startswith("> [!vitrina]")
+
+
 def escribir_lo_suyo(md, suyo):
-    """Pone tu parrafo arriba y deja debajo lo que haya generado el script.
+    """Pone tu texto arriba, en su cartela, y deja debajo lo generado.
 
     Es la otra mitad de `escribir_cuerpo`: aquella cambia lo generado sin
-    tocar lo tuyo, y esta lo tuyo sin tocar lo generado.
+    tocar lo tuyo, y esta lo tuyo sin tocar lo generado. Lo que ya venga
+    enmarcado entra tal cual; lo suelto, se enmarca.
     """
     texto = md.read_text(encoding="utf-8")
     m = FRONT_RE.match(texto)
@@ -382,8 +404,24 @@ def escribir_lo_suyo(md, suyo):
         raise ValueError(f"{md} no tiene cabecera")
     generado = "\n\n".join(g.group(0).strip()
                             for g in GENERADO_RE.finditer(texto[m.end():]))
-    nuevo = suyo.strip() + ("\n\n" + generado if generado else "")
+    suyo = suyo.strip() if enmarcado(suyo) else marco(suyo)
+    nuevo = suyo + ("\n\n" + generado if generado else "")
     md.write_text(m.group(0) + "\n" + nuevo + "\n", encoding="utf-8")
+
+
+def enmarcar(md):
+    """Mete en su cartela lo que hayas escrito suelto. Devuelve si ha hecho algo.
+
+    Asi se puede escribir en Obsidian sin acordarse de la sintaxis del callout:
+    se escribe encima de la cita, y al-dia.py lo enmarca.
+    """
+    texto = md.read_text(encoding="utf-8")
+    m = FRONT_RE.match(texto)
+    suyo = lo_suyo(texto[m.end():]) if m else ""
+    if not suyo or enmarcado(suyo):
+        return False
+    escribir_lo_suyo(md, suyo)
+    return True
 
 
 def fichas(args):

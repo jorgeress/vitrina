@@ -20,7 +20,7 @@ properties:
     displayName: Sección
 views:
   - type: cards
-    name: Últimas añadidas
+    name: Recién llegadas
     image: note.portada
     # Mezcla carteles 2:3 y discos cuadrados, como Favoritos, y por lo mismo:
     # ratio fijo para que la fila no salga dentada, y `contain` para que el

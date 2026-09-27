@@ -17,10 +17,11 @@ favoritas: 2
 alta: 2026-08-31
 ---
 
-Comentario de prueba, para ver cómo se lee lo tuyo encima de lo que ponen los
-scripts. Ocupa tres o cuatro líneas, que es más o menos lo que ocupa uno de
-verdad, y no hay que marcarlo con nada: basta con escribirlo aquí arriba.
-Bórralo cuando pongas el de verdad.
+> [!vitrina] Por qué está en la vitrina
+> Comentario de prueba, para ver cómo se lee lo tuyo encima de lo que ponen los
+> scripts. Ocupa tres o cuatro líneas, que es más o menos lo que ocupa uno de
+> verdad, y no hay que marcarlo con nada: basta con escribirlo aquí arriba.
+> Bórralo cuando pongas el de verdad.
 
 ## Canciones
 

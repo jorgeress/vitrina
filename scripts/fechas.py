@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Apunta en cada ficha cuando entro en la coleccion: el campo `alta`.
 
-De ahi sale "Ultimas añadidas" en la portada. La fecha va escrita en la ficha y
+De ahi sale "Recien llegadas" en la portada. La fecha va escrita en la ficha y
 no se saca del fichero porque la del fichero no sobrevive a un `git clone`,
 que las deja todas con la hora del clon, y Obsidian y la web acabarian
 ordenando distinto.

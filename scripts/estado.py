@@ -177,9 +177,9 @@ def comprobar():
     sin_alta = [f"{carpeta}/{md.stem}" for carpeta in SECCIONES
                 for md, campos, _ in leer(carpeta) if vacio(campos.get("alta"))]
     if sin_alta:
-        # Solo las deja fuera de "Ultimas añadidas", que no es para parar nada.
+        # Solo las deja fuera de "Recien llegadas", que no es para parar nada.
         avisos.append(f"{len(sin_alta)} ficha(s) sin fecha de alta, que no saldran "
-                      "en Ultimas añadidas: " + ", ".join(sin_alta[:5])
+                      "en Recien llegadas: " + ", ".join(sin_alta[:5])
                       + (" …" if len(sin_alta) > 5 else "")
                       + ". Pasa scripts/fechas.py")
     for aviso in avisos:

@@ -49,8 +49,26 @@ pasan por Wikidata (la lista con ejemplos, en
 [`docs/scripts.md`](docs/scripts.md)). Si buscas por título, te enseña los
 candidatos y eliges tú.
 La ficha sale completa: portada, año, autor, géneros, el «De qué va» y el
-identificador de la fuente. Lo único que no puede poner es por qué te gustó:
-eso lo pide `repasar.py`, o lo escribes en la ficha encima de la cita.
+identificador de la fuente. Lo único que no puede poner es lo tuyo.
+
+### Lo tuyo: por qué está en la vitrina
+
+Lo que escribes tú va arriba del todo, en su propia cartela, **«Por qué está en
+la vitrina»**, como la que lleva al lado cada pieza de un museo. Debajo queda la
+cita de la fuente, así que se ve de un vistazo qué es tuyo y qué no, en Obsidian
+y en la web:
+
+```markdown
+> [!vitrina] Por qué está en la vitrina
+> Me reí con esta desde los catorce y no he parado.
+
+> [!quote] De qué va
+> Zoolander es una comedia…
+```
+
+No hace falta escribir el marco: escribe suelto encima de la cita y
+`scripts/al-dia.py` lo enmarca, o contéstalo en `repasar.py`, que lo pide
+después de la nota.
 
 ### A mano
 
@@ -68,7 +86,8 @@ tags:
   - strategy         # en inglés y sin tildes
 ---
 
-Por qué me gustó.
+> [!vitrina] Por qué está en la vitrina
+> Lo que te dejó.
 ```
 
 La plantilla con todos los campos está en `content/_plantillas/Ficha.md`
@@ -84,8 +103,8 @@ scripts/repasar.py
 Al empezar enseña una guía con los atajos (y `?` la repite). Luego va una a una
 por las fichas sin nota o sin estado, y contestas en una línea:
 `9 f` es un 9 y favorita, `t` es terminado, `p` pendiente, Enter la salta y `q`
-para. Si la ficha no tiene nada tuyo escrito, después te pide la frase de por
-qué, que va arriba del todo en la ficha. Guarda cada respuesta al momento.
+para. Si la ficha no tiene nada tuyo escrito, después te pide por qué está en
+la vitrina, y lo guarda en su cartela. Guarda cada respuesta al momento.
 
 ## Traer tu colección de otros sitios
 
@@ -105,8 +124,8 @@ scripts/al-dia.py
 ```
 
 `al-dia.py` pasa, en orden, todo lo que los scripts saben rellenar: sección,
-fecha de alta, portada, año, autor, tags, texto, páginas de autor y las cifras
-del README. Solo toca lo que falta, así que se puede lanzar siempre que quieras;
+fecha de alta, la cartela de lo que hayas escrito suelto, portada, año, autor,
+tags, texto, páginas de autor y las cifras del README. Solo toca lo que falta, así que se puede lanzar siempre que quieras;
 con `--sin-red` hace solo lo que no pregunta a nadie.
 
 Para ver los borradores en el sitio antes de publicarlos, `scripts/vistazo.py`
@@ -141,7 +160,8 @@ FAVORITOS  ██······················  21 de 210
 
 ## La portada
 
-Enseña las secciones y las **últimas 12 fichas añadidas**, ordenadas por el
+Enseña las secciones y, en **«Recién llegadas a la vitrina»**, las últimas 12
+fichas añadidas, ordenadas por el
 campo `alta`, que llevan todas. Lo pone `nueva.py` al crear la ficha, y
 `al-dia.py` a las escritas a mano. Abajo está el enlace al RSS del sitio.
 

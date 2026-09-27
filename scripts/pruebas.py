@@ -242,7 +242,7 @@ class NombresYParecidos(unittest.TestCase):
             self.assertIn("tags: []", texto)
 
     def test_una_ficha_nueva_nace_con_su_fecha_de_alta(self):
-        # De ella sale "Ultimas añadidas" en la portada. Sin fecha, la ficha
+        # De ella sale "Recien llegadas" en la portada. Sin fecha, la ficha
         # no llegaria nunca a esa lista por mucho que fuera la ultima.
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
@@ -756,23 +756,45 @@ class TuTexto(unittest.TestCase):
 
     CITA = "> [!quote] De qué va\n> Una serie.\n>\n> → Wikipedia · CC BY-SA 4.0\n"
 
-    def test_la_frase_va_encima_de_la_cita_y_la_cita_se_queda(self):
+    def test_la_frase_va_en_su_cartela_encima_de_la_cita(self):
         with tempfile.TemporaryDirectory() as tmp:
             md = Path(tmp) / "Arcane.md"
             md.write_text("---\ntipo: serie\n---\n\n" + self.CITA, encoding="utf-8")
             textos.escribir_lo_suyo(md, "La mejor animación que he visto.")
             texto = md.read_text(encoding="utf-8")
-            self.assertLess(texto.index("La mejor"), texto.index("[!quote]"))
+            self.assertIn(textos.MARCO + "\n> La mejor animación que he visto.", texto)
+            self.assertLess(texto.index("[!vitrina]"), texto.index("[!quote]"))
             self.assertIn("→ Wikipedia", texto)
             self.assertTrue(texto.startswith("---\ntipo: serie\n---\n"))
 
-    def test_en_una_ficha_vacia_queda_solo_la_frase(self):
+    def test_en_una_ficha_vacia_queda_solo_la_cartela(self):
         with tempfile.TemporaryDirectory() as tmp:
             md = Path(tmp) / "Baki.md"
             md.write_text("---\ntipo: serie\n---\n", encoding="utf-8")
             textos.escribir_lo_suyo(md, "  Absurda y perfecta.  ")
             self.assertEqual(md.read_text(encoding="utf-8"),
-                             "---\ntipo: serie\n---\n\nAbsurda y perfecta.\n")
+                             "---\ntipo: serie\n---\n\n" + textos.MARCO
+                             + "\n> Absurda y perfecta.\n")
+
+    def test_lo_escrito_suelto_se_enmarca_sin_cambiar_una_palabra(self):
+        # Dos parrafos y una lista: el marco no reajusta nada, solo antepone.
+        suyo = "Primera línea.\nSegunda.\n\n- una\n- dos"
+        with tempfile.TemporaryDirectory() as tmp:
+            md = Path(tmp) / "Dune.md"
+            md.write_text("---\ntipo: libro\n---\n\n" + suyo + "\n\n" + self.CITA,
+                          encoding="utf-8")
+            self.assertTrue(textos.enmarcar(md))
+            texto = md.read_text(encoding="utf-8")
+            self.assertIn(textos.MARCO + "\n> Primera línea.\n> Segunda.\n>\n> - una\n> - dos",
+                          texto)
+            self.assertIn("[!quote] De qué va", texto)
+            # Y lo enmarcado ya no se vuelve a enmarcar.
+            self.assertFalse(textos.enmarcar(md))
+            self.assertEqual(texto.count("[!vitrina]"), 1)
+
+    def test_la_cartela_cuenta_como_tuya_y_force_no_la_pisa(self):
+        cuerpo = textos.MARCO + "\n> Mía.\n\n" + self.CITA
+        self.assertEqual(textos.lo_suyo(cuerpo), textos.MARCO + "\n> Mía.")
 
 
 class LibroPorPortada(unittest.TestCase):

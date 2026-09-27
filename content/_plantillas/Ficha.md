@@ -49,8 +49,14 @@ Campos:
   solo hace falta cuando Wikidata no enlaza su `tvmaze` con ningún artículo, que
   es lo que pasa con casi todo el anime.
 
-El cuerpo de la ficha es para lo tuyo: por qué te gustó, o qué canciones son
-las que te sabes. Es lo único que ninguna fuente puede rellenar, y lo único que
-el buscador de la web indexa por dentro.
+El cuerpo de la ficha es para lo tuyo: por qué está en la vitrina, lo que te
+dejó, o qué canciones son las que te sabes. Es lo único que ninguna fuente
+puede rellenar. Va arriba, en su cartela, encima de la cita de «De qué va»:
+
+> [!vitrina] Por qué está en la vitrina
+> Lo que te dejó, en dos frases.
+
+No hace falta escribir el marco: si escribes suelto encima de la cita,
+`scripts/al-dia.py` lo mete en él sin cambiar ni una palabra.
 
 Esta carpeta no se publica: está en `ignorePatterns` de la configuración de Quartz.
