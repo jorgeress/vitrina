@@ -219,6 +219,20 @@ npm run check                # tipos y formato
 - **Importar solo cada noche.** Una Action programada que pase
   `importar.py letterboxd-rss` y `listenbrainz` y después `al-dia.py`, y abra
   un PR con los borradores nuevos para revisarlos.
+- **«Me llegó por».** Un campo con quién te lo recomendó o de dónde salió. Con
+  el tiempo dibuja la gente que te ha ido formando el gusto.
+- **«Me llevó a».** Un enlace de una obra a la siguiente que descubriste por
+  ella. El grafo ya junta por género y autor; esto dibujaría el camino.
+- **Épocas.** Una etiqueta como `epoca/instituto` o `epoca/2026`, para ver qué
+  te acompañaba en cada momento: no solo qué te gusta, sino cuándo te hizo
+  falta.
+- **Más vitrina en los rótulos.** «En el almacén» para las pestañas de
+  pendientes, una vista «Retirado de la vitrina» para lo abandonado, y «Esta
+  vitrina está vacía» en la página 404.
+- **La presentación de la portada**, con la idea de vitrina. Un borrador: «Una
+  vitrina de lo que juego, veo, leo y escucho. No todo lo que pasa por mis
+  manos: lo que se queda. Cada pieza lleva su cartela con lo que me dejó, y
+  juntas dicen de mí más de lo que yo sabría contar.»
 
 ## Licencia
 
