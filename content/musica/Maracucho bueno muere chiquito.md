@@ -7,7 +7,10 @@ nota:
 estado: terminado
 favorito: false
 portada: "[[maracucho-bueno-muere-chiquito.webp]]"
-tags: []
+tags:
+  - hip-hop
+  - r&b
+  - trap
 mbid: 7293ca79-187a-43d4-be85-48a8ab5088c7
 alta: 2026-09-23
 ---

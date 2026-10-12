@@ -27,7 +27,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from vitrina import (PORTADAS, SECCIONES, VAULT, articulo_html, articulos_ingleses,
+from vitrina import (PORTADAS, SECCIONES, VAULT, articulo_html, articulos_ingleses, wiki,
                        asegurar_letterboxd, escribir_campos, ficha_letterboxd,
                        frontmatter, normal, pedir, serie_tvmaze, slug)
 
@@ -75,11 +75,43 @@ def portada_juego(titulo, campos, md):
             return img, "Steam (exacta, por appid)"
     url = "https://steamcommunity.com/actions/SearchApps/" + urllib.parse.quote(titulo)
     res = pedir(url) or []
-    if not res:
+    if res:
+        exacto = next((a for a in res if normal(a.get("name")) == normal(titulo)), res[0])
+        img = caratula_steam(exacto["appid"])
+        if img:
+            return img, f"Steam ({exacto['name']})"
+    return portada_juego_wikipedia(titulo, campos)
+
+
+def portada_juego_wikipedia(titulo, campos):
+    """La caratula de la Wikipedia inglesa, para lo que no esta en Steam.
+
+    Fortnite, los de Epic o los de consola no tienen ficha de tienda. El
+    buscador de Wikipedia siempre devuelve algo, asi que no basta con que el
+    titulo se parezca: la ficha lateral tiene que nombrar al estudio que ya
+    dice la ficha. Sin autor no hay con que comprobarlo y se queda sin portada.
+    """
+    autores = [a.strip().lower() for a in str(campos.get("autor") or "").split(",")
+               if len(a.strip()) > 3]
+    if not autores:
         return None, None
-    exacto = next((a for a in res if normal(a.get("name")) == normal(titulo)), res[0])
-    img = caratula_steam(exacto["appid"])
-    return (img, f"Steam ({exacto['name']})") if img else (None, None)
+    busqueda = wiki("en", {"action": "query", "list": "search", "srlimit": 5,
+                           "srsearch": f"{titulo} video game"})
+    for resultado in (busqueda or {}).get("query", {}).get("search", []):
+        articulo = resultado["title"]
+        # Exacto, no por parecido: «Lego Fortnite» se parece a «Fortnite» lo
+        # bastante para pasar el listón de las peliculas, y es otro juego.
+        if normal(re.sub(r"\s*\(.*\)$", "", articulo)) != normal(titulo):
+            continue
+        html = articulo_html(articulo)
+        lateral = html.split('class="infobox', 1)[-1].split("</table>", 1)[0].lower()
+        if not any(a in lateral for a in autores):
+            continue
+        src = imagen_infobox(articulo)
+        img = pedir(src, binario=True, reintentos=5) if src else None
+        if img and len(img) > 5000:
+            return img, f"Wikipedia ({articulo}), en baja resolucion"
+    return None, None
 
 
 def portada_libro(titulo, campos, md):

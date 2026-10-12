@@ -7,7 +7,10 @@ nota:
 estado: terminado
 favorito: false
 portada: "[[a-d-r-o-m-i-c-f-m-s-4.webp]]"
-tags: []
+tags:
+  - reggaeton
+  - trap
+  - trap-latino
 mbid: 49036bb8-3e76-411b-86e9-4ec924e5a9fc
 alta: 2026-09-23
 ---

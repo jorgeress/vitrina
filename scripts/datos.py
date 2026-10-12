@@ -226,16 +226,34 @@ def datos_album(titulo, campos, md):
     del md
 
     datos = pedir(f"https://musicbrainz.org/ws/2/release-group/{mbid}"
-                  "?fmt=json&inc=genres")
+                  "?fmt=json&inc=genres+artist-credits")
     if datos is None:
         return {}, f"MusicBrainz no responde por el mbid {mbid}"
-    generos = sorted(datos.get("genres") or [],
-                     key=lambda g: -(g.get("count") or 0))
+    generos = votados(datos)
+    if generos:
+        return {"tags": generos}, f"MusicBrainz ({datos.get('title') or mbid})"
+
+    # Los discos de artistas pequeños no tienen votos, pero el artista sí: los
+    # de Yung Beef no traen ninguno y él trae `trap` y `hip hop`. Es el mismo
+    # disco identificado por mbid, así que no hay nada que adivinar; solo se
+    # baja un escalón. Con varios artistas acreditados manda el primero.
+    creditos = datos.get("artist-credit") or []
+    artista = (creditos[0].get("artist") or {}).get("id") if creditos else None
+    if artista:
+        time.sleep(1)  # MusicBrainz pide una petición por segundo
+        del_artista = pedir(f"https://musicbrainz.org/ws/2/artist/{artista}?fmt=json&inc=genres")
+        generos = votados(del_artista or {})
+        if generos:
+            nombre = (del_artista or {}).get("name") or artista
+            return {"tags": generos}, f"MusicBrainz (los de {nombre}: el disco no tiene)"
+    return {}, f"MusicBrainz no tiene generos votados de {mbid} ni de su artista"
+
+
+def votados(datos):
+    """Los generos de una respuesta de MusicBrainz, de mas votado a menos."""
+    generos = sorted(datos.get("genres") or [], key=lambda g: -(g.get("count") or 0))
     generos = [etiqueta(g.get("name")) for g in generos]
-    generos = [g for g in generos if g][:MAX_TAGS]
-    if not generos:
-        return {}, f"MusicBrainz no tiene generos votados de {mbid}"
-    return {"tags": generos}, f"MusicBrainz ({datos.get('title') or mbid})"
+    return [g for g in generos if g][:MAX_TAGS]
 
 
 # Los generos de Open Library que valen como genero, y a que tag caen. Los
