@@ -6,9 +6,14 @@
    El dorado es de Lo mejor de lo mejor y de nada más: la estrella de un
    favorito y esa página. Si lo llevara cualquier otra cosa dejaría de señalar.
 
-   Cada sección tiene un color apagado, de tierra, que solo se usa en lo
-   pequeño: el punto de la etiqueta, los nodos de la constelación y el filo
-   al pasar el ratón. */
+   Cada sección tiene su color, que se usa en lo pequeño: el punto de la
+   etiqueta, los nodos de la constelación, las barras de las cifras y el filo
+   al pasar el ratón. No son de tierra, como pedía la casa, porque en la
+   constelación el color es lo que dice de qué sala es cada nodo, y los
+   apagados no se distinguían (verde y turquesa, ni con buena vista). Estos
+   son de la paleta validada de la guía de gráficas, sin el amarillo, que se
+   confundiría con el dorado, y en un orden que pasa el validador de
+   daltonismo en los dos temas. Los discos, además, son cuadrados. */
 :root {
   --fondo: #f7f4ef;
   --caja: #fffdf9;
@@ -19,11 +24,11 @@
   --texto: #201d1a;
   --enlace: #4c5c6b;
   --dorado: #a07b12;
-  --juego: #4f6f93;
-  --peli: #a8523f;
-  --serie: #7a5d98;
-  --libro: #4f7f5d;
-  --album: #2f7f86;
+  --juego: #2a78d6;
+  --peli: #eb6834;
+  --serie: #1baf7a;
+  --libro: #6250d6;
+  --album: #e87ba4;
   --sombra: 0 10px 28px rgb(32 29 26 / 0.14);
   --radio: 8px;
   --rotulo: "Cinzel", "Trajan Pro", Georgia, serif;
@@ -44,11 +49,11 @@
     --texto: #ece7dd;
     --enlace: #9aa7b4;
     --dorado: #e0c063;
-    --juego: #8fa9c8;
-    --peli: #d48c79;
-    --serie: #b39bcc;
-    --libro: #8fb89b;
-    --album: #7cbcc1;
+    --juego: #3987e5;
+    --peli: #d95926;
+    --serie: #199e70;
+    --libro: #9085e9;
+    --album: #d55181;
     --sombra: 0 12px 32px rgb(0 0 0 / 0.5);
     color-scheme: dark;
   }
@@ -63,11 +68,11 @@
   --texto: #ece7dd;
   --enlace: #9aa7b4;
   --dorado: #e0c063;
-  --juego: #8fa9c8;
-  --peli: #d48c79;
-  --serie: #b39bcc;
-  --libro: #8fb89b;
-  --album: #7cbcc1;
+  --juego: #3987e5;
+  --peli: #d95926;
+  --serie: #199e70;
+  --libro: #9085e9;
+  --album: #d55181;
   --sombra: 0 12px 32px rgb(0 0 0 / 0.5);
   color-scheme: dark;
 }

@@ -11,8 +11,10 @@ import {
   mayuscula,
   nombreTag,
   obras,
+  porAlta,
   portada,
   relacionadas,
+  ruta,
   rutaAutor,
   slugsAutores,
   rutaTag,
@@ -45,6 +47,38 @@ const slugs = await slugsAutores();
 const quienes = autores(obra);
 const enlaces = fuentes(obra);
 const escrita = cartela(obra);
+// Anterior y siguiente dentro de la sala, en el orden en que entraron: el
+// mismo de la rejilla, así que pasar de una a otra es recorrerla.
+const sala = todas.filter((o) => o.data.tipo === d.tipo).sort(porAlta);
+const posicion = sala.findIndex((o) => o.id === obra.id);
+const anterior = sala[posicion - 1];
+const siguiente = sala[posicion + 1];
+
+// Lo que leen los buscadores: qué es la obra y, si hay nota o cartela, una
+// reseña mía con ellas.
+const TIPOS_SCHEMA = { juego: "VideoGame", peli: "Movie", serie: "TVSeries", libro: "Book", album: "MusicAlbum" } as const;
+// Quien firma un disco es un grupo y un juego lo firma un estudio; lo demás,
+// personas.
+const TIPO_CREADOR = { album: "MusicGroup", juego: "Organization" } as Record<string, string>;
+const creadores = quienes.map((n) => ({ "@type": TIPO_CREADOR[d.tipo] ?? "Person", name: n }));
+const datosEstructurados = {
+  "@context": "https://schema.org",
+  "@type": TIPOS_SCHEMA[d.tipo],
+  name: nombre,
+  ...(imagen && { image: new URL(imagen, Astro.site).href }),
+  ...(d.year && { datePublished: String(d.year) }),
+  ...(creadores.length && (d.tipo === "album" ? { byArtist: creadores } : d.tipo === "peli" ? { director: creadores } : { author: creadores })),
+  ...(d.tags?.length && { genre: d.tags.map(nombreTag) }),
+  ...((d.nota || escrita) && {
+    review: {
+      "@type": "Review",
+      author: { "@type": "Person", name: "jorgeress" },
+      ...(d.nota && { reviewRating: { "@type": "Rating", ratingValue: d.nota, bestRating: 10, worstRating: 1 } }),
+      ...(escrita && { reviewBody: escrita }),
+    },
+  }),
+};
+
 const resumen = escrita ?? `${nombre}${d.year ? ` (${d.year})` : ""}, en la sala de ${seccion.nombre.toLowerCase()} de la vitrina.`;
 
 /** Por qué está unida: el autor que comparten o sus dos tags más raros. */
@@ -57,6 +91,7 @@ function motivo(v: Vecina): string {
 ---
 
 <Base titulo={nombre} descripcion={resumen} imagen={imagen} activa={seccion.slug}>
+  <script type="application/ld+json" set:html={JSON.stringify(datosEstructurados)} />
   <article style={`--seccion:var(--${d.tipo})`} data-pagefind-body>
     <header class="escaparate">
       {imagen && <div class="fondo" style={`background-image:url('${imagen}')`} aria-hidden="true" />}
@@ -113,17 +148,16 @@ function motivo(v: Vecina): string {
               </div>
             )
           }
-          {
-            enlaces.length > 0 && (
-              <p class="fuentes">
-                {enlaces.map((f) => (
-                  <a href={f.href} rel="noopener">
-                    {f.nombre} ↗
-                  </a>
-                ))}
-              </p>
-            )
-          }
+          <p class="fuentes">
+            {enlaces.map((f) => (
+              <a href={f.href} rel="noopener">
+                {f.nombre} ↗
+              </a>
+            ))}
+            <button type="button" class="compartir" id="compartir" hidden data-titulo={nombre}>
+              Compartir
+            </button>
+          </p>
         </div>
       </div>
     </header>
@@ -132,6 +166,7 @@ function motivo(v: Vecina): string {
       <Content />
     </div>
   </article>
+
 
   {
     cercanas.length > 0 && (
@@ -153,7 +188,56 @@ function motivo(v: Vecina): string {
       </section>
     )
   }
+
+  <nav class="contenedor pasos" aria-label={`Más de ${seccion.nombre}`}>
+    {
+      anterior ? (
+        <a href={ruta(anterior)} rel="prev" id="anterior">
+          <small>← Anterior</small>
+          {titulo(anterior)}
+        </a>
+      ) : (
+        <span />
+      )
+    }
+    {
+      siguiente && (
+        <a href={ruta(siguiente)} rel="next" id="siguiente" class="derecha">
+          <small>Siguiente →</small>
+          {titulo(siguiente)}
+        </a>
+      )
+    }
+  </nav>
 </Base>
+
+<script>
+  // Compartir con lo que tenga el sistema (en el móvil, su menú); si no hay,
+  // copiar el enlace.
+  const boton = document.getElementById("compartir") as HTMLButtonElement;
+  if (navigator.share || navigator.clipboard) {
+    boton.hidden = false;
+    boton.addEventListener("click", async () => {
+      const datos = { title: boton.dataset.titulo, url: location.href.split("?")[0] };
+      try {
+        if (navigator.share) await navigator.share(datos);
+        else {
+          await navigator.clipboard.writeText(datos.url);
+          boton.textContent = "Enlace copiado";
+          setTimeout(() => (boton.textContent = "Compartir"), 2000);
+        }
+      } catch {}
+    });
+  }
+
+  // Las flechas del teclado pasan a la anterior y la siguiente de la sala.
+  document.addEventListener("keydown", (e) => {
+    if ((e.target as HTMLElement).closest("input, textarea, select") || e.metaKey || e.ctrlKey || e.altKey) return;
+    const destino = e.key === "ArrowLeft" ? "anterior" : e.key === "ArrowRight" ? "siguiente" : null;
+    const enlace = destino && (document.getElementById(destino) as HTMLAnchorElement | null);
+    if (enlace) location.href = enlace.href;
+  });
+</script>
 
 <style>
   .escaparate {
@@ -292,6 +376,42 @@ function motivo(v: Vecina): string {
   }
   .fuentes a:hover {
     color: var(--texto);
+  }
+  .compartir {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--enlace);
+    font: inherit;
+    cursor: pointer;
+  }
+  .compartir:hover {
+    color: var(--texto);
+  }
+  .pasos {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--borde);
+  }
+  .pasos a {
+    display: flex;
+    flex-direction: column;
+    max-width: 45%;
+    font-weight: 600;
+  }
+  .pasos a:hover {
+    color: var(--enlace);
+  }
+  .pasos small {
+    color: var(--tenue);
+    font-weight: 400;
+  }
+  .pasos .derecha {
+    text-align: right;
+    margin-left: auto;
   }
   .texto {
     max-width: 760px;

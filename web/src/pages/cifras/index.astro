@@ -1,0 +1,212 @@
+---
+import Base from "../../layouts/Base.astro";
+import Barras from "../../components/Barras.astro";
+import { SECCIONES, autoresRepetidos, cartela, nombreTag, obras, rutaAutor, rutaTag, slugsAutores, url } from "../../lib/obras";
+
+const todas = await obras();
+const slugs = await slugsAutores();
+const años = todas.map((o) => o.data.year).filter((y): y is number => Boolean(y));
+const primera = Math.min(...años);
+const ultima = Math.max(...años);
+
+// Por décadas, desde la de la pieza más antigua: un gráfico por sala, todos
+// con la misma escala para que se puedan comparar a ojo.
+const decadas: number[] = [];
+for (let d = Math.floor(primera / 10) * 10; d <= ultima; d += 10) decadas.push(d);
+// Las décadas vacías del principio (un libro de 1848 y nada hasta 1940)
+// estirarían todos los gráficos; se juntan en «antes de».
+const conAlgo = decadas.filter((d) => todas.some((o) => o.data.year && Math.floor(o.data.year / 10) * 10 === d));
+// El corte es donde empieza el tramo seguido: se va hacia atrás desde la
+// última década con algo mientras no haya un hueco de más de veinte años.
+let corte = conAlgo.at(-1)!;
+for (let i = conAlgo.length - 2; i >= 0 && corte - conAlgo[i] <= 20; i--) corte = conAlgo[i];
+const tramos = [
+  ...(corte > conAlgo[0] ? [{ etiqueta: `antes de ${corte}`, desde: 0, hasta: corte }] : []),
+  ...decadas.filter((d) => d >= corte).map((d) => ({ etiqueta: `${String(d).slice(2)}s`, desde: d, hasta: d + 10 })),
+];
+const porSala = SECCIONES.map((s) => {
+  const lista = todas.filter((o) => o.data.tipo === s.tipo);
+  return {
+    seccion: s,
+    total: lista.length,
+    datos: tramos.map((t) => ({
+      etiqueta: t.etiqueta,
+      valor: lista.filter((o) => o.data.year && o.data.year >= t.desde && o.data.year < t.hasta).length,
+    })),
+  };
+});
+const maximoDecada = Math.max(...porSala.flatMap((s) => s.datos.map((d) => d.valor)));
+
+const notas = Array.from({ length: 10 }, (_, i) => ({
+  etiqueta: String(i + 1),
+  valor: todas.filter((o) => o.data.nota === i + 1).length,
+}));
+const puntuadas = todas.filter((o) => o.data.nota).length;
+const dieces = todas.filter((o) => o.data.nota === 10).length;
+
+const cuentaTags = new Map<string, number>();
+for (const o of todas) for (const t of o.data.tags ?? []) cuentaTags.set(t, (cuentaTags.get(t) ?? 0) + 1);
+const tags = [...cuentaTags]
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 12)
+  .map(([t, n]) => ({ etiqueta: nombreTag(t), valor: n, enlace: rutaTag(t) }));
+
+const autores = [...autoresRepetidos(todas)]
+  .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], "es"))
+  .slice(0, 10)
+  .map(([a, lista]) => ({ etiqueta: a, valor: lista.length, enlace: rutaAutor(a, slugs) }));
+
+const escritas = todas.filter((o) => cartela(o)).length;
+const favoritos = todas.filter((o) => o.data.favorito).length;
+---
+
+<Base titulo="Cifras" descripcion="La vitrina en números: de qué épocas es, qué notas pongo y qué géneros se repiten.">
+  <div class="contenedor">
+    <header class="titulo-pagina">
+      <h1>La vitrina en cifras</h1>
+      <p>De {primera} a {ultima}, en {SECCIONES.length} salas.</p>
+    </header>
+
+    <ul class="numeros">
+      <li><strong>{todas.length}</strong> piezas</li>
+      <li class="dorada"><a href={url("favoritos/")}><strong>{favoritos}</strong> en lo mejor de lo mejor</a></li>
+      <li><strong>{escritas}</strong> con cartela</li>
+      <li><strong>{puntuadas}</strong> con nota</li>
+      <li><a href={url("autores/")}><strong>{autoresRepetidos(todas).size}</strong> autores que repiten</a></li>
+    </ul>
+
+    <section class="bloque">
+      <header>
+        <div>
+          <h2>De qué época es cada sala</h2>
+          <p>Piezas por década del año de salida. Todas con la misma escala.</p>
+        </div>
+      </header>
+      <div class="multiples">
+        {
+          porSala.map(({ seccion, total, datos }) => (
+            <div class="multiple">
+              <h3>
+                <a href={url(`${seccion.slug}/?orden=antiguas`)} style={`--seccion:var(--${seccion.tipo})`}>
+                  {seccion.nombre}
+                </a>
+                <small>{total}</small>
+              </h3>
+              <Barras
+                datos={datos}
+                maximo={maximoDecada}
+                color={`var(--${seccion.tipo})`}
+                una={seccion.una}
+                varias={seccion.varias}
+                titulo={`${seccion.nombre} por década`}
+              />
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <div class="dos">
+      <section class="bloque">
+        <header>
+          <div>
+            <h2>Las notas</h2>
+            <p>
+              {puntuadas} piezas puntuadas, y {dieces} son un 10: la nota no separa mucho, por eso existe lo mejor de lo
+              mejor.
+            </p>
+          </div>
+        </header>
+        <Barras datos={notas} una="pieza" varias="piezas" titulo="Piezas por nota" />
+      </section>
+
+      <section class="bloque">
+        <header>
+          <div>
+            <h2>Quién se repite</h2>
+            <p>Los autores con más piezas en la vitrina.</p>
+          </div>
+        </header>
+        <Barras datos={autores} tumbadas una="pieza" varias="piezas" titulo="Piezas por autor" />
+      </section>
+    </div>
+
+    <section class="bloque">
+      <header>
+        <div>
+          <h2>Los géneros que más se repiten</h2>
+          <p>Contando todas las salas juntas.</p>
+        </div>
+        <a class="ver-todo" href={url("tags/")}>Todos los tags →</a>
+      </header>
+      <Barras datos={tags} tumbadas una="pieza" varias="piezas" titulo="Piezas por tag" />
+    </section>
+  </div>
+</Base>
+
+<style>
+  .numeros {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin: 32px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .numeros li {
+    padding: 18px 20px;
+    border-radius: var(--radio);
+    background: var(--caja);
+    border: 1px solid var(--borde);
+    color: var(--tenue);
+  }
+  .numeros strong {
+    display: block;
+    font-family: var(--rotulo);
+    font-size: 2.2rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--texto);
+  }
+  .numeros .dorada,
+  .numeros .dorada strong {
+    color: var(--dorado);
+  }
+  .multiples {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 28px 24px;
+  }
+  h3 {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    font-family: var(--rotulo);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  h3 a::before {
+    content: "●";
+    margin-right: 8px;
+    font-size: 0.7em;
+    vertical-align: 0.15em;
+    color: var(--seccion);
+  }
+  h3 small {
+    font-family: var(--sans);
+    font-weight: 400;
+    color: var(--tenue);
+  }
+  .dos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 48px;
+  }
+  @media (max-width: 820px) {
+    .dos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

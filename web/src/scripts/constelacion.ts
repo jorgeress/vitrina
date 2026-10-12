@@ -157,8 +157,7 @@ export function iniciar() {
       const rad = radio(n);
       ctx.globalAlpha = apagado(n) ? 0.12 : 1;
       ctx.save();
-      ctx.beginPath();
-      ctx.arc(n.x!, n.y!, rad, 0, Math.PI * 2);
+      forma(n, rad);
       if (n.imagen) {
         ctx.clip();
         // Recorte centrado: las portadas son 2:3 y los discos cuadrados.
@@ -179,8 +178,7 @@ export function iniciar() {
         ctx.fill();
       }
       ctx.restore();
-      ctx.beginPath();
-      ctx.arc(n.x!, n.y!, rad, 0, Math.PI * 2);
+      forma(n, rad);
       ctx.strokeStyle = n === r ? colores.texto : color(n.tipo);
       ctx.lineWidth = (n === r ? 3 : 2) / vista.k;
       ctx.stroke();
@@ -203,6 +201,14 @@ export function iniciar() {
         ctx.fillText(n.titulo, x, y);
       }
     }
+  }
+
+  // Los discos, cuadrados como sus portadas; lo demás, redondo. Así la sala
+  // no depende solo del color, que entre cinco no siempre se distingue.
+  function forma(n: Nodo, rad: number) {
+    ctx.beginPath();
+    if (n.tipo === "album") ctx.roundRect(n.x! - rad * 0.9, n.y! - rad * 0.9, rad * 1.8, rad * 1.8, rad * 0.25);
+    else ctx.arc(n.x!, n.y!, rad, 0, Math.PI * 2);
   }
 
   // Del punto de la pantalla al del grafo, y la obra que haya debajo.

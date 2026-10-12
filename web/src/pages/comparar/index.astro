@@ -1,0 +1,297 @@
+---
+import Base from "../../layouts/Base.astro";
+import { url } from "../../lib/obras";
+---
+
+<Base titulo="Comparar vitrinas" descripcion="Pon la dirección de otra vitrina y mira qué tenéis en común.">
+  <div class="contenedor">
+    <header class="titulo-pagina">
+      <h1>Comparar vitrinas</h1>
+      <p>
+        Pon la dirección de otra vitrina y mira qué tenéis en común, dónde no estáis de acuerdo y qué hay allí que no
+        está aquí.
+      </p>
+    </header>
+
+    <form id="formulario" class="formulario" data-propia={url("vitrina.json")}>
+      <input
+        type="url"
+        name="con"
+        required
+        placeholder="https://alguien.github.io/vitrina/"
+        aria-label="Dirección de la otra vitrina"
+        inputmode="url"
+      />
+      <button type="submit">Comparar</button>
+    </form>
+    <p class="aviso" id="aviso" role="status"></p>
+
+    <div id="resultado" hidden>
+      <section class="afinidad">
+        <p class="cifra"><span id="porcentaje"></span><small>%</small></p>
+        <p id="resumen"></p>
+      </section>
+      <section class="bloque" data-bloque="favoritas">
+        <header><h2>Lo mejor de los dos</h2></header>
+        <div class="rejilla"></div>
+      </section>
+      <section class="bloque" data-bloque="comunes">
+        <header><h2>Lo que compartís</h2></header>
+        <div class="rejilla"></div>
+      </section>
+      <section class="bloque" data-bloque="desacuerdos">
+        <header>
+          <div>
+            <h2>Donde no estáis de acuerdo</h2>
+            <p>Puntuadas en las dos vitrinas, con tres puntos o más de diferencia.</p>
+          </div>
+        </header>
+        <ul class="desacuerdos"></ul>
+      </section>
+      <section class="bloque" data-bloque="recomendaciones">
+        <header>
+          <div>
+            <h2>Lo de allí que no está aquí</h2>
+            <p>Lo mejor de allí primero: por dónde empezar.</p>
+          </div>
+        </header>
+        <div class="rejilla"></div>
+      </section>
+    </div>
+  </div>
+</Base>
+
+<script>
+  import { comparar, direccionJSON, type Pieza, type Vitrina } from "../../lib/comparar";
+
+  const formulario = document.getElementById("formulario") as HTMLFormElement;
+  const aviso = document.getElementById("aviso")!;
+  const resultado = document.getElementById("resultado")!;
+  const propia = formulario.dataset.propia!;
+
+  /** Un elemento con sus atributos y su contenido, siempre como texto: lo
+   * que viene de otra vitrina no se mete nunca como HTML. */
+  function el(etiqueta: string, atributos: Record<string, string> = {}, ...hijos: (Node | string)[]) {
+    const nodo = document.createElement(etiqueta);
+    for (const [k, v] of Object.entries(atributos)) nodo.setAttribute(k, v);
+    nodo.append(...hijos);
+    return nodo;
+  }
+
+  const segura = (direccion: string) => (/^https?:\/\//.test(direccion) ? direccion : "#");
+
+  function tarjeta(p: Pieza, linea: string) {
+    const marco = el("span", { class: "marco" });
+    if (p.portada) marco.append(el("img", { src: segura(p.portada), alt: "", loading: "lazy" }));
+    else marco.append(el("span", { class: "sin-imagen" }, p.titulo));
+    return el("a", { class: "pieza", href: segura(p.url) }, marco, el("span", { class: "titulo" }, p.titulo), el("span", { class: "meta" }, linea));
+  }
+
+  function llenar(bloque: string, nodos: Node[]) {
+    const seccion = resultado.querySelector<HTMLElement>(`[data-bloque="${bloque}"]`)!;
+    seccion.hidden = nodos.length === 0;
+    seccion.querySelector(".rejilla, ul")!.replaceChildren(...nodos);
+  }
+
+  async function bajar(direccion: string): Promise<Vitrina> {
+    const respuesta = await fetch(direccion);
+    if (!respuesta.ok) throw new Error(`${respuesta.status}`);
+    const datos = await respuesta.json();
+    if (!Array.isArray(datos?.obras)) throw new Error("no es una vitrina");
+    return datos;
+  }
+
+  async function compararCon(texto: string) {
+    let direccion: string;
+    try {
+      direccion = direccionJSON(texto);
+    } catch {
+      aviso.textContent = "Esa dirección no parece una dirección web.";
+      return;
+    }
+    aviso.textContent = "Mirando su vitrina…";
+    resultado.hidden = true;
+    let mia: Vitrina, suya: Vitrina;
+    try {
+      [mia, suya] = await Promise.all([bajar(propia), bajar(direccion)]);
+    } catch {
+      aviso.textContent = `No encuentro una vitrina en ${direccion}. Tiene que ser una web hecha con Vitrina, que publica su colección en vitrina.json.`;
+      return;
+    }
+
+    // Las direcciones de vitrina.json son las publicadas. Las de esta vitrina
+    // se pasan a este mismo sitio, para que también se vea en local o en una
+    // copia que aún no esté publicada.
+    const local = (d: string | null | undefined) => (d ? new URL(new URL(d).pathname, location.origin).href : d);
+    mia.obras = mia.obras.map((p) => ({ ...p, url: local(p.url)!, portada: local(p.portada) }));
+
+    const r = comparar(mia, suya);
+    aviso.textContent = "";
+    document.getElementById("porcentaje")!.textContent = String(Math.round(r.afinidad * 100));
+    const piezas = (n: number) => (n === 1 ? "1 pieza" : `${n} piezas`);
+    const estan = (n: number) => (n === 1 ? "está" : "están");
+    const total = r.comunes.length + r.soloMias.length + r.soloSuyas.length;
+    document.getElementById("resumen")!.textContent =
+      `${piezas(r.comunes.length)} en común de ${total} entre las dos vitrinas. ` +
+      `Aquí hay ${r.soloMias.length} que no ${estan(r.soloMias.length)} allí, y allí ${r.soloSuyas.length} que no ${estan(r.soloSuyas.length)} aquí.`;
+
+    llenar("favoritas", r.favoritasDeLosDos.map((c) => tarjeta(c.mia, "★ en las dos")));
+    llenar(
+      "comunes",
+      r.comunes.map((c) =>
+        tarjeta(
+          c.mia,
+          c.mia.nota || c.suya.nota
+            ? [c.mia.nota && `aquí ${c.mia.nota}`, c.suya.nota && `allí ${c.suya.nota}`].filter(Boolean).join(" · ")
+            : [c.mia.year, c.mia.autores[0]].filter(Boolean).join(" · "),
+        ),
+      ),
+    );
+    llenar(
+      "desacuerdos",
+      r.desacuerdos.map((c) =>
+        el("li", {}, el("a", { href: segura(c.mia.url) }, c.mia.titulo), el("span", { class: "notas" }, `${c.mia.nota} aquí · ${c.suya.nota} allí`)),
+      ),
+    );
+    llenar(
+      "recomendaciones",
+      r.recomendaciones.slice(0, 24).map((p) => tarjeta(p, [p.favorito && "★ de lo mejor de allí", p.nota && `un ${p.nota}`, p.year].filter(Boolean).join(" · "))),
+    );
+    resultado.hidden = false;
+  }
+
+  formulario.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const con = String(new FormData(formulario).get("con") ?? "");
+    history.replaceState(null, "", `?con=${encodeURIComponent(con)}`);
+    compararCon(con);
+  });
+
+  const inicial = new URLSearchParams(location.search).get("con");
+  if (inicial) {
+    (formulario.elements.namedItem("con") as HTMLInputElement).value = inicial;
+    compararCon(inicial);
+  }
+</script>
+
+<style>
+  .formulario {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+  }
+  .formulario input {
+    flex: 1;
+    padding: 11px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: var(--caja);
+    color: var(--texto);
+    font: inherit;
+  }
+  .formulario button {
+    padding: 11px 20px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--texto);
+    color: var(--fondo);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .aviso {
+    min-height: 1.5em;
+    color: var(--tenue);
+  }
+  .afinidad {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-top: 32px;
+    padding: 24px 28px;
+    border-radius: var(--radio);
+    background: var(--caja);
+    border: 1px solid var(--borde);
+  }
+  .cifra {
+    margin: 0;
+    font-family: var(--rotulo);
+    font-size: 4rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .cifra small {
+    font-size: 0.45em;
+    color: var(--tenue);
+  }
+  .afinidad p:last-child {
+    margin: 0;
+    color: var(--tenue);
+    font-size: 1.05rem;
+  }
+  #resultado :global(.pieza) {
+    display: block;
+    min-width: 0;
+  }
+  #resultado :global(.marco) {
+    display: block;
+    aspect-ratio: 2 / 3;
+    border-radius: var(--radio);
+    overflow: hidden;
+    background: var(--caja-2);
+    box-shadow: var(--sombra);
+  }
+  #resultado :global(.marco img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  #resultado :global(.sin-imagen) {
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    padding: 12px;
+    font-family: var(--rotulo);
+    font-weight: 600;
+  }
+  #resultado :global(.titulo) {
+    display: block;
+    margin-top: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+  #resultado :global(.meta) {
+    display: block;
+    color: var(--tenue);
+    font-size: 0.84rem;
+  }
+  .desacuerdos {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .desacuerdos :global(li) {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--borde);
+  }
+  .desacuerdos :global(a) {
+    font-weight: 600;
+  }
+  .desacuerdos :global(.notas) {
+    color: var(--tenue);
+  }
+  @media (max-width: 520px) {
+    .formulario {
+      flex-direction: column;
+    }
+    .afinidad {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  }
+</style>

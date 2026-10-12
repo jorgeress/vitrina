@@ -41,7 +41,7 @@ const datos = {
       <h1>Constelación</h1>
       <p>
         Cada punto es una de las {datos.nodos.length} obras, y cada línea une las que comparten autor o algo que
-        las hace parecidas. Las discontinuas solo comparten sección y época. Arrastra para moverte y usa la rueda
+        las hace parecidas. Las discontinuas solo comparten sección y época, y los discos son cuadrados. Arrastra para moverte y usa la rueda
         para acercarte.
       </p>
       <input id="buscar" type="search" list="titulos" placeholder="Buscar una obra…" aria-label="Buscar una obra" />
@@ -139,6 +139,9 @@ const datos = {
     height: 9px;
     border-radius: 50%;
     background: var(--seccion);
+  }
+  .leyenda button[data-tipo="album"] span {
+    border-radius: 2px;
   }
   .leyenda button.activo {
     color: var(--texto);
