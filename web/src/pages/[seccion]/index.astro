@@ -1,0 +1,234 @@
+---
+import Base from "../../layouts/Base.astro";
+import Portada from "../../components/Portada.astro";
+import { SECCIONES, mayuscula, nombreTag, obras, porAlta, type Seccion } from "../../lib/obras";
+
+export async function getStaticPaths() {
+  return SECCIONES.map((seccion) => ({ params: { seccion: seccion.slug }, props: { seccion } }));
+}
+
+const { seccion } = Astro.props as { seccion: Seccion };
+const lista = (await obras()).filter((o) => o.data.tipo === seccion.tipo).sort(porAlta);
+
+// Solo los estados y tags que de verdad aparecen: un filtro que no filtra
+// nada es ruido.
+const estados = ["terminado", "en curso", "pendiente", "abandonado"].filter((e) =>
+  lista.some((o) => o.data.estado === e),
+);
+const cuenta = new Map<string, number>();
+for (const o of lista) for (const t of o.data.tags ?? []) cuenta.set(t, (cuenta.get(t) ?? 0) + 1);
+const tags = [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).slice(0, 14);
+---
+
+<Base titulo={seccion.nombre} activa={seccion.slug}>
+  <div class="contenedor">
+    <header class="cabecera" style={`--seccion:${seccion.color}`}>
+      <h1>{seccion.nombre}</h1>
+      <p id="recuento" data-total={lista.length} data-una={seccion.una} data-varias={seccion.varias}>
+        {lista.length} {lista.length === 1 ? seccion.una : seccion.varias}
+      </p>
+    </header>
+
+    <form class="filtros" id="filtros" onsubmit="return false">
+      <input type="search" name="q" placeholder={`Buscar por título o autor…`} aria-label="Buscar" autocomplete="off" />
+      <select name="orden" aria-label="Ordenar">
+        <option value="alta">Lo último que entró</option>
+        <option value="nota">Mejor nota</option>
+        <option value="year">Más nuevas</option>
+        <option value="titulo">Por título</option>
+      </select>
+      {
+        estados.length > 1 && (
+          <select name="estado" aria-label="Estado">
+            <option value="">Cualquier estado</option>
+            {estados.map((e) => (
+              <option value={e}>{mayuscula(e)}</option>
+            ))}
+          </select>
+        )
+      }
+      <div class="opciones">
+        <label><input type="checkbox" name="favorito" /> ★ Favoritos</label>
+        <label><input type="checkbox" name="cartela" /> ✎ Con cartela</label>
+
+      </div>
+      {
+        tags.length > 0 && (
+          <div class="tags">
+            {tags.map(([t]) => (
+              <button type="button" class="chip" data-tag={t} aria-pressed="false">
+                {nombreTag(t)}
+              </button>
+            ))}
+          </div>
+        )
+      }
+    </form>
+
+    <div class="rejilla" id="rejilla">
+      {lista.map((o) => <Portada obra={o} filtrable />)}
+    </div>
+    <p class="vacio" id="vacio" hidden>No hay nada con esos filtros.</p>
+  </div>
+</Base>
+
+<script>
+  // Filtrar y ordenar en el navegador: todo está ya en la página, así que no
+  // hace falta pedir nada a nadie. El estado va en la URL para poder enlazar
+  // «mis juegos favoritos» o «lo que tengo con el tag horror».
+  const form = document.getElementById("filtros") as HTMLFormElement;
+  const rejilla = document.getElementById("rejilla")!;
+  const tarjetas = [...rejilla.children] as HTMLElement[];
+  const recuento = document.getElementById("recuento")!;
+  const { total, una, varias } = recuento.dataset as { total: string; una: string; varias: string };
+  const vacio = document.getElementById("vacio")!;
+  const botones = [...form.querySelectorAll<HTMLButtonElement>("[data-tag]")];
+  let tag = new URLSearchParams(location.search).get("tag") ?? "";
+
+  const parametros = new URLSearchParams(location.search);
+  for (const [k, v] of parametros) {
+    const campo = form.elements.namedItem(k);
+    if (campo instanceof HTMLInputElement && campo.type === "checkbox") campo.checked = v === "1";
+    else if (campo instanceof HTMLInputElement || campo instanceof HTMLSelectElement) campo.value = v;
+  }
+
+  function aplicar() {
+    const f = new FormData(form);
+    const q = String(f.get("q") ?? "").trim().toLowerCase();
+    const estado = String(f.get("estado") ?? "");
+    const orden = String(f.get("orden") ?? "alta");
+    const soloFav = f.has("favorito");
+    const soloCartela = f.has("cartela");
+
+    let n = 0;
+    for (const t of tarjetas) {
+      const d = t.dataset;
+      const ve =
+        (!q || d.titulo!.includes(q) || d.autor!.includes(q)) &&
+        (!estado || d.estado === estado) &&
+        (!soloFav || d.favorito === "1") &&
+        (!soloCartela || d.cartela === "1") &&
+        (!tag || d.tags!.split(" ").includes(tag));
+      t.hidden = !ve;
+      if (ve) n++;
+    }
+    const clave = (t: HTMLElement) =>
+      orden === "titulo" ? 0 : -Number(t.dataset[orden] ?? 0);
+    const ordenadas = [...tarjetas].sort((a, b) =>
+      orden === "titulo" ? a.dataset.titulo!.localeCompare(b.dataset.titulo!, "es") : clave(a) - clave(b) || Number(b.dataset.alta) - Number(a.dataset.alta),
+    );
+    ordenadas.forEach((t, i) => (t.style.order = String(i)));
+    const palabra = Number(total) === 1 ? una : varias;
+    recuento.textContent = n === Number(total) ? `${total} ${palabra}` : `${n} de ${total} ${palabra}`;
+    vacio.hidden = n > 0;
+    botones.forEach((b) => {
+      b.classList.toggle("activo", b.dataset.tag === tag);
+      b.setAttribute("aria-pressed", String(b.dataset.tag === tag));
+    });
+
+    const url = new URLSearchParams();
+    if (q) url.set("q", q);
+    if (estado) url.set("estado", estado);
+    if (orden !== "alta") url.set("orden", orden);
+    if (soloFav) url.set("favorito", "1");
+    if (soloCartela) url.set("cartela", "1");
+    if (tag) url.set("tag", tag);
+    history.replaceState(null, "", url.size ? `?${url}` : location.pathname);
+  }
+
+  form.addEventListener("input", aplicar);
+  botones.forEach((b) =>
+    b.addEventListener("click", () => {
+      tag = tag === b.dataset.tag ? "" : b.dataset.tag!;
+      aplicar();
+    }),
+  );
+  aplicar();
+</script>
+
+<style>
+  .cabecera {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-top: 40px;
+  }
+  .cabecera h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--seccion);
+  }
+  .cabecera p {
+    color: var(--tenue);
+    margin: 0;
+  }
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    align-items: center;
+    margin: 22px 0 30px;
+  }
+  input[type="search"],
+  select {
+    padding: 9px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: var(--superficie);
+    color: var(--texto);
+    font: inherit;
+    font-size: 0.92rem;
+  }
+  input[type="search"] {
+    flex: 1 1 220px;
+  }
+  .opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    font-size: 0.88rem;
+    color: var(--tenue);
+  }
+  .opciones label {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    cursor: pointer;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+  }
+  .tags button {
+    background: none;
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .tags button.activo {
+    color: var(--fondo);
+    background: var(--texto);
+    border-color: var(--texto);
+  }
+  @media (max-width: 760px) {
+    /* En el móvil los tags van en una fila que se desliza, en vez de ocupar
+       media pantalla antes de la primera portada. */
+    .tags {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      margin-inline: -16px;
+      padding-inline: 16px;
+      scrollbar-width: none;
+    }
+    .tags button {
+      flex: none;
+    }
+    select {
+      flex: 1 1 140px;
+    }
+  }
+  .vacio {
+    color: var(--tenue);
+  }
+</style>

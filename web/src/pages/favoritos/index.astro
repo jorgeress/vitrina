@@ -1,0 +1,59 @@
+---
+import Base from "../../layouts/Base.astro";
+import Portada from "../../components/Portada.astro";
+import { SECCIONES, cantidad, obras, porAlta, url } from "../../lib/obras";
+
+const todas = await obras();
+const grupos = SECCIONES.map((s) => ({
+  seccion: s,
+  lista: todas
+    .filter((o) => o.data.tipo === s.tipo && o.data.favorito)
+    .sort((a, b) => (b.data.nota ?? 0) - (a.data.nota ?? 0) || porAlta(a, b)),
+})).filter((g) => g.lista.length > 0);
+const total = grupos.reduce((n, g) => n + g.lista.length, 0);
+---
+
+<Base titulo="Favoritos" descripcion="Lo mejor de lo mejor de la vitrina, sección por sección.">
+  <div class="contenedor">
+    <header class="cabecera">
+      <h1>Favoritos</h1>
+      <p>{cantidad(total, "obra", "obras")} que no pueden faltar.</p>
+    </header>
+    {
+      grupos.map(({ seccion, lista }) => (
+        <section class="bloque" style={`--seccion:${seccion.color}`}>
+          <header>
+            <h2 class="titulo-seccion">{seccion.nombre}</h2>
+            <a class="ver-todo" href={url(`${seccion.slug}/?favorito=1`)}>
+              Ver en {seccion.nombre} →
+            </a>
+          </header>
+          <div class="rejilla">
+            {lista.map((o) => (
+              <Portada obra={o} />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .cabecera {
+    padding-top: 40px;
+  }
+  .cabecera h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .cabecera p {
+    margin: 6px 0 0;
+    color: var(--tenue);
+  }
+  .bloque {
+    margin-block: 40px;
+  }
+  .titulo-seccion {
+    color: var(--seccion);
+  }
+</style>

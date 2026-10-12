@@ -1,0 +1,190 @@
+---
+import "../styles/global.css";
+import { SECCIONES, url } from "../lib/obras";
+
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+  /** Imagen al compartir el enlace: la portada de la obra, si la hay. */
+  imagen?: string | null;
+  activa?: string;
+}
+
+const {
+  titulo,
+  descripcion = "Mi colección de juegos, películas, series, libros y discos, y por qué está cada uno.",
+  imagen,
+  activa,
+} = Astro.props;
+const completo = titulo ? `${titulo} · Vitrina` : "Vitrina";
+const canonica = new URL(Astro.url.pathname, Astro.site);
+const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
+
+const icono = `data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#17171a"/><text x="16" y="23" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="21" fill="#e8c36a">v</text></svg>`,
+)}`;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{completo}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
+    <link rel="icon" href={icono} />
+    <meta name="theme-color" content="#0e0e10" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Vitrina" />
+    <meta property="og:title" content={titulo ?? "Vitrina"} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica} />
+    {imagenAbsoluta && <meta property="og:image" content={imagenAbsoluta} />}
+    <meta name="twitter:card" content="summary" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Noto Sans JP solo se descarga si la página tiene japonés: Google la
+         sirve partida por rangos de caracteres. Sin ella, «悪の華» o el
+         nombre de BUCK-TICK salen como cuadros en muchos sistemas. -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;600&display=swap"
+    />
+  </head>
+  <body>
+    <header class="barra">
+      <div class="contenedor barra-dentro">
+        <a class="marca" href={url()}>Vitrina</a>
+        <nav class="secciones" aria-label="Secciones">
+          {
+            SECCIONES.map((s) => (
+              <a href={url(`${s.slug}/`)} aria-current={activa === s.slug ? "page" : undefined}>
+                {s.nombre}
+              </a>
+            ))
+          }
+          <a href={url("constelacion/")} aria-current={activa === "constelacion" ? "page" : undefined}>Constelación</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="contenedor pie">
+      <a href={url("autores/")}>Autores</a>
+      <a href={url("creditos/")}>Créditos</a>
+    </footer>
+
+    <!-- En el móvil la navegación baja al pulgar, como en una app. -->
+    <nav class="pestanas" aria-label="Secciones">
+      <a href={url()} aria-current={activa === "inicio" ? "page" : undefined}><span>◆</span>Inicio</a>
+      {
+        SECCIONES.map((s) => (
+          <a href={url(`${s.slug}/`)} aria-current={activa === s.slug ? "page" : undefined}>
+            <span style={`color:${s.color}`}>●</span>
+            {s.corto}
+          </a>
+        ))
+      }
+      <a href={url("constelacion/")} aria-current={activa === "constelacion" ? "page" : undefined}><span>✦</span>Mapa</a>
+    </nav>
+  </body>
+</html>
+
+<style>
+  .barra {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--fondo) 82%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--borde);
+  }
+  .barra-dentro {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    height: 58px;
+  }
+  .marca {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-style: italic;
+  }
+  .secciones {
+    display: flex;
+    gap: 22px;
+    font-size: 0.93rem;
+    color: var(--tenue);
+  }
+  .secciones a {
+    position: relative;
+    padding-block: 18px;
+  }
+  .secciones a:hover,
+  .secciones a[aria-current] {
+    color: var(--texto);
+  }
+  .secciones a[aria-current]::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 -1px;
+    height: 2px;
+    background: var(--acento);
+  }
+  .pie {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-block: 32px 48px;
+    color: var(--tenue);
+    font-size: 0.88rem;
+    border-top: 1px solid var(--borde);
+    margin-top: 72px;
+  }
+  .pie a:hover {
+    color: var(--texto);
+  }
+  .pestanas {
+    display: none;
+  }
+  @media (max-width: 760px) {
+    .secciones {
+      display: none;
+    }
+    .pie {
+      padding-bottom: 110px;
+    }
+    .pestanas {
+      position: fixed;
+      inset: auto 0 0 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+      background: color-mix(in srgb, var(--superficie) 92%, transparent);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--borde);
+      font-size: 0.68rem;
+      color: var(--tenue);
+    }
+    .pestanas a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      min-width: 0;
+    }
+    .pestanas a[aria-current] {
+      color: var(--texto);
+      font-weight: 600;
+    }
+    .pestanas span {
+      font-size: 0.95rem;
+    }
+  }
+</style>

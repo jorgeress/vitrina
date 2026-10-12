@@ -1,0 +1,258 @@
+---
+import Base from "../layouts/Base.astro";
+import Portada from "../components/Portada.astro";
+import { perfil } from "../perfil";
+import { SECCIONES, cartela, obras, porAlta, portada, ruta, seccionDe, titulo, url } from "../lib/obras";
+
+const todas = await obras();
+const recientes = [...todas].sort(porAlta).slice(0, 12);
+
+// Las estrellas: lo que él ha marcado como favorito, de más nota a menos y,
+// a igual nota, lo último que entró.
+const estrellas = SECCIONES.map((s) => ({
+  seccion: s,
+  obras: todas
+    .filter((o) => o.data.tipo === s.tipo && o.data.favorito)
+    .sort((a, b) => (b.data.nota ?? 0) - (a.data.nota ?? 0) || porAlta(a, b))
+    .slice(0, perfil.estrellas),
+})).filter((g) => g.obras.length > 0);
+
+const escritas = todas
+  .map((o) => ({ obra: o, texto: cartela(o) }))
+  .filter((e): e is { obra: typeof e.obra; texto: string } => e.texto !== null)
+  .sort((a, b) => porAlta(a.obra, b.obra));
+
+const cifras = SECCIONES.map((s) => ({
+  seccion: s,
+  total: todas.filter((o) => o.data.tipo === s.tipo).length,
+}));
+const favoritos = todas.filter((o) => o.data.favorito).length;
+---
+
+<Base activa="inicio">
+  <section class="perfil contenedor">
+    <div class="avatar" aria-hidden="true">{perfil.nombre[0]}</div>
+    <div>
+      <h1>{perfil.nombre}</h1>
+      <p class="lema">{perfil.lema}</p>
+      <ul class="cifras">
+        {
+          cifras.map(({ seccion, total }) => (
+            <li>
+              <a href={url(`${seccion.slug}/`)}>
+                <strong>{total}</strong> {total === 1 ? seccion.una : seccion.varias}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a href={url("favoritos/")}><strong>{favoritos}</strong> {favoritos === 1 ? "favorito" : "favoritos"}</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="contenedor">
+    <section class="bloque">
+      <header>
+        <div>
+          <h2>Mis estrellas</h2>
+          <p>Lo que no puede faltar, sección por sección.</p>
+        </div>
+        <a class="ver-todo" href={url("favoritos/")}>Todos los favoritos →</a>
+      </header>
+      <div class="estrellas">
+        {
+          estrellas.map(({ seccion, obras }) => (
+            <div class="fila-estrellas">
+              <a class="etiqueta" href={url(`${seccion.slug}/`)} style={`--seccion:${seccion.color}`}>
+                {seccion.nombre}
+              </a>
+              <div class="cinco">
+                {obras.map((o) => (
+                  <Portada obra={o} />
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      escritas.length > 0 && (
+        <section class="bloque">
+          <header>
+            <div>
+              <h2>Por qué están en la vitrina</h2>
+              <p>Lo que he escrito yo, no lo que dice la contraportada.</p>
+            </div>
+          </header>
+          <div class="cartelas">
+            {escritas.map(({ obra, texto }) => (
+              <a class="cartela" href={ruta(obra)} style={`--seccion:${seccionDe(obra.data.tipo).color}`}>
+                {portada(obra) && <img src={portada(obra)} alt="" loading="lazy" />}
+                <div>
+                  <p class="cita">«{texto.length > 220 ? texto.slice(0, 220).replace(/\s\S*$/, "") + "…" : texto}»</p>
+                  <p class="de">{titulo(obra)}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="bloque">
+      <header>
+        <div>
+          <h2>Recién llegadas</h2>
+          <p>Lo último que ha entrado, de cualquier sección.</p>
+        </div>
+      </header>
+      <div class="rejilla">
+        {recientes.map((o) => <Portada obra={o} mixta />)}
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .perfil {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+    padding-top: 56px;
+  }
+  .avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--juego), var(--serie), var(--peli), var(--album));
+    font-family: var(--serif);
+    font-size: 3rem;
+    font-style: italic;
+    color: #fff;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .lema {
+    margin: 6px 0 14px;
+    color: var(--tenue);
+    font-family: var(--serif);
+    font-size: 1.15rem;
+  }
+  .cifras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--tenue);
+    font-size: 0.92rem;
+  }
+  .cifras strong {
+    color: var(--texto);
+  }
+  .cifras a:hover {
+    color: var(--texto);
+  }
+  @media (max-width: 520px) {
+    .perfil {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      padding-top: 32px;
+    }
+    .avatar {
+      width: 72px;
+      height: 72px;
+      font-size: 2rem;
+    }
+  }
+
+  .estrellas {
+    display: grid;
+    gap: 28px;
+  }
+  .fila-estrellas {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .etiqueta {
+    padding-top: 6px;
+    font-weight: 600;
+    color: var(--seccion);
+  }
+  .cinco {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 18px;
+    max-width: 860px;
+  }
+  @media (max-width: 760px) {
+    .fila-estrellas {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .cinco {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 12px;
+      padding-bottom: 6px;
+    }
+    .cinco > :global(*) {
+      flex: 0 0 31%;
+      scroll-snap-align: start;
+    }
+  }
+
+  .cartelas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .cartela {
+    display: flex;
+    gap: 16px;
+    padding: 18px;
+    border-radius: var(--radio);
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    transition: border-color 0.18s ease;
+  }
+  .cartela:hover {
+    border-color: var(--seccion);
+  }
+  .cartela img {
+    flex: none;
+    width: 64px;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  .cita {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 1.02rem;
+    line-height: 1.45;
+  }
+  .de {
+    margin: 8px 0 0;
+    font-size: 0.82rem;
+    color: var(--tenue);
+  }
+  @media (max-width: 520px) {
+    .cartelas {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,276 @@
+---
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Portada from "../../components/Portada.astro";
+import {
+  autores,
+  autoresRepetidos,
+  cartela,
+  fuentes,
+  mayuscula,
+  nombreTag,
+  obras,
+  portada,
+  relacionadas,
+  seccionDe,
+  slugAutor,
+  slugObra,
+  titulo,
+  url,
+  type Obra,
+} from "../../lib/obras";
+
+export async function getStaticPaths() {
+  const todas = await obras();
+  return todas.map((obra) => ({
+    params: { seccion: seccionDe(obra.data.tipo).slug, obra: slugObra(obra) },
+    props: { obra, todas },
+  }));
+}
+
+const { obra, todas } = Astro.props as { obra: Obra; todas: Obra[] };
+const d = obra.data;
+const seccion = seccionDe(d.tipo);
+const nombre = titulo(obra);
+const imagen = portada(obra);
+const { Content } = await render(obra);
+const cercanas = relacionadas(obra, todas);
+const conPagina = autoresRepetidos(todas);
+const quienes = autores(obra);
+// La cita de la fuente ya acaba en «→ Steam»: ese no se repite arriba.
+const enlaces = fuentes(obra).filter((f) => !(obra.body ?? "").includes(new URL(f.href).hostname));
+const resumen =
+  cartela(obra) ?? `${nombre}${d.year ? ` (${d.year})` : ""}, en la sección de ${seccion.nombre.toLowerCase()} de la vitrina.`;
+---
+
+<Base titulo={nombre} descripcion={resumen} imagen={imagen} activa={seccion.slug}>
+  <article style={`--seccion:${seccion.color}`}>
+    <header class="escaparate">
+      {imagen && <div class="fondo" style={`background-image:url('${imagen}')`} aria-hidden="true" />}
+      <div class="contenedor dentro">
+        <div class:list={["cubierta", d.tipo === "album" && "cuadrada"]}>
+          {imagen ? <img src={imagen} alt={`Portada de ${nombre}`} /> : <span class="sin-imagen">{nombre}</span>}
+        </div>
+        <div class="datos">
+          <a class="seccion" href={url(`${seccion.slug}/`)}>{mayuscula(seccion.una)}</a>
+          <h1>{nombre}</h1>
+          <p class="autor">
+            {
+              // Cada autor por separado, enlazado si tiene página: en «QLOC,
+              // FromSoftware, Inc.» solo FromSoftware la tiene.
+              quienes.map((a, i) => (
+                <>
+                  {i > 0 && (i === quienes.length - 1 ? " y " : ", ")}
+                  {conPagina.has(a) ? <a href={url(`autores/${slugAutor(a)}/`)}>{a}</a> : <span>{a}</span>}
+                </>
+              ))
+            }
+            {quienes.length > 0 && d.year && " · "}
+            {d.year}
+          </p>
+          <div class="sellos">
+            {d.favorito && <span class="sello favorito">★ Favorito</span>}
+            {d.nota && <span class="sello">{d.nota}<small>/10</small></span>}
+            {d.estado && <span class="sello">{mayuscula(d.estado)}</span>}
+            {d.alta && <span class="sello tenue">En la vitrina desde {d.alta.toLocaleDateString("es-ES", { month: "long", year: "numeric" })}</span>}
+          </div>
+          {
+            (d.tags?.length ?? 0) > 0 && (
+              <div class="tags">
+                {d.tags!.map((t) => (
+                  <a class="chip" href={url(`${seccion.slug}/?tag=${encodeURIComponent(t)}`)}>
+                    {nombreTag(t)}
+                  </a>
+                ))}
+              </div>
+            )
+          }
+          {
+            enlaces.length > 0 && (
+              <p class="fuentes">
+                {enlaces.map((f) => (
+                  <a href={f.href} rel="noopener">
+                    {f.nombre} ↗
+                  </a>
+                ))}
+              </p>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="contenedor texto">
+      <Content />
+    </div>
+
+    {
+      cercanas.length > 0 && (
+        <section class="contenedor bloque">
+          <header>
+            <div>
+              <h2>Conectada con</h2>
+              <p>Comparten autor o lo que las hace parecidas.</p>
+            </div>
+            <a class="ver-todo" href={url(`constelacion/?foco=${encodeURIComponent(obra.id)}`)}>
+              Verla en la constelación →
+            </a>
+          </header>
+          <div class="rejilla">
+            {cercanas.map((o) => <Portada obra={o} mixta />)}
+          </div>
+        </section>
+      )
+    }
+  </article>
+</Base>
+
+<style>
+  .escaparate {
+    position: relative;
+    overflow: hidden;
+    padding-block: 48px;
+    border-bottom: 1px solid var(--borde);
+  }
+  /* La propia portada, desenfocada, hace de fondo: cada ficha tiene su color
+     sin elegir ninguno a mano. */
+  .fondo {
+    position: absolute;
+    inset: -40px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(48px) saturate(1.3);
+    opacity: 0.35;
+  }
+  .dentro {
+    position: relative;
+    display: flex;
+    gap: 40px;
+    align-items: flex-end;
+  }
+  .cubierta {
+    flex: none;
+    width: 240px;
+    aspect-ratio: 2 / 3;
+    border-radius: var(--radio);
+    overflow: hidden;
+    background: var(--superficie-2);
+    box-shadow: 0 24px 60px rgb(0 0 0 / 0.5);
+  }
+  .cubierta.cuadrada {
+    width: 280px;
+    aspect-ratio: 1;
+  }
+  .sin-imagen {
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    padding: 18px;
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    font-weight: 600;
+    line-height: 1.1;
+    background:
+      radial-gradient(circle at 20% 15%, color-mix(in srgb, var(--seccion) 55%, transparent), transparent 60%),
+      linear-gradient(160deg, color-mix(in srgb, var(--seccion) 30%, var(--superficie-2)), var(--superficie-2));
+  }
+  .fuentes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 16px 0 0;
+    font-size: 0.85rem;
+    color: var(--tenue);
+  }
+  .fuentes a:hover {
+    color: var(--texto);
+  }
+  .cubierta img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .seccion {
+    color: var(--seccion);
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin-top: 8px;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+  }
+  .autor {
+    margin: 10px 0 0;
+    font-size: 1.1rem;
+    color: var(--tenue);
+  }
+  .autor a {
+    color: var(--texto);
+    text-decoration: underline;
+    text-decoration-color: var(--seccion);
+    text-underline-offset: 4px;
+  }
+  .sellos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .sello {
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--superficie-2) 80%, transparent);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  .sello small {
+    color: var(--tenue);
+  }
+  .sello.favorito {
+    color: var(--acento);
+  }
+  .sello.tenue {
+    color: var(--tenue);
+    font-weight: 400;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .texto {
+    max-width: 760px;
+    padding-top: 40px;
+  }
+  .texto :global(h2) {
+    margin: 32px 0 12px;
+    font-size: 1.1rem;
+  }
+  .texto :global(ol) {
+    columns: 2;
+    color: var(--tenue);
+    padding-left: 1.4em;
+  }
+  @media (max-width: 680px) {
+    .escaparate {
+      padding-block: 28px;
+    }
+    .dentro {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 22px;
+    }
+    .cubierta {
+      width: 150px;
+    }
+    .cubierta.cuadrada {
+      width: 180px;
+    }
+    .texto :global(ol) {
+      columns: 1;
+    }
+  }
+</style>

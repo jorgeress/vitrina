@@ -1,0 +1,50 @@
+---
+import Base from "../../layouts/Base.astro";
+import Portada from "../../components/Portada.astro";
+import { autoresRepetidos, cantidad, obras, slugAutor, url, type Obra } from "../../lib/obras";
+
+export async function getStaticPaths() {
+  const grupos = autoresRepetidos(await obras());
+  return [...grupos].map(([autor, lista]) => ({
+    params: { autor: slugAutor(autor) },
+    props: { autor, lista },
+  }));
+}
+
+const { autor, lista } = Astro.props as { autor: string; lista: Obra[] };
+const ordenadas = [...lista].sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
+---
+
+<Base titulo={autor} descripcion={`Lo que tengo de ${autor} en la vitrina.`}>
+  <div class="contenedor">
+    <header class="cabecera">
+      <a class="volver" href={url("autores/")}>← Autores</a>
+      <h1>{autor}</h1>
+      <p>{cantidad(lista.length, "obra", "obras")} en la vitrina</p>
+    </header>
+    <div class="rejilla">
+      {ordenadas.map((o) => <Portada obra={o} mixta />)}
+    </div>
+  </div>
+</Base>
+
+<style>
+  .cabecera {
+    padding-block: 40px 28px;
+  }
+  .volver {
+    color: var(--tenue);
+    font-size: 0.9rem;
+  }
+  .volver:hover {
+    color: var(--texto);
+  }
+  .cabecera p {
+    margin: 0;
+    color: var(--tenue);
+  }
+  h1 {
+    margin-block: 4px;
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+</style>

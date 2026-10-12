@@ -1,0 +1,188 @@
+/* Oscuro por defecto, como una sala de museo con las vitrinas iluminadas;
+   claro si el sistema lo pide. Cada sección tiene su color, que se usa poco:
+   en la etiqueta, en los nodos de la constelación y al pasar el ratón. */
+:root {
+  --fondo: #0e0e10;
+  --superficie: #17171a;
+  --superficie-2: #202024;
+  --borde: #2a2a30;
+  --texto: #ecebe8;
+  --tenue: #9a9893;
+  --acento: #e8c36a;
+  --juego: #7aa7ff;
+  --peli: #ff7a7a;
+  --serie: #c58bff;
+  --libro: #6fd3a1;
+  --album: #ffb35c;
+  --radio: 10px;
+  --sombra: 0 10px 30px rgb(0 0 0 / 0.45);
+  --sans: "Inter", "Noto Sans JP", system-ui, sans-serif;
+  --serif: "Fraunces", Georgia, "Noto Sans JP", serif;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --fondo: #f6f4ef;
+    --superficie: #ffffff;
+    --superficie-2: #efece5;
+    --borde: #e0dcd3;
+    --texto: #1b1a18;
+    --tenue: #6d6a63;
+    --acento: #a7781a;
+    --juego: #2f63d6;
+    --peli: #d43c3c;
+    --serie: #8a3fd6;
+    --libro: #1f9a62;
+    --album: #c96d0b;
+    --sombra: 0 10px 30px rgb(0 0 0 / 0.12);
+    color-scheme: light;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.contenedor {
+  width: min(1180px, 100% - 32px);
+  margin-inline: auto;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* Cabeceras de bloque en minúscula, cortas, con una línea de apoyo debajo. */
+.bloque {
+  margin-block: 56px;
+}
+.bloque > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.bloque h2 {
+  font-size: 1.4rem;
+}
+.bloque header p {
+  margin: 4px 0 0;
+  color: var(--tenue);
+  font-size: 0.92rem;
+}
+.ver-todo {
+  color: var(--tenue);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+.ver-todo:hover {
+  color: var(--texto);
+}
+
+/* Rejilla de portadas: lo que hace Passport y lo que pintaban los .base. */
+.rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 22px 18px;
+}
+@media (max-width: 520px) {
+  .rejilla {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px 10px;
+  }
+}
+
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  color: var(--tenue);
+  font-size: 0.8rem;
+}
+a.chip:hover {
+  color: var(--texto);
+  border-color: var(--tenue);
+}
+
+/* Callouts de Obsidian. La cartela es lo suyo: serif, con aire, como el
+   texto que acompaña a una pieza en un museo. La cita es de la fuente y va
+   más apagada para que se vea que no es suya. */
+.callout {
+  margin: 0 0 24px;
+  padding: 20px 22px;
+  border-radius: var(--radio);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+}
+.callout-content p {
+  margin: 0 0 10px;
+}
+.callout-content p:last-child {
+  margin-bottom: 0;
+}
+.callout-title {
+  margin-bottom: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tenue);
+}
+.callout[data-callout="vitrina"] {
+  background: transparent;
+  border: 0;
+  border-left: 3px solid var(--acento);
+  border-radius: 0;
+  padding: 4px 0 4px 22px;
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+.callout[data-callout="vitrina"] .callout-title {
+  margin-bottom: 10px;
+  font-family: var(--sans);
+  color: var(--acento);
+}
+.callout[data-callout="quote"] {
+  color: var(--tenue);
+}
+.callout a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+[hidden] {
+  display: none !important;
+}

@@ -1,0 +1,162 @@
+---
+import Base from "../layouts/Base.astro";
+import { SECCIONES, autores, obras, portada, ruta, titulo, vecindario } from "../lib/obras";
+
+// Los nodos son las obras y las aristas, lo que tienen en común. Cada obra se
+// une a sus tres más parecidas y, siempre, a las de su mismo autor: con todas
+// las parejas posibles saldría una bola sin forma; con pocas, se ven grupos.
+// La que no se parece a nada se une a las de su sección más cercanas en el
+// tiempo, con una arista débil que se pinta discontinua.
+const todas = await obras();
+const vecinas = vecindario(todas, 3);
+const aristas = new Map<string, { source: string; target: string; peso: number; debil: boolean }>();
+const unir = (a: string, b: string, peso: number, debil: boolean) => {
+  const clave = [a, b].sort().join("|");
+  const previa = aristas.get(clave);
+  if (!previa || (previa.debil && !debil)) aristas.set(clave, { source: a, target: b, peso, debil });
+};
+for (const a of todas) for (const v of vecinas.get(a.id) ?? []) unir(a.id, v.obra.id, v.peso, v.debil);
+const porAutor = new Map<string, string[]>();
+for (const o of todas) for (const autor of autores(o)) porAutor.set(autor, [...(porAutor.get(autor) ?? []), o.id]);
+for (const ids of porAutor.values())
+  for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) unir(ids[i], ids[j], 6, false);
+
+const datos = {
+  nodos: todas.map((o) => ({
+    id: o.id,
+    titulo: titulo(o),
+    tipo: o.data.tipo,
+    favorito: Boolean(o.data.favorito),
+    portada: portada(o),
+    url: ruta(o),
+  })),
+  aristas: [...aristas.values()],
+};
+---
+
+<Base titulo="Constelación" descripcion="Las obras de la vitrina como un mapa: cada una unida a las que más se le parecen." activa="constelacion">
+  <div class="escena">
+    <canvas id="lienzo" aria-label="Grafo de las obras de la vitrina y lo que tienen en común"></canvas>
+    <div class="panel">
+      <h1>Constelación</h1>
+      <p>
+        Cada punto es una de las {datos.nodos.length} obras, y cada línea une las que comparten autor o algo que
+        las hace parecidas. Las discontinuas solo comparten sección y época. Arrastra para moverte y usa la rueda
+        para acercarte.
+      </p>
+      <input id="buscar" type="search" list="titulos" placeholder="Buscar una obra…" aria-label="Buscar una obra" />
+      <datalist id="titulos">
+        {datos.nodos.map((n) => <option value={n.titulo} />)}
+      </datalist>
+      <div class="leyenda" id="leyenda">
+        {
+          SECCIONES.map((s) => (
+            <button type="button" data-tipo={s.tipo} class="activo" style={`--seccion:${s.color}`}>
+              <span /> {s.nombre}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+  <script type="application/json" id="datos" set:html={JSON.stringify(datos)} />
+</Base>
+
+<script>
+  import { iniciar } from "../scripts/constelacion";
+  iniciar();
+</script>
+
+<style>
+  .escena {
+    position: relative;
+    height: calc(100dvh - 59px);
+    overflow: hidden;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    touch-action: none;
+  }
+  canvas.agarrado {
+    cursor: grabbing;
+  }
+  .panel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    max-width: 320px;
+    padding: 16px 18px;
+    border-radius: var(--radio);
+    background: color-mix(in srgb, var(--superficie) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--borde);
+  }
+  h1 {
+    font-size: 1.3rem;
+  }
+  .panel p {
+    margin: 6px 0 12px;
+    color: var(--tenue);
+    font-size: 0.86rem;
+  }
+  #buscar {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: var(--fondo);
+    color: var(--texto);
+    font: inherit;
+    font-size: 0.88rem;
+  }
+  .leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .leyenda button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    background: none;
+    color: var(--tenue);
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .leyenda button span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--seccion);
+  }
+  .leyenda button.activo {
+    color: var(--texto);
+    border-color: var(--seccion);
+  }
+  .leyenda button:not(.activo) span {
+    opacity: 0.3;
+  }
+  @media (max-width: 760px) {
+    .escena {
+      height: calc(100dvh - 59px - 64px);
+    }
+    .panel {
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      max-width: none;
+      padding: 12px;
+    }
+    .panel p {
+      display: none;
+    }
+  }
+</style>

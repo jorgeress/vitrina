@@ -1,0 +1,25 @@
+---
+import { getEntry, render } from "astro:content";
+import Base from "../layouts/Base.astro";
+
+const pagina = (await getEntry("paginas", "creditos"))!;
+const { Content } = await render(pagina);
+---
+
+<Base titulo={pagina.data.title}>
+  <article class="contenedor texto">
+    <h1>{pagina.data.title.toLowerCase()}</h1>
+    <Content />
+  </article>
+</Base>
+
+<style>
+  .texto {
+    max-width: 720px;
+    padding-top: 40px;
+  }
+  .texto :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

@@ -1,0 +1,100 @@
+---
+import Base from "../../layouts/Base.astro";
+import { autoresRepetidos, cantidad, obras, portada, seccionDe, slugAutor, url } from "../../lib/obras";
+
+// Solo quien tiene dos obras o más, como en la vault: con una sola, la página
+// de autor no agrupa nada que no diga ya la ficha.
+const grupos = [...autoresRepetidos(await obras())].sort(
+  (a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], "es"),
+);
+---
+
+<Base titulo="Autores" descripcion="Quien firma más de una obra de la vitrina.">
+  <div class="contenedor">
+    <header class="cabecera">
+      <h1>Autores</h1>
+      <p>Quien firma más de una obra de la vitrina.</p>
+    </header>
+    <ul class="lista">
+      {
+        grupos.map(([autor, lista]) => (
+          <li>
+            <a href={url(`autores/${slugAutor(autor)}/`)}>
+              <span class="miniaturas">
+                {lista.slice(0, 3).map((o) =>
+                  portada(o) ? (
+                    <img src={portada(o)} alt="" loading="lazy" />
+                  ) : (
+                    <span class="hueco" style={`background:${seccionDe(o.data.tipo).color}`} />
+                  ),
+                )}
+              </span>
+              <span>
+                <strong>{autor}</strong>
+                <small>{cantidad(lista.length, "obra", "obras")}</small>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .cabecera {
+    padding-block: 40px 28px;
+  }
+  .cabecera h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  .cabecera p {
+    margin: 6px 0 0;
+    color: var(--tenue);
+  }
+  .lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .lista a {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px;
+    border-radius: var(--radio);
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+  }
+  .lista a:hover {
+    border-color: var(--tenue);
+  }
+  .miniaturas {
+    display: flex;
+    flex: none;
+  }
+  .miniaturas > * {
+    width: 40px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 2px solid var(--superficie);
+  }
+  .miniaturas > * + * {
+    margin-left: -18px;
+  }
+  .hueco {
+    display: block;
+    opacity: 0.5;
+  }
+  strong {
+    display: block;
+    font-weight: 600;
+  }
+  small {
+    color: var(--tenue);
+  }
+</style>

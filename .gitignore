@@ -21,3 +21,7 @@ content/.trash/
 # Cache de los scripts de Python
 __pycache__/
 *.pyc
+
+# La web en Astro: lo que genera al construir
+web/dist/
+web/.astro/

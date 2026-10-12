@@ -1,0 +1,179 @@
+---
+import { autores, cartela, listaAutores, portada, ruta, seccionDe, titulo, type Obra } from "../lib/obras";
+
+interface Props {
+  obra: Obra;
+  /** En las secciones la tarjeta lleva datos para que los filtros la muevan. */
+  filtrable?: boolean;
+  /** En una rejilla con varias secciones todas las tarjetas miden lo mismo:
+   * el disco, cuadrado, va centrado sobre su propia portada desenfocada. */
+  mixta?: boolean;
+}
+
+const { obra, filtrable = false, mixta = false } = Astro.props;
+const d = obra.data;
+const cuadrada = d.tipo === "album";
+const imagen = portada(obra);
+const nombre = titulo(obra);
+const seccion = seccionDe(d.tipo);
+const escrita = cartela(obra) !== null;
+const quien = listaAutores(autores(obra));
+const datos = filtrable
+  ? {
+      "data-titulo": nombre.toLowerCase(),
+      "data-autor": quien.toLowerCase(),
+      "data-estado": d.estado ?? "",
+      "data-favorito": d.favorito ? "1" : "",
+      "data-nota": d.nota ?? 0,
+      "data-year": d.year ?? 0,
+      "data-alta": d.alta?.getTime() ?? 0,
+      "data-tags": (d.tags ?? []).join(" "),
+      "data-cartela": escrita ? "1" : "",
+    }
+  : {};
+---
+
+<a class="portada" href={ruta(obra)} style={`--seccion:${seccion.color}`} {...datos}>
+  <div class:list={["marco", cuadrada && !mixta && "cuadrada"]}>
+    {
+      imagen && cuadrada && mixta ? (
+        <>
+          <img class="difuso" src={imagen} alt="" loading="lazy" decoding="async" />
+          <img class="centrada" src={imagen} alt="" loading="lazy" decoding="async" />
+        </>
+      ) : imagen ? (
+        <img src={imagen} alt="" loading="lazy" decoding="async" />
+      ) : (
+        // Sin portada, una tarjeta tipográfica del color de la sección en vez
+        // de un hueco: se ve que falta, pero no parece un error.
+        <span class="sin-imagen">
+          <span class="sin-imagen-titulo">{nombre}</span>
+          {quien && <span class="sin-imagen-autor">{quien}</span>}
+        </span>
+      )
+    }
+    {d.favorito && <span class="estrella" title="Favorito">★</span>}
+    {d.nota && <span class="nota" title={`Nota: ${d.nota} de 10`}>{d.nota}</span>}
+    {escrita && <span class="escrita" title="Tiene cartela: está escrito por qué está aquí">✎</span>}
+  </div>
+  <p class="titulo">{nombre}</p>
+  <p class="meta">{[d.year, quien].filter(Boolean).join(" · ")}</p>
+</a>
+
+<style>
+  .portada {
+    display: block;
+    min-width: 0;
+  }
+  .marco {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    border-radius: var(--radio);
+    overflow: hidden;
+    background: var(--superficie-2);
+    box-shadow: var(--sombra);
+    transition:
+      transform 0.18s ease,
+      outline-color 0.18s ease;
+    outline: 2px solid transparent;
+    outline-offset: 3px;
+  }
+  .marco.cuadrada {
+    aspect-ratio: 1;
+  }
+  .portada:hover .marco,
+  .portada:focus-visible .marco {
+    transform: translateY(-3px);
+    outline-color: var(--seccion);
+  }
+  .portada:focus-visible {
+    outline: none;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .difuso {
+    position: absolute;
+    inset: 0;
+    filter: blur(18px) saturate(1.2);
+    transform: scale(1.3);
+    opacity: 0.8;
+  }
+  .centrada {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    height: auto;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.4);
+  }
+  .sin-imagen {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 6px;
+    height: 100%;
+    padding: 14px;
+    background:
+      radial-gradient(circle at 20% 15%, color-mix(in srgb, var(--seccion) 55%, transparent), transparent 60%),
+      linear-gradient(160deg, color-mix(in srgb, var(--seccion) 30%, var(--superficie-2)), var(--superficie-2));
+  }
+  .sin-imagen-titulo {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+  .sin-imagen-autor {
+    font-size: 0.75rem;
+    color: var(--tenue);
+  }
+  .estrella,
+  .nota,
+  .escrita {
+    position: absolute;
+    top: 8px;
+    display: grid;
+    place-items: center;
+    min-width: 26px;
+    height: 26px;
+    padding-inline: 6px;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.68);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    backdrop-filter: blur(6px);
+  }
+  .estrella {
+    left: 8px;
+    color: #ffd36b;
+  }
+  .nota {
+    right: 8px;
+  }
+  .escrita {
+    top: auto;
+    bottom: 8px;
+    right: 8px;
+  }
+  .titulo {
+    margin: 10px 0 0;
+    font-size: 0.92rem;
+    font-weight: 500;
+    line-height: 1.3;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .meta {
+    margin: 2px 0 0;
+    font-size: 0.8rem;
+    color: var(--tenue);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>

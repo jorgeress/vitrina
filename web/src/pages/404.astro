@@ -1,0 +1,31 @@
+---
+import Base from "../layouts/Base.astro";
+import { url } from "../lib/obras";
+---
+
+<Base titulo="No está en la vitrina">
+  <div class="contenedor aviso">
+    <h1>Esto no está en la vitrina</h1>
+    <p>Puede que la obra haya cambiado de nombre o que el enlace esté mal.</p>
+    <p><a href={url()}>Volver al inicio →</a></p>
+  </div>
+</Base>
+
+<style>
+  .aviso {
+    padding-block: 96px;
+    text-align: center;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 5vw, 3rem);
+  }
+  p {
+    color: var(--tenue);
+  }
+  a {
+    color: var(--texto);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
