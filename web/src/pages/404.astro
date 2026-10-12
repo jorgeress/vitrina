@@ -3,11 +3,14 @@ import Base from "../layouts/Base.astro";
 import { url } from "../lib/obras";
 ---
 
-<Base titulo="No está en la vitrina">
+<Base titulo="Esta vitrina está vacía">
   <div class="contenedor aviso">
-    <h1>Esto no está en la vitrina</h1>
-    <p>Puede que la obra haya cambiado de nombre o que el enlace esté mal.</p>
-    <p><a href={url()}>Volver al inicio →</a></p>
+    <p class="rotulo">404</p>
+    <h1>Esta vitrina está vacía</h1>
+    <p>Lo que había aquí ha cambiado de sala, o el enlace no lleva a ninguna parte.</p>
+    <p>
+      <a href={url("buscar/")}>Buscarlo</a> · <a href={url()}>Ir a la entrada</a>
+    </p>
   </div>
 </Base>
 
@@ -16,15 +19,21 @@ import { url } from "../lib/obras";
     padding-block: 96px;
     text-align: center;
   }
+  .rotulo {
+    color: var(--tenue);
+    font-size: 0.85rem;
+  }
   h1 {
-    font-family: var(--serif);
-    font-size: clamp(2rem, 5vw, 3rem);
+    margin-top: 10px;
+    font-family: var(--rotulo);
+    font-weight: 600;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
   }
   p {
     color: var(--tenue);
   }
   a {
-    color: var(--texto);
+    color: var(--enlace);
     text-decoration: underline;
     text-underline-offset: 3px;
   }

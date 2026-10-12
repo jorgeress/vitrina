@@ -1,36 +1,34 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Portada from "../../components/Portada.astro";
-import { SECCIONES, cantidad, obras, porAlta, url } from "../../lib/obras";
+import { SECCIONES, cantidad, obras, porAprecio, url } from "../../lib/obras";
 
 const todas = await obras();
 const grupos = SECCIONES.map((s) => ({
   seccion: s,
-  lista: todas
-    .filter((o) => o.data.tipo === s.tipo && o.data.favorito)
-    .sort((a, b) => (b.data.nota ?? 0) - (a.data.nota ?? 0) || porAlta(a, b)),
+  lista: todas.filter((o) => o.data.tipo === s.tipo && o.data.favorito).sort(porAprecio),
 })).filter((g) => g.lista.length > 0);
 const total = grupos.reduce((n, g) => n + g.lista.length, 0);
 ---
 
-<Base titulo="Favoritos" descripcion="Lo mejor de lo mejor de la vitrina, sección por sección.">
+<Base titulo="Lo mejor de lo mejor" descripcion="Lo que no puede faltar en la vitrina, sala por sala.">
   <div class="contenedor">
-    <header class="cabecera">
-      <h1>Favoritos</h1>
-      <p>{cantidad(total, "obra", "obras")} que no pueden faltar.</p>
+    <header class="titulo-pagina">
+      <h1>★ Lo mejor de lo mejor</h1>
+      <p>{cantidad(total, "pieza", "piezas")} que no pueden faltar, sala por sala.</p>
     </header>
     {
       grupos.map(({ seccion, lista }) => (
-        <section class="bloque" style={`--seccion:${seccion.color}`}>
+        <section class="bloque" style={`--seccion:var(--${seccion.tipo})`}>
           <header>
-            <h2 class="titulo-seccion">{seccion.nombre}</h2>
+            <h2>{seccion.nombre}</h2>
             <a class="ver-todo" href={url(`${seccion.slug}/?favorito=1`)}>
-              Ver en {seccion.nombre} →
+              En su sala →
             </a>
           </header>
           <div class="rejilla">
             {lista.map((o) => (
-              <Portada obra={o} />
+              <Portada obra={o} viaja />
             ))}
           </div>
         </section>
@@ -40,20 +38,21 @@ const total = grupos.reduce((n, g) => n + g.lista.length, 0);
 </Base>
 
 <style>
-  .cabecera {
-    padding-top: 40px;
+  /* Es la única página en dorado, como en Quartz: la que cruza todas las
+     salas y se queda con lo marcado como favorito. */
+  .titulo-pagina h1 {
+    color: var(--dorado);
   }
-  .cabecera h1 {
-    font-size: clamp(2rem, 5vw, 3rem);
-  }
-  .cabecera p {
-    margin: 6px 0 0;
-    color: var(--tenue);
-  }
-  .bloque {
-    margin-block: 40px;
-  }
-  .titulo-seccion {
+  .bloque h2::before {
+    content: "●";
+    margin-right: 10px;
+    font-size: 0.6em;
+    vertical-align: 0.2em;
     color: var(--seccion);
+  }
+  .rejilla :global(.marco) {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--dorado) 45%, transparent),
+      var(--sombra);
   }
 </style>

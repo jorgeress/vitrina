@@ -1,0 +1,72 @@
+---
+import Base from "../../layouts/Base.astro";
+import { SECCIONES, nombreTag, obras, rutaTag } from "../../lib/obras";
+
+const todas = await obras();
+const cuenta = new Map<string, Set<string>>();
+for (const o of todas)
+  for (const t of o.data.tags ?? []) cuenta.set(t, (cuenta.get(t) ?? new Set()).add(o.data.tipo));
+const veces = new Map<string, number>();
+for (const o of todas) for (const t of o.data.tags ?? []) veces.set(t, (veces.get(t) ?? 0) + 1);
+const tags = [...veces].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+const maximo = tags[0]?.[1] ?? 1;
+---
+
+<Base titulo="Tags" descripcion="Los géneros de la vitrina, de los que más se repiten a los que menos.">
+  <div class="contenedor">
+    <header class="titulo-pagina">
+      <h1>Tags</h1>
+      <p>Los géneros de todas las salas. Cuanto más grande, más piezas lo comparten.</p>
+    </header>
+    <ul class="nube">
+      {
+        tags.map(([t, n]) => (
+          <li style={`--peso:${0.85 + (n / maximo) * 0.9}`}>
+            <a href={rutaTag(t)}>
+              {nombreTag(t)} <small>{n}</small>
+              <span class="puntos" aria-hidden="true">
+                {SECCIONES.filter((s) => cuenta.get(t)!.has(s.tipo)).map((s) => (
+                  <span style={`background:var(--${s.tipo})`} />
+                ))}
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .nube {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px 22px;
+    margin: 36px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .nube a {
+    font-size: calc(var(--peso) * 1rem);
+    color: var(--texto);
+  }
+  .nube a:hover {
+    color: var(--enlace);
+  }
+  small {
+    color: var(--suave);
+    font-size: 0.7em;
+  }
+  .puntos {
+    display: inline-flex;
+    gap: 2px;
+    margin-left: 4px;
+    vertical-align: 0.2em;
+  }
+  .puntos span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+</style>

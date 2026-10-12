@@ -1,5 +1,10 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  "exclude": ["dist"],
+  "compilerOptions": {
+    // Las pruebas corren con node --test, que quita los tipos al vuelo pero
+    // necesita la extensión .ts en los import.
+    "allowImportingTsExtensions": true
+  }
 }

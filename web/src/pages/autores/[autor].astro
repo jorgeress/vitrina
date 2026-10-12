@@ -1,50 +1,38 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Portada from "../../components/Portada.astro";
-import { autoresRepetidos, cantidad, obras, slugAutor, url, type Obra } from "../../lib/obras";
+import { autoresRepetidos, cantidad, obras, slugAutor, slugsAutores, url, type Obra } from "../../lib/obras";
 
 export async function getStaticPaths() {
   const grupos = autoresRepetidos(await obras());
-  return [...grupos].map(([autor, lista]) => ({
-    params: { autor: slugAutor(autor) },
-    props: { autor, lista },
-  }));
+  const slugs = await slugsAutores();
+  // La misma dirección que la página que escribe autores.py en la vault.
+  return [...grupos].map(([autor, lista]) => ({ params: { autor: slugAutor(autor, slugs) }, props: { autor, lista } }));
 }
 
 const { autor, lista } = Astro.props as { autor: string; lista: Obra[] };
 const ordenadas = [...lista].sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
+const desde = Math.min(...lista.map((o) => o.data.year ?? 9999));
+const hasta = Math.max(...lista.map((o) => o.data.year ?? 0));
 ---
 
 <Base titulo={autor} descripcion={`Lo que tengo de ${autor} en la vitrina.`}>
   <div class="contenedor">
-    <header class="cabecera">
+    <header class="titulo-pagina">
       <a class="volver" href={url("autores/")}>← Autores</a>
       <h1>{autor}</h1>
-      <p>{cantidad(lista.length, "obra", "obras")} en la vitrina</p>
+      <p>
+        {cantidad(lista.length, "pieza", "piezas")} en la vitrina{desde < hasta && `, de ${desde} a ${hasta}`}.
+      </p>
     </header>
     <div class="rejilla">
-      {ordenadas.map((o) => <Portada obra={o} mixta />)}
+      {ordenadas.map((o) => <Portada obra={o} mixta viaja />)}
     </div>
   </div>
 </Base>
 
 <style>
-  .cabecera {
-    padding-block: 40px 28px;
-  }
-  .volver {
-    color: var(--tenue);
-    font-size: 0.9rem;
-  }
-  .volver:hover {
-    color: var(--texto);
-  }
-  .cabecera p {
-    margin: 0;
-    color: var(--tenue);
-  }
-  h1 {
-    margin-block: 4px;
-    font-size: clamp(2rem, 5vw, 3rem);
+  .titulo-pagina {
+    margin-bottom: 32px;
   }
 </style>

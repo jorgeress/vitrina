@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
 import { z } from "astro/zod";
 import { glob } from "astro/loaders";
+import { slugQuartz } from "./lib/texto";
 
 // Las mismas fichas que edita Obsidian y rellenan los scripts. El esquema es
 // el contrato: si una ficha trae `nota: 11` o un estado mal escrito, la web
@@ -9,6 +10,8 @@ const obras = defineCollection({
   loader: glob({
     pattern: ["{juegos,pelis,series,libros,musica}/*.md", "!**/index.md"],
     base: "../content",
+    // La misma dirección que en Quartz, para que no se rompa ningún enlace.
+    generateId: ({ entry }) => slugQuartz(entry.replace(/\.md$/, "")),
   }),
   schema: z.object({
     tipo: z.enum(["juego", "peli", "serie", "libro", "album"]),
@@ -33,10 +36,24 @@ const obras = defineCollection({
   }),
 });
 
-// Las páginas sueltas de la vault que también salen en la web.
+// Las páginas sueltas de la vault que también salen en la web: los créditos y
+// la portada, de la que se toma la presentación que él escribe.
 const paginas = defineCollection({
-  loader: glob({ pattern: "creditos.md", base: "../content" }),
+  loader: glob({ pattern: ["creditos.md", "index.md"], base: "../content" }),
   schema: z.object({ title: z.string() }),
 });
 
-export const collections = { obras, paginas };
+// Las páginas de autor que escribe scripts/autores.py. De ellas solo se toma
+// cómo se llama cada fichero, que es lo que da la dirección: autores.py lo
+// pasa a ASCII y le quita el punto final («FromSoftware, Inc.» queda en
+// `fromsoftware,-inc`), y así la web no tiene que copiar esa regla.
+const autores = defineCollection({
+  loader: glob({
+    pattern: ["autores/*.md", "!autores/index.md"],
+    base: "../content",
+    generateId: ({ entry }) => slugQuartz(entry.replace(/^autores\//, "").replace(/\.md$/, "")),
+  }),
+  schema: z.object({ title: z.string() }),
+});
+
+export const collections = { obras, paginas, autores };

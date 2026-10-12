@@ -1,0 +1,36 @@
+---
+import Base from "../../layouts/Base.astro";
+import { url } from "../../lib/obras";
+---
+
+<Base titulo="Sin conexión">
+  <div class="contenedor aviso">
+    <p class="rotulo">Sin conexión</p>
+    <h1>Esta sala no la tengo guardada</h1>
+    <p>Las páginas que ya has visitado se abren sin red; esta todavía no. Vuelve a probar cuando haya conexión.</p>
+    <p><a href={url()}>Ir a la entrada →</a></p>
+  </div>
+</Base>
+
+<style>
+  .aviso {
+    padding-block: 96px;
+    text-align: center;
+  }
+  .rotulo {
+    color: var(--tenue);
+    font-size: 0.85rem;
+  }
+  h1 {
+    margin-top: 10px;
+    font-family: var(--rotulo);
+    font-weight: 600;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+  }
+  p {
+    color: var(--tenue);
+  }
+  a {
+    color: var(--enlace);
+  }
+</style>

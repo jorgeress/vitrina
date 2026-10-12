@@ -1,43 +1,75 @@
-/* Oscuro por defecto, como una sala de museo con las vitrinas iluminadas;
-   claro si el sistema lo pide. Cada sección tiene su color, que se usa poco:
-   en la etiqueta, en los nodos de la constelación y al pasar el ratón. */
+/* La misma casa que en Quartz (quartz.config.yaml y custom.scss): papel y
+   tinta en claro, una vitrina a oscuras con las piezas iluminadas en oscuro.
+   Cinzel para los rótulos, que es la capital romana con la que se rotula una
+   sala de museo; Source Sans para lo que hay que leer.
+
+   El dorado es de Lo mejor de lo mejor y de nada más: la estrella de un
+   favorito y esa página. Si lo llevara cualquier otra cosa dejaría de señalar.
+
+   Cada sección tiene un color apagado, de tierra, que solo se usa en lo
+   pequeño: el punto de la etiqueta, los nodos de la constelación y el filo
+   al pasar el ratón. */
 :root {
-  --fondo: #0e0e10;
-  --superficie: #17171a;
-  --superficie-2: #202024;
-  --borde: #2a2a30;
-  --texto: #ecebe8;
-  --tenue: #9a9893;
-  --acento: #e8c36a;
-  --juego: #7aa7ff;
-  --peli: #ff7a7a;
-  --serie: #c58bff;
-  --libro: #6fd3a1;
-  --album: #ffb35c;
-  --radio: 10px;
-  --sombra: 0 10px 30px rgb(0 0 0 / 0.45);
-  --sans: "Inter", "Noto Sans JP", system-ui, sans-serif;
-  --serif: "Fraunces", Georgia, "Noto Sans JP", serif;
-  color-scheme: dark;
+  --fondo: #f7f4ef;
+  --caja: #fffdf9;
+  --caja-2: #efebe3;
+  --borde: #e3ded4;
+  --tenue: #6f685d;
+  --suave: #948d80;
+  --texto: #201d1a;
+  --enlace: #4c5c6b;
+  --dorado: #a07b12;
+  --juego: #4f6f93;
+  --peli: #a8523f;
+  --serie: #7a5d98;
+  --libro: #4f7f5d;
+  --album: #2f7f86;
+  --sombra: 0 10px 28px rgb(32 29 26 / 0.14);
+  --radio: 8px;
+  --rotulo: "Cinzel", "Trajan Pro", Georgia, serif;
+  --sans: "Source Sans 3", "Source Sans Pro", "Noto Sans JP", system-ui, sans-serif;
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --fondo: #f6f4ef;
-    --superficie: #ffffff;
-    --superficie-2: #efece5;
-    --borde: #e0dcd3;
-    --texto: #1b1a18;
-    --tenue: #6d6a63;
-    --acento: #a7781a;
-    --juego: #2f63d6;
-    --peli: #d43c3c;
-    --serie: #8a3fd6;
-    --libro: #1f9a62;
-    --album: #c96d0b;
-    --sombra: 0 10px 30px rgb(0 0 0 / 0.12);
-    color-scheme: light;
+/* El oscuro: si lo pide el sistema y no se ha elegido otra cosa, o si se ha
+   elegido a mano con el botón de la barra. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --fondo: #0f0e10;
+    --caja: #191719;
+    --caja-2: #221f22;
+    --borde: #2a272a;
+    --tenue: #a39d93;
+    --suave: #6f6a72;
+    --texto: #ece7dd;
+    --enlace: #9aa7b4;
+    --dorado: #e0c063;
+    --juego: #8fa9c8;
+    --peli: #d48c79;
+    --serie: #b39bcc;
+    --libro: #8fb89b;
+    --album: #7cbcc1;
+    --sombra: 0 12px 32px rgb(0 0 0 / 0.5);
+    color-scheme: dark;
   }
+}
+:root[data-tema="oscuro"] {
+  --fondo: #0f0e10;
+  --caja: #191719;
+  --caja-2: #221f22;
+  --borde: #2a272a;
+  --tenue: #a39d93;
+  --suave: #6f6a72;
+  --texto: #ece7dd;
+  --enlace: #9aa7b4;
+  --dorado: #e0c063;
+  --juego: #8fa9c8;
+  --peli: #d48c79;
+  --serie: #b39bcc;
+  --libro: #8fb89b;
+  --album: #7cbcc1;
+  --sombra: 0 12px 32px rgb(0 0 0 / 0.5);
+  color-scheme: dark;
 }
 
 *,
@@ -48,6 +80,7 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 72px;
 }
 
 body {
@@ -55,8 +88,9 @@ body {
   background: var(--fondo);
   color: var(--texto);
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -69,6 +103,16 @@ img {
   max-width: 100%;
 }
 
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--enlace);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
 .contenedor {
   width: min(1180px, 100% - 32px);
   margin-inline: auto;
@@ -77,12 +121,44 @@ img {
 h1,
 h2,
 h3 {
-  line-height: 1.15;
-  letter-spacing: -0.02em;
   margin: 0;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
-/* Cabeceras de bloque en minúscula, cortas, con una línea de apoyo debajo. */
+/* Un rótulo: capitales espaciadas en Cinzel, la letra de la casa. */
+.rotulo {
+  font-family: var(--rotulo);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 600;
+}
+
+.titulo-pagina {
+  padding-top: 44px;
+}
+.titulo-pagina h1 {
+  font-family: var(--rotulo);
+  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: 0.04em;
+}
+.titulo-pagina p {
+  margin: 6px 0 0;
+  color: var(--tenue);
+}
+.volver {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: var(--tenue);
+  font-size: 0.92rem;
+}
+.volver:hover {
+  color: var(--texto);
+}
+
+/* Cabeceras de bloque: el nombre y una línea de apoyo debajo. */
 .bloque {
   margin-block: 56px;
 }
@@ -94,57 +170,60 @@ h3 {
   margin-bottom: 18px;
 }
 .bloque h2 {
-  font-size: 1.4rem;
+  font-family: var(--rotulo);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 .bloque header p {
   margin: 4px 0 0;
   color: var(--tenue);
-  font-size: 0.92rem;
+  font-size: 0.95rem;
 }
 .ver-todo {
-  color: var(--tenue);
-  font-size: 0.9rem;
+  color: var(--enlace);
+  font-size: 0.93rem;
   white-space: nowrap;
 }
 .ver-todo:hover {
   color: var(--texto);
 }
 
-/* Rejilla de portadas: lo que hace Passport y lo que pintaban los .base. */
+/* Rejilla de portadas. */
 .rejilla {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 22px 18px;
+  gap: 26px 18px;
 }
 @media (max-width: 520px) {
   .rejilla {
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px 10px;
+    gap: 18px 10px;
   }
 }
 
 .chip {
   display: inline-block;
-  padding: 3px 10px;
+  padding: 3px 11px;
   border: 1px solid var(--borde);
   border-radius: 999px;
   color: var(--tenue);
-  font-size: 0.8rem;
+  font-size: 0.84rem;
+  white-space: nowrap;
 }
 a.chip:hover {
   color: var(--texto);
-  border-color: var(--tenue);
+  border-color: var(--suave);
 }
 
-/* Callouts de Obsidian. La cartela es lo suyo: serif, con aire, como el
-   texto que acompaña a una pieza en un museo. La cita es de la fuente y va
-   más apagada para que se vea que no es suya. */
+/* --- Callouts --------------------------------------------------------------
+   La cartela es lo suyo y tiene que verse distinta de la cita de la fuente,
+   que va justo debajo: en caja, un paso por delante del fondo; el rótulo en
+   capitales espaciadas, un filo a la izquierda y la piedra tallada de icono,
+   como en Quartz y en el snippet de Obsidian. La cita va sin caja y apagada:
+   sus comillas ya dicen que no es suya. */
 .callout {
-  margin: 0 0 24px;
-  padding: 20px 22px;
-  border-radius: var(--radio);
-  background: var(--superficie);
-  border: 1px solid var(--borde);
+  margin: 0 0 28px;
 }
 .callout-content p {
   margin: 0 0 10px;
@@ -152,37 +231,84 @@ a.chip:hover {
 .callout-content p:last-child {
   margin-bottom: 0;
 }
-.callout-title {
-  margin-bottom: 10px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--tenue);
-}
-.callout[data-callout="vitrina"] {
-  background: transparent;
-  border: 0;
-  border-left: 3px solid var(--acento);
-  border-radius: 0;
-  padding: 4px 0 4px 22px;
-  font-family: var(--serif);
-  font-size: 1.25rem;
-  line-height: 1.5;
-}
-.callout[data-callout="vitrina"] .callout-title {
-  margin-bottom: 10px;
-  font-family: var(--sans);
-  color: var(--acento);
-}
-.callout[data-callout="quote"] {
-  color: var(--tenue);
-}
-.callout a {
+.callout-content a {
+  color: var(--enlace);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+.callout-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.callout-title::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  flex: none;
+  background: currentColor;
+  -webkit-mask: var(--icono) center / contain no-repeat;
+  mask: var(--icono) center / contain no-repeat;
+}
 
-[hidden] {
-  display: none !important;
+.callout[data-callout="vitrina"] {
+  --icono: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg>');
+  padding: 20px 24px;
+  background: var(--caja);
+  border: 1px solid var(--borde);
+  border-left: 3px solid var(--tenue);
+  border-radius: var(--radio);
+  font-size: 1.12rem;
+  line-height: 1.6;
+}
+.callout[data-callout="vitrina"] .callout-title {
+  font-family: var(--rotulo);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--tenue);
+}
+
+.callout[data-callout="quote"] {
+  --icono: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/><path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"/></svg>');
+  padding-left: 24px;
+  border-left: 1px solid var(--borde);
+  color: var(--tenue);
+}
+/* El rótulo «De qué va» se queda en la nota por Obsidian; en la web basta
+   con las comillas, como en Quartz. */
+.callout[data-callout="quote"] .callout-title {
+  color: var(--suave);
+}
+.callout[data-callout="quote"] .callout-title-text {
+  display: none;
+}
+
+/* --- Transiciones ----------------------------------------------------------
+   De una página a otra sin pantallazo, y la portada de una obra viaja de la
+   rejilla a su ficha. Sin JavaScript: es CSS y lo hace el navegador. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.18s;
+}
+::view-transition-group(*) {
+  animation-duration: 0.32s;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
 }

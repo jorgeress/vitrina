@@ -1,0 +1,80 @@
+---
+import Base from "../../layouts/Base.astro";
+import { url } from "../../lib/obras";
+
+const base = url("pagefind/");
+---
+
+<Base titulo="Buscar" descripcion="Buscar en todas las salas de la vitrina." activa="buscar">
+  <div class="contenedor">
+    <header class="titulo-pagina">
+      <h1>Buscar</h1>
+      <p>En todas las salas: títulos, autores, cartelas y de qué va cada pieza.</p>
+    </header>
+    <div id="buscador" data-base={base}></div>
+    <p id="sin-indice" class="aviso" hidden>
+      El índice del buscador se crea al construir la web (<code>npm run build</code>), así que con <code>npm run dev</code> no
+      hay nada que buscar todavía.
+    </p>
+  </div>
+</Base>
+
+<script>
+  // Pagefind: el índice son ficheros estáticos que se bajan a trozos según lo
+  // que se escribe, así que busca sin servidor. Su interfaz trae el castellano
+  // y lo elige por el lang de la página.
+  const caja = document.getElementById("buscador")!;
+  const base = caja.dataset.base!;
+  const estilos = document.createElement("link");
+  estilos.rel = "stylesheet";
+  estilos.href = `${base}pagefind-ui.css`;
+  document.head.append(estilos);
+
+  const script = document.createElement("script");
+  script.src = `${base}pagefind-ui.js`;
+  script.onload = () => {
+    // @ts-expect-error: lo define el script de Pagefind al cargarse
+    const ui = new PagefindUI({
+      element: "#buscador",
+      showSubResults: false,
+      showImages: true,
+      resetStyles: false,
+      autofocus: true,
+      pageSize: 12,
+    });
+    const q = new URLSearchParams(location.search).get("q");
+    if (q) ui.triggerSearch(q);
+  };
+  script.onerror = () => (document.getElementById("sin-indice")!.hidden = false);
+  document.body.append(script);
+</script>
+
+<style>
+  #buscador {
+    margin-top: 28px;
+    --pagefind-ui-scale: 0.95;
+    --pagefind-ui-primary: var(--texto);
+    --pagefind-ui-text: var(--texto);
+    --pagefind-ui-background: var(--caja);
+    --pagefind-ui-border: var(--borde);
+    --pagefind-ui-tag: var(--caja-2);
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 8px;
+    --pagefind-ui-image-border-radius: 6px;
+    --pagefind-ui-image-box-ratio: 2 / 3;
+    --pagefind-ui-font: var(--sans);
+  }
+  #buscador :global(.pagefind-ui__result-link) {
+    color: var(--texto);
+  }
+  #buscador :global(.pagefind-ui__result-excerpt) {
+    color: var(--tenue);
+  }
+  #buscador :global(mark) {
+    background: color-mix(in srgb, var(--dorado) 25%, transparent);
+    color: inherit;
+  }
+  .aviso {
+    color: var(--tenue);
+  }
+</style>

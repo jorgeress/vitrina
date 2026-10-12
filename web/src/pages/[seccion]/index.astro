@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Portada from "../../components/Portada.astro";
-import { SECCIONES, mayuscula, nombreTag, obras, porAlta, type Seccion } from "../../lib/obras";
+import { ESTADOS, SECCIONES, nombreTag, obras, porAlta, url, type Estado, type Seccion } from "../../lib/obras";
 
 export async function getStaticPaths() {
   return SECCIONES.map((seccion) => ({ params: { seccion: seccion.slug }, props: { seccion } }));
@@ -12,63 +12,72 @@ const lista = (await obras()).filter((o) => o.data.tipo === seccion.tipo).sort(p
 
 // Solo los estados y tags que de verdad aparecen: un filtro que no filtra
 // nada es ruido.
-const estados = ["terminado", "en curso", "pendiente", "abandonado"].filter((e) =>
-  lista.some((o) => o.data.estado === e),
-);
+const estados = (Object.keys(ESTADOS) as Estado[]).filter((e) => lista.some((o) => o.data.estado === e));
 const cuenta = new Map<string, number>();
 for (const o of lista) for (const t of o.data.tags ?? []) cuenta.set(t, (cuenta.get(t) ?? 0) + 1);
-const tags = [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).slice(0, 14);
+const tags = [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).slice(0, 16);
+const palabra = (n: number) => (n === 1 ? seccion.una : seccion.varias);
 ---
 
-<Base titulo={seccion.nombre} activa={seccion.slug}>
+<Base
+  titulo={seccion.nombre}
+  descripcion={`${lista.length} ${palabra(lista.length)} en la vitrina, con lo que pienso de cada uno.`}
+  activa={seccion.slug}
+>
   <div class="contenedor">
-    <header class="cabecera" style={`--seccion:${seccion.color}`}>
+    <header class="titulo-pagina cabecera" style={`--seccion:var(--${seccion.tipo})`}>
       <h1>{seccion.nombre}</h1>
-      <p id="recuento" data-total={lista.length} data-una={seccion.una} data-varias={seccion.varias}>
-        {lista.length} {lista.length === 1 ? seccion.una : seccion.varias}
+      <p id="recuento" aria-live="polite" data-total={lista.length} data-una={seccion.una} data-varias={seccion.varias}>
+        {lista.length} {palabra(lista.length)}
       </p>
     </header>
 
-    <form class="filtros" id="filtros" onsubmit="return false">
-      <input type="search" name="q" placeholder={`Buscar por título o autor…`} aria-label="Buscar" autocomplete="off" />
+    <form class="filtros" id="filtros" role="search" onsubmit="return false">
+      <input type="search" name="q" placeholder="Buscar por título o autor…" aria-label="Buscar en esta sala" autocomplete="off" />
       <select name="orden" aria-label="Ordenar">
         <option value="alta">Lo último que entró</option>
+        <option value="aprecio">Lo mejor primero</option>
         <option value="nota">Mejor nota</option>
         <option value="year">Más nuevas</option>
+        <option value="antiguas">Más antiguas</option>
         <option value="titulo">Por título</option>
       </select>
       {
         estados.length > 1 && (
           <select name="estado" aria-label="Estado">
-            <option value="">Cualquier estado</option>
+            <option value="">Todo</option>
             {estados.map((e) => (
-              <option value={e}>{mayuscula(e)}</option>
+              <option value={e}>{ESTADOS[e]}</option>
             ))}
           </select>
         )
       }
       <div class="opciones">
-        <label><input type="checkbox" name="favorito" /> ★ Favoritos</label>
-        <label><input type="checkbox" name="cartela" /> ✎ Con cartela</label>
-
+        <label class="dorada"><input type="checkbox" name="favorito" /> ★ Lo mejor de lo mejor</label>
+        <label><input type="checkbox" name="cartela" /> Con cartela</label>
       </div>
       {
         tags.length > 0 && (
-          <div class="tags">
-            {tags.map(([t]) => (
-              <button type="button" class="chip" data-tag={t} aria-pressed="false">
+          <div class="tags" role="group" aria-label="Tags">
+            {tags.map(([t, n]) => (
+              <button type="button" class="chip" data-tag={t} aria-pressed="false" title={`${n} ${palabra(n)}`}>
                 {nombreTag(t)}
               </button>
             ))}
+            <a class="chip mas" href={url("tags/")}>
+              Todos los tags →
+            </a>
           </div>
         )
       }
     </form>
 
     <div class="rejilla" id="rejilla">
-      {lista.map((o) => <Portada obra={o} filtrable />)}
+      {lista.map((o, i) => <Portada obra={o} filtrable viaja prioridad={i < 12} />)}
     </div>
-    <p class="vacio" id="vacio" hidden>No hay nada con esos filtros.</p>
+    <p class="vacio" id="vacio" hidden>
+      No hay nada con esos filtros. <button type="button" id="limpiar">Quitar los filtros</button>
+    </p>
   </div>
 </Base>
 
@@ -83,14 +92,30 @@ const tags = [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).s
   const { total, una, varias } = recuento.dataset as { total: string; una: string; varias: string };
   const vacio = document.getElementById("vacio")!;
   const botones = [...form.querySelectorAll<HTMLButtonElement>("[data-tag]")];
-  let tag = new URLSearchParams(location.search).get("tag") ?? "";
+  let tag = "";
 
-  const parametros = new URLSearchParams(location.search);
-  for (const [k, v] of parametros) {
-    const campo = form.elements.namedItem(k);
-    if (campo instanceof HTMLInputElement && campo.type === "checkbox") campo.checked = v === "1";
-    else if (campo instanceof HTMLInputElement || campo instanceof HTMLSelectElement) campo.value = v;
+  function leerURL() {
+    const parametros = new URLSearchParams(location.search);
+    tag = parametros.get("tag") ?? "";
+    for (const [k, v] of parametros) {
+      const campo = form.elements.namedItem(k);
+      if (campo instanceof HTMLInputElement && campo.type === "checkbox") campo.checked = v === "1";
+      else if (campo instanceof HTMLInputElement || campo instanceof HTMLSelectElement) campo.value = v;
+    }
   }
+
+  const numero = (t: HTMLElement, campo: string) => Number(t.dataset[campo] ?? 0);
+  const ORDENES: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
+    alta: (a, b) => numero(b, "alta") - numero(a, "alta"),
+    aprecio: (a, b) =>
+      Number(b.dataset.favorito === "1") - Number(a.dataset.favorito === "1") ||
+      numero(b, "nota") - numero(a, "nota") ||
+      numero(b, "alta") - numero(a, "alta"),
+    nota: (a, b) => numero(b, "nota") - numero(a, "nota") || numero(b, "alta") - numero(a, "alta"),
+    year: (a, b) => numero(b, "year") - numero(a, "year"),
+    antiguas: (a, b) => (numero(a, "year") || 9999) - (numero(b, "year") || 9999),
+    titulo: (a, b) => a.dataset.titulo!.localeCompare(b.dataset.titulo!, "es"),
+  };
 
   function aplicar() {
     const f = new FormData(form);
@@ -112,19 +137,14 @@ const tags = [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).s
       t.hidden = !ve;
       if (ve) n++;
     }
-    const clave = (t: HTMLElement) =>
-      orden === "titulo" ? 0 : -Number(t.dataset[orden] ?? 0);
-    const ordenadas = [...tarjetas].sort((a, b) =>
-      orden === "titulo" ? a.dataset.titulo!.localeCompare(b.dataset.titulo!, "es") : clave(a) - clave(b) || Number(b.dataset.alta) - Number(a.dataset.alta),
-    );
-    ordenadas.forEach((t, i) => (t.style.order = String(i)));
+    [...tarjetas].sort(ORDENES[orden] ?? ORDENES.alta).forEach((t, i) => (t.style.order = String(i)));
     const palabra = Number(total) === 1 ? una : varias;
     recuento.textContent = n === Number(total) ? `${total} ${palabra}` : `${n} de ${total} ${palabra}`;
     vacio.hidden = n > 0;
-    botones.forEach((b) => {
+    for (const b of botones) {
       b.classList.toggle("activo", b.dataset.tag === tag);
       b.setAttribute("aria-pressed", String(b.dataset.tag === tag));
-    });
+    }
 
     const url = new URLSearchParams();
     if (q) url.set("q", q);
@@ -137,12 +157,17 @@ const tags = [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).s
   }
 
   form.addEventListener("input", aplicar);
-  botones.forEach((b) =>
+  for (const b of botones)
     b.addEventListener("click", () => {
       tag = tag === b.dataset.tag ? "" : b.dataset.tag!;
       aplicar();
-    }),
-  );
+    });
+  document.getElementById("limpiar")!.addEventListener("click", () => {
+    form.reset();
+    tag = "";
+    aplicar();
+  });
+  leerURL();
   aplicar();
 </script>
 
@@ -151,48 +176,50 @@ const tags = [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).s
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    padding-top: 40px;
+    gap: 16px;
   }
-  .cabecera h1 {
-    font-size: clamp(2rem, 5vw, 3rem);
+  .cabecera h1::before {
+    content: "●";
+    margin-right: 14px;
+    font-size: 0.45em;
+    vertical-align: 0.35em;
     color: var(--seccion);
-  }
-  .cabecera p {
-    color: var(--tenue);
-    margin: 0;
   }
   .filtros {
     display: flex;
     flex-wrap: wrap;
     gap: 12px 16px;
     align-items: center;
-    margin: 22px 0 30px;
+    margin: 24px 0 32px;
   }
   input[type="search"],
   select {
     padding: 9px 12px;
     border: 1px solid var(--borde);
     border-radius: 8px;
-    background: var(--superficie);
+    background: var(--caja);
     color: var(--texto);
     font: inherit;
-    font-size: 0.92rem;
+    font-size: 0.95rem;
   }
   input[type="search"] {
-    flex: 1 1 220px;
+    flex: 1 1 240px;
   }
   .opciones {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 16px;
-    font-size: 0.88rem;
+    gap: 6px 18px;
+    font-size: 0.93rem;
     color: var(--tenue);
   }
   .opciones label {
     display: flex;
-    gap: 5px;
+    gap: 6px;
     align-items: center;
     cursor: pointer;
+  }
+  .opciones .dorada {
+    color: var(--dorado);
   }
   .tags {
     display: flex;
@@ -203,13 +230,33 @@ const tags = [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).s
   .tags button {
     background: none;
     font: inherit;
-    font-size: 0.8rem;
+    font-size: 0.84rem;
     cursor: pointer;
+  }
+  .tags button:hover {
+    color: var(--texto);
+    border-color: var(--suave);
   }
   .tags button.activo {
     color: var(--fondo);
     background: var(--texto);
     border-color: var(--texto);
+  }
+  .tags .mas {
+    color: var(--enlace);
+    border-style: dashed;
+  }
+  .vacio {
+    color: var(--tenue);
+  }
+  .vacio button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--enlace);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
   }
   @media (max-width: 760px) {
     /* En el móvil los tags van en una fila que se desliza, en vez de ocupar
@@ -221,14 +268,11 @@ const tags = [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).s
       padding-inline: 16px;
       scrollbar-width: none;
     }
-    .tags button {
+    .tags > * {
       flex: none;
     }
     select {
       flex: 1 1 140px;
     }
-  }
-  .vacio {
-    color: var(--tenue);
   }
 </style>

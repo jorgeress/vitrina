@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 public
+# public/ es lo que genera Quartz; el de la web en Astro son sus iconos y se versiona
+!/web/public/
 prof
 tsconfig.tsbuildinfo
 .quartz-cache

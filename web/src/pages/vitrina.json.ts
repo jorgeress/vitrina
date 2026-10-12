@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { cartela, obras, ruta, titulo } from "../lib/obras";
+import { autores, cartela, obras, ruta, titulo } from "../lib/obras";
 
 // La colección entera en un fichero, con los ids de cada fuente. Es lo que
 // permitiría comparar dos vitrinas cualesquiera (en qué coinciden, qué tiene
@@ -11,7 +11,7 @@ export const GET: APIRoute = async ({ site }) => {
       titulo: titulo(o),
       tipo: d.tipo,
       year: d.year ?? null,
-      autor: d.autor ?? null,
+      autores: autores(o),
       nota: d.nota ?? null,
       estado: d.estado ?? null,
       favorito: Boolean(d.favorito),
@@ -26,7 +26,7 @@ export const GET: APIRoute = async ({ site }) => {
       url: new URL(ruta(o), site).href,
     };
   });
-  return new Response(JSON.stringify({ version: 1, obras: lista }, null, 2), {
+  return new Response(JSON.stringify({ version: 2, obras: lista }, null, 2), {
     headers: { "Content-Type": "application/json; charset=utf-8" },
   });
 };

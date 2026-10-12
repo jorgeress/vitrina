@@ -1,101 +1,141 @@
 ---
+import { getEntry } from "astro:content";
 import Base from "../layouts/Base.astro";
 import Portada from "../components/Portada.astro";
-import { perfil } from "../perfil";
-import { SECCIONES, cartela, obras, porAlta, portada, ruta, seccionDe, titulo, url } from "../lib/obras";
+import {
+  SECCIONES,
+  cartela,
+  obras,
+  porAlta,
+  porAprecio,
+  portada,
+  primerParrafo,
+  recortar,
+  ruta,
+  titulo,
+  url,
+} from "../lib/obras";
+
+// Cuántas piezas de Lo mejor de lo mejor se enseñan por sala.
+const ESTRELLAS = 5;
 
 const todas = await obras();
-const recientes = [...todas].sort(porAlta).slice(0, 12);
+// La presentación es la suya: el primer párrafo de content/index.md, que se
+// edita en Obsidian como cualquier otra nota.
+const portadaVault = await getEntry("paginas", "index");
+const presentacion = primerParrafo(portadaVault?.body);
 
-// Las estrellas: lo que él ha marcado como favorito, de más nota a menos y,
-// a igual nota, lo último que entró.
-const estrellas = SECCIONES.map((s) => ({
-  seccion: s,
-  obras: todas
-    .filter((o) => o.data.tipo === s.tipo && o.data.favorito)
-    .sort((a, b) => (b.data.nota ?? 0) - (a.data.nota ?? 0) || porAlta(a, b))
-    .slice(0, perfil.estrellas),
-})).filter((g) => g.obras.length > 0);
+const salas = SECCIONES.map((s) => {
+  const lista = todas.filter((o) => o.data.tipo === s.tipo);
+  return {
+    seccion: s,
+    lista,
+    escaparate: [...lista].sort(porAprecio).slice(0, 3),
+    estrellas: lista.filter((o) => o.data.favorito).sort(porAprecio).slice(0, ESTRELLAS),
+  };
+});
 
 const escritas = todas
-  .map((o) => ({ obra: o, texto: cartela(o) }))
-  .filter((e): e is { obra: typeof e.obra; texto: string } => e.texto !== null)
+  .map((obra) => ({ obra, texto: cartela(obra) }))
+  .filter((e): e is { obra: (typeof todas)[number]; texto: string } => e.texto !== null)
   .sort((a, b) => porAlta(a.obra, b.obra));
-
-const cifras = SECCIONES.map((s) => ({
-  seccion: s,
-  total: todas.filter((o) => o.data.tipo === s.tipo).length,
-}));
+const almacen = todas.filter((o) => o.data.estado === "pendiente").sort(porAlta);
+const recientes = [...todas].sort(porAlta).slice(0, 14);
 const favoritos = todas.filter((o) => o.data.favorito).length;
 ---
 
 <Base activa="inicio">
-  <section class="perfil contenedor">
-    <div class="avatar" aria-hidden="true">{perfil.nombre[0]}</div>
-    <div>
-      <h1>{perfil.nombre}</h1>
-      <p class="lema">{perfil.lema}</p>
-      <ul class="cifras">
-        {
-          cifras.map(({ seccion, total }) => (
-            <li>
-              <a href={url(`${seccion.slug}/`)}>
-                <strong>{total}</strong> {total === 1 ? seccion.una : seccion.varias}
-              </a>
-            </li>
-          ))
-        }
-        <li>
-          <a href={url("favoritos/")}><strong>{favoritos}</strong> {favoritos === 1 ? "favorito" : "favoritos"}</a>
-        </li>
-      </ul>
-    </div>
+  <section class="entrada contenedor">
+    <h1 class="rotulo-casa">Vitrina</h1>
+    {presentacion && <p class="presentacion">{presentacion}</p>}
+    <ul class="cifras">
+      {
+        salas.map(({ seccion, lista }) => (
+          <li>
+            <a href={url(`${seccion.slug}/`)}>
+              <strong>{lista.length}</strong> {lista.length === 1 ? seccion.una : seccion.varias}
+            </a>
+          </li>
+        ))
+      }
+      <li class="dorada">
+        <a href={url("favoritos/")}>★ <strong>{favoritos}</strong> en lo mejor de lo mejor</a>
+      </li>
+    </ul>
   </section>
 
   <div class="contenedor">
-    <section class="bloque">
+    <section class="bloque" aria-labelledby="t-salas">
+      <header><h2 id="t-salas">Las salas</h2></header>
+      <div class="salas">
+        {
+          salas.map(({ seccion, lista, escaparate }) => (
+            <a class="sala" href={url(`${seccion.slug}/`)} style={`--seccion:var(--${seccion.tipo})`}>
+              <span class="pila" aria-hidden="true">
+                {escaparate.map((o) => portada(o) && <img src={portada(o)} alt="" loading="lazy" />)}
+              </span>
+              <span class="sala-texto">
+                <span class="sala-nombre">{seccion.nombre}</span>
+                <span class="sala-cuenta">{lista.length === 1 ? `1 ${seccion.una}` : `${lista.length} ${seccion.varias}`}</span>
+              </span>
+            </a>
+          ))
+        }
+        <a class="sala constelacion" href={url("constelacion/")}>
+          <span class="estrellas-fondo" aria-hidden="true"></span>
+          <span class="sala-texto">
+            <span class="sala-nombre">Constelación</span>
+            <span class="sala-cuenta">Todas, unidas por lo que comparten</span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <section class="bloque" aria-labelledby="t-mejor">
       <header>
         <div>
-          <h2>Mis estrellas</h2>
-          <p>Lo que no puede faltar, sección por sección.</p>
+          <h2 id="t-mejor" class="dorado">★ Lo mejor de lo mejor</h2>
+          <p>Lo que no puede faltar, sala por sala.</p>
         </div>
-        <a class="ver-todo" href={url("favoritos/")}>Todos los favoritos →</a>
+        <a class="ver-todo" href={url("favoritos/")}>Verlo todo →</a>
       </header>
       <div class="estrellas">
         {
-          estrellas.map(({ seccion, obras }) => (
-            <div class="fila-estrellas">
-              <a class="etiqueta" href={url(`${seccion.slug}/`)} style={`--seccion:${seccion.color}`}>
-                {seccion.nombre}
-              </a>
-              <div class="cinco">
-                {obras.map((o) => (
-                  <Portada obra={o} />
-                ))}
+          salas
+            .filter((s) => s.estrellas.length > 0)
+            .map(({ seccion, estrellas }) => (
+              <div class="fila">
+                <a class="etiqueta" href={url(`${seccion.slug}/?favorito=1`)} style={`--seccion:var(--${seccion.tipo})`}>
+                  {seccion.nombre}
+                </a>
+                <div class="cinco">
+                  {estrellas.map((o, i) => (
+                    <Portada obra={o} prioridad={i < 5} />
+                  ))}
+                </div>
               </div>
-            </div>
-          ))
+            ))
         }
       </div>
     </section>
 
     {
       escritas.length > 0 && (
-        <section class="bloque">
+        <section class="bloque" aria-labelledby="t-cartelas">
           <header>
             <div>
-              <h2>Por qué están en la vitrina</h2>
+              <h2 id="t-cartelas">Por qué están en la vitrina</h2>
               <p>Lo que he escrito yo, no lo que dice la contraportada.</p>
             </div>
           </header>
           <div class="cartelas">
             {escritas.map(({ obra, texto }) => (
-              <a class="cartela" href={ruta(obra)} style={`--seccion:${seccionDe(obra.data.tipo).color}`}>
+              <a class="cartela" href={ruta(obra)} style={`--seccion:var(--${obra.data.tipo})`}>
                 {portada(obra) && <img src={portada(obra)} alt="" loading="lazy" />}
-                <div>
-                  <p class="cita">«{texto.length > 220 ? texto.slice(0, 220).replace(/\s\S*$/, "") + "…" : texto}»</p>
-                  <p class="de">{titulo(obra)}</p>
-                </div>
+                <span>
+                  <span class="cita">{recortar(texto, 230)}</span>
+                  <span class="de">{titulo(obra)}</span>
+                </span>
               </a>
             ))}
           </div>
@@ -103,12 +143,31 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
       )
     }
 
-    <section class="bloque">
+    {
+      almacen.length > 0 && (
+        <section class="bloque" aria-labelledby="t-almacen">
+          <header>
+            <div>
+              <h2 id="t-almacen">En el almacén</h2>
+              <p>Lo que espera su turno de salir a la vitrina.</p>
+            </div>
+          </header>
+          <div class="rejilla">
+            {almacen.map((o) => (
+              <Portada obra={o} mixta />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="bloque" aria-labelledby="t-recientes">
       <header>
         <div>
-          <h2>Recién llegadas</h2>
-          <p>Lo último que ha entrado, de cualquier sección.</p>
+          <h2 id="t-recientes">Recién llegadas a la vitrina</h2>
+          <p>Lo último que ha entrado, de cualquier sala.</p>
         </div>
+        <a class="ver-todo" href={url("index.xml")}>RSS</a>
       </header>
       <div class="rejilla">
         {recientes.map((o) => <Portada obra={o} mixta />)}
@@ -118,43 +177,45 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
 </Base>
 
 <style>
-  .perfil {
-    display: flex;
-    gap: 28px;
-    align-items: center;
-    padding-top: 56px;
+  /* La entrada, como en Quartz: el nombre de la colección grabado en el
+     centro y la presentación debajo. */
+  .entrada {
+    padding-block: 64px 8px;
+    text-align: center;
   }
-  .avatar {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 104px;
-    height: 104px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--juego), var(--serie), var(--peli), var(--album));
-    font-family: var(--serif);
-    font-size: 3rem;
-    font-style: italic;
-    color: #fff;
+  .rotulo-casa {
+    font-family: var(--rotulo);
+    font-size: clamp(2.2rem, 7vw, 3.6rem);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    /* El espaciado se come el centrado: la última letra deja su hueco a la
+       derecha y la palabra queda medio paso a la izquierda. Se devuelve. */
+    text-indent: 0.22em;
   }
-  h1 {
-    font-size: clamp(2rem, 5vw, 3rem);
+  :global(:root[data-tema="oscuro"]) .rotulo-casa {
+    text-shadow: 0 0 24px rgb(236 231 221 / 0.22);
   }
-  .lema {
-    margin: 6px 0 14px;
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-tema="claro"])) .rotulo-casa {
+      text-shadow: 0 0 24px rgb(236 231 221 / 0.22);
+    }
+  }
+  .presentacion {
+    max-width: 640px;
+    margin: 18px auto 0;
     color: var(--tenue);
-    font-family: var(--serif);
     font-size: 1.15rem;
   }
   .cifras {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 18px;
-    margin: 0;
+    justify-content: center;
+    gap: 6px 22px;
+    margin: 26px 0 0;
     padding: 0;
     list-style: none;
     color: var(--tenue);
-    font-size: 0.92rem;
   }
   .cifras strong {
     color: var(--texto);
@@ -162,43 +223,133 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
   .cifras a:hover {
     color: var(--texto);
   }
-  @media (max-width: 520px) {
-    .perfil {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 16px;
-      padding-top: 32px;
+  .cifras .dorada,
+  .cifras .dorada strong {
+    color: var(--dorado);
+  }
+
+  .dorado {
+    color: var(--dorado);
+  }
+
+  /* Las salas: una tarjeta por sección con sus tres mejores piezas
+     apiladas, como se ve una sala desde la puerta. */
+  .salas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  @media (max-width: 960px) {
+    .salas {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .avatar {
-      width: 72px;
-      height: 72px;
-      font-size: 2rem;
-    }
+  }
+  .sala {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-height: 116px;
+    padding: 16px 18px;
+    overflow: hidden;
+    border-radius: var(--radio);
+    background: var(--caja);
+    border: 1px solid var(--borde);
+    transition: border-color 0.18s ease;
+  }
+  .sala:hover {
+    border-color: var(--seccion, var(--suave));
+  }
+  .pila {
+    display: flex;
+    flex: none;
+  }
+  .pila img {
+    width: 52px;
+    height: 76px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 2px solid var(--caja);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.25);
+  }
+  .pila img + img {
+    margin-left: -26px;
+  }
+  .pila img:nth-child(2) {
+    transform: translateY(4px) rotate(3deg);
+  }
+  .pila img:nth-child(3) {
+    transform: translateY(8px) rotate(6deg);
+  }
+  .sala-texto {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .sala-nombre {
+    font-family: var(--rotulo);
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: 0.04em;
+  }
+  .sala-nombre::before {
+    content: "●";
+    margin-right: 8px;
+    font-size: 0.7em;
+    vertical-align: 0.15em;
+    color: var(--seccion);
+  }
+  .sala-cuenta {
+    color: var(--tenue);
+    font-size: 0.92rem;
+  }
+  .constelacion .sala-nombre::before {
+    content: "✦";
+    color: var(--texto);
+  }
+  .estrellas-fondo {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 80% 28%, var(--juego) 0 2px, transparent 3px),
+      radial-gradient(circle at 90% 58%, var(--peli) 0 2px, transparent 3px),
+      radial-gradient(circle at 95% 20%, var(--album) 0 2px, transparent 3px),
+      radial-gradient(circle at 84% 80%, var(--serie) 0 2px, transparent 3px),
+      radial-gradient(circle at 93% 86%, var(--libro) 0 2px, transparent 3px);
+    opacity: 0.9;
   }
 
   .estrellas {
     display: grid;
-    gap: 28px;
+    gap: 30px;
   }
-  .fila-estrellas {
+  .fila {
     display: grid;
-    grid-template-columns: 110px 1fr;
+    grid-template-columns: 120px 1fr;
     gap: 18px;
     align-items: start;
   }
   .etiqueta {
-    padding-top: 6px;
+    padding-top: 4px;
+    font-family: var(--rotulo);
     font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .etiqueta::before {
+    content: "●";
+    margin-right: 8px;
+    font-size: 0.7em;
+    vertical-align: 0.15em;
     color: var(--seccion);
   }
   .cinco {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 18px;
-    max-width: 860px;
+    max-width: 880px;
   }
   @media (max-width: 760px) {
-    .fila-estrellas {
+    .fila {
       grid-template-columns: 1fr;
       gap: 10px;
     }
@@ -207,7 +358,9 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       gap: 12px;
-      padding-bottom: 6px;
+      margin-inline: -16px;
+      padding: 0 16px 8px;
+      scrollbar-width: none;
     }
     .cinco > :global(*) {
       flex: 0 0 31%;
@@ -217,16 +370,17 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
 
   .cartelas {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 14px;
   }
   .cartela {
     display: flex;
     gap: 16px;
     padding: 18px;
     border-radius: var(--radio);
-    background: var(--superficie);
+    background: var(--caja);
     border: 1px solid var(--borde);
+    border-left: 3px solid var(--tenue);
     transition: border-color 0.18s ease;
   }
   .cartela:hover {
@@ -234,23 +388,57 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
   }
   .cartela img {
     flex: none;
-    width: 64px;
+    width: 62px;
     aspect-ratio: 2 / 3;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 5px;
+  }
+  .cartela > span {
+    display: flex;
+    flex-direction: column;
   }
   .cita {
-    margin: 0;
-    font-family: var(--serif);
     font-size: 1.02rem;
-    line-height: 1.45;
+    line-height: 1.5;
   }
   .de {
-    margin: 8px 0 0;
-    font-size: 0.82rem;
+    margin-top: 8px;
+    font-size: 0.86rem;
     color: var(--tenue);
   }
   @media (max-width: 520px) {
+    .entrada {
+      padding-top: 40px;
+    }
+    /* En el móvil las salas van de dos en dos, con la pila encima del
+       nombre, para que no ocupen una pantalla entera antes de lo demás. */
+    .salas {
+      gap: 10px;
+    }
+    .sala {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      min-height: 0;
+      padding: 14px;
+    }
+    .pila img {
+      width: 40px;
+      height: 58px;
+    }
+    .pila img + img {
+      margin-left: -20px;
+    }
+    .sala-nombre {
+      font-size: 1rem;
+    }
+    .sala-cuenta {
+      font-size: 0.85rem;
+    }
+    .constelacion {
+      justify-content: flex-end;
+      min-height: 112px;
+    }
     .cartelas {
       grid-template-columns: 1fr;
     }

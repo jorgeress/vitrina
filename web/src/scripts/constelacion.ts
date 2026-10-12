@@ -28,11 +28,20 @@ export function iniciar() {
   const lienzo = document.getElementById("lienzo") as HTMLCanvasElement;
   const ctx = lienzo.getContext("2d")!;
   const datos = JSON.parse(document.getElementById("datos")!.textContent!);
-  const estilo = getComputedStyle(document.documentElement);
-  const color = (tipo: string) => estilo.getPropertyValue(`--${tipo}`).trim();
-  const fondo = estilo.getPropertyValue("--fondo").trim();
-  const tenue = estilo.getPropertyValue("--tenue").trim();
-  const texto = estilo.getPropertyValue("--texto").trim();
+  // Los colores salen de las variables de global.css, y se releen al cambiar
+  // de tema: el lienzo no se entera solo, como sí hace el CSS.
+  let colores: Record<string, string> = {};
+  const color = (tipo: string) => colores[tipo];
+  function leerColores() {
+    const estilo = getComputedStyle(document.documentElement);
+    for (const v of ["juego", "peli", "serie", "libro", "album", "fondo", "tenue", "texto"])
+      colores[v] = estilo.getPropertyValue(`--${v}`).trim();
+  }
+  leerColores();
+  window.addEventListener("tema", () => {
+    leerColores();
+    pintar();
+  });
 
   const nodos: Nodo[] = datos.nodos.map((n: Nodo) => ({ ...n, vecinos: new Set<string>() }));
   const porId = new Map(nodos.map((n) => [n.id, n]));
@@ -94,9 +103,25 @@ export function iniciar() {
     const xs = grupo.map((n) => n.x!);
     const ys = grupo.map((n) => n.y!);
     const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
-    const margen = 60;
-    const k = Math.min(2, (width - margen * 2) / (x1 - x0 || 1), (height - margen * 2) / (y1 - y0 || 1));
-    vista = { k, x: width / 2 - ((x0 + x1) / 2) * k, y: height / 2 - ((y0 + y1) / 2) * k };
+    // El hueco libre es lo que no tapa el panel: a su derecha en pantalla
+    // ancha, debajo en el móvil, donde ocupa todo el ancho.
+    const panel = document.querySelector(".panel")?.getBoundingClientRect();
+    const lienzoCaja = lienzo.getBoundingClientRect();
+    let izquierda = 0;
+    let arriba = 0;
+    if (panel && !foco) {
+      if (width > 760) izquierda = panel.right - lienzoCaja.left;
+      else arriba = panel.bottom - lienzoCaja.top;
+    }
+    const margen = 40;
+    const ancho = width - izquierda - margen * 2;
+    const alto = height - arriba - margen * 2;
+    const k = Math.min(2, ancho / (x1 - x0 || 1), alto / (y1 - y0 || 1));
+    vista = {
+      k,
+      x: izquierda + margen + ancho / 2 - ((x0 + x1) / 2) * k,
+      y: arriba + margen + alto / 2 - ((y0 + y1) / 2) * k,
+    };
   }
 
   const resaltado = () => encima ?? foco;
@@ -118,7 +143,7 @@ export function iniciar() {
       if (!visibles.has(a.source.tipo) || !visibles.has(a.target.tipo)) continue;
       const activa = r && (a.source === r || a.target === r);
       ctx.globalAlpha = r ? (activa ? 0.9 : 0.05) : 0.22;
-      ctx.strokeStyle = activa ? color(r!.tipo) : tenue;
+      ctx.strokeStyle = activa ? color(r!.tipo) : colores.tenue;
       ctx.lineWidth = (activa ? 2 : 1) / vista.k;
       ctx.setLineDash(a.debil ? [4 / vista.k, 4 / vista.k] : []);
       ctx.beginPath();
@@ -156,7 +181,7 @@ export function iniciar() {
       ctx.restore();
       ctx.beginPath();
       ctx.arc(n.x!, n.y!, rad, 0, Math.PI * 2);
-      ctx.strokeStyle = n === r ? texto : color(n.tipo);
+      ctx.strokeStyle = n === r ? colores.texto : color(n.tipo);
       ctx.lineWidth = (n === r ? 3 : 2) / vista.k;
       ctx.stroke();
     }
@@ -165,16 +190,16 @@ export function iniciar() {
 
     // Con una obra resaltada, se nombran ella y sus vecinas.
     if (r && visibles.has(r.tipo)) {
-      ctx.font = "600 12px Inter, system-ui, sans-serif";
+      ctx.font = "600 13px 'Source Sans 3', system-ui, sans-serif";
       ctx.textAlign = "center";
       for (const n of [r, ...[...r.vecinos].map((id) => porId.get(id)!)]) {
         if (!visibles.has(n.tipo)) continue;
         const x = n.x! * vista.k + vista.x;
         const y = (n.y! + radio(n)) * vista.k + vista.y + 14;
         ctx.lineWidth = 4;
-        ctx.strokeStyle = fondo;
+        ctx.strokeStyle = colores.fondo;
         ctx.strokeText(n.titulo, x, y);
-        ctx.fillStyle = n === r ? texto : tenue;
+        ctx.fillStyle = n === r ? colores.texto : colores.tenue;
         ctx.fillText(n.titulo, x, y);
       }
     }
@@ -199,13 +224,39 @@ export function iniciar() {
 
   let arrastre: { nodo: Nodo | null; x: number; y: number; movido: boolean } | null = null;
 
+  // Con dos dedos se acerca y se aleja, como un mapa: en el móvil no hay
+  // rueda. Se guarda dónde está cada dedo y, mientras haya dos, la distancia
+  // entre ellos manda sobre el zoom y su punto medio, sobre el centro.
+  const dedos = new Map<number, { x: number; y: number }>();
+  let pellizco: { distancia: number; k: number } | null = null;
+  const separacion = () => {
+    const [a, b] = [...dedos.values()];
+    return { d: Math.hypot(a.x - b.x, a.y - b.y), mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2 };
+  };
+
   lienzo.addEventListener("pointerdown", (e) => {
+    dedos.set(e.pointerId, { x: e.offsetX, y: e.offsetY });
+    if (dedos.size === 2) {
+      pellizco = { distancia: separacion().d, k: vista.k };
+      arrastre = null;
+      return;
+    }
     lienzo.setPointerCapture(e.pointerId);
     lienzo.classList.add("agarrado");
     arrastre = { nodo: nodoEn(e.offsetX, e.offsetY), x: e.offsetX, y: e.offsetY, movido: false };
   });
 
   lienzo.addEventListener("pointermove", (e) => {
+    if (dedos.has(e.pointerId)) dedos.set(e.pointerId, { x: e.offsetX, y: e.offsetY });
+    if (pellizco && dedos.size === 2) {
+      const { d, mx, my } = separacion();
+      const k = Math.min(4, Math.max(0.25, (pellizco.k * d) / pellizco.distancia));
+      vista.x = mx - ((mx - vista.x) * k) / vista.k;
+      vista.y = my - ((my - vista.y) * k) / vista.k;
+      vista.k = k;
+      pintar();
+      return;
+    }
     if (arrastre) {
       const dx = e.offsetX - arrastre.x;
       const dy = e.offsetY - arrastre.y;
@@ -232,7 +283,18 @@ export function iniciar() {
     }
   });
 
-  lienzo.addEventListener("pointerup", () => {
+  const soltar = (e: PointerEvent) => {
+    dedos.delete(e.pointerId);
+    if (dedos.size < 2) pellizco = null;
+  };
+  lienzo.addEventListener("pointercancel", (e) => {
+    soltar(e);
+    arrastre = null;
+  });
+  lienzo.addEventListener("pointerup", (e) => {
+    const eraPellizco = pellizco !== null;
+    soltar(e);
+    if (eraPellizco) return;
     lienzo.classList.remove("agarrado");
     if (!arrastre) return;
     const { nodo, movido } = arrastre;

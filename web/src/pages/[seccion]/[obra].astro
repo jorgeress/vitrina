@@ -3,6 +3,7 @@ import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Portada from "../../components/Portada.astro";
 import {
+  ESTADOS,
   autores,
   autoresRepetidos,
   cartela,
@@ -12,12 +13,16 @@ import {
   obras,
   portada,
   relacionadas,
+  rutaAutor,
+  slugsAutores,
+  rutaTag,
   seccionDe,
-  slugAutor,
   slugObra,
   titulo,
+  transicion,
   url,
   type Obra,
+  type Vecina,
 } from "../../lib/obras";
 
 export async function getStaticPaths() {
@@ -36,24 +41,41 @@ const imagen = portada(obra);
 const { Content } = await render(obra);
 const cercanas = relacionadas(obra, todas);
 const conPagina = autoresRepetidos(todas);
+const slugs = await slugsAutores();
 const quienes = autores(obra);
-// La cita de la fuente ya acaba en «→ Steam»: ese no se repite arriba.
-const enlaces = fuentes(obra).filter((f) => !(obra.body ?? "").includes(new URL(f.href).hostname));
-const resumen =
-  cartela(obra) ?? `${nombre}${d.year ? ` (${d.year})` : ""}, en la sección de ${seccion.nombre.toLowerCase()} de la vitrina.`;
+const enlaces = fuentes(obra);
+const escrita = cartela(obra);
+const resumen = escrita ?? `${nombre}${d.year ? ` (${d.year})` : ""}, en la sala de ${seccion.nombre.toLowerCase()} de la vitrina.`;
+
+/** Por qué está unida: el autor que comparten o sus dos tags más raros. */
+function motivo(v: Vecina): string {
+  const [primero, segundo] = v.motivos;
+  if (!primero) return "";
+  if (quienes.includes(primero)) return `También de ${primero}`;
+  return [primero, segundo].filter(Boolean).map((t) => nombreTag(t!)).join(" · ");
+}
 ---
 
 <Base titulo={nombre} descripcion={resumen} imagen={imagen} activa={seccion.slug}>
-  <article style={`--seccion:${seccion.color}`}>
+  <article style={`--seccion:var(--${d.tipo})`} data-pagefind-body>
     <header class="escaparate">
       {imagen && <div class="fondo" style={`background-image:url('${imagen}')`} aria-hidden="true" />}
       <div class="contenedor dentro">
-        <div class:list={["cubierta", d.tipo === "album" && "cuadrada"]}>
-          {imagen ? <img src={imagen} alt={`Portada de ${nombre}`} /> : <span class="sin-imagen">{nombre}</span>}
+        <div
+          class:list={["cubierta", d.tipo === "album" && "cuadrada", d.estado === "abandonado" && "retirada"]}
+          style={`view-transition-name:${transicion(obra)}`}
+        >
+          {
+            imagen ? (
+              <img src={imagen} alt={`Portada de ${nombre}`} data-pagefind-meta="image[src]" />
+            ) : (
+              <span class="sin-imagen">{nombre}</span>
+            )
+          }
         </div>
         <div class="datos">
-          <a class="seccion" href={url(`${seccion.slug}/`)}>{mayuscula(seccion.una)}</a>
-          <h1>{nombre}</h1>
+          <a class="sala" href={url(`${seccion.slug}/`)} data-pagefind-filter="sala">{seccion.nombre}</a>
+          <h1 data-pagefind-meta="title">{nombre}</h1>
           <p class="autor">
             {
               // Cada autor por separado, enlazado si tiene página: en «QLOC,
@@ -61,24 +83,30 @@ const resumen =
               quienes.map((a, i) => (
                 <>
                   {i > 0 && (i === quienes.length - 1 ? " y " : ", ")}
-                  {conPagina.has(a) ? <a href={url(`autores/${slugAutor(a)}/`)}>{a}</a> : <span>{a}</span>}
+                  {conPagina.has(a) ? <a href={rutaAutor(a, slugs)}>{a}</a> : <span>{a}</span>}
                 </>
               ))
             }
-            {quienes.length > 0 && d.year && " · "}
+            {quienes.length > 0 && d.year && <span class="punto"> · </span>}
             {d.year}
           </p>
           <div class="sellos">
-            {d.favorito && <span class="sello favorito">★ Favorito</span>}
+            {d.favorito && <a class="sello dorado" href={url("favoritos/")}>★ Lo mejor de lo mejor</a>}
             {d.nota && <span class="sello">{d.nota}<small>/10</small></span>}
-            {d.estado && <span class="sello">{mayuscula(d.estado)}</span>}
-            {d.alta && <span class="sello tenue">En la vitrina desde {d.alta.toLocaleDateString("es-ES", { month: "long", year: "numeric" })}</span>}
+            {d.estado && <span class="sello">{ESTADOS[d.estado]}</span>}
+            {
+              d.alta && (
+                <span class="sello tenue">
+                  En la vitrina desde {d.alta.toLocaleDateString("es-ES", { month: "long", year: "numeric", timeZone: "UTC" })}
+                </span>
+              )
+            }
           </div>
           {
             (d.tags?.length ?? 0) > 0 && (
               <div class="tags">
                 {d.tags!.map((t) => (
-                  <a class="chip" href={url(`${seccion.slug}/?tag=${encodeURIComponent(t)}`)}>
+                  <a class="chip" href={rutaTag(t)}>
                     {nombreTag(t)}
                   </a>
                 ))}
@@ -103,133 +131,144 @@ const resumen =
     <div class="contenedor texto">
       <Content />
     </div>
-
-    {
-      cercanas.length > 0 && (
-        <section class="contenedor bloque">
-          <header>
-            <div>
-              <h2>Conectada con</h2>
-              <p>Comparten autor o lo que las hace parecidas.</p>
-            </div>
-            <a class="ver-todo" href={url(`constelacion/?foco=${encodeURIComponent(obra.id)}`)}>
-              Verla en la constelación →
-            </a>
-          </header>
-          <div class="rejilla">
-            {cercanas.map((o) => <Portada obra={o} mixta />)}
-          </div>
-        </section>
-      )
-    }
   </article>
+
+  {
+    cercanas.length > 0 && (
+      <section class="contenedor bloque" aria-labelledby="t-conectada">
+        <header>
+          <div>
+            <h2 id="t-conectada">Conectada con</h2>
+            <p>Lo que tiene en común con otras piezas de la vitrina.</p>
+          </div>
+          <a class="ver-todo" href={url(`constelacion/?foco=${encodeURIComponent(obra.id)}`)}>
+            Verla en la constelación →
+          </a>
+        </header>
+        <div class="rejilla">
+          {cercanas.map((v) => (
+            <Portada obra={v.obra} mixta nota={motivo(v)} />
+          ))}
+        </div>
+      </section>
+    )
+  }
 </Base>
 
 <style>
   .escaparate {
     position: relative;
     overflow: hidden;
-    padding-block: 48px;
+    padding-block: 52px;
     border-bottom: 1px solid var(--borde);
   }
-  /* La propia portada, desenfocada, hace de fondo: cada ficha tiene su color
-     sin elegir ninguno a mano. */
+  /* La propia portada, desenfocada, hace de fondo: cada ficha tiene su luz
+     sin elegirla a mano, como una pieza iluminada dentro de su caja. */
   .fondo {
     position: absolute;
     inset: -40px;
     background-size: cover;
     background-position: center;
-    filter: blur(48px) saturate(1.3);
-    opacity: 0.35;
+    filter: blur(52px) saturate(1.2);
+    opacity: 0.3;
   }
   .dentro {
     position: relative;
     display: flex;
-    gap: 40px;
+    gap: 44px;
     align-items: flex-end;
   }
   .cubierta {
     flex: none;
-    width: 240px;
+    width: 250px;
     aspect-ratio: 2 / 3;
     border-radius: var(--radio);
     overflow: hidden;
-    background: var(--superficie-2);
-    box-shadow: 0 24px 60px rgb(0 0 0 / 0.5);
+    background: var(--caja-2);
+    box-shadow: 0 24px 60px rgb(0 0 0 / 0.45);
   }
   .cubierta.cuadrada {
-    width: 280px;
+    width: 290px;
     aspect-ratio: 1;
   }
-  .sin-imagen {
-    display: flex;
-    align-items: flex-end;
-    height: 100%;
-    padding: 18px;
-    font-family: var(--serif);
-    font-size: 1.8rem;
-    font-weight: 600;
-    line-height: 1.1;
-    background:
-      radial-gradient(circle at 20% 15%, color-mix(in srgb, var(--seccion) 55%, transparent), transparent 60%),
-      linear-gradient(160deg, color-mix(in srgb, var(--seccion) 30%, var(--superficie-2)), var(--superficie-2));
-  }
-  .fuentes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin: 16px 0 0;
-    font-size: 0.85rem;
-    color: var(--tenue);
-  }
-  .fuentes a:hover {
-    color: var(--texto);
+  .cubierta.retirada {
+    filter: grayscale(0.85);
   }
   .cubierta img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
-  .seccion {
-    color: var(--seccion);
+  .sin-imagen {
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    padding: 20px;
+    font-family: var(--rotulo);
+    font-size: 1.7rem;
     font-weight: 600;
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
+    line-height: 1.1;
+    background:
+      radial-gradient(circle at 20% 15%, color-mix(in srgb, var(--seccion) 45%, transparent), transparent 60%),
+      linear-gradient(160deg, color-mix(in srgb, var(--seccion) 25%, var(--caja-2)), var(--caja-2));
+  }
+  .sala {
+    font-family: var(--rotulo);
     text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--tenue);
+  }
+  .sala::before {
+    content: "●";
+    margin-right: 8px;
+    color: var(--seccion);
+  }
+  .sala:hover {
+    color: var(--texto);
   }
   h1 {
-    margin-top: 8px;
-    font-size: clamp(2rem, 5vw, 3.4rem);
+    margin-top: 10px;
+    font-size: clamp(2rem, 5vw, 3.3rem);
+    line-height: 1.08;
+    overflow-wrap: anywhere;
   }
   .autor {
-    margin: 10px 0 0;
-    font-size: 1.1rem;
+    margin: 12px 0 0;
+    font-size: 1.15rem;
     color: var(--tenue);
   }
   .autor a {
     color: var(--texto);
     text-decoration: underline;
-    text-decoration-color: var(--seccion);
+    text-decoration-color: color-mix(in srgb, var(--texto) 30%, transparent);
     text-underline-offset: 4px;
+  }
+  .autor a:hover {
+    text-decoration-color: currentColor;
   }
   .sellos {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 18px;
+    margin-top: 20px;
   }
   .sello {
-    padding: 5px 12px;
+    padding: 5px 13px;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--superficie-2) 80%, transparent);
-    font-size: 0.85rem;
-    font-weight: 500;
+    background: color-mix(in srgb, var(--caja) 75%, transparent);
+    border: 1px solid var(--borde);
+    font-size: 0.9rem;
+    font-weight: 600;
   }
   .sello small {
     color: var(--tenue);
+    font-weight: 400;
   }
-  .sello.favorito {
-    color: var(--acento);
+  .sello.dorado {
+    color: var(--dorado);
+    border-color: color-mix(in srgb, var(--dorado) 45%, transparent);
   }
   .sello.tenue {
     color: var(--tenue);
@@ -241,18 +280,38 @@ const resumen =
     gap: 6px;
     margin-top: 14px;
   }
+  .fuentes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin: 16px 0 0;
+    font-size: 0.92rem;
+  }
+  .fuentes a {
+    color: var(--enlace);
+  }
+  .fuentes a:hover {
+    color: var(--texto);
+  }
   .texto {
     max-width: 760px;
-    padding-top: 40px;
+    padding-top: 44px;
   }
   .texto :global(h2) {
-    margin: 32px 0 12px;
+    margin: 36px 0 12px;
+    font-family: var(--rotulo);
     font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
   }
   .texto :global(ol) {
     columns: 2;
+    column-gap: 40px;
     color: var(--tenue);
-    padding-left: 1.4em;
+    padding-left: 1.6em;
+  }
+  .texto :global(ol li) {
+    break-inside: avoid;
   }
   @media (max-width: 680px) {
     .escaparate {
@@ -264,10 +323,10 @@ const resumen =
       gap: 22px;
     }
     .cubierta {
-      width: 150px;
+      width: 160px;
     }
     .cubierta.cuadrada {
-      width: 180px;
+      width: 200px;
     }
     .texto :global(ol) {
       columns: 1;

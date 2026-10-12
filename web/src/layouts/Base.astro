@@ -12,17 +12,13 @@ interface Props {
 
 const {
   titulo,
-  descripcion = "Mi colección de juegos, películas, series, libros y discos, y por qué está cada uno.",
+  descripcion = "Lo que juego, veo, leo y escucho, y por qué está cada cosa en la vitrina.",
   imagen,
   activa,
 } = Astro.props;
 const completo = titulo ? `${titulo} · Vitrina` : "Vitrina";
 const canonica = new URL(Astro.url.pathname, Astro.site);
 const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
-
-const icono = `data:image/svg+xml,${encodeURIComponent(
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#17171a"/><text x="16" y="23" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="21" fill="#e8c36a">v</text></svg>`,
-)}`;
 ---
 
 <!doctype html>
@@ -33,11 +29,15 @@ const icono = `data:image/svg+xml,${encodeURIComponent(
     <title>{completo}</title>
     <meta name="description" content={descripcion} />
     <link rel="canonical" href={canonica} />
-    <link rel="icon" href={icono} />
-    <meta name="theme-color" content="#0e0e10" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/png" href={url("iconos/favicon-64.png")} />
+    <link rel="apple-touch-icon" href={url("iconos/apple-touch-icon.png")} />
+    <link rel="manifest" href={url("manifest.webmanifest")} />
+    <link rel="alternate" type="application/rss+xml" title="Vitrina: recién llegadas" href={url("index.xml")} />
+    <meta name="theme-color" content="#0f0e10" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f7f4ef" media="(prefers-color-scheme: light)" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Vitrina" />
+    <meta property="og:locale" content="es_ES" />
     <meta property="og:title" content={titulo ?? "Vitrina"} />
     <meta property="og:description" content={descripcion} />
     <meta property="og:url" content={canonica} />
@@ -50,13 +50,22 @@ const icono = `data:image/svg+xml,${encodeURIComponent(
          nombre de BUCK-TICK salen como cuadros en muchos sistemas. -->
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+JP:wght@400;600&display=swap"
     />
+    <!-- El tema elegido a mano se aplica antes de pintar nada, para que no
+         parpadee el otro al cargar. -->
+    <script is:inline>
+      try {
+        const tema = localStorage.getItem("tema");
+        if (tema === "claro" || tema === "oscuro") document.documentElement.dataset.tema = tema;
+      } catch {}
+    </script>
   </head>
   <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
     <header class="barra">
       <div class="contenedor barra-dentro">
-        <a class="marca" href={url()}>Vitrina</a>
+        <a class="marca" href={url()} aria-label="Vitrina, inicio">Vitrina</a>
         <nav class="secciones" aria-label="Secciones">
           {
             SECCIONES.map((s) => (
@@ -67,16 +76,31 @@ const icono = `data:image/svg+xml,${encodeURIComponent(
           }
           <a href={url("constelacion/")} aria-current={activa === "constelacion" ? "page" : undefined}>Constelación</a>
         </nav>
+        <div class="acciones">
+          <a class="boton" href={url("buscar/")} aria-label="Buscar" title="Buscar (/)" aria-current={activa === "buscar" ? "page" : undefined}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+          </a>
+          <button class="boton" type="button" id="tema" aria-label="Cambiar entre claro y oscuro" title="Claro u oscuro">
+            <svg class="sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+            <svg class="luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg>
+          </button>
+        </div>
       </div>
     </header>
 
-    <main>
+    <main id="contenido">
       <slot />
     </main>
 
     <footer class="contenedor pie">
-      <a href={url("autores/")}>Autores</a>
-      <a href={url("creditos/")}>Créditos</a>
+      <a class="pie-marca" href={url()}>Vitrina</a>
+      <nav aria-label="Más">
+        <a href={url("favoritos/")}>Lo mejor de lo mejor</a>
+        <a href={url("autores/")}>Autores</a>
+        <a href={url("tags/")}>Tags</a>
+        <a href={url("creditos/")}>Créditos</a>
+        <a href={url("index.xml")}>RSS</a>
+      </nav>
     </footer>
 
     <!-- En el móvil la navegación baja al pulgar, como en una app. -->
@@ -85,45 +109,103 @@ const icono = `data:image/svg+xml,${encodeURIComponent(
       {
         SECCIONES.map((s) => (
           <a href={url(`${s.slug}/`)} aria-current={activa === s.slug ? "page" : undefined}>
-            <span style={`color:${s.color}`}>●</span>
+            <span style={`color:var(--${s.tipo})`}>●</span>
             {s.corto}
           </a>
         ))
       }
       <a href={url("constelacion/")} aria-current={activa === "constelacion" ? "page" : undefined}><span>✦</span>Mapa</a>
     </nav>
+
+    <script>
+      const boton = document.getElementById("tema")!;
+      boton.addEventListener("click", () => {
+        const raiz = document.documentElement;
+        const oscuroAhora =
+          raiz.dataset.tema === "oscuro" ||
+          (!raiz.dataset.tema && matchMedia("(prefers-color-scheme: dark)").matches);
+        const nuevo = oscuroAhora ? "claro" : "oscuro";
+        raiz.dataset.tema = nuevo;
+        try {
+          localStorage.setItem("tema", nuevo);
+        } catch {}
+        // La constelación pinta en un lienzo y tiene que releer los colores.
+        window.dispatchEvent(new Event("tema"));
+      });
+
+      // «/» abre el buscador desde cualquier página, como en casi todas partes.
+      document.addEventListener("keydown", (e) => {
+        const enCampo = (e.target as HTMLElement).closest("input, textarea, select, [contenteditable]");
+        if (e.key === "/" && !enCampo && !e.metaKey && !e.ctrlKey) {
+          e.preventDefault();
+          const buscar = document.querySelector<HTMLAnchorElement>('.acciones a[href$="buscar/"]');
+          if (buscar) location.href = buscar.href;
+        }
+      });
+
+      if ("serviceWorker" in navigator && location.hostname !== "localhost") {
+        const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+        navigator.serviceWorker.register(`${base}sw.js`, { scope: base }).catch(() => {});
+      }
+    </script>
   </body>
 </html>
 
 <style>
+  .saltar {
+    position: absolute;
+    left: -9999px;
+  }
+  .saltar:focus {
+    left: 16px;
+    top: 12px;
+    z-index: 20;
+    padding: 6px 12px;
+    background: var(--texto);
+    color: var(--fondo);
+    border-radius: 6px;
+  }
   .barra {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: color-mix(in srgb, var(--fondo) 82%, transparent);
+    background: color-mix(in srgb, var(--fondo) 85%, transparent);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--borde);
+    view-transition-name: barra;
   }
   .barra-dentro {
     display: flex;
     align-items: center;
-    gap: 32px;
-    height: 58px;
+    gap: 36px;
+    height: 60px;
   }
+  /* El rótulo de la casa, como en Quartz: capitales espaciadas en Cinzel y,
+     en oscuro, un resplandor muy bajo, la letra iluminada desde dentro. */
   .marca {
-    font-family: var(--serif);
-    font-size: 1.4rem;
-    font-style: italic;
+    font-family: var(--rotulo);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  :global(:root[data-tema="oscuro"]) .marca {
+    text-shadow: 0 0 24px rgb(236 231 221 / 0.22);
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-tema="claro"])) .marca {
+      text-shadow: 0 0 24px rgb(236 231 221 / 0.22);
+    }
   }
   .secciones {
     display: flex;
     gap: 22px;
-    font-size: 0.93rem;
+    font-size: 0.97rem;
     color: var(--tenue);
   }
   .secciones a {
     position: relative;
-    padding-block: 18px;
+    padding-block: 19px;
   }
   .secciones a:hover,
   .secciones a[aria-current] {
@@ -134,25 +216,96 @@ const icono = `data:image/svg+xml,${encodeURIComponent(
     position: absolute;
     inset: auto 0 -1px;
     height: 2px;
-    background: var(--acento);
+    background: var(--texto);
   }
+  .acciones {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .boton {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--tenue);
+    cursor: pointer;
+  }
+  .boton:hover,
+  .boton[aria-current] {
+    color: var(--texto);
+    background: var(--caja-2);
+  }
+  .boton svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /* El botón enseña el tema al que se va a pasar: la luna en claro, el sol
+     en oscuro. */
+  .sol,
+  .luna {
+    display: none;
+  }
+  :global(:root[data-tema="claro"]) .luna,
+  :global(:root:not([data-tema])) .luna,
+  :global(:root[data-tema="oscuro"]) .sol {
+    display: block;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-tema])) .luna {
+      display: none;
+    }
+    :global(:root:not([data-tema])) .sol {
+      display: block;
+    }
+  }
+
   .pie {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px 28px;
     padding-block: 32px 48px;
     color: var(--tenue);
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     border-top: 1px solid var(--borde);
-    margin-top: 72px;
+    margin-top: 80px;
   }
-  .pie a:hover {
+  .pie-marca {
+    font-family: var(--rotulo);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-weight: 600;
     color: var(--texto);
+  }
+  .pie nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+  }
+  .pie nav a:hover {
+    color: var(--texto);
+  }
+  .pie nav a:first-child {
+    color: var(--dorado);
+  }
+  .pie nav a:first-child::before {
+    content: "★ ";
   }
   .pestanas {
     display: none;
   }
-  @media (max-width: 760px) {
+  @media (max-width: 860px) {
     .secciones {
       display: none;
     }
@@ -166,11 +319,12 @@ const icono = `data:image/svg+xml,${encodeURIComponent(
       display: flex;
       justify-content: space-around;
       padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
-      background: color-mix(in srgb, var(--superficie) 92%, transparent);
+      background: color-mix(in srgb, var(--caja) 92%, transparent);
       backdrop-filter: blur(12px);
       border-top: 1px solid var(--borde);
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       color: var(--tenue);
+      view-transition-name: pestanas;
     }
     .pestanas a {
       display: flex;

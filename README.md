@@ -5,9 +5,11 @@ de cada uno. Se escribe en Obsidian y se publica como web estática.
 
 **→ [jorgeress.github.io/vitrina](https://jorgeress.github.io/vitrina/)**
 
-Cada obra es una ficha en Markdown. Las galerías, las tablas y las listas de
-pendientes se generan solas a partir de los campos de la ficha, y se ven igual
-en Obsidian que en la web.
+Cada obra es una ficha en Markdown. La web las lee tal cual y las enseña como
+lo que son, piezas de una colección: cada sala con sus portadas y sus filtros,
+lo mejor de lo mejor, la cartela de por qué está cada una y una constelación
+que las une por lo que comparten. En Obsidian, las galerías y tablas de los
+`.base` enseñan lo mismo con los mismos campos.
 
 ## Arrancarlo
 
@@ -17,14 +19,18 @@ cómodamente, [Obsidian](https://obsidian.md).
 ```bash
 git clone https://github.com/jorgeress/vitrina.git
 cd vitrina
-npm ci --ignore-scripts --include=optional
-npm run install-plugins
 pip install -r requirements.txt
-npx quartz build --serve       # http://localhost:8080
+cd web
+npm ci --ignore-scripts --include=optional
+npm run dev                    # http://localhost:4321/vitrina/
 ```
 
+- La web está en `web/`, hecha con [Astro](https://astro.build), y lee las
+  fichas de `content/` sin tocarlas: lo que guardas en Obsidian sale en
+  `npm run dev` al momento.
 - Sin `--ignore-scripts`, `sharp` intenta compilarse y la instalación falla.
-- Si el sitio construye pero las galerías salen vacías, falta `install-plugins`.
+- El buscador solo funciona sobre la web construida: `npm run build` y después
+  `npm run preview`. Con `dev` todavía no hay índice.
 
 En Obsidian, *Abrir carpeta como almacén* sobre **`content/`**, no sobre la raíz
 del repo. La configuración ya viene hecha.
@@ -158,12 +164,33 @@ SIN RELLENAR
 FAVORITOS  ██······················  21 de 210
 ```
 
-## La portada
+## La web
 
-Enseña las secciones y, en **«Recién llegadas a la vitrina»**, las últimas 12
-fichas añadidas, ordenadas por el
-campo `alta`, que llevan todas. Lo pone `nueva.py` al crear la ficha, y
-`al-dia.py` a las escritas a mano. Abajo está el enlace al RSS del sitio.
+- **La entrada** lleva el rótulo y, debajo, la presentación, que es **el primer
+  párrafo de `content/index.md`**: se cambia en Obsidian como cualquier nota.
+  Después vienen las salas, **Lo mejor de lo mejor** (los `favorito: true`, de
+  más nota a menos), las cartelas escritas, lo que está **en el almacén**
+  (`estado: pendiente`) y lo **recién llegado**, por el campo `alta`, que lo
+  pone `nueva.py` y `al-dia.py` a las escritas a mano.
+- **Cada sala** tiene buscador, orden y filtros por estado, favoritos, cartela y
+  tag, y se quedan en la dirección: `juegos/?tag=metroidvania` se puede enlazar.
+  Lo `abandonado` sale como *Retirado de la vitrina*, apagado.
+- **Cada ficha** enseña sus fuentes y las seis piezas que más se le parecen,
+  con el motivo: el mismo autor, o los tags que comparten (cuanto más raro el
+  tag, más pesa).
+- **La constelación** une cada pieza con sus tres más parecidas y con las de su
+  mismo autor. La que no comparte nada se une a las de su sala más cercanas en
+  el tiempo, con línea discontinua: ninguna se queda suelta.
+- **Las direcciones son las mismas que tenía la web en Quartz**
+  (`juegos/golf-it!`, `autores/fromsoftware,-inc`, `tags/action`, `index.xml`),
+  así que ningún enlace viejo se rompe. Las de autor salen del nombre de
+  fichero que les da `autores.py`.
+- **Se instala como app** en el móvil y abre sin conexión lo ya visitado.
+- **`vitrina.json`** es la colección entera con los ids de cada fuente, para
+  poder compararla con otra sin fiarse de los títulos.
+- Si una ficha trae un campo mal (`nota: 11`, un estado mal escrito), la web no
+  se construye y el error dice cuál: el esquema está en
+  `web/src/content.config.ts`.
 
 ## Publicar
 
@@ -173,7 +200,8 @@ Pages.
 Para montarlo en tu cuenta:
 
 1. Haz un *fork*.
-2. En `quartz.config.yaml`, cambia `baseUrl` por `tuusuario.github.io/vitrina`.
+2. En `web/astro.config.mjs`, cambia `site` por `https://tuusuario.github.io`
+   (y `base`, si el repo no se llama `vitrina`).
 3. En *Settings → Pages*, pon *Source* en **GitHub Actions**.
 
 ## Reglas de la vault
@@ -200,9 +228,14 @@ content/            la vault: lo único que se escribe a mano
   *.base            las galerías y tablas de cada sección
   assets/portadas/  carátulas
 scripts/            altas, importación y mantenimiento (docs/scripts.md)
-plugins/vitrina/    la cabecera de cada ficha y el grafo de la portada
-quartz.config.yaml  colores, tipografías y plugins del sitio
-quartz/             el generador, un fork de Quartz
+web/                la web, en Astro
+  src/pages/        una página por tipo: entrada, sala, ficha, autor, tag...
+  src/lib/          de dónde sale cada cosa: autores, parecidos, direcciones
+  src/styles/       colores y letras, los mismos que tenía Quartz
+  public/           iconos, manifest y service worker de la app
+  test/             pruebas de src/lib, sin levantar nada
+plugins/vitrina/    lo que pintaba Quartz: la cabecera de cada ficha y el grafo
+quartz/             el generador de antes, un fork de Quartz
 ```
 
 Todos los scripts y sus opciones están en [`docs/scripts.md`](docs/scripts.md).
@@ -211,7 +244,9 @@ Todos los scripts y sus opciones están en [`docs/scripts.md`](docs/scripts.md).
 
 ```bash
 python3 scripts/pruebas.py   # sin red
-npm run check                # tipos y formato
+cd web
+npm test                     # entre otras, que reparte los autores igual que autores.py
+npm run check                # tipos, y con ellos el esquema de las fichas
 ```
 
 ## Por hacer
@@ -226,9 +261,6 @@ npm run check                # tipos y formato
 - **Épocas.** Una etiqueta como `epoca/instituto` o `epoca/2026`, para ver qué
   te acompañaba en cada momento: no solo qué te gusta, sino cuándo te hizo
   falta.
-- **Más vitrina en los rótulos.** «En el almacén» para las pestañas de
-  pendientes, una vista «Retirado de la vitrina» para lo abandonado, y «Esta
-  vitrina está vacía» en la página 404.
 - **La presentación de la portada**, con la idea de vitrina. Un borrador: «Una
   vitrina de lo que juego, veo, leo y escucho. No todo lo que pasa por mis
   manos: lo que se queda. Cada pieza lleva su cartela con lo que me dejó, y
@@ -236,8 +268,9 @@ npm run check                # tipos y formato
 
 ## Licencia
 
-El generador es [Quartz](https://quartz.jzhao.xyz), de jackyzha0, bajo MIT, y
-mis cambios también. Los textos de `content/` son míos, Copyright (c) 2026
+La web está hecha con [Astro](https://astro.build), bajo MIT, como mi código.
+`quartz/` es el fork de [Quartz](https://quartz.jzhao.xyz), de jackyzha0, bajo
+MIT, que la publicaba antes, y mis cambios también. Los textos de `content/` son míos, Copyright (c) 2026
 Jorge García, bajo
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es). Las
 carátulas son de sus autores y se usan en miniatura para identificar cada obra.

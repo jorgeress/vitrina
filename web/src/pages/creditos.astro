@@ -8,7 +8,9 @@ const { Content } = await render(pagina);
 
 <Base titulo={pagina.data.title}>
   <article class="contenedor texto">
-    <h1>{pagina.data.title.toLowerCase()}</h1>
+    <header class="titulo-pagina">
+      <h1>{pagina.data.title}</h1>
+    </header>
     <Content />
   </article>
 </Base>
@@ -16,9 +18,12 @@ const { Content } = await render(pagina);
 <style>
   .texto {
     max-width: 720px;
-    padding-top: 40px;
+  }
+  .texto :global(.titulo-pagina) {
+    margin-bottom: 24px;
   }
   .texto :global(a) {
+    color: var(--enlace);
     text-decoration: underline;
     text-underline-offset: 3px;
   }

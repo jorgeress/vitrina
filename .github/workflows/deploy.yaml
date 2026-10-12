@@ -19,33 +19,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-        with:
-          # Quartz saca las fechas de creacion y modificacion del historial.
-          fetch-depth: 0
 
       - uses: actions/setup-node@v7
         with:
           node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
 
-      # --ignore-scripts evita que sharp intente compilarse desde fuente:
-      # los binarios precompilados de @img ya vienen en las dependencias.
+      # La web es web/, en Astro, y lee las fichas de content/ sin tocarlas.
+      # --ignore-scripts por lo mismo que con Quartz: sharp no tiene que
+      # compilarse, y Pagefind trae su binario como dependencia opcional.
       - name: Instalar dependencias
-        run: |
-          npm ci --ignore-scripts --include=optional
-          npm run install-plugins
+        working-directory: web
+        run: npm ci --ignore-scripts --include=optional
 
-      # Los tipos del plugin de plugins/vitrina y el formato del codigo. El
-      # build no mira ninguna de las dos: compila el plugin sin comprobarlo, y
-      # del formato no sabe nada.
-      - name: Revisar tipos y formato
+      # Los tipos de las paginas y, con ellos, el esquema de las fichas: una
+      # nota de 11 o un estado mal escrito paran aqui, no en la web.
+      - name: Revisar tipos
+        working-directory: web
         run: npm run check
+        env:
+          ASTRO_TELEMETRY_DISABLED: 1
 
       # Si los scripts se rompen, la vault se llena de fichas mal y eso no lo
-      # nota el build: sale verde con las fichas equivocadas dentro.
-      - name: Probar los scripts
+      # nota el build: sale verde con las fichas equivocadas dentro. Las de la
+      # web comprueban, entre otras cosas, que reparte los autores igual que
+      # autores.py, que lo usa ella para las paginas de autor.
+      - name: Probar los scripts y la web
         run: |
           pip install --quiet -r requirements.txt
           python3 scripts/pruebas.py
+          npm --prefix web test
 
       # Lo que se publica igual pero se ha quedado atras: el bloque de cifras
       # del README, portadas que ya no usa nadie. No para el despliegue; sale
@@ -53,8 +57,13 @@ jobs:
       - name: Comprobar la vault
         run: python3 scripts/estado.py --comprobar
 
+      # Construye las paginas, copia las portadas de la vault y hace el
+      # indice del buscador.
       - name: Construir el sitio
-        run: npx quartz build
+        working-directory: web
+        run: npm run build
+        env:
+          ASTRO_TELEMETRY_DISABLED: 1
 
       # GitHub Pages no esta disponible en repos privados con el plan
       # gratuito, asi que el despliegue se salta mientras el repo lo sea.
@@ -65,7 +74,7 @@ jobs:
       - uses: actions/upload-pages-artifact@v5
         if: ${{ !github.event.repository.private }}
         with:
-          path: public
+          path: web/dist
 
   desplegar:
     needs: construir

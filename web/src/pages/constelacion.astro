@@ -51,7 +51,7 @@ const datos = {
       <div class="leyenda" id="leyenda">
         {
           SECCIONES.map((s) => (
-            <button type="button" data-tipo={s.tipo} class="activo" style={`--seccion:${s.color}`}>
+            <button type="button" data-tipo={s.tipo} class="activo" style={`--seccion:var(--${s.tipo})`}>
               <span /> {s.nombre}
             </button>
           ))
@@ -70,7 +70,7 @@ const datos = {
 <style>
   .escena {
     position: relative;
-    height: calc(100dvh - 59px);
+    height: calc(100dvh - 61px);
     overflow: hidden;
   }
   canvas {
@@ -90,12 +90,15 @@ const datos = {
     max-width: 320px;
     padding: 16px 18px;
     border-radius: var(--radio);
-    background: color-mix(in srgb, var(--superficie) 88%, transparent);
+    background: color-mix(in srgb, var(--caja) 90%, transparent);
     backdrop-filter: blur(10px);
     border: 1px solid var(--borde);
   }
   h1 {
+    font-family: var(--rotulo);
+    font-weight: 600;
     font-size: 1.3rem;
+    letter-spacing: 0.04em;
   }
   .panel p {
     margin: 6px 0 12px;
@@ -146,7 +149,7 @@ const datos = {
   }
   @media (max-width: 760px) {
     .escena {
-      height: calc(100dvh - 59px - 64px);
+      height: calc(100dvh - 61px - 64px);
     }
     .panel {
       top: 10px;
