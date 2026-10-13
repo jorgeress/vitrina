@@ -5,6 +5,8 @@ de cada uno. Se escribe en Obsidian y se publica como web estática.
 
 **→ [jorgeress.github.io/vitrina](https://jorgeress.github.io/vitrina/)**
 
+*In English: [Vitrine](#in-english-vitrine).*
+
 Cada obra es una ficha en Markdown. La web las lee tal cual y las enseña como
 lo que son, piezas de una colección: cada sala con sus portadas y sus filtros,
 lo mejor de lo mejor, la cartela de por qué está cada una y una constelación
@@ -13,7 +15,7 @@ que las une por lo que comparten. En Obsidian, las galerías y tablas de los
 
 ## Arrancarlo
 
-Hace falta [Node 22 o superior](https://nodejs.org), Python 3 y, para editar
+Hace falta [Node 22.12 o superior](https://nodejs.org), Python 3 y, para editar
 cómodamente, [Obsidian](https://obsidian.md).
 
 ```bash
@@ -170,7 +172,7 @@ FICHAS
 SIN RELLENAR
   nota        167   █████···················
   portada       1   ████████████████████████
-  tags          7   ███████████████████████·
+  tags          4   ████████████████████████
   texto         2   ████████████████████████
 
 FAVORITOS  ██······················  21 de 210
@@ -193,7 +195,7 @@ FAVORITOS  ██······················  21 de 210
 - **La constelación** une cada pieza con sus tres más parecidas y con las de su
   mismo autor. La que no comparte nada se une a las de su sala más cercanas en
   el tiempo, con línea discontinua: ninguna se queda suelta.
-- **Las direcciones son las mismas que tenía la web en Quartz**
+- **Las direcciones son las mismas que tenía la web cuando la hacía Quartz**
   (`juegos/golf-it!`, `autores/fromsoftware,-inc`, `tags/action`, `index.xml`),
   así que ningún enlace viejo se rompe. Las de autor salen del nombre de
   fichero que les da `autores.py`.
@@ -245,11 +247,12 @@ scripts/            altas, importación y mantenimiento (docs/scripts.md)
 web/                la web, en Astro
   src/pages/        una página por tipo: entrada, sala, ficha, autor, tag...
   src/lib/          de dónde sale cada cosa: autores, parecidos, direcciones
-  src/styles/       colores y letras, los mismos que tenía Quartz
+  src/styles/       colores y letras
+  src/scripts/      la constelación, lo único con JavaScript propio
   public/           iconos, manifest y service worker de la app
   test/             pruebas de src/lib, sin levantar nada
-plugins/vitrina/    lo que pintaba Quartz: la cabecera de cada ficha y el grafo
-quartz/             el generador de antes, un fork de Quartz
+docs/               los scripts, las fuentes de importación y lo que queda
+.github/            el despliegue y el Issue de «Nueva pieza»
 ```
 
 Todos los scripts y sus opciones están en [`docs/scripts.md`](docs/scripts.md).
@@ -265,27 +268,73 @@ npm run check                # tipos, y con ellos el esquema de las fichas
 
 ## Por hacer
 
-- **Importar solo cada noche.** Una Action programada que pase
-  `importar.py letterboxd-rss` y `listenbrainz` y después `al-dia.py`, y abra
-  un PR con los borradores nuevos para revisarlos.
-- **«Me llegó por».** Un campo con quién te lo recomendó o de dónde salió. Con
-  el tiempo dibuja la gente que te ha ido formando el gusto.
-- **«Me llevó a».** Un enlace de una obra a la siguiente que descubriste por
-  ella. El grafo ya junta por género y autor; esto dibujaría el camino.
-- **Épocas.** Una etiqueta como `epoca/instituto` o `epoca/2026`, para ver qué
-  te acompañaba en cada momento: no solo qué te gusta, sino cuándo te hizo
-  falta.
-- **La presentación de la portada**, con la idea de vitrina. Un borrador: «Una
-  vitrina de lo que juego, veo, leo y escucho. No todo lo que pasa por mis
-  manos: lo que se queda. Cada pieza lleva su cartela con lo que me dejó, y
-  juntas dicen de mí más de lo que yo sabría contar.»
+Lo que falta y lo que se puede añadir está en
+[`docs/por-hacer.md`](docs/por-hacer.md). Lo primero:
+
+- Crear la etiqueta `nueva-pieza` en el repo, o el Issue de *Nueva pieza* no
+  llega a la Action.
+- Escribir las cartelas de verdad: cuatro de las cinco son de prueba.
+- Importar solo cada noche, con un PR de borradores para revisar.
+- «Me llegó por», «Me llevó a» y épocas, para que la vitrina diga también de
+  dónde viene cada cosa y cuándo.
+
+## In English: Vitrine
+
+**Vitrine** is the tool behind this site: a personal collection of games,
+films, series, books and albums, written as Markdown notes in Obsidian and
+published as a static website. *Vitrina* is my own collection, in Spanish;
+the name of the tool in English is Vitrine, a glass display case.
+
+Every work is a note with a few fields (`tipo`, `year`, `autor`, `nota` from
+1 to 10, `estado`, `favorito`, `tags`) and, on top, a short label written by
+the owner: *why it is in the display case*, the way a museum labels each
+piece. The site turns them into rooms with covers and filters, a page for the
+very best, author and tag pages, statistics, a constellation that links each
+piece to the ones it has most in common with, and a page that compares two
+collections by the ids of each source instead of by titles.
+
+What it does:
+
+- **Adds a work from a link** (Steam, Letterboxd, TVmaze, MusicBrainz, Open
+  Library, Spotify, and through Wikidata IMDb, TMDB, Goodreads, MyAnimeList,
+  Discogs and others) with cover, year, author, genres and synopsis. No source
+  needs an API key, an account or payment.
+- **Adds from a phone**, with no terminal: a GitHub Issue with the *Nueva
+  pieza* form, or sharing a link to the installed web app on Android.
+- **Imports** a Letterboxd diary or watchlist, a Steam library, ListenBrainz
+  and a Spotify data export, as drafts to review.
+- **Works offline** and installs as an app; publishes an RSS feed and a
+  `vitrina.json` with the whole collection.
+
+Running it needs Node 22.12+ and Python 3:
+
+```bash
+git clone https://github.com/jorgeress/vitrina.git
+cd vitrina
+pip install -r requirements.txt
+cd web
+npm ci --ignore-scripts --include=optional
+npm run dev                    # http://localhost:4321/vitrina/
+```
+
+To make it your own: fork it, delete the notes in each section folder of
+`content/` and their covers in `content/assets/portadas/`, rewrite
+`content/index.md` (its first paragraph is the welcome text), set `site` and
+`base` in
+`web/astro.config.mjs` and your repo in `web/src/repo.ts`, and choose
+*GitHub Actions* as the Pages source. The interface, the scripts and their
+documentation are in Spanish for now; translating the interface is on the
+list in [`docs/por-hacer.md`](docs/por-hacer.md).
+
+Code under MIT; the texts in `content/` under CC BY-SA 4.0. Details in
+`LICENSE.txt`.
 
 ## Licencia
 
-La web está hecha con [Astro](https://astro.build), bajo MIT, como mi código.
-`quartz/` es el fork de [Quartz](https://quartz.jzhao.xyz), de jackyzha0, bajo
-MIT, que la publicaba antes, y mis cambios también. Los textos de `content/` son míos, Copyright (c) 2026
-Jorge García, bajo
+El código es mío y va bajo MIT. Hasta octubre de 2026 la web la hacía un fork
+de [Quartz](https://quartz.jzhao.xyz), de jackyzha0, también MIT; sigue en el
+historial. Los textos de `content/` son míos, Copyright (c) 2026 Jorge García,
+bajo
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es). Las
 carátulas son de sus autores y se usan en miniatura para identificar cada obra.
 El detalle, en `LICENSE.txt`.

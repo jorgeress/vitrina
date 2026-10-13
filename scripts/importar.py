@@ -24,7 +24,7 @@ todo, y los umbrales se mueven con --min-horas y --min-nota.
 
 Todo entra en borrador: `draft: true`, `nota` vacia y el cuerpo en blanco. La
 excepcion son las peliculas, que si traen tu puntuacion porque Letterboxd es la
-unica de las tres fuentes que sabe si algo te gusto. Quartz no publica lo que
+unica de las tres fuentes que sabe si algo te gusto. La web no publica lo que
 lleva `draft`, asi que la web sigue enseñando solo lo que hayas ascendido a
 mano; en Obsidian se ven todas. Con --sin-borrador entran publicadas.
 

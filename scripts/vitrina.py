@@ -283,17 +283,17 @@ def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True, fichero=No
     # con la linea de title delante, `lineas` lleva un elemento de mas y este
     # indice caia sobre la clave anterior. Se comio el `portada:` de las fichas
     # que llevan titulo aparte, y la cabecera acababa con dos `tags:` y sin
-    # portada -- que es un YAML invalido, y ahi Quartz ya no construye la ficha.
+    # portada -- que es un YAML invalido, y ahi la web ya no se construye.
     if campos.get("tags") is None:
         lineas[orden.index("tags")] = "tags: []"
     if nombre != titulo:
         # Un nombre de fichero no admite ":" ni "?", asi que "Spider-Man: Brand
         # New Day" se queda sin los dos puntos y con eso ya no se encuentra en
         # ningun catalogo. El titulo de verdad se apunta aparte: es el que
-        # buscan los scripts y el que Quartz pone de encabezado en la web.
+        # buscan los scripts y el que la web pone de encabezado.
         lineas.insert(0, f"title: {yaml_valor(titulo)}")
     if borrador:
-        # Quartz se salta las notas con draft; Obsidian las sigue enseñando.
+        # La web se salta las notas con draft; Obsidian las sigue enseñando.
         lineas.append("draft: true")
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_text("---\n" + "\n".join(lineas) + "\n---\n\n" + cuerpo,

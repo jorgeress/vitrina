@@ -11,4 +11,4 @@ Campos:
 - `portada`: ruta a una imagen en `assets/portadas/`, o una URL.
 - `tags`: géneros o etiquetas libres, en minúscula y sin espacios.
 
-Esta carpeta no se publica: está en `ignorePatterns` de la configuración de Quartz.
+Esta carpeta no se publica: la web solo lee las carpetas de las secciones.

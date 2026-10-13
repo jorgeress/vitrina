@@ -181,8 +181,8 @@ película sean la misma etiqueta. Va despacio a propósito, que la tienda corta
 sobre las 200 peticiones cada cinco minutos.
 
 Los tags no son un adorno: son lo que hace que la página de etiquetas deje de
-estar vacía y que el grafo tenga aristas. Sin ellos, dos plugins que Quartz trae
-encendidos no tienen nada que dibujar.
+estar vacía y que la constelación tenga aristas. Sin ellos, cada pieza solo se
+une a las de su sala más cercanas en el tiempo, que es el último recurso.
 
 ### Música
 
@@ -369,11 +369,14 @@ scripts/importar.py --dry-run ...                               # sin escribir
   las fuentes de carátula desde `FUENTES`, en `scripts/portadas.py`, y las de
   relleno desde el `FUENTES` de `scripts/datos.py`, donde cada sección dice qué
   campos sabe completar.
-- **Una sección nueva** son siete sitios, y la última vez fueron estos: la
-  entrada en `SECCIONES` (`scripts/vitrina.py`), el `.base` que la filtra y su
-  `index.md`, el enlace en la portada, el orden del árbol lateral en
-  `quartz.config.yaml`, la entrada en `TIPOS` de `plugins/vitrina` —el rótulo de
-  su `autor` y a dónde enlaza su ficha— y la fuente en `nueva.py`,
-  `portadas.py`, `datos.py` y `textos.py`. La prueba
+- **Una sección nueva** son estos sitios: la entrada en `SECCIONES` de
+  `scripts/vitrina.py` y la de `web/src/lib/obras.ts` (nombre, dirección y cómo
+  se cuenta: «un disco», «90 discos»), el `tipo` y la carpeta en el esquema de
+  `web/src/content.config.ts`, su color en `web/src/styles/global.css` (en los
+  dos temas, y pasado por el validador de daltonismo) y en la lista de
+  `web/src/scripts/constelacion.ts`, su tipo de schema.org en la ficha
+  (`web/src/pages/[seccion]/[obra].astro`), el `.base` que la filtra y su
+  `index.md` en la vault, y la fuente en `nueva.py`, `portadas.py`, `datos.py` y
+  `textos.py`. La prueba
   `test_cada_tipo_tiene_fuente_en_los_cuatro_scripts` avisa de los cuatro
   últimos, que son los que se olvidan sin que falle nada.

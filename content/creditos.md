@@ -15,9 +15,8 @@ para identificar cada obra dentro del catálogo.
   catálogo del Internet Archive.
 - Las de discos, de [Cover Art Archive](https://coverartarchive.org), y los
   datos de cada disco de [MusicBrainz](https://musicbrainz.org).
-- Las de juegos, de las fichas de tienda de Steam.
+- Las de juegos, de las fichas de tienda de Steam, y las de los que no están
+  en Steam, de [Wikipedia](https://en.wikipedia.org).
 
 Ninguna de esas fuentes pide clave de API ni registro: es la regla con la que
 está hecho el catálogo.
-
-El sitio está hecho con [Quartz](https://quartz.jzhao.xyz), de jackyzha0.

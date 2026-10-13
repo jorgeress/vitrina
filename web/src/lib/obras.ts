@@ -82,7 +82,7 @@ export async function slugsAutores(): Promise<Map<string, string>> {
 }
 
 /** La dirección de la página de un autor: la de su fichero en la vault, que
- * es la que tiene en Quartz. Si autores.py aún no la ha escrito, la que
+ * es la que tenía con Quartz. Si autores.py aún no la ha escrito, la que
  * saldría de su nombre. */
 export function slugAutor(autor: string, slugs: Map<string, string>): string {
   return slugs.get(autor) ?? slugQuartz(autor.replace(/\.+$/, ""));

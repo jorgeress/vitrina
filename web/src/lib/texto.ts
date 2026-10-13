@@ -3,10 +3,10 @@
 // con `node --test` sin levantar nada (ver test/texto.test.ts).
 
 /**
- * La dirección de una página, con la misma regla que Quartz. Así, el día que
- * la web en Astro sustituya a la de Quartz, los enlaces que ya circulan siguen
- * llevando al mismo sitio: «Golf It!.md» es `golf-it!` en las dos, y «Love,
- * Death & Robots» es `love,-death--and--robots`.
+ * La dirección de una página, con la misma regla que usaba Quartz, que era la
+ * web de antes. Así los enlaces que ya circulaban siguen llevando al mismo
+ * sitio: «Golf It!.md» es `golf-it!`, y «Love, Death & Robots» es
+ * `love,-death--and--robots`. Si se cambia, se rompen.
  */
 export function slugQuartz(ruta: string): string {
   return ruta

@@ -81,7 +81,7 @@ def cita(texto, credito):
 
     Se usa `[!quote]` y no un parrafo suelto porque la diferencia importa: asi
     se ve que la sinopsis es de la fuente y que lo que escriba el debajo es
-    suyo. Quartz pinta los callouts igual que Obsidian, asi que se ve lo mismo
+    suyo. La web pinta los callouts igual que Obsidian, asi que se ve lo mismo
     en el editor y en la web.
 
     El credito va tras una flecha y con el nombre de la fuente enlazado, nada

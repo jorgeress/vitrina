@@ -249,7 +249,7 @@ def resumen(args):
 
     print(f"\nEN LA WEB  {barra(publicadas, hay)}  {publicadas} de {hay}")
     if not publicadas:
-        print("  Ninguna. Quartz se salta lo que lleva `draft: true`; en Obsidian se")
+        print("  Ninguna. La web se salta lo que lleva `draft: true`; en Obsidian se")
         print("  ven todas. Para ascender una, quítale esa línea.")
 
     print("\nSIN RELLENAR")

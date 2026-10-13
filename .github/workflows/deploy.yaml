@@ -27,8 +27,9 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       # La web es web/, en Astro, y lee las fichas de content/ sin tocarlas.
-      # --ignore-scripts por lo mismo que con Quartz: sharp no tiene que
-      # compilarse, y Pagefind trae su binario como dependencia opcional.
+      # --ignore-scripts porque sharp intenta compilarse y la instalacion
+      # falla; no hace falta, y Pagefind trae su binario como dependencia
+      # opcional.
       - name: Instalar dependencias
         working-directory: web
         run: npm ci --ignore-scripts --include=optional

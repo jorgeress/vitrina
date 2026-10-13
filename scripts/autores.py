@@ -12,11 +12,10 @@ porque es un dato, no maquetacion, y porque es lo que escriben tambien
 `datos.py`, `nueva.py` e `importar.py`; antes esto le ponia un `[[...]]`
 alrededor y los tres se pisaban en cada pasada.
 
-El enlace lo pone la web al pintar, en `plugins/vitrina`: la cabecera de la
-ficha busca dentro del texto los nombres que tengan pagina y los enlaza, y el
-mismo plugin apunta esas paginas en los `links` de la ficha para que el grafo
-las una. Asi una ficha con varios autores enlaza a todos los que tengan pagina
-sin partir el campo por comas, que no se puede hacer a ojo: la coma separa
+El enlace lo pone la web al pintar: parte el campo con la misma regla que
+`separar()` de aqui (web/src/lib/texto.ts, y una prueba comprueba que dan lo
+mismo) y enlaza cada nombre a su pagina, cuya direccion sale del nombre de
+fichero que le da este script. Partirlo no se puede hacer a ojo: la coma separa
 "Mike Johnson, Tim Burton" y no separa "FromSoftware, Inc.".
 
 **Solo tiene pagina quien tenga dos obras o mas** (`--minimo`). Con una sola, la
@@ -45,10 +44,9 @@ from vitrina import (SECCIONES, VAULT, escribir_campos, frontmatter,
 
 AUTORES = VAULT / "autores"
 
-# El indice de la carpeta, que es solo el titulo. Sin el, quien la fabrica es el
-# plugin folder-page de Quartz, que la titula con el nombre crudo del
-# directorio: en el arbol lateral salia "autores" en minuscula, entre secciones
-# que van en mayuscula. La lista de paginas la pone el plugin debajo.
+# El indice de la carpeta, que es solo el titulo: es a donde lleva el enlace
+# "Autores" de content/index.md en Obsidian. La web no lo lee; su pagina de
+# autores la hace ella con la lista de nombres.
 #
 # Va aqui y no a mano porque main() borra la carpeta entera en cada pasada.
 INDICE = """---

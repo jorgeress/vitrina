@@ -1,11 +1,13 @@
-Vitrina es un sitio hecho con Quartz. En este repositorio conviven tres cosas
-con condiciones distintas:
+En este repositorio conviven dos cosas con condiciones distintas:
 
-  1. El código de Quartz (quartz/ y la configuración base del proyecto),
-     de jackyzha0, bajo licencia MIT.
-  2. Las modificaciones y añadidos de Jorge García, también bajo MIT.
-  3. Los textos del catálogo (content/), de Jorge García, bajo
+  1. El código (web/, scripts/ y lo demás que no es content/), de
+     Jorge García, bajo licencia MIT.
+  2. Los textos del catálogo (content/), de Jorge García, bajo
      Creative Commons Atribución-CompartirIgual 4.0.
+
+Hasta octubre de 2026 la web la generaba un fork de Quartz, de jackyzha0,
+también bajo MIT; ese código ya no está aquí, sigue en el historial del repo
+con su propio aviso de copyright.
 
 Las carátulas y carteles de content/assets/ no entran en ninguna de las dos:
 son de sus respectivos autores y se usan en miniatura solo para identificar
@@ -16,7 +18,6 @@ cada obra. Ver content/creditos.md.
 CÓDIGO — Licencia MIT
 ================================================================================
 
-Copyright (c) 2021 jackyzha0
 Copyright (c) 2026 Jorge García
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

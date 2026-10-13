@@ -180,7 +180,7 @@ class NombresYParecidos(unittest.TestCase):
         # La linea de `title` se insertaba delante antes de poner el `tags: []`,
         # y el indice de tags se calculaba sin contarla: caia sobre `portada` y
         # lo dejaba en "tags: []". La cabecera salia con dos `tags:` y sin
-        # portada, que es YAML invalido: Quartz no construye esa ficha.
+        # portada, que es YAML invalido: la web no se construye.
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
             md = m.escribir_ficha("musica", "D>E>A>T>H>M>E>T>A>L",

@@ -59,4 +59,4 @@ puede rellenar. Va arriba, en su cartela, encima de la cita de «De qué va»:
 No hace falta escribir el marco: si escribes suelto encima de la cita,
 `scripts/al-dia.py` lo mete en él sin cambiar ni una palabra.
 
-Esta carpeta no se publica: está en `ignorePatterns` de la configuración de Quartz.
+Esta carpeta no se publica: la web solo lee las carpetas de las secciones.
