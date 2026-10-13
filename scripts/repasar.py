@@ -34,8 +34,9 @@ import sys
 
 import estado
 import textos
-from vitrina import (fichas, ESTADOS, FRONT_RE, SECCIONES, VAULT, escribir_campos, frontmatter,
-                     vacio, yaml_valor)
+from idioma import opciones, ayuda
+from vitrina import (fichas, ESTADOS, FRONT_RE, SECCIONES, VAULT, _, escribir_campos, estado_de,
+                     frontmatter, vacio, yaml_valor)
 
 try:
     import readline  # noqa: F401  -- solo por poder corregir la linea con las flechas
@@ -45,7 +46,7 @@ except ImportError:
 # Sale al empezar, y con ? en cualquier momento. Al principio y no solo con ?
 # porque es un comando de cada tantas semanas, y para entonces los atajos ya no
 # se recuerdan; pedir la ayuda es saber antes que hay que pedirla.
-GUIA = """\
+GUIA_ES = """\
 Cómo contestar, en una línea y en cualquier orden:
 
   NOTA       1 … 10      la nota
@@ -70,6 +71,8 @@ Cómo contestar, en una línea y en cualquier orden:
   en su cartela. Enter la salta.
 """
 
+GUIA = _(GUIA_ES)
+
 ATAJOS = {"p": "pending", "c": "in-progress", "t": "finished", "a": "dropped",
           "curso": "in-progress"}
 
@@ -85,16 +88,16 @@ def interpretar(respuesta):
     for trozo in trozos:
         if trozo.isdigit():
             if not 1 <= int(trozo) <= 10:
-                raise ValueError(f"la nota va del 1 al 10, no {trozo}")
+                raise ValueError(_("la nota va del 1 al 10, no {nota}").format(nota=trozo))
             cambios["rating"] = int(trozo)
-        elif trozo in ATAJOS or trozo in ESTADOS:
-            cambios["status"] = ATAJOS.get(trozo, trozo)
+        elif trozo in ATAJOS or estado_de(trozo) in ESTADOS:
+            cambios["status"] = ATAJOS.get(trozo) or estado_de(trozo)
         elif trozo == "f":
             cambios["favorite"] = True
         elif trozo in ("-f", "nf"):
             cambios["favorite"] = False
         else:
-            raise ValueError(f"no entiendo «{trozo}»")
+            raise ValueError(_("no entiendo «{trozo}»").format(trozo=trozo))
     return cambios
 
 
@@ -128,14 +131,14 @@ def pedir_frase(md):
     if tiene_lo_suyo(md):
         return False
     try:
-        frase = input("  por qué está en la vitrina (Enter para saltar): ").strip()
+        frase = input("  " + _("por qué está en la vitrina (Enter para saltar): ")).strip()
     except (EOFError, KeyboardInterrupt):
         print()
         return False
     if not frase:
         return False
     textos.escribir_lo_suyo(md, frase)
-    print("  ✓ escrito")
+    print("  ✓ " + _("escrito"))
     return True
 
 
@@ -157,28 +160,29 @@ def describir(carpeta, md, campos):
     est = campos.get("status") if not vacio(campos.get("status")) else "—"
     fav = "  ★" if campos.get("favorite") == "true" else ""
     return (f"{carpeta} · {titulo}{año}{autor}\n"
-            f"      nota {nota} · {est}{fav}")
+            "      " + _("nota {nota} · {estado}").format(nota=nota, estado=est) + fav)
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__,
+    p = argparse.ArgumentParser(description=ayuda(__doc__, "repasar"),
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--seccion", choices=list(SECCIONES), help="solo una carpeta")
-    p.add_argument("--todas", action="store_true",
-                   help="tambien las que ya tienen nota y estado")
+    p.add_argument(*opciones("--seccion", "--section"), dest="seccion", choices=list(SECCIONES),
+                   help=_("solo una carpeta"))
+    p.add_argument(*opciones("--todas", "--all"), dest="todas", action="store_true",
+                   help=_("tambien las que ya tienen nota y estado"))
     args = p.parse_args()
 
     if not sys.stdin.isatty():
-        print("Esto pregunta ficha a ficha, y hace falta una terminal para contestar.")
+        print(_("Esto pregunta ficha a ficha, y hace falta una terminal para contestar."))
         return 1
 
     carpetas = [args.seccion] if args.seccion else list(SECCIONES)
     lista = list(pendientes(carpetas, args.todas))
     if not lista:
-        print("No hay ninguna sin nota ni estado.")
+        print(_("No hay ninguna sin nota ni estado."))
         return 0
     print(GUIA)
-    print(f"{len(lista)} fichas por repasar.\n")
+    print(_("{n} fichas por repasar.").format(n=len(lista)) + "\n")
 
     tocadas = frases = 0
     for i, (carpeta, md, campos) in enumerate(lista, 1):
@@ -197,7 +201,7 @@ def main():
             try:
                 cambios = completar(campos, interpretar(respuesta))
             except ValueError as e:
-                print(f"  {e}. Otra vez, o ? para la ayuda.")
+                print("  " + _("{error}. Otra vez, o ? para la ayuda.").format(error=e))
                 continue
             escribir_campos(md, cambios)
             tocadas += 1
@@ -208,9 +212,9 @@ def main():
             break
         print()
 
-    print(f"{tocadas} ficha(s) cambiadas, {frases} con frase nueva.")
+    print(_("{tocadas} ficha(s) cambiadas, {frases} con frase nueva.").format(tocadas=tocadas, frases=frases))
     if tocadas and estado.actualizar_readme(callado=True):
-        print("Puesto al día el bloque de cifras del README.")
+        print(_("Puesto al día el bloque de cifras del README."))
     return 0
 
 

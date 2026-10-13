@@ -1,39 +1,53 @@
-name: Nueva pieza
-description: Añade una obra a la vitrina con su enlace. Se guarda y se publica sola.
+# La escribe scripts/desde_issue.py --plantilla: no se toca a mano.
+name: "Nueva pieza"
+description: "Añade una obra a la vitrina con su enlace. Se guarda y se publica sola."
 title: "Nueva pieza"
 labels: ["nueva-pieza"]
 body:
   - type: input
     id: enlace
     attributes:
-      label: Enlace
-      description: >-
-        De Steam, Letterboxd, IMDb, TMDB, FilmAffinity, TVmaze, MyAnimeList,
-        AniList, Goodreads, Open Library, Spotify, Apple Music, MusicBrainz,
-        Discogs, Wikipedia... El que tengas abierto.
+      label: "Enlace"
+      description: "De Steam, Letterboxd, IMDb, TMDB, FilmAffinity, TVmaze, MyAnimeList, AniList, Goodreads, Open Library, Spotify, Apple Music, MusicBrainz, Discogs, Wikipedia... El que tengas abierto."
       placeholder: https://letterboxd.com/film/parasite-2019/
     validations:
       required: true
   - type: dropdown
     id: nota
     attributes:
-      label: Nota
+      label: "Nota"
       options: ["Sin nota", "10", "9", "8", "7", "6", "5", "4", "3", "2", "1"]
       default: 0
   - type: dropdown
     id: estado
     attributes:
-      label: Estado
+      label: "Estado"
       options: ["Sin estado", "terminado", "en curso", "pendiente", "abandonado"]
       default: 0
   - type: checkboxes
     id: favorito
     attributes:
-      label: Lo mejor de lo mejor
+      label: "Lo mejor de lo mejor"
       options:
-        - label: Es de lo mejor de lo mejor
+        - label: "Es de lo mejor de lo mejor"
+  - type: input
+    id: grupos
+    attributes:
+      label: "Grupos"
+      description: "Separados por comas. Si el grupo no existe, se crea solo."
+  - type: input
+    id: terminada
+    attributes:
+      label: "Cuándo la terminaste"
+      description: "AAAA, AAAA-MM o AAAA-MM-DD. Es lo que la pone en el anuario."
   - type: textarea
     id: frase
     attributes:
-      label: Por qué está en la vitrina
-      description: Lo que te dejó. Va en su cartela, encima de lo que diga la fuente.
+      label: "Por qué está en la vitrina"
+      description: "Lo que te dejó. Va en su cartela, encima de lo que diga la fuente."
+  - type: checkboxes
+    id: oculta
+    attributes:
+      label: "Oculta"
+      options:
+        - label: "No sale en la web (el fichero sí está en el repo, que es público)"

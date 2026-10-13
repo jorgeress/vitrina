@@ -33,6 +33,23 @@ CARPETA_PRIVADA = CARPETAS.get("private", "private")
 UA = f"vitrine/1.0 ({CONFIG.get('repo', 'https://github.com')})"
 
 
+def _(castellano):
+    """Un mensaje por pantalla, en el idioma de la vitrina.
+
+    Se escribe en castellano y con huecos de `str.format`, nunca como f-string,
+    para que el texto sea siempre el mismo y se encuentre en el catalogo de
+    mensajes_en.py:
+
+        print(_("Creada {ruta}").format(ruta=md))
+
+    Lo que no tenga traduccion sale en castellano, que es mejor que nada.
+    """
+    if IDIOMA == "es":
+        return castellano
+    from mensajes_en import MENSAJES
+    return MENSAJES.get(castellano, castellano)
+
+
 def fichas(carpeta, privadas=True):
     """Las fichas de una seccion, las publicas y, detras, las de la carpeta
     privada. Sin el index.md de la seccion, que no es ninguna obra."""
@@ -395,8 +412,8 @@ def preguntar(candidatos, describir):
         print(f"  {i}) {describir(doc)}")
     while True:
         try:
-            resp = input(f"\n¿Cuál? (1-{len(candidatos)}, Enter para el 1, "
-                         "0 si ninguno): ").strip()
+            resp = input("\n" + _("¿Cuál? (1-{n}, Enter para el 1, 0 si ninguno): ").format(
+                n=len(candidatos))).strip()
         except (EOFError, KeyboardInterrupt):
             print()
             return None
@@ -406,7 +423,7 @@ def preguntar(candidatos, describir):
             return None
         if resp.isdigit() and 1 <= int(resp) <= len(candidatos):
             return candidatos[int(resp) - 1]
-        print("  Eso no es una de las opciones.")
+        print("  " + _("Eso no es una de las opciones."))
 
 
 # --- Wikipedia ---------------------------------------------------------------
@@ -589,14 +606,14 @@ def letterboxd_id(titulo, year):
     """
     candidatas = peliculas_wikidata(titulo)
     if candidatas is None:
-        return None, "no he podido consultar Wikidata"
+        return None, _("no he podido consultar Wikidata")
     if not candidatas:
-        return None, "Wikidata no la encuentra"
+        return None, _("Wikidata no la encuentra")
 
     if not year:
         if len(candidatas) == 1:
             return candidatas[0]["letterboxd"], f"Wikidata ({candidatas[0]['nombre']})"
-        return None, f"{len(candidatas)} candidatas y la ficha no dice el año"
+        return None, _("{n} candidatas y la ficha no dice el año").format(n=len(candidatas))
 
     year = int(year)
     # El año exacto manda. El margen de uno es solo para cuando no hay ninguna
@@ -610,8 +627,8 @@ def letterboxd_id(titulo, year):
     if len(justas) == 1:
         return justas[0]["letterboxd"], f"Wikidata ({justas[0]['nombre']}, {justas[0]['year']})"
     if justas:
-        return None, "varias del mismo año y ninguna encaja mejor"
-    return None, ("ninguna es de " + str(year) + ": "
+        return None, _("varias del mismo año y ninguna encaja mejor")
+    return None, (_("ninguna es de {year}: ").format(year=year)
                   + ", ".join(f"{c['nombre']} ({c['year']})" for c in candidatas[:3]))
 
 
@@ -673,7 +690,7 @@ def asegurar_letterboxd(md, campos):
     dejarlo escrito ahorra dos peticiones a Wikidata en cada pasada.
     """
     if campos.get("letterboxd"):
-        return campos["letterboxd"], "ya estaba en la ficha"
+        return campos["letterboxd"], _("ya estaba en la ficha")
     slug, detalle = letterboxd_id(campos.get("title") or md.stem, campos.get("year"))
     if slug:
         escribir_campos(md, {"letterboxd": slug})

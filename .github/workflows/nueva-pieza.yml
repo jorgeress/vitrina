@@ -17,7 +17,8 @@ jobs:
     # un repo publico cualquiera puede abrir uno, y esto escribe en main.
     if: >-
       github.event.issue.user.login == github.repository_owner &&
-      contains(github.event.issue.labels.*.name, 'nueva-pieza')
+      (contains(github.event.issue.labels.*.name, 'nueva-pieza') ||
+       contains(github.event.issue.labels.*.name, 'new-piece'))
     runs-on: ubuntu-latest
     concurrency:
       group: nueva-pieza
@@ -36,13 +37,12 @@ jobs:
       # evento y lo valida campo a campo.
       - name: Crear la ficha
         id: ficha
-        run: python3 scripts/desde_issue.py "$GITHUB_EVENT_PATH" --resumen resumen.md
+        run: python3 scripts/desde_issue.py "$GITHUB_EVENT_PATH" --resumen resumen.md --commit commit.txt
 
       - name: Guardar en main
         if: success()
         env:
           GH_TOKEN: ${{ github.token }}
-          NUMERO: ${{ github.event.issue.number }}
         run: |
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
@@ -51,8 +51,8 @@ jobs:
             echo "Nada que guardar."
             exit 0
           fi
-          titulo=$(git diff --cached --name-only --diff-filter=A -- 'content/*/*.md' | grep -v '^content/autores/' | head -1 | xargs -r -d '\n' basename -s .md)
-          git commit -q -m "Entra en la vitrina ${titulo:-una pieza nueva}" -m "Desde el Issue #${NUMERO}."
+          # El mensaje lo escribe desde_issue.py, en el idioma de la vitrina.
+          git commit -q -F commit.txt
           git push
           # Lo que sube el token de una Action no lanza otras Actions, asi que
           # la publicacion se pide a mano.
@@ -65,7 +65,7 @@ jobs:
           NUMERO: ${{ github.event.issue.number }}
           RESULTADO: ${{ steps.ficha.outcome }}
         run: |
-          [ -f resumen.md ] || echo "Algo ha fallado antes de llegar a la ficha: mira el run de la Action." > resumen.md
+          [ -f resumen.md ] || echo "Algo ha fallado antes de llegar a la ficha / Something failed before the entry was made: mira el run de la Action / see the Action run." > resumen.md
           gh issue comment "$NUMERO" --body-file resumen.md
           if [ "$RESULTADO" = "success" ]; then
             gh issue close "$NUMERO" --reason completed

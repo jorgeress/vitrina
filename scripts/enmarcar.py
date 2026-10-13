@@ -16,12 +16,12 @@ import argparse
 import sys
 
 import textos
-from vitrina import fichas, FRONT_RE, SECCIONES, VAULT
+from vitrina import _, fichas, FRONT_RE, SECCIONES, VAULT
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--dry-run", action="store_true", help="no escribe nada")
+    p = argparse.ArgumentParser(description=_(__doc__.splitlines()[0]))
+    p.add_argument("--dry-run", action="store_true", help=_("no escribe nada"))
     args = p.parse_args()
 
     hechas = 0
@@ -39,7 +39,7 @@ def main():
             print(f"  ▣  {carpeta}/{md.stem}")
             hechas += 1
 
-    print(f"\n{hechas} fichas {'por enmarcar' if args.dry_run else 'enmarcadas'}.")
+    print("\n" + (_("{n} fichas por enmarcar.") if args.dry_run else _("{n} fichas enmarcadas.")).format(n=hechas))
     return 0
 
 

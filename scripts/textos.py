@@ -5,11 +5,15 @@ Las 84 fichas sin una linea eran el cuello de botella del sitio: el buscador
 las encuentra por el titulo, pero entrar en una era entrar a nada. Esto pone
 de que va cada obra, sacado de la misma fuente que ya identifica la ficha.
 
-  juegos  Steam, por `appid`     la descripcion corta de la tienda, en español
-  pelis   Wikipedia ES, por el `letterboxd` que resuelve Wikidata
-  series  Wikipedia ES por el `tvmaze`, y si no lo enlaza, TVmaze en ingles
+  juegos  Steam, por `appid`     la descripcion corta de la tienda
+  pelis   Wikipedia, por el `letterboxd` que resuelve Wikidata
+  series  Wikipedia por el `tvmaze`, y si no lo enlaza, TVmaze en ingles
   musica  MusicBrainz, por `mbid`   la lista de canciones del disco
-  libros  Wikipedia ES, por la obra de Open Library que dice su `coverid`
+  libros  Wikipedia, por la obra de Open Library que dice su `coverid`
+
+Steam y Wikipedia se piden en el idioma de la vitrina (`language` en
+vitrine.config.json): en castellano en una vitrina en castellano, en ingles en
+una en ingles. Lo que solo existe en ingles se marca como tal.
 
 La regla es la de siempre: **no adivinar**. Cada obra se busca por el
 identificador que ya tiene apuntado, nunca por parecido de nombre. Si no lo
@@ -55,15 +59,16 @@ import time
 import urllib.parse
 from pathlib import Path
 
-from vitrina import (fichas, FRONT_RE, SECCIONES, VAULT, asegurar_letterboxd, entrada_steam,
-                     escribir_campos, ficha_letterboxd, frontmatter, pedir,
-                     serie_tvmaze, url_tvmaze)
+import idioma
+from idioma import opciones, ayuda, CALLOUT, CALLOUTS, LICENCIA_CC, STEAM, WIKIPEDIA
+from vitrina import (IDIOMA, _, fichas as de_la_seccion, FRONT_RE, SECCIONES, VAULT,
+                     asegurar_letterboxd, entrada_steam, escribir_campos, ficha_letterboxd,
+                     frontmatter, pedir, serie_tvmaze, url_tvmaze)
 
 ESPERA = 1.5  # la tienda de Steam corta sobre las 200 peticiones cada 5 minutos
 
 ANCHO = 76  # el resto del repo escribe la prosa a esta anchura
 
-LICENCIA_CC = "https://creativecommons.org/licenses/by-sa/4.0/deed.es"
 
 
 def limpio(bruto):
@@ -93,7 +98,13 @@ def cita(texto, credito):
     """
     lineas = textwrap.wrap(texto, ANCHO - 2) or [""]
     cuerpo = "\n".join(f"> {l}" for l in lineas)
-    return f"> [!quote] De qué va\n{cuerpo}\n>\n> → {credito}"
+    return f"> [!quote] {idioma.texto('de_que_va')}\n{cuerpo}\n>\n> → {credito}"
+
+
+def en_ingles(credito):
+    """El credito de un texto que solo esta en ingles, avisando si la vitrina
+    no lo esta."""
+    return credito if IDIOMA == "en" else f"{credito} · {idioma.texto('en_ingles')}"
 
 
 # --- fuentes -----------------------------------------------------------------
@@ -102,18 +113,18 @@ def texto_juego(titulo, campos, md):
     del titulo, md  # aqui manda el appid, que identifica el juego sin dudas
     appid = campos.get("appid")
     if not appid:
-        return None, "la ficha no tiene appid; se pone a mano"
+        return None, _("la ficha no tiene appid; se pone a mano")
 
     respuesta = pedir("https://store.steampowered.com/api/appdetails"
-                      f"?appids={appid}&l=spanish&cc=es") or {}
+                      f"?appids={appid}&l={STEAM}&cc=es") or {}
     entrada = entrada_steam(respuesta, appid)
     if not entrada.get("success"):
-        return None, f"la tienda no tiene ficha del appid {appid}"
+        return None, _("la tienda no tiene ficha del appid {id}").format(id=appid)
 
     datos = entrada.get("data") or {}
     sinopsis = limpio(datos.get("short_description"))
     if not sinopsis:
-        return None, f"su ficha de Steam no trae descripcion ({appid})"
+        return None, _("su ficha de Steam no trae descripcion ({id})").format(id=appid)
 
     return cita(sinopsis, credito_steam(appid)), \
         f"Steam ({datos.get('name') or appid})"
@@ -123,8 +134,9 @@ def credito_steam(appid):
     return f"[Steam](https://store.steampowered.com/app/{appid}/)"
 
 
-def articulo_es(propiedad, valor):
-    """El articulo de la Wikipedia en español de lo que tenga ese identificador.
+def articulo_wiki(propiedad, valor):
+    """El articulo de la Wikipedia del idioma de la vitrina de lo que tenga ese
+    identificador.
 
     Se pregunta a Wikidata por el id exacto -el de Letterboxd para las pelis,
     el de Open Library para los libros- y no por el titulo. Wikidata solo
@@ -132,8 +144,8 @@ def articulo_es(propiedad, valor):
     correcta o no sale ninguna, que es justo lo que se quiere.
     """
     consulta = ('SELECT ?art WHERE { ?item wdt:%s "%s". '
-                '?art schema:about ?item; schema:isPartOf <https://es.wikipedia.org/> }'
-                % (propiedad, valor))
+                '?art schema:about ?item; schema:isPartOf <https://%s.wikipedia.org/> }'
+                % (propiedad, valor, WIKIPEDIA))
     time.sleep(0.5)  # el endpoint publico de Wikidata pide no apretar
     datos = pedir("https://query.wikidata.org/sparql?format=json&query="
                   + urllib.parse.quote(consulta)) or {}
@@ -148,7 +160,7 @@ def resumen_wikipedia(articulo):
     """El primer parrafo del articulo, que es el que resume la obra."""
     ruta = urllib.parse.quote(articulo.replace(" ", "_"), safe="")
     time.sleep(0.4)
-    datos = pedir(f"https://es.wikipedia.org/api/rest_v1/page/summary/{ruta}") or {}
+    datos = pedir(f"https://{WIKIPEDIA}.wikipedia.org/api/rest_v1/page/summary/{ruta}") or {}
     return limpio(datos.get("extract"))
 
 
@@ -159,45 +171,45 @@ def credito_wikipedia(articulo):
     licencia deja expresamente cumplir la atribucion con un enlace a donde
     esten los datos (seccion 3(a)(2)). Lo que no se puede quitar es la licencia.
     """
-    enlace = "https://es.wikipedia.org/wiki/" + urllib.parse.quote(
+    enlace = f"https://{WIKIPEDIA}.wikipedia.org/wiki/" + urllib.parse.quote(
         articulo.replace(" ", "_"), safe="")
     return f"[Wikipedia]({enlace}) · [CC BY-SA 4.0]({LICENCIA_CC})"
 
 
 def texto_peli(titulo, campos, md):
-    """La sinopsis, de la Wikipedia en español, por el id de Letterboxd.
+    """La sinopsis, de la Wikipedia de la vitrina, por el id de Letterboxd.
 
     Se podria sacar de la propia pagina de Letterboxd, que la trae en su
     JSON-LD, pero ese texto no es suyo: es de TMDB, a quien enlazan en la
-    misma pagina. Y viene en ingles. Wikipedia lo da en castellano y con una
-    licencia que dice en claro que se puede hacer con el.
+    misma pagina. Y viene en ingles. Wikipedia lo da en el idioma de la
+    vitrina y con una licencia que dice en claro que se puede hacer con el.
     """
     del titulo
     slug_lb, detalle = asegurar_letterboxd(md, campos)
     if not slug_lb:
         return None, detalle
 
-    articulo = articulo_es("P6127", slug_lb)
+    articulo = articulo_wiki("P6127", slug_lb)
     if articulo:
         sinopsis = resumen_wikipedia(articulo)
         if sinopsis:
             return cita(sinopsis, credito_wikipedia(articulo)), f"Wikipedia ({articulo})"
 
-    # Sin articulo en español -pasa con lo recien estrenado- queda la ficha de
+    # Sin articulo en su Wikipedia -pasa con lo recien estrenado- queda la ficha de
     # Letterboxd. Se cita a TMDB y no a ellos porque el texto es de TMDB, a
     # quien enlazan en su propia pagina; y se avisa de que viene en ingles.
     ficha = ficha_letterboxd(slug_lb)
     sinopsis, tmdb = ficha.get("sinopsis"), ficha.get("tmdb")
     if sinopsis and tmdb:
-        return cita(limpio(sinopsis), f"[TMDB]({tmdb}) · en inglés"), \
+        return cita(limpio(sinopsis), en_ingles(f"[TMDB]({tmdb})")), \
             f"TMDB via Letterboxd ({slug_lb})"
     if not articulo:
-        return None, f"ni articulo en español ni sinopsis en Letterboxd ({slug_lb})"
-    return None, f"el articulo «{articulo}» no trae resumen"
+        return None, _("ni articulo en Wikipedia ({wiki}) ni sinopsis en Letterboxd ({id})").format(wiki=WIKIPEDIA, id=slug_lb)
+    return None, _("el articulo «{articulo}» no trae resumen").format(articulo=articulo)
 
 
 def texto_serie(titulo, campos, md):
-    """De que va la serie, de la Wikipedia en español si se llega hasta ella.
+    """De que va la serie, de la Wikipedia de la vitrina si se llega hasta ella.
 
     Se llega por el `tvmaze`, igual que una pelicula por su id de Letterboxd:
     Wikidata guarda el identificador de TVmaze (P8600) y de ahi sale el
@@ -214,7 +226,7 @@ def texto_serie(titulo, campos, md):
     del titulo, md
     articulo = campos.get("wikipedia") or None
     if not articulo and campos.get("tvmaze"):
-        articulo = articulo_es("P8600", campos["tvmaze"])
+        articulo = articulo_wiki("P8600", campos["tvmaze"])
     if articulo:
         sinopsis = resumen_wikipedia(articulo)
         if sinopsis:
@@ -222,15 +234,15 @@ def texto_serie(titulo, campos, md):
 
     tvid = campos.get("tvmaze")
     if not tvid:
-        return None, "la ficha no tiene tvmaze; se pone a mano"
+        return None, _("la ficha no tiene tvmaze; se pone a mano")
     serie = serie_tvmaze(tvid) or {}
     sinopsis = limpio(serie.get("summary"))
     if sinopsis:
-        return cita(sinopsis, f"[TVmaze]({url_tvmaze(tvid)}) · CC BY-SA · en inglés"), \
+        return cita(sinopsis, en_ingles(f"[TVmaze]({url_tvmaze(tvid)}) · CC BY-SA")), \
             f"TVmaze ({serie.get('name') or tvid})"
     if not articulo:
-        return None, f"ni articulo en español ni resumen en TVmaze ({tvid})"
-    return None, f"el articulo «{articulo}» no trae resumen"
+        return None, _("ni articulo en Wikipedia ({wiki}) ni resumen en TVmaze ({id})").format(wiki=WIKIPEDIA, id=tvid)
+    return None, _("el articulo «{articulo}» no trae resumen").format(articulo=articulo)
 
 
 def obra_de_portada(coverid):
@@ -254,15 +266,15 @@ def texto_libro(titulo, campos, md):
     articulo = campos.get("wikipedia")
     if not articulo and campos.get("coverid"):
         obra = obra_de_portada(campos["coverid"])
-        articulo = obra and articulo_es("P648", obra)
+        articulo = obra and articulo_wiki("P648", obra)
         if articulo and md:
             escribir_campos(md, {"wikipedia": articulo})
     if not articulo:
-        return None, ("Wikidata no enlaza este libro con la Wikipedia en español; "
-                      "pon el campo `wikipedia` a mano")
+        return None, _("Wikidata no enlaza este libro con la Wikipedia ({wiki}); "
+                       "pon el campo `wikipedia` a mano").format(wiki=WIKIPEDIA)
     sinopsis = resumen_wikipedia(articulo)
     if not sinopsis:
-        return None, f"el articulo «{articulo}» no trae resumen"
+        return None, _("el articulo «{articulo}» no trae resumen").format(articulo=articulo)
     return cita(sinopsis, credito_wikipedia(articulo)), f"Wikipedia ({articulo})"
 
 
@@ -310,11 +322,11 @@ def texto_album(titulo, campos, md):
     del titulo, md
     mbid = campos.get("mbid")
     if not mbid:
-        return None, "la ficha no tiene mbid; se pone a mano"
+        return None, _("la ficha no tiene mbid; se pone a mano")
 
     titulos, nombre = canciones_musicbrainz(mbid)
     if not titulos:
-        return None, f"MusicBrainz no da la lista de canciones ({mbid})"
+        return None, _("MusicBrainz no da la lista de canciones ({id})").format(id=mbid)
     return cuerpo_disco(titulos), f"MusicBrainz ({nombre})"
 
 
@@ -378,7 +390,7 @@ def escribir_cuerpo(md, cuerpo):
 # que pinte el sitio al construir para que se vea igual en Obsidian, donde el
 # snippet de .obsidian/snippets/vitrina.css le da su color.
 
-MARCO = "> [!vitrina] Por qué está en la vitrina"
+MARCO = f"> [!{CALLOUT}] {idioma.texto('cartela')}"
 
 
 def marco(suyo):
@@ -388,7 +400,7 @@ def marco(suyo):
 
 
 def enmarcado(suyo):
-    return suyo.lstrip().startswith("> [!vitrina]")
+    return suyo.lstrip().startswith(tuple(f"> [!{c}]" for c in CALLOUTS))
 
 
 def escribir_lo_suyo(md, suyo):
@@ -430,18 +442,19 @@ def fichas(args):
     carpetas = [args.seccion] if args.seccion else list(SECCIONES)
     salida = []
     for carpeta in carpetas:
-        salida += fichas(carpeta)
+        salida += de_la_seccion(carpeta)
     return salida
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__,
+    p = argparse.ArgumentParser(description=ayuda(__doc__, "textos"),
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("ficha", nargs="*", help="fichas sueltas; por defecto, todas")
-    p.add_argument("--seccion", choices=list(SECCIONES), help="solo una carpeta")
+    p.add_argument("ficha", nargs="*", help=_("fichas sueltas; por defecto, todas"))
+    p.add_argument(*opciones("--seccion", "--section"), dest="seccion", choices=list(SECCIONES),
+                   help=_("solo una carpeta"))
     p.add_argument("--force", action="store_true",
-                   help="reescribe el cuerpo de las fichas que ya tienen texto")
-    p.add_argument("--dry-run", action="store_true", help="no consulta ni escribe nada")
+                   help=_("reescribe el cuerpo de las fichas que ya tienen texto"))
+    p.add_argument("--dry-run", action="store_true", help=_("no consulta ni escribe nada"))
     args = p.parse_args()
 
     hechas = fallidas = saltadas = 0
@@ -460,11 +473,11 @@ def main():
 
         fuente = FUENTES.get(tipo)
         if not fuente:
-            print(f"  ?  {nombre}: no hay fuente para '{tipo}'")
+            print(f"  ?  {nombre}: " + _("no hay fuente para '{tipo}'").format(tipo=tipo))
             fallidas += 1
             continue
         if args.dry_run:
-            print(f"  ·  {nombre}: buscaría su texto")
+            print(f"  ·  {nombre}: " + _("buscaría su texto"))
             continue
 
         cuerpo, detalle = fuente(titulo, campos, md)
@@ -478,8 +491,8 @@ def main():
         hechas += 1
         time.sleep(ESPERA)
 
-    print(f"\n{hechas} fichas escritas, {fallidas} sin resolver, "
-          f"{saltadas} ya tenian texto.")
+    print("\n" + _("{hechas} fichas escritas, {fallidas} sin resolver, {saltadas} ya tenian texto.").format(
+        hechas=hechas, fallidas=fallidas, saltadas=saltadas))
     return 0
 
 

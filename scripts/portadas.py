@@ -27,9 +27,11 @@ from pathlib import Path
 
 from PIL import Image
 
-from vitrina import (fichas, portadas_de, PORTADAS, SECCIONES, VAULT, articulo_html, articulos_ingleses, wiki,
-                       asegurar_letterboxd, escribir_campos, ficha_letterboxd,
-                       frontmatter, normal, pedir, serie_tvmaze, slug)
+from idioma import opciones, ayuda
+from vitrina import (_, fichas as de_la_seccion, portadas_de, PORTADAS, SECCIONES, VAULT,
+                     articulo_html, articulos_ingleses, wiki, asegurar_letterboxd,
+                     escribir_campos, ficha_letterboxd, frontmatter, normal, pedir, serie_tvmaze,
+                     slug)
 
 ANCHO = 400  # las tarjetas miden 220 px; 400 cubre pantallas 2x
 
@@ -72,7 +74,7 @@ def portada_juego(titulo, campos, md):
         # Buscarlo por nombre falla con los free-to-play y con los titulos raros.
         img = caratula_steam(campos["appid"], campos.get("capsule"))
         if img:
-            return img, "Steam (exacta, por appid)"
+            return img, _("Steam (exacta, por appid)")
     url = "https://steamcommunity.com/actions/SearchApps/" + urllib.parse.quote(titulo)
     res = pedir(url) or []
     if res:
@@ -110,7 +112,7 @@ def portada_juego_wikipedia(titulo, campos):
         src = imagen_infobox(articulo)
         img = pedir(src, binario=True, reintentos=5) if src else None
         if img and len(img) > 5000:
-            return img, f"Wikipedia ({articulo}), en baja resolucion"
+            return img, _("Wikipedia ({articulo}), en baja resolucion").format(articulo=articulo)
     return None, None
 
 
@@ -122,7 +124,7 @@ def portada_libro(titulo, campos, md):
         img = pedir(f"https://covers.openlibrary.org/b/id/{campos['coverid']}-L.jpg",
                     binario=True)
         if img and len(img) > 5000:
-            return img, "Open Library (exacta, por coverid)"
+            return img, _("Open Library (exacta, por coverid)")
     consulta = " ".join(filter(None, [titulo, campos.get("author")]))
     url = ("https://openlibrary.org/search.json?limit=5"
            "&fields=title,author_name,cover_i,first_publish_year&q="
@@ -149,7 +151,7 @@ def portada_album(titulo, campos, md):
             img = pedir(f"https://coverartarchive.org/{clase}/{campos['mbid']}/front-500",
                         binario=True)
             if img and len(img) > 5000:
-                return img, f"Cover Art Archive (exacta, por mbid de {clase})"
+                return img, _("Cover Art Archive (exacta, por mbid de {clase})").format(clase=clase)
     consulta = f'releasegroup:"{titulo}"'
     if campos.get("author"):
         consulta += f' AND artist:"{campos["author"]}"'
@@ -201,7 +203,7 @@ def portada_peli(titulo, campos, md):
             if img and len(img) > 5000:
                 return img, f"Letterboxd ({slug_lb})"
     else:
-        print(f"     sin id de Letterboxd: {detalle}")
+        print("     " + _("sin id de Letterboxd: {porque}").format(porque=detalle))
 
     for articulo in articulos_ingleses(titulo, campos.get("year")):
         src = imagen_infobox(articulo)
@@ -213,7 +215,7 @@ def portada_peli(titulo, campos, md):
         time.sleep(0.6)
         img = pedir(src, binario=True, reintentos=5)
         if img and len(img) > 5000:
-            return img, f"Wikipedia ({articulo}), en baja resolucion"
+            return img, _("Wikipedia ({articulo}), en baja resolucion").format(articulo=articulo)
     return None, None
 
 
@@ -253,17 +255,18 @@ def fichas(args):
     carpetas = [args.seccion] if args.seccion else SECCIONES
     salida = []
     for carpeta in carpetas:
-        salida += fichas(carpeta)
+        salida += de_la_seccion(carpeta)
     return salida
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__,
+    p = argparse.ArgumentParser(description=ayuda(__doc__, "portadas"),
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("ficha", nargs="*", help="fichas sueltas; por defecto, todas")
-    p.add_argument("--seccion", choices=list(SECCIONES), help="solo una carpeta")
-    p.add_argument("--force", action="store_true", help="rehace las que ya tienen portada")
-    p.add_argument("--dry-run", action="store_true", help="no baja ni escribe nada")
+    p.add_argument("ficha", nargs="*", help=_("fichas sueltas; por defecto, todas"))
+    p.add_argument(*opciones("--seccion", "--section"), dest="seccion", choices=list(SECCIONES),
+                   help=_("solo una carpeta"))
+    p.add_argument("--force", action="store_true", help=_("rehace las que ya tienen portada"))
+    p.add_argument("--dry-run", action="store_true", help=_("no baja ni escribe nada"))
     args = p.parse_args()
 
     hechas = fallidas = saltadas = 0
@@ -280,16 +283,16 @@ def main():
             saltadas += 1
             continue
         if tipo not in FUENTES:
-            print(f"  ?  {etiqueta}: tipo '{tipo}' desconocido")
+            print(f"  ?  {etiqueta}: " + _("tipo '{tipo}' desconocido").format(tipo=tipo))
             fallidas += 1
             continue
         if args.dry_run:
-            print(f"  ·  {etiqueta}: buscaria en {FUENTES[tipo].__name__}")
+            print(f"  ·  {etiqueta}: " + _("buscaria en {fuente}").format(fuente=FUENTES[tipo].__name__))
             continue
 
         img, fuente = FUENTES[tipo](titulo, campos, md)
         if not img:
-            print(f"  ✗  {etiqueta}: sin portada en la fuente")
+            print(f"  ✗  {etiqueta}: " + _("sin portada en la fuente"))
             fallidas += 1
             continue
 
@@ -302,8 +305,8 @@ def main():
         print(f"  ✓  {etiqueta}: {nombre}, {peso // 1024} KB, {fuente}")
         hechas += 1
 
-    print(f"\n{hechas} portadas nuevas, {fallidas} sin resolver, "
-          f"{saltadas} ya la tenian.")
+    print("\n" + _("{hechas} portadas nuevas, {fallidas} sin resolver, {saltadas} ya la tenian.").format(
+        hechas=hechas, fallidas=fallidas, saltadas=saltadas))
     return 0
 
 

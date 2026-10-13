@@ -43,27 +43,32 @@ Lo que la fuente no sabe es lo tuyo, y va en las opciones:
                       fichero esta en el repo y se puede leer en GitHub
   --privada           va a la carpeta privada (content/privado/), que git no
                       sube: ni la web ni GitHub la ven
+  --grupo "Anime"     la mete en ese grupo (se puede repetir)
+  --terminada 2024-05 cuando la terminaste, para el anuario
   --dry-run           dice que crearia, sin tocar nada
 """
 
 import argparse
 import contextlib
 import io
+import json
 import re
 import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from pathlib import Path
 
 import autores
 import estado
 import textos
+from idioma import _, ayuda, opciones
 from datos import datos_juego, datos_serie
-from vitrina import (fichas, portadas_de, ESTADOS, PORTADAS, SECCIONES, UA, VAULT, entrada_steam, estado_de, tipo_de,
-                       escribir_campos, escribir_ficha, ficha_letterboxd, frontmatter,
-                       nombre_de_fichero, parecidos, pedir, peliculas_wikidata,
-                       preguntar, serie_tvmaze, series_tvmaze, sin_letras_latinas, slug, wikidata,
-                       año_tvmaze)
+from vitrina import (fichas, portadas_de, ESTADOS, PORTADAS, SECCIONES, UA, VAULT, entrada_steam,
+                     estado_de, tipo_de, escribir_campos, escribir_ficha, ficha_letterboxd,
+                     frontmatter, nombre_de_fichero, parecidos, pedir, peliculas_wikidata,
+                     preguntar, serie_tvmaze, series_tvmaze, sin_letras_latinas, slug, wikidata,
+                     año_tvmaze)
 from portadas import FUENTES as CARATULAS, guardar
 
 # Tipo de ficha -> carpeta de la vault. SECCIONES va al reves.
@@ -160,7 +165,7 @@ def emisora(serie):
 
 # Solo lo que no es una serie de ficcion con actores se dice: eso es lo normal
 # y ponerlo en cada linea seria ruido.
-TIPOS_SERIE = {"Animation": "animación", "Documentary": "documental",
+TIPOS_SERIE = {"Animation": _("animación"), "Documentary": _("documental"),
                "Reality": "reality"}
 
 
@@ -177,7 +182,7 @@ def pista_serie(serie):
     tipo = serie.get("type")
     partes = [pais or serie.get("language"),
               TIPOS_SERIE.get(tipo, tipo.lower() if tipo and tipo != "Scripted" else None),
-              "sin estrenar" if serie.get("status") == "In Development" else None,
+              _("sin estrenar") if serie.get("status") == "In Development" else None,
               ", ".join(serie.get("genres") or [])]
     return " · ".join(p for p in partes if p)
 
@@ -227,7 +232,7 @@ def buscar_libro(consulta, cuantos):
 def candidato_libro(doc):
     return candidato(doc.get("title"), year=doc.get("first_publish_year"),
                      autor=(doc.get("author_name") or [None])[0],
-                     pista="" if doc.get("cover_i") else "(sin portada)",
+                     pista="" if doc.get("cover_i") else _("(sin portada)"),
                      coverid=doc.get("cover_i"))
 
 
@@ -484,9 +489,9 @@ def por_wikidata(consulta, preferido=None):
         ids = [r["title"] for r in ((datos or {}).get("query") or {}).get("search") or []]
         encontradas = None if datos is None else (entidades(ids) if ids else [])
     if encontradas is None:
-        return "Wikidata no contesta ahora mismo; inténtalo dentro de un rato"
+        return _("Wikidata no contesta ahora mismo; inténtalo dentro de un rato")
     if not encontradas:
-        return "Wikidata no tiene esa obra enlazada"
+        return _("Wikidata no tiene esa obra enlazada")
     for entidad in encontradas:
         ids = ids_nativos(entidad)
         # Una edicion de Goodreads es una entidad aparte, sin los ids de la
@@ -500,9 +505,10 @@ def por_wikidata(consulta, preferido=None):
         if leido:
             return leido
     if preferido:
-        return f"Wikidata no enlaza esa obra con la fuente de {CARPETAS[preferido]}"
-    return ("Wikidata la conoce, pero sin id de Steam, Letterboxd, TVmaze, "
-            "Open Library ni MusicBrainz")
+        return _("Wikidata no enlaza esa obra con la fuente de {carpeta}").format(
+            carpeta=CARPETAS[preferido])
+    return _("Wikidata la conoce, pero sin id de Steam, Letterboxd, TVmaze, "
+             "Open Library ni MusicBrainz")
 
 
 def resolver_enlace(enlace, preferido=None):
@@ -516,7 +522,8 @@ def resolver_enlace(enlace, preferido=None):
     consulta, sitio, probable = puente
     resultado = por_wikidata(consulta, preferido)
     if isinstance(resultado, str):
-        return None, f"{resultado} (enlace de {sitio})", preferido or probable
+        return None, _("{porque} (enlace de {sitio})").format(porque=resultado, sitio=sitio), \
+            preferido or probable
     return resultado
 
 
@@ -556,7 +563,7 @@ def completar(tipo, elegido):
         direccion = ficha.get("direccion") or []
         if direccion:
             return {**campos, "author": ", ".join(direccion[:2])}, "Letterboxd"
-        return campos, "su ficha de Letterboxd no dice quien dirige"
+        return campos, _("su ficha de Letterboxd no dice quien dirige")
     if tipo == "series":
         # La lista ya trajo el año y la cadena; esto pide los generos y a quien
         # se le atribuye la serie, que estan en su ficha y en su equipo. Lo que
@@ -621,29 +628,40 @@ def caratula(tipo, md, campos, titulo):
     return f"{nombre}, {peso // 1024} KB, {fuente}"
 
 
+def fecha_parcial(texto):
+    """AAAA, AAAA-MM o AAAA-MM-DD: con la precision que se sepa, ni una mas."""
+    if not re.fullmatch(r"\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?)?", texto):
+        raise argparse.ArgumentTypeError(_("tiene que ser AAAA, AAAA-MM o AAAA-MM-DD"))
+    return texto
+
+
 def main():
-    p = argparse.ArgumentParser(description=__doc__,
+    p = argparse.ArgumentParser(description=ayuda(__doc__, "nueva"),
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("tipo", metavar="tipo|enlace",
-                   help=f"{', '.join(BUSCADORES)}, o el enlace de la obra")
-    p.add_argument("titulo", nargs="?", help="lo que escribirias en un buscador")
-    p.add_argument("--nota", "--rating", dest="nota", type=int, choices=range(1, 11),
+    p.add_argument("tipo", metavar=_("tipo|enlace"),
+                   help=_("{tipos}, o el enlace de la obra").format(tipos=", ".join(BUSCADORES)))
+    p.add_argument("titulo", nargs="?", metavar=_("titulo"), help=_("lo que escribirias en un buscador"))
+    p.add_argument(*opciones("--nota", "--rating"), dest="nota", type=int, choices=range(1, 11),
                    metavar="1-10")
-    p.add_argument("--estado", "--status", dest="estado", type=estado_de,
-                   choices=ESTADOS, default="pending")
-    p.add_argument("--favorito", "--favorite", dest="favorito", action="store_true")
-    p.add_argument("--elegir", type=int, metavar="N",
-                   help="sin preguntar: el resultado numero N")
-    p.add_argument("--resultados", type=int, default=8, metavar="N")
-    p.add_argument("--fichero", metavar="NOMBRE",
-                   help="como se llama el fichero, si del titulo no sale uno")
-    p.add_argument("--borrador", "--draft", dest="borrador", action="store_true",
-                   help="entra con draft: true, o sea sin salir en la web")
-    p.add_argument("--oculta", "--hidden", dest="oculta", action="store_true",
-                   help="entra con hidden: true: no sale en la web, pero esta en el repo")
-    p.add_argument("--privada", "--private", dest="privada", action="store_true",
-                   help="va a la carpeta privada, que no se sube a ningun sitio")
-    p.add_argument("--dry-run", action="store_true", help="no escribe ni baja nada")
+    p.add_argument(*opciones("--estado", "--status"), dest="estado", type=estado_de, choices=ESTADOS)
+    p.add_argument(*opciones("--favorito", "--favorite"), dest="favorito", action="store_true")
+    p.add_argument(*opciones("--elegir", "--pick"), dest="elegir", type=int, metavar="N",
+                   help=_("sin preguntar: el resultado numero N"))
+    p.add_argument(*opciones("--resultados", "--results"), dest="resultados", type=int, default=8, metavar="N")
+    p.add_argument(*opciones("--fichero", "--file"), dest="fichero", metavar=_("NOMBRE"),
+                   help=_("como se llama el fichero, si del titulo no sale uno"))
+    p.add_argument(*opciones("--borrador", "--draft"), dest="borrador", action="store_true",
+                   help=_("entra con draft: true, o sea sin salir en la web"))
+    p.add_argument(*opciones("--oculta", "--hidden"), dest="oculta", action="store_true",
+                   help=_("entra con hidden: true: no sale en la web, pero esta en el repo"))
+    p.add_argument(*opciones("--privada", "--private"), dest="privada", action="store_true",
+                   help=_("va a la carpeta privada, que no se sube a ningun sitio"))
+    p.add_argument(*opciones("--grupo", "--group"), dest="grupos", action="append", metavar=_("NOMBRE"),
+                   help=_("la mete en ese grupo; se puede repetir"))
+    p.add_argument(*opciones("--terminada", "--finished-on"), dest="terminada", type=fecha_parcial,
+                   metavar=_("AAAA[-MM[-DD]]"), help=_("cuando la terminaste, para el anuario"))
+    p.add_argument("--informe", help=argparse.SUPPRESS)
+    p.add_argument("--dry-run", action="store_true", help=_("no escribe ni baja nada"))
     args = p.parse_args()
     if not es_enlace(args.tipo):
         args.tipo = tipo_de(args.tipo)
@@ -655,27 +673,27 @@ def main():
         preferido = args.tipo if args.tipo in BUSCADORES else None
         leido = resolver_enlace(args.enlace, preferido)
         if not leido:
-            p.error("ese enlace no es de ningún sitio que sepa leer. Los que sí: "
-                    "Steam, Letterboxd, TVmaze, MusicBrainz, Spotify, Open Library, "
-                    "IMDb, TMDB, FilmAffinity, MyAnimeList, AniList, Goodreads, "
-                    "Apple Music, Deezer, Discogs, IGDB, HowLongToBeat, Wikipedia "
-                    "y Wikidata")
+            p.error(_("ese enlace no es de ningún sitio que sepa leer. Los que sí: {sitios}").format(
+                sitios="Steam, Letterboxd, TVmaze, MusicBrainz, Spotify, Open Library, IMDb, "
+                       "TMDB, FilmAffinity, MyAnimeList, AniList, Goodreads, Apple Music, "
+                       "Deezer, Discogs, IGDB, HowLongToBeat, Wikipedia, Wikidata"))
         if leido[0] is None:
-            _, porque, probable = leido
-            print(porque[0].upper() + porque[1:] + ".\nBúscala por el título: "
-                  f"scripts/nueva.py {probable or 'TIPO'} \"el título\"")
+            _sin, porque, probable = leido
+            print(porque[0].upper() + porque[1:] + ".\n"
+                  + _("Búscala por el título: scripts/nueva.py {tipo} \"el título\"").format(
+                      tipo=probable or "TIPO"))
             return 1
         if args.tipo != escrito and args.tipo != leido[0]:
-            p.error(f"ese enlace es de {CARPETAS[leido[0]]}, no de "
-                    f"{CARPETAS.get(args.tipo, args.tipo)}")
+            p.error(_("ese enlace es de {suyo}, no de {pedido}").format(
+                suyo=CARPETAS[leido[0]], pedido=CARPETAS.get(args.tipo, args.tipo)))
         args.tipo = leido[0]
         args.titulo = args.enlace
         # Resuelto una vez: por Wikidata son dos o tres peticiones.
         args.leido = leido
     elif args.tipo not in BUSCADORES:
-        p.error(f"el tipo es uno de estos: {', '.join(BUSCADORES)}; o un enlace")
+        p.error(_("el tipo es uno de estos: {tipos}; o un enlace").format(tipos=", ".join(BUSCADORES)))
     elif not args.titulo:
-        p.error("falta qué buscar")
+        p.error(_("falta qué buscar"))
     return alta(args)
 
 
@@ -688,25 +706,26 @@ def alta(args):
     carpeta = CARPETAS[args.tipo]
     enlace = getattr(args, "enlace", None)
     if enlace:
-        _, fuente, ident = getattr(args, "leido", None) or leer_enlace(enlace)
+        _sin, fuente, ident = getattr(args, "leido", None) or leer_enlace(enlace)
         candidatos = fuente(ident)
     else:
         candidatos = BUSCADORES[args.tipo](args.titulo, args.resultados)
     if candidatos is None:
-        print(f"No he podido hablar con {NOMBRE_FUENTE[args.tipo]}. No es que no esté:\n"
-              "es que ahora mismo no contesta. Inténtalo dentro de un rato.")
+        print(_("No he podido hablar con {fuente}. No es que no esté:\n"
+                "es que ahora mismo no contesta. Inténtalo dentro de un rato.").format(
+                    fuente=NOMBRE_FUENTE[args.tipo]))
         return 1
     if not candidatos and enlace:
-        print(f"{NOMBRE_FUENTE[args.tipo]} no tiene nada en ese enlace. Prueba a "
-              "buscarla por el título:\n"
-              f"  scripts/nueva.py {args.tipo} \"el título\"")
+        print(_("{fuente} no tiene nada en ese enlace. Prueba a buscarla por el título:\n"
+                "  scripts/nueva.py {tipo} \"el título\"").format(
+                    fuente=NOMBRE_FUENTE[args.tipo], tipo=args.tipo))
         return 1
     if not candidatos:
-        print(f"No encuentro nada con «{args.titulo}».")
+        print(_("No encuentro nada con «{titulo}».").format(titulo=args.titulo))
         if args.tipo == "book":
-            print("Prueba con el título en inglés: el catálogo va casi todo por ahí.")
+            print(_("Prueba con el título en inglés: el catálogo va casi todo por ahí."))
         if args.tipo == "film":
-            print("Prueba con el título original: es el que suele estar en Wikidata.")
+            print(_("Prueba con el título original: es el que suele estar en Wikidata."))
         return 1
 
     if enlace:
@@ -715,19 +734,19 @@ def alta(args):
         print(f"  {describir(elegido)}")
     elif args.elegir:
         if not 1 <= args.elegir <= len(candidatos):
-            print(f"Solo hay {len(candidatos)} resultados.")
+            print(_("Solo hay {n} resultados.").format(n=len(candidatos)))
             return 1
         elegido = candidatos[args.elegir - 1]
         print(f"  {args.elegir}) {describir(elegido)}")
     elif not sys.stdin.isatty():
         for i, c in enumerate(candidatos, 1):
             print(f"  {i}) {describir(c)}")
-        print("\nSin terminal para preguntar. Repite con --elegir N.")
+        print("\n" + _("Sin terminal para preguntar. Repite con --elegir N."))
         return 1
     else:
         elegido = preguntar(candidatos, describir)
         if elegido is None:
-            print("No se ha creado nada.")
+            print(_("No se ha creado nada."))
             return 0
 
     # La misma obra con otro nombre de fichero no la para escribir_ficha, que
@@ -735,7 +754,8 @@ def alta(args):
     # TVmaze son dos ficheros y una serie. El id si es el mismo.
     repetida = ficha_con_id(carpeta, elegido["ids"])
     if repetida:
-        print(f"\nEsa ya la tienes: {repetida} lleva el mismo id.")
+        print("\n" + _("Esa ya la tienes: {ruta} lleva el mismo id.").format(ruta=repetida))
+        informar(args, ya_estaba=str(repetida))
         return 0
 
     extra, detalle = completar(args.tipo, elegido)
@@ -750,31 +770,42 @@ def alta(args):
             # "sin titulo.md" con la portada ".webp", que es una ficha que no
             # se llama de nada y una imagen que se pisan entre ellas todas las
             # que caigan ahi. Como llamarla en latino no se adivina: se pide.
-            print(f"\n«{titulo}» no tiene ni una letra latina, y "
-                  f"{NOMBRE_FUENTE[args.tipo]} no sabe cómo se llama fuera\n"
-                  "de su alfabeto, así que de ahí no sale un nombre de fichero.\n"
-                  "Dilo tú, repitiendo la orden con --fichero y el nombre que le des:\n"
+            print("\n" + _("«{titulo}» no tiene ni una letra latina, y {fuente} no sabe cómo se llama fuera\n"
+                          "de su alfabeto, así que de ahí no sale un nombre de fichero.\n"
+                          "Dilo tú, repitiendo la orden con --fichero y el nombre que le des:").format(
+                              titulo=titulo, fuente=NOMBRE_FUENTE[args.tipo]) + "\n"
                   + (f"  scripts/nueva.py {enlace} --fichero \"Aku no Hana\"\n"
                      if enlace else
                      f"  scripts/nueva.py {args.tipo} \"{args.titulo}\" "
                      f"--elegir {args.elegir or 1} --fichero \"Aku no Hana\"\n")
-                  + "El título de verdad se guarda igual, en `title`.")
+                  + _("El título de verdad se guarda igual, en `title`."))
             return 1
-        print(f"  El título no da un nombre de fichero; {NOMBRE_FUENTE[args.tipo]}"
-              f" lo llama «{fichero}».")
+        print("  " + _("El título no da un nombre de fichero; {fuente} lo llama «{nombre}».").format(
+            fuente=NOMBRE_FUENTE[args.tipo], nombre=fichero))
     # En las series la columna de la izquierda es la cadena, que sirve para
     # reconocer cual de las tres "The Office" es y no para firmar la obra: a la
     # ficha solo va si `completar` trae a alguien.
     autor = None if args.tipo == "series" else elegido["author"]
+    # Sin estado, lo que ya tiene nota o fecha de terminado esta terminado (la
+    # misma regla que repasar.py); lo demas, pendiente.
+    estado = args.estado or ("finished" if args.nota or getattr(args, "terminada", None)
+                             else "pending")
     campos = {"type": args.tipo, "year": elegido["year"], "author": autor,
-              "rating": args.nota, "status": args.estado, "favorite": args.favorito,
+              "rating": args.nota, "status": estado, "favorite": args.favorito,
               "cover": None, "tags": None}
     # Lo que traiga la ficha de la obra manda sobre lo que trajo el buscador:
     # la del juego sabe el estudio y el año, y la lista solo sabia el nombre.
     campos.update({c: v for c, v in extra.items() if v})
 
+    if getattr(args, "oculta", False):
+        campos["hidden"] = True
+    if getattr(args, "grupos", None):
+        campos["groups"] = args.grupos
+    if getattr(args, "terminada", None):
+        campos["finished_on"] = args.terminada
+
     if args.dry_run:
-        print(f"\nSe crearía content/{carpeta}/{nombre_de_fichero(fichero)}.md")
+        print("\n" + _("Se crearía {ruta}").format(ruta=f"content/{carpeta}/{nombre_de_fichero(fichero)}.md"))
         for clave, valor in campos.items():
             if valor not in (None, "", False):
                 print(f"  {clave}: {valor}")
@@ -782,34 +813,48 @@ def alta(args):
             print(f"  ({detalle})")
         return 0
 
-    if getattr(args, "oculta", False):
-        campos["hidden"] = True
     md = escribir_ficha(carpeta, titulo, campos, borrador=args.borrador,
                         fichero=fichero, privada=getattr(args, "privada", False))
     if not md:
-        print(f"\n«{titulo}» ya estaba en content/{carpeta}/.")
+        print("\n" + _("«{titulo}» ya estaba en {carpeta}.").format(titulo=titulo, carpeta=f"content/{carpeta}/"))
+        informar(args, ya_estaba=f"content/{carpeta}/{nombre_de_fichero(fichero)}.md")
         return 0
-    print(f"\nCreada {md.relative_to(VAULT.parent)}")
+    print("\n" + _("Creada {ruta}").format(ruta=md.relative_to(VAULT.parent)))
+    detalles = []
 
     hecha = caratula(args.tipo, md, campos, titulo)
-    print("  portada: " + (hecha or "no la he encontrado; se pone a mano"))
+    detalles.append(_("portada: {detalle}").format(detalle=hecha or _("no la he encontrado; se pone a mano")))
+    print("  " + detalles[-1])
     # El texto, de la misma fuente que pasaria textos.py despues. Con los
     # campos del disco y no los de aqui: la portada y el id ya estan escritos.
     cuerpo, detalle = textos.FUENTES[args.tipo](
         titulo, frontmatter(md.read_text(encoding="utf-8")), md)
     if cuerpo:
         textos.escribir_cuerpo(md, cuerpo)
-    print("  texto: " + (detalle if cuerpo else f"sin texto ({detalle})"))
+    detalles.append(_("texto: {detalle}").format(
+        detalle=detalle if cuerpo else _("sin texto ({porque})").format(porque=detalle)))
+    print("  " + detalles[-1])
+    informar(args, creada=str(md.relative_to(VAULT.parent)), detalles=detalles)
     for aviso in parecidos(carpeta, [titulo]):
-        print("  Se parece a una que ya tenías: " + aviso)
+        print("  " + _("Se parece a una que ya tenías: {aviso}").format(aviso=aviso))
     if args.borrador:
-        print("Entra con draft: true, así que no sale en la web hasta que le quites\n"
-              "la línea. En Obsidian se ve ya.")
+        print(_("Entra con draft: true, así que no sale en la web hasta que le quites\n"
+                "la línea. En Obsidian se ve ya."))
     if args.nota is None:
-        print("Sin nota: ponla con scripts/repasar.py o en Obsidian cuando la\n"
-              "tengas, que es por lo que ordenan las galerías.")
+        print(_("Sin nota: ponla con scripts/repasar.py o en Obsidian cuando la\n"
+                "tengas, que es por lo que ordenan las galerías."))
     al_dia()
     return 0
+
+
+def informar(args, **datos):
+    """Lo que ha hecho el alta, en JSON, para quien la lance desde otro script.
+
+    desde_issue.py lo lee en vez de los mensajes, que salen en el idioma de la
+    vitrina y podrian cambiar de redaccion cualquier dia.
+    """
+    if getattr(args, "informe", None):
+        Path(args.informe).write_text(json.dumps(datos, ensure_ascii=False), encoding="utf-8")
 
 
 def al_dia():

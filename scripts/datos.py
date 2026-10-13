@@ -45,10 +45,11 @@ import sys
 import time
 from pathlib import Path
 
-from vitrina import (fichas, SECCIONES, VAULT, articulo_html, articulos_ingleses,
-                       ascii_plano, asegurar_letterboxd, creadores_tvmaze, entrada_steam,
-                       escribir_campos, ficha_letterboxd, frontmatter, pedir,
-                       serie_tvmaze, vacio, año_tvmaze)
+from idioma import opciones, ayuda
+from vitrina import (_, fichas as de_la_seccion, SECCIONES, VAULT, articulo_html,
+                     articulos_ingleses, ascii_plano, asegurar_letterboxd, creadores_tvmaze,
+                     entrada_steam, escribir_campos, ficha_letterboxd, frontmatter, pedir,
+                     serie_tvmaze, vacio, año_tvmaze)
 
 # La tienda de Steam corta sobre las 200 peticiones cada cinco minutos. Con una
 # biblioteca normal no se llega, pero se va sin prisa por si acaso.
@@ -76,14 +77,14 @@ def datos_juego(titulo, campos, md):
     del titulo  # aqui manda el appid, que identifica el juego sin dudas
     appid = campos.get("appid")
     if not appid:
-        return {}, "la ficha no tiene appid; se pone a mano"
+        return {}, _("la ficha no tiene appid; se pone a mano")
 
     respuesta = pedir("https://store.steampowered.com/api/appdetails"
                       f"?appids={appid}&l=english&cc=es") or {}
     entrada = entrada_steam(respuesta, appid)
     if not entrada.get("success"):
         # Pasa con lo retirado de la tienda y con lo que ya no es una app suya.
-        return {}, f"la tienda no tiene ficha del appid {appid}"
+        return {}, _("la tienda no tiene ficha del appid {id}").format(id=appid)
     datos = entrada.get("data") or {}
 
     valores = {}
@@ -181,13 +182,13 @@ def datos_serie(titulo, campos, md):
     del md
     tvid = campos.get("tvmaze")
     if not tvid:
-        return {}, "la ficha no tiene tvmaze; se pone a mano"
+        return {}, _("la ficha no tiene tvmaze; se pone a mano")
 
     serie = serie_tvmaze(tvid)
     if serie is None:
-        return {}, f"TVmaze no responde por el id {tvid}"
+        return {}, _("TVmaze no responde por el id {id}").format(id=tvid)
     if not serie.get("name"):
-        return {}, f"TVmaze no tiene ficha del id {tvid}"
+        return {}, _("TVmaze no tiene ficha del id {id}").format(id=tvid)
 
     valores = {}
     año = año_tvmaze(serie)
@@ -201,7 +202,7 @@ def datos_serie(titulo, campos, md):
     if creadores:
         valores["author"] = ", ".join(creadores[:2])
     if not valores:
-        return {}, f"su ficha de TVmaze esta vacia ({tvid})"
+        return {}, _("su ficha de TVmaze esta vacia ({id})").format(id=tvid)
     return valores, f"TVmaze ({serie.get('name')})"
 
 
@@ -222,13 +223,13 @@ def datos_album(titulo, campos, md):
     del titulo  # manda el mbid, que identifica el disco sin dudas
     mbid = campos.get("mbid")
     if not mbid:
-        return {}, "la ficha no tiene mbid; se pone a mano"
+        return {}, _("la ficha no tiene mbid; se pone a mano")
     del md
 
     datos = pedir(f"https://musicbrainz.org/ws/2/release-group/{mbid}"
                   "?fmt=json&inc=genres+artist-credits")
     if datos is None:
-        return {}, f"MusicBrainz no responde por el mbid {mbid}"
+        return {}, _("MusicBrainz no responde por el mbid {id}").format(id=mbid)
     generos = votados(datos)
     if generos:
         return {"tags": generos}, f"MusicBrainz ({datos.get('title') or mbid})"
@@ -245,8 +246,8 @@ def datos_album(titulo, campos, md):
         generos = votados(del_artista or {})
         if generos:
             nombre = (del_artista or {}).get("name") or artista
-            return {"tags": generos}, f"MusicBrainz (los de {nombre}: el disco no tiene)"
-    return {}, f"MusicBrainz no tiene generos votados de {mbid} ni de su artista"
+            return {"tags": generos}, _("MusicBrainz (los de {nombre}: el disco no tiene)").format(nombre=nombre)
+    return {}, _("MusicBrainz no tiene generos votados de {id} ni de su artista").format(id=mbid)
 
 
 def votados(datos):
@@ -380,15 +381,15 @@ def datos_libro(titulo, campos, md):
     del titulo, md  # manda el coverid, que lleva a una obra y no a dos
     coverid = campos.get("coverid")
     if vacio(coverid):
-        return {}, "la ficha no tiene coverid; se pone a mano"
+        return {}, _("la ficha no tiene coverid; se pone a mano")
 
     datos = pedir("https://openlibrary.org/search.json?limit=1"
                   f"&fields=title,key,subject&q=cover_i%3A{coverid}")
     if datos is None:
-        return {}, f"Open Library no responde por el coverid {coverid}"
+        return {}, _("Open Library no responde por el coverid {id}").format(id=coverid)
     docs = datos.get("docs") or []
     if not docs:
-        return {}, f"Open Library no encuentra la obra del coverid {coverid}"
+        return {}, _("Open Library no encuentra la obra del coverid {id}").format(id=coverid)
 
     obra = docs[0]
     generos = generos_de_subjects(obra.get("subject"))
@@ -417,18 +418,19 @@ def fichas(args):
         c for c, tipo in SECCIONES.items() if tipo in FUENTES]
     salida = []
     for carpeta in carpetas:
-        salida += fichas(carpeta)
+        salida += de_la_seccion(carpeta)
     return salida
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__,
+    p = argparse.ArgumentParser(description=ayuda(__doc__, "datos"),
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("ficha", nargs="*", help="fichas sueltas; por defecto, todas")
-    p.add_argument("--seccion", choices=list(SECCIONES), help="solo una carpeta")
+    p.add_argument("ficha", nargs="*", help=_("fichas sueltas; por defecto, todas"))
+    p.add_argument(*opciones("--seccion", "--section"), dest="seccion", choices=list(SECCIONES),
+                   help=_("solo una carpeta"))
     p.add_argument("--force", action="store_true",
-                   help="reescribe los campos que ya tienen valor")
-    p.add_argument("--dry-run", action="store_true", help="no consulta ni escribe nada")
+                   help=_("reescribe los campos que ya tienen valor"))
+    p.add_argument("--dry-run", action="store_true", help=_("no consulta ni escribe nada"))
     args = p.parse_args()
 
     hechas = fallidas = saltadas = 0
@@ -439,7 +441,7 @@ def main():
         titulo = campos.get("title") or md.stem
         nombre = f"{md.parent.name}/{md.stem}"
         if tipo not in FUENTES:
-            print(f"  ?  {nombre}: no hay fuente para '{tipo}'; se rellena a mano")
+            print(f"  ?  {nombre}: " + _("no hay fuente para '{tipo}'; se rellena a mano").format(tipo=tipo))
             fallidas += 1
             continue
 
@@ -450,7 +452,7 @@ def main():
             saltadas += 1
             continue
         if args.dry_run:
-            print(f"  ·  {nombre}: buscaría {', '.join(faltan)}")
+            print(f"  ·  {nombre}: " + _("buscaría {campos}").format(campos=", ".join(faltan)))
             continue
 
         valores, detalle = fuente(titulo, campos, md)
@@ -468,8 +470,8 @@ def main():
         hechas += 1
         time.sleep(ESPERA)
 
-    print(f"\n{hechas} fichas completadas, {fallidas} sin resolver, "
-          f"{saltadas} ya estaban.")
+    print("\n" + _("{hechas} fichas completadas, {fallidas} sin resolver, {saltadas} ya estaban.").format(
+        hechas=hechas, fallidas=fallidas, saltadas=saltadas))
     return 0
 
 

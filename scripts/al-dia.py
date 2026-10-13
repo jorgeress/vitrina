@@ -20,29 +20,31 @@ import subprocess
 import sys
 from pathlib import Path
 
-from vitrina import SECCIONES
+from idioma import opciones, ayuda
+from vitrina import SECCIONES, _
 
 SCRIPTS = Path(__file__).resolve().parent
 
 # (script, para que, si pregunta a la red, si admite --seccion)
 PASOS = [
-    ("secciones.py", "cuelga cada ficha de su sección", False, False),
-    ("fechas.py", "apunta la fecha de alta que falte", False, False),
-    ("enmarcar.py", "pone en su cartela lo que hayas escrito suelto", False, False),
-    ("portadas.py", "baja las carátulas que falten", True, True),
-    ("datos.py", "rellena año, autor y tags", True, True),
-    ("textos.py", "escribe el «De qué va»", True, True),
-    ("autores.py", "escribe las páginas de autor", False, False),
+    ("secciones.py", _("cuelga cada ficha de su sección"), False, False),
+    ("fechas.py", _("apunta la fecha de alta que falte"), False, False),
+    ("enmarcar.py", _("pone en su cartela lo que hayas escrito suelto"), False, False),
+    ("portadas.py", _("baja las carátulas que falten"), True, True),
+    ("datos.py", _("rellena año, autor y tags"), True, True),
+    ("textos.py", _("escribe el «De qué va»"), True, True),
+    ("autores.py", _("escribe las páginas de autor"), False, False),
 ]
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__,
+    p = argparse.ArgumentParser(description=ayuda(__doc__, "al-dia"),
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--seccion", choices=list(SECCIONES), help="solo una carpeta")
-    p.add_argument("--sin-red", action="store_true",
-                   help="salta portadas, datos y textos")
-    p.add_argument("--dry-run", action="store_true", help="no escribe nada")
+    p.add_argument(*opciones("--seccion", "--section"), dest="seccion", choices=list(SECCIONES),
+                   help=_("solo una carpeta"))
+    p.add_argument(*opciones("--sin-red", "--offline"), dest="sin_red", action="store_true",
+                   help=_("salta portadas, datos y textos"))
+    p.add_argument("--dry-run", action="store_true", help=_("no escribe nada"))
     args = p.parse_args()
 
     fallidos = []
@@ -61,14 +63,14 @@ def main():
             fallidos.append(script)
 
     if not args.dry_run:
-        print("\n── estado.py --readme: las cifras del README", flush=True)
+        print("\n── estado.py --readme: " + _("las cifras del README"), flush=True)
         if subprocess.run([sys.executable, str(SCRIPTS / "estado.py"), "--readme"]).returncode:
             fallidos.append("estado.py")
 
     if fallidos:
-        print(f"\nHan fallado: {', '.join(fallidos)}. El resto ha terminado.")
+        print("\n" + _("Han fallado: {scripts}. El resto ha terminado.").format(scripts=", ".join(fallidos)))
         return 1
-    print("\nAl día. Lo que falta rellenar a mano: scripts/estado.py --detalle")
+    print("\n" + _("Al día. Lo que falta rellenar a mano: scripts/estado.py --detalle"))
     return 0
 
 

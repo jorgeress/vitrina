@@ -30,7 +30,8 @@ import re
 import sys
 from collections import Counter, defaultdict
 
-from vitrina import (fichas, ESTADOS, FRONT_RE, PORTADAS, RAIZ, SECCIONES, VAULT,
+from idioma import opciones, ayuda
+from vitrina import (_, fichas, ESTADOS, FRONT_RE, PORTADAS, RAIZ, SECCIONES, VAULT,
                      frontmatter, vacio)
 
 # Los que hacen falta para que una ficha este completa de verdad.
@@ -72,10 +73,10 @@ def barra(hechas, total, ancho=24):
 # El bloque del README es este resumen recortado: las tres cosas que se leen de
 # un vistazo. El reparto por estados y el recuento de notas se quedan fuera
 # porque ahi ocupan media pantalla y no es lo que el README esta contando.
-PARTES_README = ("FICHAS", "SIN RELLENAR", "FAVORITOS")
+PARTES_README = (_("FICHAS"), _("SIN RELLENAR"), _("FAVORITOS"))
 
 # El bloque de cifras del README, que es el unico cercado que empieza por FICHAS.
-BLOQUE_RE = re.compile(r"(?<=```\n)FICHAS\n.*?(?=\n```)", re.S)
+BLOQUE_RE = re.compile(r"(?<=```\n)" + re.escape(_("FICHAS")) + r"\n.*?(?=\n```)", re.S)
 
 
 def bloque_readme(salida):
@@ -97,28 +98,29 @@ def escribir_readme(salida):
     readme = RAIZ / "README.md"
     texto = readme.read_text(encoding="utf-8")
     if not BLOQUE_RE.search(texto):
-        print("No encuentro el bloque de cifras en el README: tiene que ser un\n"
-              "cercado que empiece por una linea «FICHAS».")
+        print(_("No encuentro el bloque de cifras en el README: tiene que ser un\n"
+                "cercado que empiece por una linea «{titulo}».").format(titulo=_("FICHAS")))
         return None
     nuevo = BLOQUE_RE.sub(lambda _: bloque_readme(salida), texto, count=1)
     if nuevo == texto:
-        print("El README ya estaba al dia.")
+        print(_("El README ya estaba al dia."))
         return False
     readme.write_text(nuevo, encoding="utf-8")
-    print(f"Actualizado el bloque de cifras de {readme.name}.")
+    print(_("Actualizado el bloque de cifras de {fichero}.").format(fichero=readme.name))
     return True
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__,
+    p = argparse.ArgumentParser(description=ayuda(__doc__, "estado"),
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--seccion", choices=list(SECCIONES), help="solo una carpeta")
-    p.add_argument("--detalle", action="store_true",
-                   help="lista las fichas a las que les falta algo")
+    p.add_argument(*opciones("--seccion", "--section"), dest="seccion", choices=list(SECCIONES),
+                   help=_("solo una carpeta"))
+    p.add_argument(*opciones("--detalle", "--detail"), dest="detalle", action="store_true",
+                   help=_("lista las fichas a las que les falta algo"))
     p.add_argument("--readme", action="store_true",
-                   help="reescribe el bloque de cifras del README")
-    p.add_argument("--comprobar", action="store_true",
-                   help="avisa de lo que se ha quedado atras, sin tocar nada")
+                   help=_("reescribe el bloque de cifras del README"))
+    p.add_argument(*opciones("--comprobar", "--check"), dest="comprobar", action="store_true",
+                   help=_("avisa de lo que se ha quedado atras, sin tocar nada"))
     args = p.parse_args()
 
     if args.readme:
@@ -169,28 +171,28 @@ def comprobar():
     texto = (RAIZ / "README.md").read_text(encoding="utf-8")
     actual = BLOQUE_RE.search(texto)
     if actual and actual.group(0) != bloque_readme(resumen_entero()):
-        avisos.append("El bloque de cifras del README no dice lo que hay en la "
-                      "vault. Pasa scripts/estado.py --readme")
+        avisos.append(_("El bloque de cifras del README no dice lo que hay en la "
+                        "vault. Pasa scripts/estado.py --readme"))
     usadas = {re.sub(r"^\[\[|\]\]$", "", campos.get("cover") or "")
-              for carpeta in SECCIONES for _, campos, _ in leer(carpeta)}
+              for carpeta in SECCIONES for _md, campos, _cuerpo in leer(carpeta)}
     sueltas = sorted(p.name for p in PORTADAS.glob("*")
                      if p.is_file() and p.suffix.lower() in IMAGENES
                      and p.name not in usadas)
     if sueltas:
-        avisos.append(f"{len(sueltas)} portada(s) que ya no usa ninguna ficha: "
+        avisos.append(_("{n} portada(s) que ya no usa ninguna ficha: ").format(n=len(sueltas))
                       + ", ".join(sueltas[:5]) + (" …" if len(sueltas) > 5 else ""))
     sin_alta = [f"{carpeta}/{md.stem}" for carpeta in SECCIONES
-                for md, campos, _ in leer(carpeta) if vacio(campos.get("added"))]
+                for md, campos, _cuerpo in leer(carpeta) if vacio(campos.get("added"))]
     if sin_alta:
         # Solo las deja fuera de "Recien llegadas", que no es para parar nada.
-        avisos.append(f"{len(sin_alta)} ficha(s) sin fecha de alta, que no saldran "
-                      "en Recien llegadas: " + ", ".join(sin_alta[:5])
+        avisos.append(_("{n} ficha(s) sin fecha de alta, que no saldran en Recien llegadas: ").format(
+                          n=len(sin_alta)) + ", ".join(sin_alta[:5])
                       + (" …" if len(sin_alta) > 5 else "")
-                      + ". Pasa scripts/fechas.py")
+                      + ". " + _("Pasa scripts/fechas.py"))
     for aviso in avisos:
         print(f"::warning::{aviso}" if en_action else f"  ! {aviso}")
     if not avisos and not en_action:
-        print("Nada atrasado.")
+        print(_("Nada atrasado."))
     return 0
 
 
@@ -239,69 +241,70 @@ def resumen(args):
 
     hay = sum(total.values())
     if not hay:
-        print("No hay ninguna ficha todavía.")
+        print(_("No hay ninguna ficha todavía."))
         return 0
     publicadas = hay - sum(borrador.values())
 
-    print("FICHAS")
-    print(f"  {'':10} {'total':>6} {'borrador':>9} {'publicadas':>11} {'con texto':>10}")
+    print(_("FICHAS"))
+    print(f"  {'':10} {_('total'):>6} {_('borrador'):>9} {_('publicadas'):>11} {_('con texto'):>10}")
     for carpeta in carpetas:
         print(f"  {carpeta:10} {total[carpeta]:>6} {borrador[carpeta]:>9} "
               f"{total[carpeta] - borrador[carpeta]:>11} {con_texto[carpeta]:>10}")
     print(f"  {'':10} {'—' * 6:>6} {'—' * 9:>9} {'—' * 11:>11} {'—' * 10:>10}")
-    print(f"  {'total':10} {hay:>6} {sum(borrador.values()):>9} "
+    print(f"  {_('total'):10} {hay:>6} {sum(borrador.values()):>9} "
           f"{publicadas:>11} {sum(con_texto.values()):>10}")
 
-    print(f"\nEN LA WEB  {barra(publicadas, hay)}  {publicadas} de {hay}")
+    print("\n" + _("EN LA WEB") + f"  {barra(publicadas, hay)}  "
+          + _("{n} de {total}").format(n=publicadas, total=hay))
     if not publicadas:
-        print("  Ninguna. La web se salta lo que lleva `draft: true`; en Obsidian se")
-        print("  ven todas. Para ascender una, quítale esa línea.")
+        print(_("  Ninguna. La web se salta lo que lleva `draft: true`; en Obsidian se\n"
+                "  ven todas. Para ascender una, quítale esa línea."))
 
-    print("\nSIN RELLENAR")
+    print("\n" + _("SIN RELLENAR"))
     for campo in CAMPOS + ("texto",):
         cuantas = len(faltan[campo])
         if cuantas:
-            print(f"  {campo:10} {cuantas:>4}   {barra(hay - cuantas, hay)}")
+            print(f"  {_(campo):10} {cuantas:>4}   {barra(hay - cuantas, hay)}")
             if args.detalle:
                 for ficha in faltan[campo]:
                     print(f"             · {ficha}")
     if not any(faltan.values()):
-        print("  Nada. Están todas completas.")
+        print("  " + _("Nada. Están todas completas."))
 
     if notas:
-        print("\nNOTAS      " + "  ".join(f"{n}:{c}" for n, c in
+        print("\n" + f"{_('NOTAS'):11}" + "  ".join(f"{n}:{c}" for n, c in
                                           sorted(notas.items(), reverse=True)))
 
     # De aqui salen las dos ultimas vistas de pelis, libros y musica: lo
     # terminado en una y lo que queda -- "pending" y "in-progress" -- en la otra.
     # Lo que no cae en ninguna de las dos solo se ve en la galeria, y eso no se
     # nota mirandola.
-    print("\nESTADOS")
+    print("\n" + _("ESTADOS"))
     columnas = ESTADOS + ["sin poner"]
-    print("  " + " " * 10 + "".join(f"{c:>11}" for c in columnas))
+    print("  " + " " * 10 + "".join(f"{_(c):>12}" for c in columnas))
     for carpeta in carpetas:
-        print(f"  {carpeta:10}" + "".join(f"{estados[carpeta][c]:>11}"
+        print(f"  {carpeta:10}" + "".join(f"{estados[carpeta][c]:>12}"
                                           for c in columnas))
     sin_poner = sum(estados[c]["sin poner"] for c in carpetas
                     if c in POR_ESTADO)
     if sin_poner:
-        print(f"  {sin_poner} ficha(s) sin estado: no salen ni en la vista de lo")
-        print("  terminado ni en la lista de lo que queda.")
+        print(_("  {n} ficha(s) sin estado: no salen ni en la vista de lo\n"
+                "  terminado ni en la lista de lo que queda.").format(n=sin_poner))
     if inventados:
-        print(f"  {len(inventados)} ficha(s) con un estado que no existe, que es")
-        print("  la otra manera de no salir en ninguna de las dos:")
+        print(_("  {n} ficha(s) con un estado que no existe, que es\n"
+                "  la otra manera de no salir en ninguna de las dos:").format(n=len(inventados)))
         for i in inventados:
             print(f"    ✗ {i}")
 
     # Favoritos.base junta las cinco secciones y cada .base tiene ademas su
     # vista "Favoritos". Si aqui sale 0, esas paginas salen vacias.
-    print(f"\nFAVORITOS  {barra(sum(favoritos.values()), hay)}  "
-          f"{sum(favoritos.values())} de {hay}")
+    print("\n" + _("FAVORITOS") + f"  {barra(sum(favoritos.values()), hay)}  "
+          + _("{n} de {total}").format(n=sum(favoritos.values()), total=hay))
     for carpeta in carpetas:
         print(f"  {carpeta:10} {favoritos[carpeta]:>4}")
     if not sum(favoritos.values()):
-        print("  Ninguna. Favoritos.base y las vistas «Solo favoritos» salen vacías")
-        print("  hasta que alguna ficha lleve `favorite: true`.")
+        print(_("  Ninguna. Favoritos.base y las vistas «Solo favoritos» salen vacías\n"
+                "  hasta que alguna ficha lleve `favorite: true`."))
 
     # Solo con la vault entera tiene sentido: con --seccion sobran las de las otras.
     if not args.seccion:
@@ -309,17 +312,17 @@ def resumen(args):
                          if p.is_file() and p.suffix.lower() in IMAGENES
                          and p.name not in portadas_usadas)
         if sueltas or rotas:
-            print("\nPORTADAS")
+            print("\n" + _("PORTADAS"))
             if rotas:
-                print(f"  {len(rotas)} ficha(s) apuntan a una imagen que no está:")
+                print("  " + _("{n} ficha(s) apuntan a una imagen que no está:").format(n=len(rotas)))
                 for r in rotas:
                     print(f"    ✗ {r}")
             if sueltas:
-                print(f"  {len(sueltas)} imagen(es) que ya no usa ninguna ficha:")
+                print("  " + _("{n} imagen(es) que ya no usa ninguna ficha:").format(n=len(sueltas)))
                 for s in sueltas if args.detalle else sueltas[:5]:
                     print(f"    · {s}")
                 if not args.detalle and len(sueltas) > 5:
-                    print(f"    … y {len(sueltas) - 5} más (--detalle las lista)")
+                    print("    " + _("… y {n} más (--detalle las lista)").format(n=len(sueltas) - 5))
     return 0
 
 

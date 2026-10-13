@@ -21,7 +21,7 @@ import subprocess
 import sys
 from datetime import date
 
-from vitrina import fichas, RAIZ, SECCIONES, VAULT, escribir_campos, frontmatter, vacio
+from vitrina import _, fichas, RAIZ, SECCIONES, VAULT, escribir_campos, frontmatter, vacio
 
 
 def alta_en_git(md):
@@ -35,8 +35,8 @@ def alta_en_git(md):
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--dry-run", action="store_true", help="no escribe nada")
+    p = argparse.ArgumentParser(description=_(__doc__.splitlines()[0]))
+    p.add_argument("--dry-run", action="store_true", help=_("no escribe nada"))
     args = p.parse_args()
 
     hoy = date.today().isoformat()
@@ -53,7 +53,7 @@ def main():
             print(f"  {fecha}  {carpeta}/{md.stem}")
             puestas += 1
 
-    print(f"\n{puestas} fichas {'sin fecha' if args.dry_run else 'fechadas'}.")
+    print("\n" + (_("{n} fichas sin fecha.") if args.dry_run else _("{n} fichas fechadas.")).format(n=puestas))
     return 0
 
 

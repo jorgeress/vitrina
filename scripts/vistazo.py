@@ -28,7 +28,8 @@ import socketserver
 import subprocess
 import sys
 
-from vitrina import CONFIG, RAIZ
+from idioma import ayuda
+from vitrina import CONFIG, RAIZ, _
 
 WEB = RAIZ / "web"
 PUERTO = 8081  # el 4321 lo usa `npm run dev`, la web de verdad
@@ -54,16 +55,16 @@ def servir(carpeta, puerto):
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__,
+    p = argparse.ArgumentParser(description=ayuda(__doc__, "vistazo"),
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--puerto", type=int, default=PUERTO,
-                   help=f"puerto del servidor (por defecto {PUERTO})")
+                   help=_("puerto del servidor (por defecto {n})").format(n=PUERTO))
     p.add_argument("--solo-build", action="store_true",
-                   help="construye en web/vistazo/ y no levanta nada")
+                   help=_("construye en web/vistazo/ y no levanta nada"))
     args = p.parse_args()
 
     if not (WEB / "node_modules").exists():
-        print("Falta instalar la web: cd web && npm ci --ignore-scripts --include=optional")
+        print(_("Falta instalar la web: cd web && npm ci --ignore-scripts --include=optional"))
         return 1
     entorno = {**os.environ, "VITRINE_PREVIEW": "1", "ASTRO_TELEMETRY_DISABLED": "1"}
 
@@ -72,7 +73,8 @@ def main():
     codigo = subprocess.call(["npx", "astro", "build", "--outDir", str(SALIDA)], cwd=WEB, env=entorno)
     if codigo != 0 or args.solo_build:
         return codigo
-    print(f"\nEl vistazo está en http://localhost:{args.puerto}{BASE}/  (Ctrl+C para salir)", flush=True)
+    print("\n" + _("El vistazo está en {url}  (Ctrl+C para salir)").format(
+        url=f"http://localhost:{args.puerto}{BASE}/"), flush=True)
     try:
         servir(SALIDA, args.puerto)
     except KeyboardInterrupt:

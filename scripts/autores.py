@@ -39,25 +39,27 @@ import shutil
 import sys
 from collections import defaultdict
 
-from vitrina import (fichas as de_la_seccion, SECCIONES, VAULT, escribir_campos, frontmatter,
-                     nombre_de_fichero)
+from idioma import ayuda, texto
+from vitrina import (CARPETAS, _, fichas as de_la_seccion, SECCIONES, VAULT, escribir_campos,
+                     frontmatter, nombre_de_fichero)
 
-AUTORES = VAULT / "autores"
+CARPETA = CARPETAS.get("author", "authors")
+AUTORES = VAULT / CARPETA
 
 # El indice de la carpeta, que es solo el titulo: es a donde lleva el enlace
 # "Autores" de content/index.md en Obsidian. La web no lo lee; su pagina de
 # autores la hace ella con la lista de nombres.
 #
 # Va aqui y no a mano porque main() borra la carpeta entera en cada pasada.
-INDICE = """---
-title: Autores
+INDICE = f"""---
+title: {texto('autores')}
 ---
 """
 
 # Un `author` enlazado de cuando el enlace vivia en el campo: "[[autores/X|X]]".
 # Se sigue leyendo para poder recuperar el nombre de las fichas que aun lo
 # lleven, y para que volver a pasar el script sobre una vault vieja la limpie.
-ENLACE_RE = re.compile(r"\[\[autores/[^|\]]+\|([^\]]+)\]\]")
+ENLACE_RE = re.compile(r"\[\[" + re.escape(CARPETA) + r"/[^|\]]+\|([^\]]+)\]\]")
 
 # Trozos que son el final de un nombre de empresa y no un autor aparte: sin
 # esto, "FromSoftware, Inc." se parte en dos y "Inc." acaba siendo el estudio
@@ -114,7 +116,7 @@ def fichas():
 
 def obras_por_autor():
     mapa = defaultdict(list)
-    for md, carpeta, _, campos in fichas():
+    for md, carpeta, _texto, campos in fichas():
         for autor in separar(campos.get("author")):
             mapa[autor].append((carpeta, md.stem, campos.get("year") or ""))
     return mapa
@@ -126,24 +128,24 @@ def pagina(autor, obras):
     # entera antes de rehacerla y para entonces ya no esta: aqui se sabe, es el
     # de INDICE.
     lineas = [f'---\ntitle: "{autor}"\ntype: author\n'
-              f'section: "[[autores/index|Autores]]"\n---\n',
+              f'section: "[[{CARPETA}/index|{texto("autores")}]]"\n---\n',
               # Sin el punto si el nombre ya acaba en uno: "FromSoftware, Inc.."
-              f"Lo que tengo de {autor}{'' if autor.endswith('.') else '.'}\n"]
+              texto("lo_que_tengo", autor=autor) + ("" if autor.endswith(".") else ".") + "\n"]
     for carpeta, nombre, year in sorted(obras, key=lambda o: (o[0], o[1])):
         año = f" ({year})" if year else ""
         lineas.append(f"- [[{carpeta}/{nombre}|{nombre}]]{año}")
-    lineas.append("\nEsta página la escribe `scripts/autores.py`.\n")
+    lineas.append("\n" + texto("la_escribe") + "\n")
     return "\n".join(lineas)
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description=__doc__,
+    p = argparse.ArgumentParser(description=ayuda(__doc__, "autores"),
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--minimo", type=int, default=2,
-                   help="obras que hacen falta para tener pagina (por defecto 2)")
+                   help=_("obras que hacen falta para tener pagina (por defecto 2)"))
     p.add_argument("--deshacer", action="store_true",
-                   help="borra las paginas de autor")
-    p.add_argument("--dry-run", action="store_true", help="no escribe nada")
+                   help=_("borra las paginas de autor"))
+    p.add_argument("--dry-run", action="store_true", help=_("no escribe nada"))
     args = p.parse_args(argv)
 
     mapa = obras_por_autor()
@@ -153,7 +155,7 @@ def main(argv=None):
     # Las fichas: solo se les quita el `[[...]]` que dejaron las pasadas de
     # antes, cuando el enlace vivia en el campo. El nombre nunca se cambia.
     tocadas = 0
-    for md, _, _, campos in fichas():
+    for md, _carpeta, _texto, campos in fichas():
         partes = separar(campos.get("author"))
         if not partes:
             continue
@@ -167,7 +169,8 @@ def main(argv=None):
             escribir_campos(md, {"author": nuevo})
 
     if args.dry_run:
-        print(f"\n  ·  {tocadas} fichas, {len(enlazables)} paginas de autor")
+        print("\n  ·  " + _("{fichas} fichas, {paginas} paginas de autor").format(
+            fichas=tocadas, paginas=len(enlazables)))
         return 0
 
     # Las paginas se reescriben enteras: son derivadas, no fuente.
@@ -180,12 +183,12 @@ def main(argv=None):
             destino = AUTORES / f"{nombre_de_fichero(autor)}.md"
             destino.write_text(pagina(autor, obras), encoding="utf-8")
 
-    print(f"{len(enlazables)} páginas de autor"
-          + (f", {tocadas} fichas limpiadas de enlaces viejos." if tocadas else "."))
+    print(_("{n} páginas de autor").format(n=len(enlazables))
+          + (_(", {n} fichas limpiadas de enlaces viejos.").format(n=tocadas) if tocadas else "."))
     if not args.deshacer:
         sueltos = len(mapa) - len(enlazables)
-        print(f"{sueltos} autores con menos de {args.minimo} obras se quedan "
-              f"en texto, sin página.")
+        print(_("{n} autores con menos de {minimo} obras se quedan en texto, sin página.").format(
+            n=sueltos, minimo=args.minimo))
     return 0
 
 

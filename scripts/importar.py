@@ -45,7 +45,8 @@ from xml.etree import ElementTree
 
 import estado
 import nueva
-from vitrina import ESTADOS, escribir_ficha, estado_de, parecidos, pedir
+from idioma import ayuda, opciones
+from vitrina import CARPETAS, ESTADOS, _, escribir_ficha, estado_de, parecidos, pedir
 
 # Umbrales del modo rapido. Ninguna fuente sabe si algo te gusto salvo
 # Letterboxd, asi que el resto se criba por la unica senal que dan: el uso.
@@ -101,10 +102,10 @@ def importar_letterboxd(args):
                 peli["rating"] = int(round(float(fila["Rating"]) * 2))
 
     if not encontrados:
-        print("No he encontrado ningún csv de Letterboxd en esa ruta.")
+        print(_("No he encontrado ningún csv de Letterboxd en esa ruta."))
         return 1
-    print("Leído: " + ", ".join(encontrados))
-    return volcar(pelis, "pelis", "film", args)
+    print(_("Leído: {que}").format(que=", ".join(encontrados)))
+    return volcar(pelis, "film", args)
 
 
 def importar_letterboxd_rss(args):
@@ -116,8 +117,8 @@ def importar_letterboxd_rss(args):
     usuario = args.usuario.strip().strip("/").split("/")[-1]
     crudo = pedir(f"https://letterboxd.com/{usuario}/rss/", binario=True)
     if not crudo:
-        print(f"No he podido leer el diario de '{usuario}'. Comprueba el nombre y\n"
-              "que el perfil no sea privado.")
+        print(_("No he podido leer el diario de '{usuario}'. Comprueba el nombre y\n"
+                "que el perfil no sea privado.").format(usuario=usuario))
         return 1
 
     espacio = {"letterboxd": "https://letterboxd.com"}
@@ -140,10 +141,10 @@ def importar_letterboxd_rss(args):
         }
 
     if not pelis:
-        print("El diario no tiene entradas de películas.")
+        print(_("El diario no tiene entradas de películas."))
         return 1
-    print(f"Diario de {usuario}: {len(pelis)} películas.")
-    return volcar(pelis, "pelis", "film", args)
+    print(_("Diario de {usuario}: {n} películas.").format(usuario=usuario, n=len(pelis)))
+    return volcar(pelis, "film", args)
 
 
 # --- Steam -------------------------------------------------------------------
@@ -211,7 +212,7 @@ def juegos_de_html(texto, hallados):
                 pass
 
     variante = texto
-    for _ in range(4):
+    for _intento in range(4):
         for trozo in JUEGO_SUELTO.findall(variante):
             try:
                 buscar_juegos(json.loads(trozo), hallados)
@@ -257,8 +258,8 @@ def importar_letterboxd_watchlist(args):
         crudo = pedir(url, binario=True)
         if not crudo:
             if pagina == 1:
-                print(f"No he podido leer la watchlist de '{usuario}'. Comprueba el\n"
-                      "nombre y que el perfil no sea privado.")
+                print(_("No he podido leer la watchlist de '{usuario}'. Comprueba el\n"
+                        "nombre y que el perfil no sea privado.").format(usuario=usuario))
                 return 1
             break  # se acabaron las paginas, o Letterboxd ha dejado de responder
 
@@ -282,10 +283,11 @@ def importar_letterboxd_watchlist(args):
             }
 
     if not pelis:
-        print(f"La watchlist de '{usuario}' está vacía o no es pública.")
+        print(_("La watchlist de '{usuario}' está vacía o no es pública.").format(usuario=usuario))
         return 1
-    print(f"Leída la watchlist de {usuario}: {plural(len(pelis), 'película', 'películas')}.")
-    return volcar(pelis, "pelis", "film", args, cribar=False)
+    print(_("Leída la watchlist de {usuario}: {cuantas}.").format(
+        usuario=usuario, cuantas=plural(len(pelis), _("película"), _("películas"))))
+    return volcar(pelis, "film", args, cribar=False)
 
 
 def importar_steam(args):
@@ -306,13 +308,12 @@ def importar_steam(args):
         if len(hallados) > antes:
             leidos.append(nombre)
     if not hallados:
-        print("No he encontrado juegos en esa ruta. Lo que entiende:\n"
-              "  - steamcommunity.com/my/games?tab=all guardada con Ctrl+S,\n"
-              "    con la sesión abierta\n"
-              "  - el zip del export de datos de Steam\n"
-              "Si tienes una de las dos y aun así falla, enséñamela y lo ajusto.")
+        print(_("No he encontrado juegos en esa ruta. Lo que entiende:\n"
+                "  - steamcommunity.com/my/games?tab=all guardada con Ctrl+S,\n"
+                "    con la sesión abierta\n"
+                "  - el zip del export de datos de Steam"))
         return 1
-    print(f"Leído: {', '.join(leidos[:6])}{' ...' if len(leidos) > 6 else ''}")
+    print(_("Leído: {que}").format(que=", ".join(leidos[:6]) + (" ..." if len(leidos) > 6 else "")))
 
     juegos = {}
     for titulo, dato in hallados.items():
@@ -335,7 +336,7 @@ def importar_steam(args):
             "appid": dato.get("appid"),
             "capsule": dato.get("capsule"),
         }
-    return volcar(juegos, "juegos", "game", args)
+    return volcar(juegos, "game", args)
 
 
 # --- ListenBrainz ------------------------------------------------------------
@@ -346,6 +347,9 @@ RANGOS = {"mes": ("month", "del último mes"),
           "semestre": ("half_yearly", "del último medio año"),
           "año": ("year", "del último año"),
           "todo": ("all_time", "de siempre")}
+# Los mismos, con su nombre en ingles.
+RANGOS.update({"month": RANGOS["mes"], "quarter": RANGOS["trimestre"],
+               "half": RANGOS["semestre"], "year": RANGOS["año"], "all": RANGOS["todo"]})
 
 
 def importar_listenbrainz(args):
@@ -361,15 +365,15 @@ def importar_listenbrainz(args):
     datos = pedir(f"https://api.listenbrainz.org/1/stats/user/{usuario}/releases"
                   f"?count={args.top}&range={rango}")
     if datos is None:
-        print(f"No he podido leer las estadísticas de '{usuario}'. Comprueba el\n"
-              "nombre de usuario en listenbrainz.org.")
+        print(_("No he podido leer las estadísticas de '{usuario}'. Comprueba el\n"
+                "nombre de usuario en listenbrainz.org.").format(usuario=usuario))
         return 1
 
     lanzamientos = (datos.get("payload") or {}).get("releases") or []
     if not lanzamientos:
-        print(f"'{usuario}' no tiene escuchas registradas en esa ventana.\n"
-              "Si acabas de crear la cuenta, conecta Spotify o sube tu historial\n"
-              "ampliado en listenbrainz.org/settings/import y vuelve luego.")
+        print(_("'{usuario}' no tiene escuchas registradas en esa ventana.\n"
+                "Si acabas de crear la cuenta, conecta Spotify o sube tu historial\n"
+                "ampliado en listenbrainz.org/settings/import y vuelve luego.").format(usuario=usuario))
         return 1
 
     discos = {}
@@ -379,8 +383,9 @@ def importar_listenbrainz(args):
             continue
         discos[titulo] = {"author": disco.get("artist_name"), "status": "finished",
                           "mbid": disco.get("caa_release_mbid") or disco.get("release_mbid")}
-    print(f"{plural(len(discos), 'disco', 'discos')} entre lo más escuchado {cuando}.")
-    return volcar(discos, "musica", "album", args, cribar=False)
+    print(_("{cuantos} entre lo más escuchado {cuando}.").format(
+        cuantos=plural(len(discos), _("disco"), _("discos")), cuando=_(cuando)))
+    return volcar(discos, "album", args, cribar=False)
 
 
 # --- Spotify, por export -----------------------------------------------------
@@ -462,53 +467,52 @@ def importar_spotify_export(args):
                 leidos.append(nombre)
 
     if not leidos and not historial_corto:
-        print("No he encontrado datos de Spotify en esa ruta.")
+        print(_("No he encontrado datos de Spotify en esa ruta."))
         return 1
     if leidos:
-        print(f"Leído: {', '.join(leidos[:5])}{' ...' if len(leidos) > 5 else ''}")
+        print(_("Leído: {que}").format(que=", ".join(leidos[:5]) + (" ..." if len(leidos) > 5 else "")))
     if sin_album:
-        print(plural(sin_album, "reproducción viene", "reproducciones vienen")
-              + " sin nombre de álbum. Eso es el historial\n"
-              "corto del export de la cuenta, que no lo trae: para ordenar por lo más\n"
-              "escuchado hace falta pedir el historial ampliado, que tarda hasta un mes.")
+        print(_("{n} reproducción(es) sin nombre de álbum. Eso es el historial\n"
+                "corto del export de la cuenta, que no lo trae: para ordenar por lo más\n"
+                "escuchado hace falta pedir el historial ampliado, que tarda hasta un mes.").format(
+                    n=sin_album))
 
     if args.canciones:
         if not canciones:
-            print("No he encontrado canciones guardadas en esa ruta. Van en la\n"
-                  "clave tracks de YourLibrary.json, que trae el export de la cuenta.")
+            print(_("No he encontrado canciones guardadas en esa ruta. Van en la\n"
+                    "clave tracks de YourLibrary.json, que trae el export de la cuenta."))
             return 1
         for dato in canciones.values():
             dato["favorite"] = dato["favoritas"] >= args.min_favoritas
         total = sum(d["favoritas"] for d in canciones.values())
         marcados = sum(1 for d in canciones.values() if d["favorite"])
-        print(f"{plural(total, 'cancion guardada', 'canciones guardadas')} "
-              f"en {plural(len(canciones), 'disco', 'discos')}.")
-        print(plural(marcados, "disco llega", "discos llegan")
-              + f" a {args.min_favoritas} o más y entra"
-              + ("" if marcados == 1 else "n") + " como favorito"
-              + ("" if marcados == 1 else "s") + ".")
-        return volcar(canciones, "musica", "album", args)
+        print(_("{canciones} guardadas en {discos}.").format(
+            canciones=plural(total, _("canción"), _("canciones")),
+            discos=plural(len(canciones), _("disco"), _("discos"))))
+        print(_("{n} disco(s) con {minimo} o más entran como favoritos.").format(
+            n=marcados, minimo=args.min_favoritas))
+        return volcar(canciones, "album", args)
 
     if args.completo:
         if not guardados:
-            print("No hay YourLibrary.json en esa ruta, que es donde va lo guardado.")
+            print(_("No hay YourLibrary.json en esa ruta, que es donde va lo guardado."))
             return 1
-        print(plural(len(guardados), "álbum guardado", "álbumes guardados") + ".")
-        return volcar(guardados, "musica", "album", args, cribar=False)
+        print(_("{n} álbum(es) guardado(s).").format(n=len(guardados)))
+        return volcar(guardados, "album", args, cribar=False)
 
     if not escuchados:
-        print("\nSin historial con álbum no puedo ordenar por lo más escuchado.\n"
-              "Con --completo entran los álbumes guardados que traiga el export.")
+        print("\n" + _("Sin historial con álbum no puedo ordenar por lo más escuchado.\n"
+                       "Con --completo entran los álbumes guardados que traiga el export."))
         return 1
     oidos = {k: v for k, v in escuchados.items() if v["ms"] >= MIN_MS}
     mejores = sorted(oidos, key=lambda k: oidos[k]["ms"], reverse=True)[:args.top]
     discos = {t: {"author": oidos[t]["author"], "status": "finished"} for t in mejores}
     ms = sum(oidos[t]["ms"] for t in mejores)
-    tiempo = (plural(round(ms / 3600000), "hora", "horas") if ms >= 3600000
-              else plural(round(ms / 60000), "minuto", "minutos"))
-    print(plural(len(discos), "disco entre lo más escuchado",
-                 "discos entre lo más escuchado") + f" ({tiempo} en total).")
-    return volcar(discos, "musica", "album", args, cribar=False)
+    tiempo = (plural(round(ms / 3600000), _("hora"), _("horas")) if ms >= 3600000
+              else plural(round(ms / 60000), _("minuto"), _("minutos")))
+    print(_("{n} disco(s) entre lo más escuchado ({tiempo} en total).").format(
+        n=len(discos), tiempo=tiempo))
+    return volcar(discos, "album", args, cribar=False)
 
 
 # --- Open Library, obra a obra -----------------------------------------------
@@ -554,7 +558,8 @@ def criba(elementos, args):
     return dentro, fuera
 
 
-def volcar(elementos, carpeta, tipo, args, cribar=True):
+def volcar(elementos, tipo, args, cribar=True):
+    carpeta = CARPETAS[tipo]
     elementos, apartados = criba(elementos, args) if cribar else (elementos, {})
     avisos = parecidos(carpeta, elementos)
     nuevas = repetidas = 0
@@ -595,86 +600,86 @@ def volcar(elementos, carpeta, tipo, args, cribar=True):
         else:
             repetidas += 1
 
-    hecho = ("ficha se crearía", "fichas se crearían") if args.dry_run else (
-        "ficha creada", "fichas creadas")
-    print(f"\n{plural(nuevas, *hecho)} en content/{carpeta}/, "
-          f"{plural(repetidas, 'ya estaba', 'ya estaban')}.")
+    hecho = (_("{n} ficha(s) se crearían en {carpeta}, {ya} ya estaba(n).") if args.dry_run
+             else _("{n} ficha(s) creada(s) en {carpeta}, {ya} ya estaba(n)."))
+    print("\n" + hecho.format(n=nuevas, carpeta=f"content/{carpeta}/", ya=repetidas))
     if apartados:
-        umbral = (f"menos de {args.min_horas} horas" if carpeta == "juegos"
-                  else f"menos de {args.min_favoritas} canciones tuyas"
-                  if carpeta == "musica"
-                  else f"nota por debajo de {args.min_nota}, o ninguna")
-        print(plural(len(apartados), "ficha apartada", "fichas apartadas")
-              + f" por el modo rápido ({umbral}). Con --completo entran todas.")
+        umbral = (_("menos de {n} horas").format(n=args.min_horas) if tipo == "game"
+                  else _("menos de {n} canciones tuyas").format(n=args.min_favoritas)
+                  if tipo == "album"
+                  else _("nota por debajo de {n}, o ninguna").format(n=args.min_nota))
+        print(_("{n} ficha(s) apartada(s) por el modo rápido ({umbral}). Con --completo entran todas.").format(
+            n=len(apartados), umbral=umbral))
     if avisos:
-        print("\nSe parecen a fichas que ya tenías. Si son la misma obra, únelas:")
+        print("\n" + _("Se parecen a fichas que ya tenías. Si son la misma obra, únelas:"))
         for aviso in avisos:
             print("  " + aviso)
     if nuevas and not args.dry_run:
         if not args.sin_borrador:
-            print("Entran con draft: true, así que no salen en la web hasta que les\n"
-                  "quites la línea. En Obsidian se ven todas.")
-        print("Ahora: scripts/portadas.py")
+            print(_("Entran con draft: true, así que no salen en la web hasta que les\n"
+                    "quites la línea. En Obsidian se ven todas."))
+        print(_("Ahora: scripts/al-dia.py"))
     return 0
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__,
+    p = argparse.ArgumentParser(description=ayuda(__doc__, "importar"),
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--dry-run", action="store_true", help="dice qué haría, sin escribir")
-    p.add_argument("--completo", action="store_true",
-                   help="sin umbrales: entra todo lo que traiga el export")
-    p.add_argument("--min-horas", type=int, default=MIN_HORAS,
-                   help=f"juegos: horas mínimas jugadas (por defecto {MIN_HORAS})")
-    p.add_argument("--min-favoritas", type=int, default=MIN_FAVORITAS,
-                   help=f"discos: canciones tuyas mínimas (por defecto {MIN_FAVORITAS})")
-    p.add_argument("--min-nota", type=int, default=MIN_NOTA,
-                   help=f"películas: nota mínima (por defecto {MIN_NOTA}, o sea 4 estrellas)")
-    p.add_argument("--sin-borrador", action="store_true",
-                   help="las fichas entran publicadas, sin draft")
+    p.add_argument("--dry-run", action="store_true", help=_("dice qué haría, sin escribir"))
+    p.add_argument(*opciones("--completo", "--all"), dest="completo", action="store_true",
+                   help=_("sin umbrales: entra todo lo que traiga el export"))
+    p.add_argument(*opciones("--min-horas", "--min-hours"), dest="min_horas", type=int, default=MIN_HORAS,
+                   help=_("juegos: horas mínimas jugadas (por defecto {n})").format(n=MIN_HORAS))
+    p.add_argument(*opciones("--min-favoritas", "--min-favorites"), dest="min_favoritas", type=int,
+                   default=MIN_FAVORITAS,
+                   help=_("discos: canciones tuyas mínimas (por defecto {n})").format(n=MIN_FAVORITAS))
+    p.add_argument(*opciones("--min-nota", "--min-rating"), dest="min_nota", type=int, default=MIN_NOTA,
+                   help=_("películas: nota mínima (por defecto {n}, o sea 4 estrellas)").format(n=MIN_NOTA))
+    p.add_argument(*opciones("--sin-borrador", "--no-draft"), dest="sin_borrador", action="store_true",
+                   help=_("las fichas entran publicadas, sin draft"))
     subs = p.add_subparsers(dest="fuente", required=True)
 
-    lb = subs.add_parser("letterboxd", help="export de Letterboxd")
-    lb.add_argument("ruta", help="el .zip del export, la carpeta o un csv suelto")
+    lb = subs.add_parser("letterboxd", help=_("export de Letterboxd"))
+    lb.add_argument("ruta", help=_("el .zip del export, la carpeta o un csv suelto"))
     lb.set_defaults(func=importar_letterboxd)
 
-    lr = subs.add_parser("letterboxd-rss", help="el diario público, sin cuenta Pro")
-    lr.add_argument("usuario", help="tu nombre de usuario en Letterboxd")
+    lr = subs.add_parser("letterboxd-rss", help=_("el diario público, sin cuenta Pro"))
+    lr.add_argument("usuario", help=_("tu nombre de usuario en Letterboxd"))
     lr.set_defaults(func=importar_letterboxd_rss)
 
     lw = subs.add_parser("letterboxd-watchlist",
-                         help="lo que tienes por ver, sin cuenta Pro")
-    lw.add_argument("usuario", help="tu nombre de usuario en Letterboxd")
+                         help=_("lo que tienes por ver, sin cuenta Pro"))
+    lw.add_argument("usuario", help=_("tu nombre de usuario en Letterboxd"))
     lw.set_defaults(func=importar_letterboxd_watchlist)
 
-    st = subs.add_parser("steam", help="export de datos de Steam")
-    st.add_argument("ruta", help="el .zip del export o la carpeta")
+    st = subs.add_parser("steam", help=_("export de datos de Steam"))
+    st.add_argument("ruta", help=_("el .zip del export o la carpeta"))
     st.set_defaults(func=importar_steam)
 
-    lb = subs.add_parser("listenbrainz", help="lo más escuchado, sin clave ninguna")
-    lb.add_argument("usuario", help="tu nombre de usuario en listenbrainz.org")
-    lb.add_argument("--periodo", choices=list(RANGOS), default="año",
-                    help="ventana (por defecto, año)")
-    lb.add_argument("--top", type=int, default=40, help="cuántos discos (por defecto 40)")
+    lb = subs.add_parser("listenbrainz", help=_("lo más escuchado, sin clave ninguna"))
+    lb.add_argument("usuario", help=_("tu nombre de usuario en listenbrainz.org"))
+    lb.add_argument(*opciones("--periodo", "--period"), dest="periodo", choices=list(RANGOS), default="año",
+                    help=_("ventana (por defecto, año)"))
+    lb.add_argument("--top", type=int, default=40, help=_("cuántos discos (por defecto 40)"))
     lb.set_defaults(func=importar_listenbrainz)
 
-    li = subs.add_parser("libro", aliases=["book"], help="busca un libro en Open Library y crea la ficha")
-    li.add_argument("titulo", help="el título, o título y autor")
-    li.add_argument("--elegir", type=int, metavar="N",
-                    help="quédate con el resultado N sin preguntar")
-    li.add_argument("--resultados", type=int, default=5,
-                    help="cuántos resultados enseñar (por defecto 5)")
-    li.add_argument("--nota", type=int, help="ponle ya la nota, del 1 al 10")
-    li.add_argument("--estado", "--status", dest="estado", type=estado_de,
+    li = subs.add_parser("libro", aliases=["book"], help=_("busca un libro en Open Library y crea la ficha"))
+    li.add_argument("titulo", help=_("el título, o título y autor"))
+    li.add_argument(*opciones("--elegir", "--pick"), dest="elegir", type=int, metavar="N",
+                    help=_("quédate con el resultado N sin preguntar"))
+    li.add_argument(*opciones("--resultados", "--results"), dest="resultados", type=int, default=5,
+                    help=_("cuántos resultados enseñar (por defecto 5)"))
+    li.add_argument(*opciones("--nota", "--rating"), dest="nota", type=int, help=_("ponle ya la nota, del 1 al 10"))
+    li.add_argument(*opciones("--estado", "--status"), dest="estado", type=estado_de,
                     choices=ESTADOS, default="pending",
-                    help="por defecto, pendiente")
+                    help=_("por defecto, pendiente"))
     li.set_defaults(func=importar_libro)
 
-    se = subs.add_parser("spotify-export", help="lo mismo desde el zip, sin crear app")
-    se.add_argument("ruta", help="el .zip del export de Spotify o la carpeta")
-    se.add_argument("--top", type=int, default=40, help="cuántos discos (por defecto 40)")
-    se.add_argument("--canciones", action="store_true",
-                    help="pliega tus canciones guardadas en los discos que las llevan")
+    se = subs.add_parser("spotify-export", help=_("lo mismo desde el zip, sin crear app"))
+    se.add_argument("ruta", help=_("el .zip del export de Spotify o la carpeta"))
+    se.add_argument("--top", type=int, default=40, help=_("cuántos discos (por defecto 40)"))
+    se.add_argument(*opciones("--canciones", "--tracks"), dest="canciones", action="store_true",
+                    help=_("pliega tus canciones guardadas en los discos que las llevan"))
     se.set_defaults(func=importar_spotify_export)
 
     args = p.parse_args()

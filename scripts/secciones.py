@@ -29,8 +29,9 @@ import argparse
 import re
 import sys
 
-from vitrina import (fichas, SECCIONES, VAULT, enlace_seccion, escribir_campos,
-                     frontmatter, linea_yaml)
+from idioma import opciones
+from vitrina import (_, fichas as de_la_seccion, SECCIONES, VAULT, enlace_seccion,
+                     escribir_campos, frontmatter, linea_yaml)
 
 # La clave y su valor, con el salto de linea de delante: asi al quitarla no
 # queda una linea en blanco dentro de la cabecera.
@@ -53,15 +54,16 @@ def colgar(md, texto, linea):
 
 def fichas():
     for carpeta in SECCIONES:
-        for md in fichas(carpeta):
+        for md in de_la_seccion(carpeta):
             if md.stem != "index":
                 yield carpeta, md
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--deshacer", action="store_true", help="quita el campo")
-    p.add_argument("--dry-run", action="store_true", help="no escribe nada")
+    p = argparse.ArgumentParser(description=_(__doc__.splitlines()[0]))
+    p.add_argument(*opciones("--deshacer", "--undo"), dest="deshacer", action="store_true",
+                   help=_("quita el campo"))
+    p.add_argument("--dry-run", action="store_true", help=_("no escribe nada"))
     args = p.parse_args()
 
     tocadas = 0
@@ -87,11 +89,12 @@ def main():
             print(f"{'~' if actual else '+'} {md.relative_to(VAULT)}  {debido}")
         tocadas += 1
 
-    verbo = "quitaria" if args.deshacer else "escribiria"
     if args.dry_run:
-        print(f"\n{verbo} el campo en {tocadas} fichas")
+        print("\n" + (_("quitaria el campo en {n} fichas") if args.deshacer
+                      else _("escribiria el campo en {n} fichas")).format(n=tocadas))
     else:
-        print(f"\n{tocadas} fichas" + (" sin campo" if args.deshacer else " colgadas"))
+        print("\n" + (_("{n} fichas sin campo") if args.deshacer
+                      else _("{n} fichas colgadas")).format(n=tocadas))
     return 0
 
 

@@ -861,33 +861,139 @@ class DesdeIssue(unittest.TestCase):
     )
 
     def test_lee_todos_los_campos(self):
-        pedido = desde_issue.peticion(self.CUERPO)
+        cuerpo = self.CUERPO + ("\n### Grupos\n\nAnime y manga, Verano 2024\n\n"
+                                "### Cuándo la terminaste\n\n2024-05\n\n"
+                                "### Oculta\n\n- [ ] No sale en la web\n")
+        pedido = desde_issue.peticion(cuerpo)
         self.assertEqual(pedido, {
             "enlace": "https://letterboxd.com/film/parasite-2019/", "rating": "9",
-            "status": "finished", "favorite": True,
+            "status": "finished", "favorite": True, "hidden": False,
+            "groups": ["Anime y manga", "Verano 2024"], "finished_on": "2024-05",
             "frase": "La vi dos veces seguidas.\nY otra más."})
         self.assertEqual(desde_issue.argumentos(pedido), [
             "https://letterboxd.com/film/parasite-2019/", "--nota", "9",
-            "--estado", "finished", "--favorito"])
+            "--estado", "finished", "--favorito", "--grupo", "Anime y manga",
+            "--grupo", "Verano 2024", "--terminada", "2024-05"])
 
     def test_lo_que_se_deja_en_blanco_no_se_pasa(self):
         cuerpo = ("### Enlace\n\nhttps://boxd.it/2bg8\n\n### Nota\n\nSin nota\n\n"
                   "### Estado\n\nSin estado\n\n### Lo mejor de lo mejor\n\n"
-                  "- [ ] Es de lo mejor de lo mejor\n\n"
+                  "- [ ] Es de lo mejor de lo mejor\n\n### Grupos\n\n_No response_\n\n"
                   "### Por qué está en la vitrina\n\n_No response_\n")
         pedido = desde_issue.peticion(cuerpo)
         self.assertEqual(desde_issue.argumentos(pedido), ["https://boxd.it/2bg8"])
         self.assertEqual(pedido["frase"], "")
+
+    def test_el_formulario_en_ingles_se_lee_igual(self):
+        cuerpo = ("### Link\n\nhttps://boxd.it/2bg8\n\n### Rating\n\n8\n\n"
+                  "### Status\n\nin progress\n\n### Hidden\n\n- [x] Don't show it\n\n"
+                  "### Why it's on display\n\nTwice in a row.\n")
+        pedido = desde_issue.peticion(cuerpo)
+        self.assertEqual((pedido["rating"], pedido["status"], pedido["hidden"], pedido["frase"]),
+                         ("8", "in-progress", True, "Twice in a row."))
+        self.assertIn("--oculta", desde_issue.argumentos(pedido))
 
     def test_rechaza_lo_que_no_vale(self):
         # Ni un enlace que no lo es, ni algo que nueva.py tomaria por opcion.
         for enlace in ("hollow knight", "--borrador", "https://a b", "javascript:alert(1)"):
             with self.subTest(enlace=enlace), self.assertRaises(ValueError):
                 desde_issue.peticion(f"### Enlace\n\n{enlace}\n")
-        with self.assertRaises(ValueError):
-            desde_issue.peticion("### Enlace\n\nhttps://boxd.it/x\n\n### Nota\n\n11\n")
-        with self.assertRaises(ValueError):
-            desde_issue.peticion("### Enlace\n\nhttps://boxd.it/x\n\n### Estado\n\nvisto\n")
+        malos = ["### Nota\n\n11\n", "### Estado\n\nvisto\n", "### Grupos\n\n--borrador\n",
+                 "### Grupos\n\nuno; rm -rf\n", "### Cuándo la terminaste\n\nayer\n",
+                 "### Cuándo la terminaste\n\n2024-13\n"]
+        for resto in malos:
+            with self.subTest(resto=resto), self.assertRaises(ValueError):
+                desde_issue.peticion("### Enlace\n\nhttps://boxd.it/x\n\n" + resto)
+
+    def test_la_plantilla_del_repo_es_la_que_escribe_el_script(self):
+        # Si se toca el formulario aqui y no se regenera la plantilla, el Issue
+        # preguntaria una cosa y este script buscaria otra.
+        f = desde_issue.FORMULARIO
+        ruta = desde_issue.PLANTILLAS / f["fichero"]
+        self.assertEqual(ruta.read_text(encoding="utf-8"), desde_issue.plantilla(),
+                         "pasa scripts/desde_issue.py --plantilla")
+        for otro in desde_issue.FORMULARIOS.values():
+            if otro is not f:
+                self.assertFalse((desde_issue.PLANTILLAS / otro["fichero"]).exists())
+
+
+class Arrancan(unittest.TestCase):
+    """Que cada script llegue al final de verdad, en modo prueba y sin red.
+
+    Las pruebas de funciones sueltas no ven lo que solo pasa en main(): una
+    funcion local que se llama igual que la que importa el modulo (pasó con
+    `fichas` en cuatro scripts) o una variable `_` que tapa a `_()`.
+    """
+
+    SIN_RED = [["secciones.py", "--dry-run"], ["fechas.py", "--dry-run"],
+               ["enmarcar.py", "--dry-run"], ["autores.py", "--dry-run"],
+               ["estado.py"], ["estado.py", "--comprobar"],
+               ["portadas.py", "--dry-run"], ["datos.py", "--dry-run"],
+               ["textos.py", "--dry-run"]]
+
+    def test_cada_script_termina(self):
+        import subprocess
+        for orden in self.SIN_RED:
+            with self.subTest(orden=" ".join(orden)):
+                r = subprocess.run([sys.executable, str(m.RAIZ / "scripts" / orden[0]), *orden[1:]],
+                                   capture_output=True, text=True, timeout=120)
+                self.assertEqual(r.returncode, 0, r.stderr[-800:])
+
+    def test_cada_script_tiene_ayuda(self):
+        import subprocess
+        for ruta in sorted(Path(m.RAIZ / "scripts").glob("*.py")):
+            if ruta.name in ("pruebas.py", "vitrina.py", "idioma.py", "mensajes_en.py"):
+                continue
+            with self.subTest(script=ruta.name):
+                r = subprocess.run([sys.executable, str(ruta), "--help"],
+                                   capture_output=True, text=True, timeout=60)
+                self.assertEqual(r.returncode, 0, r.stderr[-800:])
+
+
+class Traducciones(unittest.TestCase):
+    """Que todo lo que dicen los scripts tenga su version en ingles.
+
+    Los mensajes van en castellano dentro de `_()`, y su traduccion en
+    mensajes_en.py. Un mensaje nuevo o cambiado sin traducir sale en
+    castellano en una vitrina en ingles sin que falle nada: aqui si falla.
+    """
+
+    def mensajes(self):
+        import ast
+        vistos = {}
+        for ruta in sorted(Path(m.RAIZ / "scripts").glob("*.py")):
+            if ruta.name in ("pruebas.py", "mensajes_en.py"):
+                continue
+            for nodo in ast.walk(ast.parse(ruta.read_text(encoding="utf-8"))):
+                if (isinstance(nodo, ast.Call) and getattr(nodo.func, "id", None) == "_"
+                        and nodo.args and isinstance(nodo.args[0], ast.Constant)):
+                    vistos.setdefault(nodo.args[0].value, ruta.name)
+        # Los que pasan por `_()` con una variable y no con el texto escrito.
+        vistos[repasar.GUIA_ES] = "repasar.py"
+        for _clave, cuando in importar.RANGOS.values():
+            vistos[cuando] = "importar.py"
+        for modulo in ("enmarcar", "fechas", "secciones"):
+            doc = (m.RAIZ / "scripts" / f"{modulo}.py").read_text(encoding="utf-8")
+            vistos[doc.split('"""')[1].splitlines()[0]] = f"{modulo}.py"
+        return vistos
+
+    def test_ningun_mensaje_sin_traducir(self):
+        from mensajes_en import MENSAJES
+        faltan = [f"{fichero}: {texto!r}" for texto, fichero in self.mensajes().items()
+                  if texto not in MENSAJES]
+        self.assertFalse(faltan, "sin traducir en mensajes_en.py:\n" + "\n".join(faltan))
+
+    def test_los_huecos_son_los_mismos(self):
+        from mensajes_en import MENSAJES
+        huecos = lambda t: sorted(re.findall(r"\{(\w*)\}", t))  # noqa: E731
+        for castellano, ingles in MENSAJES.items():
+            self.assertEqual(huecos(castellano), huecos(ingles), castellano)
+
+    def test_cada_script_tiene_su_ayuda_en_ingles(self):
+        from mensajes_en import AYUDAS
+        for ruta in Path(m.RAIZ / "scripts").glob("*.py"):
+            for clave in re.findall(r'ayuda\(__doc__, "([^"]+)"\)', ruta.read_text(encoding="utf-8")):
+                self.assertIn(clave, AYUDAS, ruta.name)
 
 
 class Coherencia(unittest.TestCase):
