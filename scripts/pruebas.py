@@ -15,6 +15,7 @@ cargarse y de ahi cuelga media cadena de imports. Esta en requirements.txt.
 """
 
 import io
+import os
 import json
 import re
 import sys
@@ -25,6 +26,10 @@ from pathlib import Path
 from types import SimpleNamespace
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+# Las pruebas de funciones comprueban textos en castellano, sea cual sea el
+# idioma de la vitrina: se fija antes de importar nada.
+os.environ["VITRINE_LANGUAGE"] = "es"
 
 import datos
 import estado
@@ -546,9 +551,9 @@ class AutoresYComas(unittest.TestCase):
         # De esto depende poder volver a pasar el script sin acabar con
         # enlaces dentro de enlaces.
         self.assertEqual(
-            autores.separar("[[autores/Radiohead|Radiohead]]"), ["Radiohead"])
+            autores.separar(f"[[{autores.CARPETA}/Radiohead|Radiohead]]"), ["Radiohead"])
         self.assertEqual(
-            autores.separar("[[autores/FromSoftware, Inc|FromSoftware, Inc.]]"),
+            autores.separar(f"[[{autores.CARPETA}/FromSoftware, Inc|FromSoftware, Inc.]]"),
             ["FromSoftware, Inc."])
 
     def test_sin_autor_no_devuelve_nada(self):
@@ -908,9 +913,10 @@ class DesdeIssue(unittest.TestCase):
     def test_la_plantilla_del_repo_es_la_que_escribe_el_script(self):
         # Si se toca el formulario aqui y no se regenera la plantilla, el Issue
         # preguntaria una cosa y este script buscaria otra.
-        f = desde_issue.FORMULARIO
+        # El de la configuracion de verdad, no el castellano que fijan las pruebas.
+        f = desde_issue.FORMULARIOS.get(m.CONFIG.get("language"), desde_issue.FORMULARIOS["en"])
         ruta = desde_issue.PLANTILLAS / f["fichero"]
-        self.assertEqual(ruta.read_text(encoding="utf-8"), desde_issue.plantilla(),
+        self.assertEqual(ruta.read_text(encoding="utf-8"), desde_issue.plantilla(f),
                          "pasa scripts/desde_issue.py --plantilla")
         for otro in desde_issue.FORMULARIOS.values():
             if otro is not f:
@@ -996,37 +1002,46 @@ class Traducciones(unittest.TestCase):
                 self.assertIn(clave, AYUDAS, ruta.name)
 
 
+def bases_de_las_salas():
+    """La .base de cada sala, la que enlaza su index.md: {carpeta: ruta}.
+
+    Se busca asi y no por nombre porque el nombre va en el idioma de la
+    vitrina (Juegos.base, Games.base).
+    """
+    salida = {}
+    for carpeta in m.SECCIONES:
+        indice = m.VAULT / carpeta / "index.md"
+        enlace = re.search(r"!\[\[([^\]|]+\.base)", indice.read_text(encoding="utf-8")) \
+            if indice.exists() else None
+        if enlace and (m.VAULT / enlace.group(1)).exists():
+            salida[carpeta] = m.VAULT / enlace.group(1)
+    return salida
+
+
 class Coherencia(unittest.TestCase):
     """Que la vault y lo que los scripts esperan de ella no se separen."""
 
     def test_cada_seccion_escribe_el_tipo_que_su_base_filtra(self):
         # Si una .base filtra por un tipo que ningun script escribe, la seccion
-        # sale vacia en la web sin que falle nada.
-        bases = {"juegos": "Juegos", "pelis": "Peliculas", "series": "Series",
-                 "libros": "Libros", "musica": "Musica"}
-        for carpeta, base in bases.items():
-            ruta = m.RAIZ / "content" / f"{base}.base"
-            if not ruta.exists():
-                continue
+        # sale vacia en Obsidian sin que falle nada.
+        bases = bases_de_las_salas()
+        self.assertTrue(bases, "ninguna sala enlaza su .base desde su index.md")
+        for carpeta, ruta in bases.items():
             texto = ruta.read_text(encoding="utf-8")
             self.assertIn(f'note.type == "{m.SECCIONES[carpeta]}"', texto,
-                          f"{base}.base no filtra por el tipo que escribe {carpeta}")
+                          f"{ruta.name} no filtra por el tipo que escribe {carpeta}")
 
     def test_las_vistas_de_estado_filtran_por_estados_que_existen(self):
-        # Mismo riesgo que el tipo, y mas facil de que pase: las dos ultimas
-        # vistas de cada seccion --lo terminado y lo que queda-- filtran por un
-        # valor escrito a mano. Con una letra de mas la pestaña sale vacia y no
-        # falla nada.
-        for base in ("Peliculas", "Series", "Libros", "Musica"):
-            ruta = m.RAIZ / "content" / f"{base}.base"
-            if not ruta.exists():
-                continue
+        # Mismo riesgo que el tipo, y mas facil de que pase: la ultima vista de
+        # cada seccion --lo que queda-- filtra por un valor escrito a mano. Con
+        # una letra de mas la pestaña sale vacia y no falla nada.
+        for carpeta, ruta in bases_de_las_salas().items():
             texto = ruta.read_text(encoding="utf-8")
             filtrados = set(re.findall(r'note\.status == "([^"]*)"', texto))
-            self.assertTrue(filtrados, f"{base}.base no filtra por estado")
+            self.assertTrue(filtrados, f"{ruta.name} no filtra por estado")
             for estado in filtrados:
                 self.assertIn(estado, m.ESTADOS,
-                              f'{base}.base filtra por "{estado}", que no existe')
+                              f'{ruta.name} filtra por "{estado}", que no existe')
 
     def test_cada_tipo_tiene_fuente_en_los_cuatro_scripts(self):
         # Una seccion nueva se añade en varios sitios a la vez, y olvidarse de
@@ -1052,10 +1067,10 @@ class Coherencia(unittest.TestCase):
         # volviera a quedar un `note.horas` suelto en un .base, la vista
         # filtraria por un campo que ya no escribe nadie: saldria vacia, que es
         # como no estar.
-        for base in ("Juegos", "Peliculas", "Series", "Libros", "Musica"):
-            texto = (m.RAIZ / "content" / f"{base}.base").read_text(encoding="utf-8")
-            self.assertIn('note.status == "pending"', texto, base)
-            self.assertNotIn("- note.horas", texto, base)
+        for carpeta, ruta in bases_de_las_salas().items():
+            texto = ruta.read_text(encoding="utf-8")
+            self.assertIn('note.status == "pending"', texto, ruta.name)
+            self.assertNotIn("- note.horas", texto, ruta.name)
 
     def test_ninguna_ficha_guarda_ya_las_horas(self):
         # Las horas siguen decidiendo que entra del volcado de Steam, pero no
@@ -1138,7 +1153,9 @@ class Coherencia(unittest.TestCase):
     def test_una_ficha_renombrada_conserva_su_titulo(self):
         # El nombre de fichero pierde el simbolo, pero la ficha no: lo guarda en
         # `title`, que es lo que pinta la web y lo que leen los scripts.
-        ficha = m.RAIZ / "content" / "juegos" / "DARK SOULS REMASTERED.md"
+        ficha = m.VAULT / m.CARPETAS["game"] / "DARK SOULS REMASTERED.md"
+        if not ficha.exists():
+            self.skipTest("es una ficha de la vitrina de partida")
         campos = m.frontmatter(ficha.read_text(encoding="utf-8"))
         self.assertEqual(campos.get("title"), "DARK SOULS™ REMASTERED")
 
@@ -1169,7 +1186,15 @@ class Coherencia(unittest.TestCase):
         # El rotulo del enlace sale del `title` del index.md, que es donde se
         # escribe una sola vez: si se leyera del nombre de la carpeta, "pelis"
         # saldria asi en vez de "Peliculas".
-        self.assertEqual(m.enlace_seccion("pelis"), "[[pelis/index|Películas]]")
+        with tempfile.TemporaryDirectory() as tmp:
+            antes, m.VAULT = m.VAULT, Path(tmp)
+            try:
+                (m.VAULT / "pelis").mkdir()
+                (m.VAULT / "pelis" / "index.md").write_text(
+                    "---\ntitle: Películas\n---\n", encoding="utf-8")
+                self.assertEqual(m.enlace_seccion("pelis"), "[[pelis/index|Películas]]")
+            finally:
+                m.VAULT = antes
 
     def test_una_ficha_nueva_ya_nace_colgada(self):
         # Asi no hay que pasar secciones.py detras de cada alta.

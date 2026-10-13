@@ -307,6 +307,8 @@ MENSAJES = {
     "«{titulo}» no tiene ni una letra latina, y {fuente} no sabe cómo se llama fuera\nde su alfabeto, así que de ahí no sale un nombre de fichero.\nDilo tú, repitiendo la orden con --fichero y el nombre que le des:":
         "“{titulo}” has no Latin letters at all, and {fuente} doesn't know its name outside\nits alphabet, so no file name comes out of it.\nGive one yourself by repeating the command with --file and the name:",
 
+    "Escritas las plantillas de {carpeta}.": "Wrote the templates in {carpeta}.",
+
     # --- repasar.py -----------------------------------------------------------------
     "escrito": "written",
     "tambien las que ya tienen nota y estado": "also the ones that already have a rating and status",

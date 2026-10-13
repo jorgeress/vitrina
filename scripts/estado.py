@@ -76,7 +76,9 @@ def barra(hechas, total, ancho=24):
 PARTES_README = (_("FICHAS"), _("SIN RELLENAR"), _("FAVORITOS"))
 
 # El bloque de cifras del README, que es el unico cercado que empieza por FICHAS.
-BLOQUE_RE = re.compile(r"(?<=```\n)" + re.escape(_("FICHAS")) + r"\n.*?(?=\n```)", re.S)
+# Con el titulo en cualquiera de los dos idiomas: el README de una vitrina en
+# ingles puede ser todavia el de la plantilla, en castellano, y al revés.
+BLOQUE_RE = re.compile(r"(?<=```\n)(?:FICHAS|ENTRIES)\n.*?(?=\n```)", re.S)
 
 
 def bloque_readme(salida):

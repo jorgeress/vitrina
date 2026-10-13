@@ -2,6 +2,7 @@
 
 import difflib
 import json
+import os
 import re
 import time
 import unicodedata
@@ -19,7 +20,9 @@ PORTADAS = VAULT / "assets" / "portadas"
 # como se llama cada carpeta. Lo leen tambien la web y astro.config.mjs, asi
 # que hacerse una vitrina propia es cambiar este fichero y nada mas.
 CONFIG = json.loads((RAIZ / "vitrine.config.json").read_text(encoding="utf-8"))
-IDIOMA = CONFIG.get("language", "en")
+# VITRINE_LANGUAGE lo cambia sin tocar la configuracion: lo usan las pruebas,
+# que comprueban textos en castellano en cualquier vitrina.
+IDIOMA = os.environ.get("VITRINE_LANGUAGE") or CONFIG.get("language", "en")
 CARPETAS = CONFIG["folders"]
 
 # Carpeta de la vault -> valor del campo `type` de la ficha.
