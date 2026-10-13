@@ -57,6 +57,18 @@ candidatos y eliges tú.
 La ficha sale completa: portada, año, autor, géneros, el «De qué va» y el
 identificador de la fuente. Lo único que no puede poner es lo tuyo.
 
+### Desde el móvil, sin terminal
+
+Abre un Issue con la plantilla **Nueva pieza** y pega el enlace; si quieres,
+pon nota, estado, si es de lo mejor de lo mejor y por qué está en la vitrina.
+Una Action crea la ficha igual que `nueva.py`, la guarda, publica la web y
+cierra el Issue diciendo qué ha hecho. Solo corre con los Issues del dueño del
+repo.
+
+Con la web instalada como app, en Android sale **Vitrina** en el menú de
+Compartir: compartir un enlace desde Letterboxd, Steam o Spotify abre el
+formulario con el enlace ya puesto. También está en `/anadir/`.
+
 ### Lo tuyo: por qué está en la vitrina
 
 Lo que escribes tú va arriba del todo, en su propia cartela, **«Por qué está en
@@ -202,6 +214,8 @@ Para montarlo en tu cuenta:
 1. Haz un *fork*.
 2. En `web/astro.config.mjs`, cambia `site` por `https://tuusuario.github.io`
    (y `base`, si el repo no se llama `vitrina`).
+   Y en `web/src/repo.ts`, la dirección de tu repo, que es a donde lleva
+   *Añadir una pieza*.
 3. En *Settings → Pages*, pon *Source* en **GitHub Actions**.
 
 ## Reglas de la vault

@@ -1,0 +1,72 @@
+name: Nueva pieza
+
+# Añadir desde el movil: un Issue con la plantilla "Nueva pieza" se convierte
+# en ficha, se guarda en main y se publica. Ver scripts/desde_issue.py.
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+  actions: write
+
+jobs:
+  anadir:
+    # Solo los Issues del dueño del repo y con la etiqueta de la plantilla: en
+    # un repo publico cualquiera puede abrir uno, y esto escribe en main.
+    if: >-
+      github.event.issue.user.login == github.repository_owner &&
+      contains(github.event.issue.labels.*.name, 'nueva-pieza')
+    runs-on: ubuntu-latest
+    concurrency:
+      group: nueva-pieza
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Instalar dependencias
+        run: pip install --quiet -r requirements.txt
+
+      # El Issue no se pega en ninguna orden: el script lo lee del JSON del
+      # evento y lo valida campo a campo.
+      - name: Crear la ficha
+        id: ficha
+        run: python3 scripts/desde_issue.py "$GITHUB_EVENT_PATH" --resumen resumen.md
+
+      - name: Guardar en main
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMERO: ${{ github.event.issue.number }}
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git add content README.md
+          if git diff --cached --quiet; then
+            echo "Nada que guardar."
+            exit 0
+          fi
+          titulo=$(git diff --cached --name-only --diff-filter=A -- 'content/*/*.md' | grep -v '^content/autores/' | head -1 | xargs -r -d '\n' basename -s .md)
+          git commit -q -m "Entra en la vitrina ${titulo:-una pieza nueva}" -m "Desde el Issue #${NUMERO}."
+          git push
+          # Lo que sube el token de una Action no lanza otras Actions, asi que
+          # la publicacion se pide a mano.
+          gh workflow run deploy.yaml --ref main
+
+      - name: Contestar y cerrar el Issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMERO: ${{ github.event.issue.number }}
+          RESULTADO: ${{ steps.ficha.outcome }}
+        run: |
+          [ -f resumen.md ] || echo "Algo ha fallado antes de llegar a la ficha: mira el run de la Action." > resumen.md
+          gh issue comment "$NUMERO" --body-file resumen.md
+          if [ "$RESULTADO" = "success" ]; then
+            gh issue close "$NUMERO" --reason completed
+          fi

@@ -1,0 +1,79 @@
+---
+import Base from "../../layouts/Base.astro";
+import { REPO } from "../../repo";
+
+const formulario = `${REPO}/issues/new?template=nueva-pieza.yml`;
+---
+
+<Base titulo="Añadir una pieza" descripcion="Añadir una obra a la vitrina desde su enlace.">
+  <div class="contenedor">
+    <header class="titulo-pagina">
+      <h1>Añadir una pieza</h1>
+      <p>
+        Pega el enlace de la obra y se abre el formulario del Issue con él ya puesto. Al enviarlo, la ficha se crea y
+        se publica sola. Solo funciona con la cuenta dueña de la vitrina.
+      </p>
+    </header>
+    <form id="anadir" class="formulario" data-formulario={formulario}>
+      <input type="url" name="enlace" required placeholder="https://letterboxd.com/film/…" aria-label="Enlace de la obra" />
+      <button type="submit">Seguir en GitHub →</button>
+    </form>
+    <p class="nota">
+      Con la web instalada como app en Android, <strong>Vitrina</strong> sale en el menú de Compartir: compartir un enlace
+      desde Letterboxd, Steam o Spotify trae directamente aquí.
+    </p>
+  </div>
+</Base>
+
+<script>
+  // Lo que llega del menú Compartir trae el enlace en `url` o, según la app,
+  // metido en el texto. Si hay uno, se va derecho al formulario.
+  const form = document.getElementById("anadir") as HTMLFormElement;
+  const destino = (enlace: string) => `${form.dataset.formulario}&enlace=${encodeURIComponent(enlace)}`;
+  const p = new URLSearchParams(location.search);
+  const compartido = [p.get("url"), p.get("text"), p.get("title")]
+    .map((t) => t?.match(/https?:\/\/\S+/)?.[0])
+    .find(Boolean);
+  if (compartido) location.replace(destino(compartido));
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    location.href = destino(String(new FormData(form).get("enlace")));
+  });
+</script>
+
+<style>
+  .formulario {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+  }
+  .formulario input {
+    flex: 1;
+    padding: 11px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: var(--caja);
+    color: var(--texto);
+    font: inherit;
+  }
+  .formulario button {
+    padding: 11px 20px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--texto);
+    color: var(--fondo);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .nota {
+    margin-top: 20px;
+    color: var(--tenue);
+  }
+  @media (max-width: 520px) {
+    .formulario {
+      flex-direction: column;
+    }
+  }
+</style>

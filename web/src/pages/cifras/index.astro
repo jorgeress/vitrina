@@ -21,7 +21,7 @@ const conAlgo = decadas.filter((d) => todas.some((o) => o.data.year && Math.floo
 let corte = conAlgo.at(-1)!;
 for (let i = conAlgo.length - 2; i >= 0 && corte - conAlgo[i] <= 20; i--) corte = conAlgo[i];
 const tramos = [
-  ...(corte > conAlgo[0] ? [{ etiqueta: `antes de ${corte}`, desde: 0, hasta: corte }] : []),
+  ...(corte > conAlgo[0] ? [{ etiqueta: `‹${String(corte).slice(2)}`, desde: 0, hasta: corte }] : []),
   ...decadas.filter((d) => d >= corte).map((d) => ({ etiqueta: `${String(d).slice(2)}s`, desde: d, hasta: d + 10 })),
 ];
 const porSala = SECCIONES.map((s) => {
@@ -79,7 +79,10 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
       <header>
         <div>
           <h2>De qué época es cada sala</h2>
-          <p>Piezas por década del año de salida. Todas con la misma escala.</p>
+          <p>
+            Piezas por década del año de salida, todas con la misma escala.{" "}
+            {corte > conAlgo[0] && `La primera columna junta todo lo anterior a ${corte}.`}
+          </p>
         </div>
       </header>
       <div class="multiples">
@@ -99,6 +102,7 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
                 una={seccion.una}
                 varias={seccion.varias}
                 titulo={`${seccion.nombre} por década`}
+                rotularCada={tramos.length > 6 ? 2 : 1}
               />
             </div>
           ))

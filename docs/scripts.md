@@ -8,6 +8,7 @@ que falta.
 | Script | Para qué |
 | --- | --- |
 | `nueva.py` | Da de alta una obra, buscándola o desde su enlace |
+| `desde_issue.py` | Lo mismo desde un Issue de GitHub, para añadir desde el móvil |
 | `repasar.py` | Pone nota, estado, favorito y tu frase, ficha a ficha |
 | `importar.py` | Vuelca Letterboxd, Steam, ListenBrainz o Spotify |
 | `al-dia.py` | Pasa todos los de abajo en orden, hasta `autores.py` |
@@ -71,6 +72,27 @@ película), gana la serie; para elegir, pon el tipo delante:
 Opciones: `--nota 1-10`, `--estado`, `--favorito`, `--borrador`, `--elegir N`
 y `--fichero NOMBRE`. Esta última hace falta cuando el título no tiene letras
 latinas (`悪の華`) y la fuente no sabe cómo se llama en latino.
+
+## desde_issue.py
+
+Es lo que usa la Action `nueva-pieza.yml`, no hace falta lanzarlo a mano.
+Para añadir sin terminal se abre un Issue con la plantilla **Nueva pieza**: el
+enlace (vale cualquiera de los que acepta `nueva.py`), y si quieres la nota,
+el estado, si es de lo mejor de lo mejor y por qué está en la vitrina. La
+Action crea la ficha con todo, la guarda en `main`, publica la web y contesta
+en el Issue con lo que ha hecho antes de cerrarlo.
+
+Solo corre con los Issues del dueño del repo: en uno público cualquiera puede
+abrir uno, y esto escribe en `main`. Lo que llega del formulario se valida
+campo a campo y nunca se pega en una orden.
+
+Desde el móvil es aún más corto: con la web instalada como app, en Android
+sale en el menú de **Compartir**. Compartir un enlace de Letterboxd, Steam o
+Spotify a *Vitrina* abre el formulario con el enlace ya puesto.
+
+```bash
+scripts/desde_issue.py evento.json --dry-run   # lo que haría con ese Issue
+```
 
 ## repasar.py
 

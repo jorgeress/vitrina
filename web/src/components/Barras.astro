@@ -13,24 +13,41 @@ interface Props {
   una: string;
   varias: string;
   titulo: string;
+  /** Con muchas columnas estrechas, se rotula una de cada tantas. */
+  rotularCada?: number;
 }
 
-const { datos, maximo = Math.max(1, ...datos.map((d) => d.valor)), color = "var(--enlace)", tumbadas = false, una, varias, titulo } = Astro.props;
+const {
+  datos,
+  maximo = Math.max(1, ...datos.map((d) => d.valor)),
+  color = "var(--enlace)",
+  tumbadas = false,
+  una,
+  varias,
+  titulo,
+  rotularCada = 1,
+} = Astro.props;
 const texto = (n: number) => `${n} ${n === 1 ? una : varias}`;
 ---
 
 <figure class:list={["grafico", { tumbadas }]} style={`--color:${color}`}>
   <div class="barras" role="img" aria-label={`${titulo}: ${datos.map((d) => `${d.etiqueta}, ${texto(d.valor)}`).join("; ")}`}>
     {
-      datos.map((d) => {
+      datos.map((d, i) => {
         const Etiqueta = d.enlace ? "a" : "div";
         return (
           <Etiqueta class="celda" href={d.enlace} tabindex={d.enlace ? undefined : 0}>
             {tumbadas && <span class="nombre">{d.etiqueta}</span>}
             <span class="pista">
-              <span class="barra" style={`--v:${d.valor / maximo}`} />
+              {d.valor > 0 && <span class="barra" style={`--v:${d.valor / maximo}`} />}
             </span>
-            {tumbadas ? <span class="valor">{d.valor}</span> : <span class="eje">{d.etiqueta}</span>}
+            {
+              tumbadas ? (
+                <span class="valor">{d.valor}</span>
+              ) : (
+                (i % rotularCada === 0 || i === datos.length - 1) && <span class="eje">{d.etiqueta}</span>
+              )
+            }
             <span class="tip">
               {d.etiqueta}: {texto(d.valor)}
             </span>
@@ -87,7 +104,6 @@ const texto = (n: number) => `${n} ${n === 1 ? una : varias}`;
     display: block;
     width: min(100%, 26px);
     height: calc(var(--v) * 100%);
-    min-height: 2px;
     background: var(--color);
     border-radius: 4px 4px 0 0;
     transition: opacity 0.15s ease;
@@ -111,6 +127,16 @@ const texto = (n: number) => `${n} ${n === 1 ? una : varias}`;
   }
   .barras {
     margin-bottom: 26px;
+  }
+  /* La primera y la última se alinean con el borde, para que no se corten. */
+  .celda:first-child .eje {
+    left: 0;
+    transform: none;
+  }
+  .celda:last-child .eje {
+    left: auto;
+    right: 0;
+    transform: none;
   }
   .tip {
     position: absolute;

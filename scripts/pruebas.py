@@ -35,6 +35,7 @@ import repasar
 import textos
 import vitrina as m
 import nueva
+import desde_issue
 
 
 class Cabeceras(unittest.TestCase):
@@ -846,6 +847,47 @@ class Repasar(unittest.TestCase):
                          {"nota": 4})
         self.assertEqual(repasar.completar({}, {"nota": 4, "estado": "abandonado"}),
                          {"nota": 4, "estado": "abandonado"})
+
+
+class DesdeIssue(unittest.TestCase):
+    """El formulario del Issue -> lo que se le pide a nueva.py."""
+
+    CUERPO = (
+        "### Enlace\n\nhttps://letterboxd.com/film/parasite-2019/\n\n"
+        "### Nota\n\n9\n\n"
+        "### Estado\n\nterminado\n\n"
+        "### Lo mejor de lo mejor\n\n- [X] Es de lo mejor de lo mejor\n\n"
+        "### Por qué está en la vitrina\n\nLa vi dos veces seguidas.\nY otra más.\n"
+    )
+
+    def test_lee_todos_los_campos(self):
+        pedido = desde_issue.peticion(self.CUERPO)
+        self.assertEqual(pedido, {
+            "enlace": "https://letterboxd.com/film/parasite-2019/", "nota": "9",
+            "estado": "terminado", "favorito": True,
+            "frase": "La vi dos veces seguidas.\nY otra más."})
+        self.assertEqual(desde_issue.argumentos(pedido), [
+            "https://letterboxd.com/film/parasite-2019/", "--nota", "9",
+            "--estado", "terminado", "--favorito"])
+
+    def test_lo_que_se_deja_en_blanco_no_se_pasa(self):
+        cuerpo = ("### Enlace\n\nhttps://boxd.it/2bg8\n\n### Nota\n\nSin nota\n\n"
+                  "### Estado\n\nSin estado\n\n### Lo mejor de lo mejor\n\n"
+                  "- [ ] Es de lo mejor de lo mejor\n\n"
+                  "### Por qué está en la vitrina\n\n_No response_\n")
+        pedido = desde_issue.peticion(cuerpo)
+        self.assertEqual(desde_issue.argumentos(pedido), ["https://boxd.it/2bg8"])
+        self.assertEqual(pedido["frase"], "")
+
+    def test_rechaza_lo_que_no_vale(self):
+        # Ni un enlace que no lo es, ni algo que nueva.py tomaria por opcion.
+        for enlace in ("hollow knight", "--borrador", "https://a b", "javascript:alert(1)"):
+            with self.subTest(enlace=enlace), self.assertRaises(ValueError):
+                desde_issue.peticion(f"### Enlace\n\n{enlace}\n")
+        with self.assertRaises(ValueError):
+            desde_issue.peticion("### Enlace\n\nhttps://boxd.it/x\n\n### Nota\n\n11\n")
+        with self.assertRaises(ValueError):
+            desde_issue.peticion("### Enlace\n\nhttps://boxd.it/x\n\n### Estado\n\nvisto\n")
 
 
 class Coherencia(unittest.TestCase):

@@ -1,0 +1,39 @@
+name: Nueva pieza
+description: Añade una obra a la vitrina con su enlace. Se guarda y se publica sola.
+title: "Nueva pieza"
+labels: ["nueva-pieza"]
+body:
+  - type: input
+    id: enlace
+    attributes:
+      label: Enlace
+      description: >-
+        De Steam, Letterboxd, IMDb, TMDB, FilmAffinity, TVmaze, MyAnimeList,
+        AniList, Goodreads, Open Library, Spotify, Apple Music, MusicBrainz,
+        Discogs, Wikipedia... El que tengas abierto.
+      placeholder: https://letterboxd.com/film/parasite-2019/
+    validations:
+      required: true
+  - type: dropdown
+    id: nota
+    attributes:
+      label: Nota
+      options: ["Sin nota", "10", "9", "8", "7", "6", "5", "4", "3", "2", "1"]
+      default: 0
+  - type: dropdown
+    id: estado
+    attributes:
+      label: Estado
+      options: ["Sin estado", "terminado", "en curso", "pendiente", "abandonado"]
+      default: 0
+  - type: checkboxes
+    id: favorito
+    attributes:
+      label: Lo mejor de lo mejor
+      options:
+        - label: Es de lo mejor de lo mejor
+  - type: textarea
+    id: frase
+    attributes:
+      label: Por qué está en la vitrina
+      description: Lo que te dejó. Va en su cartela, encima de lo que diga la fuente.
