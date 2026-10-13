@@ -1,17 +1,17 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2024
-autor: NetEase Games
-nota:
-favorito: false
-portada: "[[marvel-rivals.webp]]"
+author: NetEase Games
+rating:
+favorite: false
+cover: "[[marvel-rivals.webp]]"
 tags:
   - action
   - free-to-play
 appid: 2767030
-capsula: b7ccf53aa5becc25ad1c7b2e62d24462cdfcc4c4/library_capsule.jpg
-alta: 2026-09-02
+capsule: b7ccf53aa5becc25ad1c7b2e62d24462cdfcc4c4/library_capsule.jpg
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

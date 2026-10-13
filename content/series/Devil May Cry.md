@@ -1,17 +1,17 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2025
-autor: Adi Shankar
-nota:
-favorito: false
-portada: "[[devil-may-cry.webp]]"
+author: Adi Shankar
+rating:
+favorite: false
+cover: "[[devil-may-cry.webp]]"
 tags:
   - action
   - fantasy
   - horror
 tvmaze: 71529
-alta: 2026-09-16
+added: 2026-09-16
 ---
 
 > [!quote] De qué va

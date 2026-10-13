@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1993
-autor: BUCK‐TICK
-nota:
-estado: terminado
-favorito: false
-portada: "[[darker-than-darkness-style93.webp]]"
+author: BUCK‐TICK
+rating:
+status: finished
+favorite: false
+cover: "[[darker-than-darkness-style93.webp]]"
 tags:
   - alternative-rock
   - gothic-rock
   - hard-rock
   - rock
 mbid: 7087d4d7-6e49-318c-ab9f-7094535b3713
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

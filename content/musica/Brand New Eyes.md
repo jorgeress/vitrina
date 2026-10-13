@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2009
-autor: Paramore
-nota:
-estado: terminado
-favorito: false
-portada: "[[brand-new-eyes.webp]]"
+author: Paramore
+rating:
+status: finished
+favorite: false
+cover: "[[brand-new-eyes.webp]]"
 tags:
   - alternative-rock
   - pop-punk
   - pop-rock
   - rock
 mbid: cd706457-8b16-4809-a61a-cdba1b281d39
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

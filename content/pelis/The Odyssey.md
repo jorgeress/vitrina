@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2026
-autor: Christopher Nolan
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[the-odyssey.webp]]"
+author: Christopher Nolan
+rating: 10
+status: finished
+favorite: false
+cover: "[[the-odyssey.webp]]"
 tags:
   - adventure
   - action
   - fantasy
 letterboxd: the-odyssey-2026
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

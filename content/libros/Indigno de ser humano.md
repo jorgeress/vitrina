@@ -1,17 +1,17 @@
 ---
-tipo: libro
-seccion: "[[libros/index|Libros]]"
+type: book
+section: "[[libros/index|Libros]]"
 year: 1948
-autor: Osamu Dazai
-nota:
-estado: terminado
-favorito: true
-portada: "[[indigno-de-ser-humano.webp]]"
+author: Osamu Dazai
+rating:
+status: finished
+favorite: true
+cover: "[[indigno-de-ser-humano.webp]]"
 tags:
   - drama
 coverid: 13003444
 wikipedia: Indigno de ser humano
-alta: 2026-09-04
+added: 2026-09-04
 ---
 
 > [!quote] De qué va

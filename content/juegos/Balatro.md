@@ -1,17 +1,17 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2024
-autor: LocalThunk
-nota:
-favorito: false
-portada: "[[balatro.webp]]"
+author: LocalThunk
+rating:
+favorite: false
+cover: "[[balatro.webp]]"
 tags:
   - casual
   - indie
   - strategy
 appid: 2379780
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

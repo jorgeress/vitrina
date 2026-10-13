@@ -1,17 +1,19 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2018
-autor: Keisuke Itagaki
-nota:
-favorito: false
-portada: "[[baki.webp]]"
+author: Keisuke Itagaki
+rating:
+favorite: false
+cover: "[[baki.webp]]"
 tags:
   - action
   - anime
   - science-fiction
 tvmaze: 37673
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

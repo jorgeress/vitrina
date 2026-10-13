@@ -1,19 +1,19 @@
 ---
 title: Yo, minoría absoluta
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2002
-autor: Extremoduro
-nota:
-estado: terminado
-favorito: false
-portada: "[[yo-minoria-absoluta.webp]]"
+author: Extremoduro
+rating:
+status: finished
+favorite: false
+cover: "[[yo-minoria-absoluta.webp]]"
 tags:
   - rock
   - hard-rock
   - progressive-rock
 mbid: b0ba36a8-dcdf-341c-af35-281fb159072b
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

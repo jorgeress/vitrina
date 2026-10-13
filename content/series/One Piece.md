@@ -1,18 +1,20 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 1999
-autor: Eiichiro Oda
-nota:
-favorito: false
-portada: "[[one-piece.webp]]"
+author: Eiichiro Oda
+rating:
+favorite: false
+cover: "[[one-piece.webp]]"
 tags:
   - action
   - adventure
   - anime
   - fantasy
 tvmaze: 1505
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

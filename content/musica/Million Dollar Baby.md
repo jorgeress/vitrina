@@ -1,15 +1,15 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2019
-autor: Cecilio G
-nota:
-estado: terminado
-favorito: false
-portada: "[[million-dollar-baby.webp]]"
+author: Cecilio G
+rating:
+status: finished
+favorite: false
+cover: "[[million-dollar-baby.webp]]"
 tags: []
 mbid: 97b279b3-1a16-4ae5-9841-cb1e6cb1f8bf
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

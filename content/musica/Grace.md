@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1994
-autor: Jeff Buckley
-nota:
-estado: terminado
-favorito: false
-portada: "[[grace.webp]]"
+author: Jeff Buckley
+rating:
+status: finished
+favorite: false
+cover: "[[grace.webp]]"
 tags:
   - alternative-rock
   - rock
   - singer-songwriter
   - folk-rock
 mbid: ea29c347-696f-3165-986d-7bad1394b178
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

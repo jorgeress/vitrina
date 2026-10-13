@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1986
-autor: The Smiths
-nota:
-estado: terminado
-favorito: false
-portada: "[[the-queen-is-dead.webp]]"
+author: The Smiths
+rating:
+status: finished
+favorite: false
+cover: "[[the-queen-is-dead.webp]]"
 tags:
   - jangle-pop
   - indie-pop
   - indie-rock
   - post-punk
 mbid: d8dde278-482c-3cc8-a530-fea70476f3a5
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

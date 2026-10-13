@@ -9,12 +9,16 @@ import {
   primerParrafo,
   recortar,
   separarAutores,
+  sinCartela,
   slugQuartz,
   textoCartela,
 } from "../src/lib/texto.ts";
 
-const VAULT = join(import.meta.dirname, "..", "..", "content");
-const SECCIONES = ["juegos", "pelis", "series", "libros", "musica"];
+const RAIZ = join(import.meta.dirname, "..", "..");
+const VAULT = join(RAIZ, "content");
+// Las carpetas de las salas, de la misma configuración que leen la web y los scripts.
+const CARPETAS = JSON.parse(readFileSync(join(RAIZ, "vitrine.config.json"), "utf8")).folders;
+const SECCIONES = ["game", "film", "series", "book", "album"].map((t) => CARPETAS[t]);
 
 test("las direcciones son las mismas que en Quartz", () => {
   // Sacadas de la web de Quartz tal cual: si cambian, se rompen enlaces.
@@ -35,7 +39,7 @@ test("los autores se reparten como en autores.py, con todas las fichas", () => {
     for (const f of readdirSync(join(VAULT, seccion))) {
       if (!f.endsWith(".md") || f === "index.md") continue;
       const texto = readFileSync(join(VAULT, seccion, f), "utf8");
-      const autor = texto.match(/^autor:[ \t]*(.*)$/m)?.[1]?.trim().replace(/^"(.*)"$/, "$1");
+      const autor = texto.match(/^author:[ \t]*(.*)$/m)?.[1]?.trim().replace(/^"(.*)"$/, "$1");
       if (autor) valores.push(autor);
     }
   assert.ok(valores.length > 100, "no ha encontrado las fichas");
@@ -80,4 +84,22 @@ test("la presentación de la portada es el primer párrafo de index.md", () => {
   assert.equal(recortar("uno dos tres cuatro", 9), "uno dos…");
   // Sin «arriba.…»: el punto se va antes de los puntos suspensivos.
   assert.equal(recortar("escribirlo aquí arriba. Bórralo luego", 25), "escribirlo aquí arriba…");
+});
+
+test("«y» o «and», según el idioma", () => {
+  assert.equal(enumerar(["A", "B", "C"]), "A, B y C");
+  assert.equal(enumerar(["A", "B"], "and"), "A and B");
+});
+
+test("una cartela oculta no queda en la página, y lo demás sí", () => {
+  const html =
+    '<div class="callout" data-callout="vitrina" data-collapsible="false"><div class="callout-title"><div class="callout-title-text">Por qué</div></div>' +
+    '<div class="callout-content"><p>Lo mío.</p></div></div>\n<div class="callout" data-callout="quote"><p>De qué va</p></div>';
+  const limpio = sinCartela(html);
+  assert.ok(!limpio.includes("Lo mío"));
+  assert.ok(limpio.includes("De qué va"));
+  assert.equal(sinCartela("<p>sin cartela</p>"), "<p>sin cartela</p>");
+  // En una vitrina en inglés el callout es [!vitrine], y vale igual.
+  assert.ok(!sinCartela('<div class="callout" data-callout="vitrine"><div><p>Mine.</p></div></div>').includes("Mine"));
+  assert.equal(textoCartela("> [!vitrine] Why it's on display\n> Mine."), "Mine.");
 });

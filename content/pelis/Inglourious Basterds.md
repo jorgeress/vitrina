@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2009
-autor: Quentin Tarantino
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[inglourious-basterds.webp]]"
+author: Quentin Tarantino
+rating: 10
+status: finished
+favorite: false
+cover: "[[inglourious-basterds.webp]]"
 tags:
   - war
   - drama
   - thriller
 letterboxd: inglourious-basterds
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

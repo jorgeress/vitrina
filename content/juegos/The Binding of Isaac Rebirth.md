@@ -1,15 +1,15 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2014
-autor: Nicalis, Inc., Edmund McMillen
-nota: 10
-favorito: true
-portada: "[[the-binding-of-isaac-rebirth.webp]]"
+author: Nicalis, Inc., Edmund McMillen
+rating: 10
+favorite: true
+cover: "[[the-binding-of-isaac-rebirth.webp]]"
 tags:
   - action
 appid: 250900
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

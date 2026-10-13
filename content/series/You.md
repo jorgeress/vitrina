@@ -1,17 +1,17 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2018
-autor: Greg Berlanti, Sera Gamble
-nota:
-favorito: false
-portada: "[[you.webp]]"
+author: Greg Berlanti, Sera Gamble
+rating:
+favorite: false
+cover: "[[you.webp]]"
 tags:
   - drama
   - romance
   - thriller
 tvmaze: 26856
-alta: 2026-09-16
+added: 2026-09-16
 ---
 
 > [!quote] De qué va

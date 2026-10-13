@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2020
-autor: TML Team
-nota:
-favorito: false
-portada: "[[tmodloader.webp]]"
+author: TML Team
+rating:
+favorite: false
+cover: "[[tmodloader.webp]]"
 tags:
   - action
   - adventure
   - indie
   - rpg
 appid: 1281930
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

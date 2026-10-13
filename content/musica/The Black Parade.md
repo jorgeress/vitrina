@@ -1,20 +1,20 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2006
-autor: My Chemical Romance
-nota:
-estado: terminado
-favorito: true
-portada: "[[the-black-parade.webp]]"
+author: My Chemical Romance
+rating:
+status: finished
+favorite: true
+cover: "[[the-black-parade.webp]]"
 tags:
   - rock
   - emo
   - pop-punk
   - punk
 mbid: bcba43e7-2f72-3b60-b234-577e77fd2d9e
-favoritas: 2
-alta: 2026-09-04
+favorite_tracks: 2
+added: 2026-09-04
 ---
 
 ## Canciones

@@ -1,18 +1,18 @@
 ---
 title: Middle-earth™ Shadow of War™
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2017
-autor: Monolith Productions
-nota:
-favorito: false
-portada: "[[middle-earthtm-shadow-of-wartm.webp]]"
+author: Monolith Productions
+rating:
+favorite: false
+cover: "[[middle-earthtm-shadow-of-wartm.webp]]"
 tags:
   - action
   - adventure
   - rpg
 appid: 356190
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

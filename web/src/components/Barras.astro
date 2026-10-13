@@ -2,6 +2,7 @@
 // Un gráfico de barras sencillo en HTML: columnas o barras tumbadas, una
 // sola serie, con su tooltip al pasar el ratón o el foco y su tabla al lado
 // para quien no vea el color o use lector de pantalla.
+import { t } from "../i18n";
 
 interface Props {
   datos: { etiqueta: string; valor: number; enlace?: string }[];
@@ -57,7 +58,7 @@ const texto = (n: number) => `${n} ${n === 1 ? una : varias}`;
     }
   </div>
   <details>
-    <summary>Ver como tabla</summary>
+    <summary>{t.verTabla}</summary>
     <table>
       <tbody>
         {

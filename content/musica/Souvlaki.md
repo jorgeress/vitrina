@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1993
-autor: Slowdive
-nota:
-estado: terminado
-favorito: false
-portada: "[[souvlaki.webp]]"
+author: Slowdive
+rating:
+status: finished
+favorite: false
+cover: "[[souvlaki.webp]]"
 tags:
   - shoegaze
   - dream-pop
   - alternative-rock
   - ambient
 mbid: 46482030-ef12-319c-9c5a-5d04c39d574b
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

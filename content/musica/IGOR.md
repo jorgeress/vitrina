@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2019
-autor: Tyler, The Creator
-nota:
-estado: terminado
-favorito: false
-portada: "[[igor.webp]]"
+author: Tyler, The Creator
+rating:
+status: finished
+favorite: false
+cover: "[[igor.webp]]"
 tags:
   - hip-hop
   - neo-soul
   - electronic
   - pop-rap
 mbid: 0f1b9e07-b38b-4bba-9794-55e0924d7177
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1969
-autor: The Beatles
-nota:
-estado: terminado
-favorito: false
-portada: "[[abbey-road.webp]]"
+author: The Beatles
+rating:
+status: finished
+favorite: false
+cover: "[[abbey-road.webp]]"
 tags:
   - rock
   - pop-rock
   - pop
   - classic-rock
 mbid: 9162580e-5df4-32de-80cc-f45a8d8a9b1d
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

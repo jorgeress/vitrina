@@ -1,16 +1,16 @@
 ---
 title: DARK SOULS™ REMASTERED
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2018
-autor: QLOC, FromSoftware, Inc.
-nota: 10
-favorito: true
-portada: "[[dark-soulstm-remastered.webp]]"
+author: QLOC, FromSoftware, Inc.
+rating: 10
+favorite: true
+cover: "[[dark-soulstm-remastered.webp]]"
 tags:
   - action
 appid: 570940
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

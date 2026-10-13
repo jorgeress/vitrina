@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2025
-autor: Team PEAK
-nota:
-favorito: false
-portada: "[[peak.webp]]"
+author: Team PEAK
+rating:
+favorite: false
+cover: "[[peak.webp]]"
 tags:
   - action
   - adventure
   - indie
 appid: 3527290
-capsula: 480bd879ac737921bfa2529a6fea15961267ad21/library_600x900.jpg
-alta: 2026-09-02
+capsule: 480bd879ac737921bfa2529a6fea15961267ad21/library_600x900.jpg
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

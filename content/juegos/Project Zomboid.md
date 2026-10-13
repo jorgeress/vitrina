@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2013
-autor: The Indie Stone
-nota:
-favorito: false
-portada: "[[project-zomboid.webp]]"
+author: The Indie Stone
+rating:
+favorite: false
+cover: "[[project-zomboid.webp]]"
 tags:
   - indie
   - rpg
   - simulation
   - early-access
 appid: 108600
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -1,17 +1,17 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2021
-autor: Alex Yee, Christian Linke
-nota:
-favorito: false
-portada: "[[arcane.webp]]"
+author: Alex Yee, Christian Linke
+rating:
+favorite: false
+cover: "[[arcane.webp]]"
 tags:
   - action
   - adventure
   - fantasy
 tvmaze: 55138
-alta: 2026-09-16
+added: 2026-09-16
 ---
 
 > [!quote] De qué va

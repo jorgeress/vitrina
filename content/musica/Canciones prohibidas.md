@@ -1,17 +1,17 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1998
-autor: Extremoduro
-nota:
-estado: terminado
-favorito: false
-portada: "[[canciones-prohibidas.webp]]"
+author: Extremoduro
+rating:
+status: finished
+favorite: false
+cover: "[[canciones-prohibidas.webp]]"
 tags:
   - hard-rock
   - rock
 mbid: 12be837f-562c-355e-9280-e4bf4b8427b5
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

@@ -1,20 +1,20 @@
 ---
 title: Either/Or
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1997
-autor: Elliott Smith
-nota:
-estado: terminado
-favorito: false
-portada: "[[either-or.webp]]"
+author: Elliott Smith
+rating:
+status: finished
+favorite: false
+cover: "[[either-or.webp]]"
 tags:
   - indie-pop
   - folk-rock
   - indie-folk
   - indie-rock
 mbid: dfb85157-313b-3f5f-8739-a5162bcb6345
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

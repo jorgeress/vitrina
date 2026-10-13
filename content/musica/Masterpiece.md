@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2016
-autor: Big Thief
-nota:
-estado: terminado
-favorito: false
-portada: "[[masterpiece.webp]]"
+author: Big Thief
+rating:
+status: finished
+favorite: false
+cover: "[[masterpiece.webp]]"
 tags:
   - indie-rock
   - americana
   - folk-rock
   - rock
 mbid: 134104b9-926e-40fc-a975-e6a0f3b238d5
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

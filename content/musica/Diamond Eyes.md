@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2010
-autor: Deftones
-nota:
-estado: terminado
-favorito: false
-portada: "[[diamond-eyes.webp]]"
+author: Deftones
+rating:
+status: finished
+favorite: false
+cover: "[[diamond-eyes.webp]]"
 tags:
   - alternative-metal
   - alternative-rock
   - post-metal
   - shoegaze
 mbid: f21cec66-4e3a-42fc-b7e4-59b17bed0cca
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

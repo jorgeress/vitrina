@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Conecta las fichas que comparten estudio, direccion o artista.
 
-Obsidian agrupa por enlaces, no por campos: dos juegos con `autor: FromSoftware`
+Obsidian agrupa por enlaces, no por campos: dos juegos con `author: FromSoftware`
 escrito igual no estan conectados de ninguna manera. La pagina de autor si los
 conecta: lista lo suyo, el grafo dibuja el haz y desde una ficha se llega a las
 hermanas por los backlinks.
 
-Lo que este script escribe son **las paginas**, no los enlaces. El campo `autor`
+Lo que este script escribe son **las paginas**, no los enlaces. El campo `author`
 de la ficha se queda siempre en texto plano -- "QLOC, FromSoftware, Inc." --
 porque es un dato, no maquetacion, y porque es lo que escriben tambien
 `datos.py`, `nueva.py` e `importar.py`; antes esto le ponia un `[[...]]`
@@ -39,7 +39,7 @@ import shutil
 import sys
 from collections import defaultdict
 
-from vitrina import (SECCIONES, VAULT, escribir_campos, frontmatter,
+from vitrina import (fichas as de_la_seccion, SECCIONES, VAULT, escribir_campos, frontmatter,
                      nombre_de_fichero)
 
 AUTORES = VAULT / "autores"
@@ -54,7 +54,7 @@ title: Autores
 ---
 """
 
-# Un `autor` enlazado de cuando el enlace vivia en el campo: "[[autores/X|X]]".
+# Un `author` enlazado de cuando el enlace vivia en el campo: "[[autores/X|X]]".
 # Se sigue leyendo para poder recuperar el nombre de las fichas que aun lo
 # lleven, y para que volver a pasar el script sobre una vault vieja la limpie.
 ENLACE_RE = re.compile(r"\[\[autores/[^|\]]+\|([^\]]+)\]\]")
@@ -78,7 +78,7 @@ NOMBRES_CON_COMA = ("tyler, the creator",)
 
 
 def separar(valor):
-    """El campo `autor` -> la lista de personas o estudios que nombra.
+    """El campo `author` -> la lista de personas o estudios que nombra.
 
     La coma no basta como separador porque significa las dos cosas:
     "Mike Johnson, Tim Burton" son dos directores y "FromSoftware, Inc." es un
@@ -105,7 +105,7 @@ def separar(valor):
 
 def fichas():
     for carpeta, tipo in SECCIONES.items():
-        for md in sorted((VAULT / carpeta).glob("*.md")):
+        for md in de_la_seccion(carpeta, privadas=False):
             if md.stem == "index":
                 continue
             campos = frontmatter(md.read_text(encoding="utf-8"))
@@ -115,18 +115,18 @@ def fichas():
 def obras_por_autor():
     mapa = defaultdict(list)
     for md, carpeta, _, campos in fichas():
-        for autor in separar(campos.get("autor")):
+        for autor in separar(campos.get("author")):
             mapa[autor].append((carpeta, md.stem, campos.get("year") or ""))
     return mapa
 
 
 def pagina(autor, obras):
-    # `seccion` cuelga la pagina de Autores, igual que una ficha cuelga de la
+    # `section` cuelga la pagina de Autores, igual que una ficha cuelga de la
     # suya. El titulo no se lee del index.md de la carpeta, que main() borra
     # entera antes de rehacerla y para entonces ya no esta: aqui se sabe, es el
     # de INDICE.
-    lineas = [f'---\ntitle: "{autor}"\ntipo: autor\n'
-              f'seccion: "[[autores/index|Autores]]"\n---\n',
+    lineas = [f'---\ntitle: "{autor}"\ntype: author\n'
+              f'section: "[[autores/index|Autores]]"\n---\n',
               # Sin el punto si el nombre ya acaba en uno: "FromSoftware, Inc.."
               f"Lo que tengo de {autor}{'' if autor.endswith('.') else '.'}\n"]
     for carpeta, nombre, year in sorted(obras, key=lambda o: (o[0], o[1])):
@@ -154,17 +154,17 @@ def main(argv=None):
     # antes, cuando el enlace vivia en el campo. El nombre nunca se cambia.
     tocadas = 0
     for md, _, _, campos in fichas():
-        partes = separar(campos.get("autor"))
+        partes = separar(campos.get("author"))
         if not partes:
             continue
         nuevo = ", ".join(partes)
-        if nuevo == (campos.get("autor") or ""):
+        if nuevo == (campos.get("author") or ""):
             continue
         tocadas += 1
         if args.dry_run:
-            print(f"  ·  {md.parent.name}/{md.stem}: {campos.get('autor')} -> {nuevo}")
+            print(f"  ·  {md.parent.name}/{md.stem}: {campos.get('author')} -> {nuevo}")
         else:
-            escribir_campos(md, {"autor": nuevo})
+            escribir_campos(md, {"author": nuevo})
 
     if args.dry_run:
         print(f"\n  ·  {tocadas} fichas, {len(enlazables)} paginas de autor")

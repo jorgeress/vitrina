@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2019
-autor: Clairo
-nota:
-estado: terminado
-favorito: false
-portada: "[[immunity.webp]]"
+author: Clairo
+rating:
+status: finished
+favorite: false
+cover: "[[immunity.webp]]"
 tags:
   - indie-pop
   - bedroom-pop
   - pop
   - alternative-pop
 mbid: fc97b087-221c-4ea4-9dd9-5277a52eb84a
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2026
-autor: Phil Lord, Christopher Miller
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[project-hail-mary.webp]]"
+author: Phil Lord, Christopher Miller
+rating: 10
+status: finished
+favorite: false
+cover: "[[project-hail-mary.webp]]"
 tags:
   - comedy
   - science-fiction
   - adventure
 letterboxd: project-hail-mary
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -19,3 +19,9 @@ __pycache__/
 web/dist/
 web/vistazo/
 web/.astro/
+
+# Lo privado de verdad: la carpeta "private" de vitrine.config.json. No sale
+# nunca del ordenador; la web publicada no la ve y vistazo.py si. Si le cambias
+# el nombre en la configuracion, cambialo tambien aqui.
+content/privado/
+content/private/

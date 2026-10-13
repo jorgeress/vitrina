@@ -1,19 +1,19 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2024
-autor: Pugstorm
-nota:
-favorito: false
-portada: "[[core-keeper.webp]]"
+author: Pugstorm
+rating:
+favorite: false
+cover: "[[core-keeper.webp]]"
 tags:
   - action
   - adventure
   - indie
   - rpg
 appid: 1621690
-capsula: 8e1f05bc29b662fc85a8847457a7d0eed312fbff/library_capsule.jpg
-alta: 2026-09-02
+capsule: 8e1f05bc29b662fc85a8847457a7d0eed312fbff/library_capsule.jpg
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

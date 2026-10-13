@@ -1,18 +1,18 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2024
-autor: Geordie Greep
-nota:
-estado: terminado
-favorito: false
-portada: "[[the-new-sound.webp]]"
+author: Geordie Greep
+rating:
+status: finished
+favorite: false
+cover: "[[the-new-sound.webp]]"
 tags:
   - art-rock
   - jazz-rock
   - progressive-rock
 mbid: 171db008-7f7b-48d3-a3b5-640d6ea41aa7
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

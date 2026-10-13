@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2014
-autor: Lana Del Rey
-nota:
-estado: terminado
-favorito: false
-portada: "[[ultraviolence.webp]]"
+author: Lana Del Rey
+rating:
+status: finished
+favorite: false
+cover: "[[ultraviolence.webp]]"
 tags:
   - dream-pop
   - pop
   - art-pop
   - baroque-pop
 mbid: 9d9b3ac3-e630-4644-92c7-fb14d4d68d86
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

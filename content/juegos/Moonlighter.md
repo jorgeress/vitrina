@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2018
-autor: Digital Sun
-nota:
-favorito: false
-portada: "[[moonlighter.webp]]"
+author: Digital Sun
+rating:
+favorite: false
+cover: "[[moonlighter.webp]]"
 tags:
   - action
   - adventure
   - indie
 appid: 606150
-capsula: 99398159ad1e3cfbe51ae5939e851536cbc6211f/library_capsule.jpg
-alta: 2026-09-02
+capsule: 99398159ad1e3cfbe51ae5939e851536cbc6211f/library_capsule.jpg
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

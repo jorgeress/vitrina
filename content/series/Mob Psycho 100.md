@@ -1,11 +1,11 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2016
-autor: ONE
-nota:
-favorito: false
-portada: "[[mob-psycho-100.webp]]"
+author: ONE
+rating:
+favorite: false
+cover: "[[mob-psycho-100.webp]]"
 tags:
   - comedy
   - action
@@ -13,7 +13,9 @@ tags:
   - horror
 tvmaze: 18260
 wikipedia: Mob Psycho 100
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

@@ -1,14 +1,15 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { t } from "../../i18n";
 import { url } from "../../lib/obras";
 ---
 
-<Base titulo="Sin conexión">
+<Base titulo={t.sinConexion}>
   <div class="contenedor aviso">
-    <p class="rotulo">Sin conexión</p>
-    <h1>Esta sala no la tengo guardada</h1>
-    <p>Las páginas que ya has visitado se abren sin red; esta todavía no. Vuelve a probar cuando haya conexión.</p>
-    <p><a href={url()}>Ir a la entrada →</a></p>
+    <p class="rotulo">{t.sinConexion}</p>
+    <h1>{t.sinConexionTitulo}</h1>
+    <p>{t.sinConexionTexto}</p>
+    <p><a href={url()}>{t.irEntrada}</a></p>
   </div>
 </Base>
 

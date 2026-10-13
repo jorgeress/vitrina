@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2017
-autor: Mac DeMarco
-nota:
-estado: terminado
-favorito: false
-portada: "[[this-old-dog.webp]]"
+author: Mac DeMarco
+rating:
+status: finished
+favorite: false
+cover: "[[this-old-dog.webp]]"
 tags:
   - indie-rock
   - bedroom-pop
   - folk-pop
   - indie-pop
 mbid: f48b5c40-6343-4d94-b306-3591d294caeb
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

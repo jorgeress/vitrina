@@ -1,16 +1,16 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2019
-autor: Mega Crit
-nota:
-favorito: false
-portada: "[[slay-the-spire.webp]]"
+author: Mega Crit
+rating:
+favorite: false
+cover: "[[slay-the-spire.webp]]"
 tags:
   - indie
   - strategy
 appid: 646570
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

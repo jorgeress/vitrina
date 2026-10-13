@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2012
-autor: Lana Del Rey
-nota:
-estado: terminado
-favorito: false
-portada: "[[born-to-die.webp]]"
+author: Lana Del Rey
+rating:
+status: finished
+favorite: false
+cover: "[[born-to-die.webp]]"
 tags:
   - pop
   - art-pop
   - chamber-pop
   - indie-pop
 mbid: 4b16a1bc-8644-48ae-9b3e-8ae36aa30cfc
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

@@ -1,24 +1,33 @@
-// Comparar dos vitrinas a partir de sus vitrina.json, sin servidor: lo hace
+// Comparar dos vitrinas a partir de sus vitrine.json, sin servidor: lo hace
 // el navegador de quien mira. Va aparte de la página para poder probarlo.
+//
+// Las claves del fichero van en inglés, como las de las fichas, para que dos
+// vitrinas en idiomas distintos se puedan comparar igual.
 
 export interface Pieza {
-  titulo: string;
-  tipo: string;
+  title: string;
+  type: string;
   year: number | null;
-  autores: string[];
-  nota: number | null;
-  estado: string | null;
-  favorito: boolean;
+  authors: string[];
+  rating: number | null;
+  status: string | null;
+  favorite: boolean;
   tags: string[];
   ids: Record<string, string | number>;
-  cartela: string | null;
+  label: string | null;
   url: string;
-  portada?: string | null;
+  cover?: string | null;
 }
 
 export interface Vitrina {
+  format?: string;
   version: number;
-  obras: Pieza[];
+  works: Pieza[];
+}
+
+/** Si lo que se ha leído tiene pinta de vitrine.json. */
+export function esVitrina(datos: unknown): datos is Vitrina {
+  return Array.isArray((datos as Vitrina | null)?.works);
 }
 
 /** Lo que se compara de un título: sin tildes, mayúsculas ni signos. */
@@ -38,7 +47,7 @@ export function normal(texto: string): string {
  */
 export function claves(p: Pieza): string[] {
   const deIds = Object.entries(p.ids ?? {}).map(([fuente, id]) => `${fuente}:${String(id).toLowerCase()}`);
-  return deIds.length > 0 ? deIds : [`${p.tipo}:${normal(p.titulo)}:${p.year ?? ""}`];
+  return deIds.length > 0 ? deIds : [`${p.type}:${normal(p.title)}:${p.year ?? ""}`];
 }
 
 export interface Pareja {
@@ -62,12 +71,12 @@ export interface Comparacion {
 
 export function comparar(mia: Vitrina, suya: Vitrina): Comparacion {
   const indice = new Map<string, Pieza>();
-  for (const p of suya.obras) for (const c of claves(p)) indice.set(c, p);
+  for (const p of suya.works) for (const c of claves(p)) indice.set(c, p);
 
   const comunes: Pareja[] = [];
   const emparejadas = new Set<Pieza>();
   const soloMias: Pieza[] = [];
-  for (const p of mia.obras) {
+  for (const p of mia.works) {
     const otra = claves(p)
       .map((c) => indice.get(c))
       .find((o) => o && !emparejadas.has(o));
@@ -76,34 +85,37 @@ export function comparar(mia: Vitrina, suya: Vitrina): Comparacion {
       emparejadas.add(otra);
     } else soloMias.push(p);
   }
-  const soloSuyas = suya.obras.filter((p) => !emparejadas.has(p));
+  const soloSuyas = suya.works.filter((p) => !emparejadas.has(p));
   const total = comunes.length + soloMias.length + soloSuyas.length;
-  const aprecio = (p: Pieza) => (p.favorito ? 100 : 0) + (p.nota ?? 0);
+  const aprecio = (p: Pieza) => (p.favorite ? 100 : 0) + (p.rating ?? 0);
 
   return {
     comunes,
     soloMias,
     soloSuyas,
     afinidad: total ? comunes.length / total : 0,
-    favoritasDeLosDos: comunes.filter((c) => c.mia.favorito && c.suya.favorito),
+    favoritasDeLosDos: comunes.filter((c) => c.mia.favorite && c.suya.favorite),
     desacuerdos: comunes
-      .filter((c) => c.mia.nota && c.suya.nota && Math.abs(c.mia.nota - c.suya.nota) >= 3)
-      .sort((a, b) => Math.abs(b.mia.nota! - b.suya.nota!) - Math.abs(a.mia.nota! - a.suya.nota!)),
+      .filter((c) => c.mia.rating && c.suya.rating && Math.abs(c.mia.rating - c.suya.rating) >= 3)
+      .sort((a, b) => Math.abs(b.mia.rating! - b.suya.rating!) - Math.abs(a.mia.rating! - a.suya.rating!)),
     recomendaciones: [...soloSuyas].sort((a, b) => aprecio(b) - aprecio(a)),
   };
 }
 
-/** De lo que pegue alguien (la portada de su vitrina, una ficha o el propio
- * json) a la dirección de su vitrina.json. */
-export function direccionJSON(texto: string): string {
+/**
+ * Dónde puede estar el vitrine.json de lo que pegue alguien: la portada de
+ * su vitrina, una ficha, una sala o el propio fichero. No se sabe cómo se
+ * llaman sus salas —van en su idioma—, así que se prueba subiendo carpeta a
+ * carpeta, de la más honda a la raíz.
+ */
+export function direccionesJSON(texto: string): string[] {
   let url = texto.trim();
   if (!/^https?:\/\//.test(url)) url = `https://${url}`;
   const u = new URL(url);
-  if (u.pathname.endsWith(".json")) return u.href;
-  // Una ficha cuelga de una sala: se sube hasta la raíz de la vitrina, que
-  // es lo que va antes de /juegos/, /pelis/... o del final.
+  if (u.pathname.endsWith(".json")) return [u.href];
   const trozos = u.pathname.split("/").filter(Boolean);
-  const sala = trozos.findIndex((t) => ["juegos", "pelis", "series", "libros", "musica", "autores", "tags"].includes(t));
-  const raiz = sala === -1 ? trozos : trozos.slice(0, sala);
-  return `${u.origin}/${raiz.map((t) => `${t}/`).join("")}vitrina.json`;
+  const candidatas: string[] = [];
+  for (let n = trozos.length; n >= 0; n--)
+    candidatas.push(`${u.origin}/${trozos.slice(0, n).map((t) => `${t}/`).join("")}vitrine.json`);
+  return candidatas;
 }

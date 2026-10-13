@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2017
-autor: "Shin'ichirō Ueda"
-nota: 9
-estado: terminado
-favorito: false
-portada: "[[one-cut-of-the-dead.webp]]"
+author: "Shin'ichirō Ueda"
+rating: 9
+status: finished
+favorite: false
+cover: "[[one-cut-of-the-dead.webp]]"
 tags:
   - comedy
   - drama
   - horror
 letterboxd: one-cut-of-the-dead
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

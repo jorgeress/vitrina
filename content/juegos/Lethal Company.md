@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2023
-autor: Zeekerss
-nota:
-favorito: false
-portada: "[[lethal-company.webp]]"
+author: Zeekerss
+rating:
+favorite: false
+cover: "[[lethal-company.webp]]"
 tags:
   - action
   - adventure
   - indie
   - early-access
 appid: 1966720
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

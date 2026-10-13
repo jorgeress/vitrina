@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2019
-autor: HopFrog
-nota:
-favorito: false
-portada: "[[forager.webp]]"
+author: HopFrog
+rating:
+favorite: false
+cover: "[[forager.webp]]"
 tags:
   - action
   - adventure
   - indie
   - simulation
 appid: 751780
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

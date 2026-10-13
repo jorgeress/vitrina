@@ -1,19 +1,19 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2022
-autor: Daniel Kwan, Daniel Scheinert
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[everything-everywhere-all-at-once.webp]]"
+author: Daniel Kwan, Daniel Scheinert
+rating: 10
+status: finished
+favorite: false
+cover: "[[everything-everywhere-all-at-once.webp]]"
 tags:
   - science-fiction
   - adventure
   - comedy
   - action
 letterboxd: everything-everywhere-all-at-once
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

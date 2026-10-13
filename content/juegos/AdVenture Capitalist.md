@@ -1,17 +1,17 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2015
-autor: Hyper Hippo Games
-nota:
-favorito: false
-portada: "[[adventure-capitalist.webp]]"
+author: Hyper Hippo Games
+rating:
+favorite: false
+cover: "[[adventure-capitalist.webp]]"
 tags:
   - casual
   - indie
   - free-to-play
 appid: 346900
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

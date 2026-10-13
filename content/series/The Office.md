@@ -1,15 +1,15 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2005
-autor: Stephen Merchant, Ricky Gervais
-nota:
-favorito: false
-portada: "[[the-office.webp]]"
+author: Stephen Merchant, Ricky Gervais
+rating:
+favorite: false
+cover: "[[the-office.webp]]"
 tags:
   - comedy
 tvmaze: 526
-alta: 2026-09-16
+added: 2026-09-16
 ---
 
 > [!quote] De qué va

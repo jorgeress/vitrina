@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2016
-autor: Dodge Roll
-nota:
-favorito: false
-portada: "[[enter-the-gungeon.webp]]"
+author: Dodge Roll
+rating:
+favorite: false
+cover: "[[enter-the-gungeon.webp]]"
 tags:
   - action
   - adventure
   - indie
 appid: 311690
-capsula: 0f83ce1bfba1f0bd837b8d575dde76ba44855ea0/library_capsule.jpg
-alta: 2026-09-02
+capsule: 0f83ce1bfba1f0bd837b8d575dde76ba44855ea0/library_capsule.jpg
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

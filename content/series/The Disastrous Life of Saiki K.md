@@ -1,12 +1,12 @@
 ---
 title: The Disastrous Life of Saiki K.
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2016
-autor: Shuichi Aso
-nota:
-favorito: false
-portada: "[[the-disastrous-life-of-saiki-k.webp]]"
+author: Shuichi Aso
+rating:
+favorite: false
+cover: "[[the-disastrous-life-of-saiki-k.webp]]"
 tags:
   - drama
   - comedy
@@ -14,7 +14,9 @@ tags:
   - supernatural
 tvmaze: 18019
 wikipedia: Saiki Kusuo no Psi-nan
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

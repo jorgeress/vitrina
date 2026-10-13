@@ -1,20 +1,20 @@
 ---
 title: WHEN WE ALL FALL ASLEEP, WHERE DO WE GO?
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2019
-autor: Billie Eilish
-nota:
-estado: terminado
-favorito: false
-portada: "[[when-we-all-fall-asleep-where-do-we-go.webp]]"
+author: Billie Eilish
+rating:
+status: finished
+favorite: false
+cover: "[[when-we-all-fall-asleep-where-do-we-go.webp]]"
 tags:
   - alternative-pop
   - pop
   - electropop
   - ambient-pop
 mbid: 72375978-a9a1-4254-b957-85565c716b7e
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

@@ -1,20 +1,20 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2007
-autor: Radiohead
-nota:
-estado: terminado
-favorito: true
-portada: "[[in-rainbows.webp]]"
+author: Radiohead
+rating:
+status: finished
+favorite: true
+cover: "[[in-rainbows.webp]]"
 tags:
   - alternative-rock
   - rock
   - art-rock
   - electronic
 mbid: 6e335887-60ba-38f0-95af-fae7774336bf
-favoritas: 2
-alta: 2026-08-31
+favorite_tracks: 2
+added: 2026-08-31
 ---
 
 > [!vitrina] Por qué está en la vitrina

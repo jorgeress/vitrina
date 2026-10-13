@@ -30,13 +30,13 @@ import re
 import sys
 from collections import Counter, defaultdict
 
-from vitrina import (ESTADOS, FRONT_RE, PORTADAS, RAIZ, SECCIONES, VAULT,
+from vitrina import (fichas, ESTADOS, FRONT_RE, PORTADAS, RAIZ, SECCIONES, VAULT,
                      frontmatter, vacio)
 
 # Los que hacen falta para que una ficha este completa de verdad.
-CAMPOS = ("year", "autor", "nota", "portada", "tags")
+CAMPOS = ("year", "author", "rating", "cover", "tags")
 
-# Las secciones que reparten sus dos ultimas vistas por `estado`, que desde que
+# Las secciones que reparten sus dos ultimas vistas por `status`, que desde que
 # los juegos dejaron de guardar las horas son las cinco. Antes juegos no estaba:
 # alli el reparto salia de las horas, y una ficha suya sin estado no le faltaba
 # nada. Ahora si: un juego sin estado no sale en ninguna de las dos.
@@ -47,14 +47,19 @@ IMAGENES = {".webp", ".jpg", ".jpeg", ".png", ".gif", ".avif"}
 
 def leer(carpeta):
     """Cada ficha de la carpeta: sus campos, si es borrador y si tiene texto."""
-    for md in sorted((VAULT / carpeta).glob("*.md")):
+    for md in fichas(carpeta, privadas=False):
         if md.stem == "index":
             continue
         texto = md.read_text(encoding="utf-8")
         m = FRONT_RE.match(texto)
         if not m:
             continue
-        yield md, frontmatter(texto), texto[m.end():].strip()
+        campos = frontmatter(texto)
+        # Lo oculto (`hidden: true`) no sale en la web, y estas cifras son las
+        # de la web: van al README, que lee cualquiera.
+        if campos.get("hidden") == "true":
+            continue
+        yield md, campos, texto[m.end():].strip()
 
 
 def barra(hechas, total, ancho=24):
@@ -166,7 +171,7 @@ def comprobar():
     if actual and actual.group(0) != bloque_readme(resumen_entero()):
         avisos.append("El bloque de cifras del README no dice lo que hay en la "
                       "vault. Pasa scripts/estado.py --readme")
-    usadas = {re.sub(r"^\[\[|\]\]$", "", campos.get("portada") or "")
+    usadas = {re.sub(r"^\[\[|\]\]$", "", campos.get("cover") or "")
               for carpeta in SECCIONES for _, campos, _ in leer(carpeta)}
     sueltas = sorted(p.name for p in PORTADAS.glob("*")
                      if p.is_file() and p.suffix.lower() in IMAGENES
@@ -175,7 +180,7 @@ def comprobar():
         avisos.append(f"{len(sueltas)} portada(s) que ya no usa ninguna ficha: "
                       + ", ".join(sueltas[:5]) + (" …" if len(sueltas) > 5 else ""))
     sin_alta = [f"{carpeta}/{md.stem}" for carpeta in SECCIONES
-                for md, campos, _ in leer(carpeta) if vacio(campos.get("alta"))]
+                for md, campos, _ in leer(carpeta) if vacio(campos.get("added"))]
     if sin_alta:
         # Solo las deja fuera de "Recien llegadas", que no es para parar nada.
         avisos.append(f"{len(sin_alta)} ficha(s) sin fecha de alta, que no saldran "
@@ -215,18 +220,18 @@ def resumen(args):
             for campo in CAMPOS:
                 if vacio(campos.get(campo)):
                     faltan[campo].append(f"{carpeta}/{md.stem}")
-            if campos.get("nota"):
-                notas[int(campos["nota"])] += 1
-            estado = campos.get("estado")
+            if campos.get("rating"):
+                notas[int(campos["rating"])] += 1
+            estado = campos.get("status")
             if vacio(estado):
                 estados[carpeta]["sin poner"] += 1
             elif estado in ESTADOS:
                 estados[carpeta][estado] += 1
             else:
                 inventados.append(f"{carpeta}/{md.stem} -> {estado}")
-            if campos.get("favorito") == "true":
+            if campos.get("favorite") == "true":
                 favoritos[carpeta] += 1
-            apuntada = re.sub(r"^\[\[|\]\]$", "", campos.get("portada") or "")
+            apuntada = re.sub(r"^\[\[|\]\]$", "", campos.get("cover") or "")
             if apuntada:
                 portadas_usadas.add(apuntada)
                 if not (PORTADAS / apuntada).exists():
@@ -268,7 +273,7 @@ def resumen(args):
                                           sorted(notas.items(), reverse=True)))
 
     # De aqui salen las dos ultimas vistas de pelis, libros y musica: lo
-    # terminado en una y lo que queda -- "pendiente" y "en curso" -- en la otra.
+    # terminado en una y lo que queda -- "pending" y "in-progress" -- en la otra.
     # Lo que no cae en ninguna de las dos solo se ve en la galeria, y eso no se
     # nota mirandola.
     print("\nESTADOS")
@@ -296,7 +301,7 @@ def resumen(args):
         print(f"  {carpeta:10} {favoritos[carpeta]:>4}")
     if not sum(favoritos.values()):
         print("  Ninguna. Favoritos.base y las vistas «Solo favoritos» salen vacías")
-        print("  hasta que alguna ficha lleve `favorito: true`.")
+        print("  hasta que alguna ficha lleve `favorite: true`.")
 
     # Solo con la vault entera tiene sentido: con --seccion sobran las de las otras.
     if not args.seccion:

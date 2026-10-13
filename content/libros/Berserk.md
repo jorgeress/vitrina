@@ -1,19 +1,21 @@
 ---
-tipo: libro
-seccion: "[[libros/index|Libros]]"
+type: book
+section: "[[libros/index|Libros]]"
 year: 1990
-autor: Kentaro Miura
-nota:
-estado: terminado
-favorito: false
-portada: "[[berserk.webp]]"
+author: Kentaro Miura
+rating:
+status: finished
+favorite: false
+cover: "[[berserk.webp]]"
 tags:
   - manga
   - fantasy
   - horror
 coverid: 869205
 wikipedia: Berserk (manga)
-alta: 2026-09-12
+added: 2026-09-12
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

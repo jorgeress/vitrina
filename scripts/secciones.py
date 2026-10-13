@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Cuelga cada ficha de su seccion: escribe el campo `seccion`.
+"""Cuelga cada ficha de su seccion: escribe el campo `section`.
 
 El grafo de Obsidian solo dibuja los `[[...]]` de la vault. Una ficha no cita a
 ninguna otra, y la galeria de su seccion tampoco la cita a ella, porque el
@@ -29,21 +29,21 @@ import argparse
 import re
 import sys
 
-from vitrina import (SECCIONES, VAULT, enlace_seccion, escribir_campos,
+from vitrina import (fichas, SECCIONES, VAULT, enlace_seccion, escribir_campos,
                      frontmatter, linea_yaml)
 
 # La clave y su valor, con el salto de linea de delante: asi al quitarla no
 # queda una linea en blanco dentro de la cabecera.
-CAMPO_RE = re.compile(r"\n?^seccion:.*$", re.M)
+CAMPO_RE = re.compile(r"\n?^section:.*$", re.M)
 
-# Detras de `tipo`, que es el campo con el que va de la mano, y no al final de
+# Detras de `type`, que es el campo con el que va de la mano, y no al final de
 # la cabecera, que es donde lo dejaria escribir_campos: es el orden en el que lo
 # escriben las fichas nuevas, y el que Obsidian enseña en sus propiedades.
-TIPO_RE = re.compile(r"^tipo:.*$", re.M)
+TIPO_RE = re.compile(r"^type:.*$", re.M)
 
 
 def colgar(md, texto, linea):
-    """Escribe la clave debajo de `tipo`. Devuelve False si no encaja."""
+    """Escribe la clave debajo de `type`. Devuelve False si no encaja."""
     m = TIPO_RE.search(texto)
     if not m:
         return False
@@ -53,7 +53,7 @@ def colgar(md, texto, linea):
 
 def fichas():
     for carpeta in SECCIONES:
-        for md in sorted((VAULT / carpeta).glob("*.md")):
+        for md in fichas(carpeta):
             if md.stem != "index":
                 yield carpeta, md
 
@@ -67,7 +67,7 @@ def main():
     tocadas = 0
     for carpeta, md in fichas():
         texto = md.read_text(encoding="utf-8")
-        actual = frontmatter(texto).get("seccion")
+        actual = frontmatter(texto).get("section")
         if args.deshacer:
             if actual is None:
                 continue
@@ -79,11 +79,11 @@ def main():
             if actual == debido:
                 continue
             if not args.dry_run:
-                linea = linea_yaml("seccion", debido)
+                linea = linea_yaml("section", debido)
                 # Con la clave ya puesta se cambia donde este; si no la hay, se
-                # abre hueco debajo de `tipo`, y solo si falla se va al final.
+                # abre hueco debajo de `type`, y solo si falla se va al final.
                 if actual is not None or not colgar(md, texto, linea):
-                    escribir_campos(md, {"seccion": debido})
+                    escribir_campos(md, {"section": debido})
             print(f"{'~' if actual else '+'} {md.relative_to(VAULT)}  {debido}")
         tocadas += 1
 

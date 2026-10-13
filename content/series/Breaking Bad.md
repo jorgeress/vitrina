@@ -1,17 +1,17 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2008
-autor: Vince Gilligan
-nota:
-favorito: false
-portada: "[[breaking-bad.webp]]"
+author: Vince Gilligan
+rating:
+favorite: false
+cover: "[[breaking-bad.webp]]"
 tags:
   - drama
   - crime
   - thriller
 tvmaze: 169
-alta: 2026-09-16
+added: 2026-09-16
 ---
 
 > [!vitrina] Por qué está en la vitrina

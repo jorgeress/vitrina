@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 1994
-autor: Alex Proyas
-nota: 8
-estado: terminado
-favorito: false
-portada: "[[the-crow.webp]]"
+author: Alex Proyas
+rating: 8
+status: finished
+favorite: false
+cover: "[[the-crow.webp]]"
 tags:
   - action
   - thriller
   - fantasy
 letterboxd: the-crow
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

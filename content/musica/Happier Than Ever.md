@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2021
-autor: Billie Eilish
-nota:
-estado: terminado
-favorito: false
-portada: "[[happier-than-ever.webp]]"
+author: Billie Eilish
+rating:
+status: finished
+favorite: false
+cover: "[[happier-than-ever.webp]]"
 tags:
   - pop
   - alternative-pop
   - alternative-r&b
   - ambient-pop
 mbid: 3ac5236a-3bd8-44c6-ab60-69b013594ae6
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

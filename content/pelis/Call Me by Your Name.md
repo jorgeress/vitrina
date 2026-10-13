@@ -1,17 +1,17 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2017
-autor: Luca Guadagnino
-nota: 10
-estado: terminado
-favorito: true
-portada: "[[call-me-by-your-name.webp]]"
+author: Luca Guadagnino
+rating: 10
+status: finished
+favorite: true
+cover: "[[call-me-by-your-name.webp]]"
 tags:
   - romance
   - drama
 letterboxd: call-me-by-your-name
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

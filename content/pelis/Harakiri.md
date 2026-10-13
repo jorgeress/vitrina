@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 1962
-autor: Masaki Kobayashi
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[harakiri.webp]]"
+author: Masaki Kobayashi
+rating: 10
+status: finished
+favorite: false
+cover: "[[harakiri.webp]]"
 tags:
   - history
   - drama
   - action
 letterboxd: harakiri
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -28,10 +28,10 @@
   --texto: #201d1a;
   --enlace: #4c5c6b;
   --dorado: #846614;
-  --juego: #2a78d6;
-  --peli: #eb6834;
-  --serie: #1baf7a;
-  --libro: #6250d6;
+  --game: #2a78d6;
+  --film: #eb6834;
+  --series: #1baf7a;
+  --book: #6250d6;
   --album: #e87ba4;
   --sombra: 0 10px 28px rgb(32 29 26 / 0.14);
   --radio: 8px;
@@ -53,10 +53,10 @@
     --texto: #ece7dd;
     --enlace: #9aa7b4;
     --dorado: #e0c063;
-    --juego: #3987e5;
-    --peli: #d95926;
-    --serie: #199e70;
-    --libro: #9085e9;
+    --game: #3987e5;
+    --film: #d95926;
+    --series: #199e70;
+    --book: #9085e9;
     --album: #d55181;
     --sombra: 0 12px 32px rgb(0 0 0 / 0.5);
     color-scheme: dark;
@@ -72,10 +72,10 @@
   --texto: #ece7dd;
   --enlace: #9aa7b4;
   --dorado: #e0c063;
-  --juego: #3987e5;
-  --peli: #d95926;
-  --serie: #199e70;
-  --libro: #9085e9;
+  --game: #3987e5;
+  --film: #d95926;
+  --series: #199e70;
+  --book: #9085e9;
   --album: #d55181;
   --sombra: 0 12px 32px rgb(0 0 0 / 0.5);
   color-scheme: dark;
@@ -226,6 +226,54 @@ a.chip:hover {
   border-color: var(--suave);
 }
 
+/* Una lista de tarjetas con tres miniaturas apiladas: autores, grupos, años. */
+.lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  margin: 32px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.lista a {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  border-radius: var(--radio);
+  background: var(--caja);
+  border: 1px solid var(--borde);
+}
+.lista a:hover {
+  border-color: var(--suave);
+}
+.miniaturas {
+  display: flex;
+  flex: none;
+}
+.miniaturas > * {
+  display: block;
+  width: 40px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 5px;
+  border: 2px solid var(--caja);
+}
+.miniaturas > * + * {
+  margin-left: -18px;
+}
+.hueco {
+  opacity: 0.5;
+}
+.lista strong {
+  display: block;
+  font-weight: 600;
+}
+.lista small {
+  color: var(--tenue);
+  font-size: 0.88rem;
+}
+
 /* --- Callouts --------------------------------------------------------------
    La cartela es lo suyo y tiene que verse distinta de la cita de la fuente,
    que va justo debajo: en caja, un paso por delante del fondo; el rótulo en
@@ -262,7 +310,8 @@ a.chip:hover {
   mask: var(--icono) center / contain no-repeat;
 }
 
-.callout[data-callout="vitrina"] {
+.callout[data-callout="vitrina"],
+.callout[data-callout="vitrine"] {
   --icono: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg>');
   padding: 20px 24px;
   background: var(--caja);
@@ -272,7 +321,8 @@ a.chip:hover {
   font-size: 1.12rem;
   line-height: 1.6;
 }
-.callout[data-callout="vitrina"] .callout-title {
+.callout[data-callout="vitrina"] .callout-title,
+.callout[data-callout="vitrine"] .callout-title {
   font-family: var(--rotulo);
   text-transform: uppercase;
   letter-spacing: 0.14em;

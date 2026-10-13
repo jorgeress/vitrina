@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apunta en cada ficha cuando entro en la coleccion: el campo `alta`.
+"""Apunta en cada ficha cuando entro en la coleccion: el campo `added`.
 
 De ahi sale "Recien llegadas" en la portada. La fecha va escrita en la ficha y
 no se saca del fichero porque la del fichero no sobrevive a un `git clone`,
@@ -21,7 +21,7 @@ import subprocess
 import sys
 from datetime import date
 
-from vitrina import RAIZ, SECCIONES, VAULT, escribir_campos, frontmatter, vacio
+from vitrina import fichas, RAIZ, SECCIONES, VAULT, escribir_campos, frontmatter, vacio
 
 
 def alta_en_git(md):
@@ -42,14 +42,14 @@ def main():
     hoy = date.today().isoformat()
     puestas = 0
     for carpeta in SECCIONES:
-        for md in sorted((VAULT / carpeta).glob("*.md")):
+        for md in fichas(carpeta):
             if md.stem == "index":
                 continue
-            if not vacio(frontmatter(md.read_text(encoding="utf-8")).get("alta")):
+            if not vacio(frontmatter(md.read_text(encoding="utf-8")).get("added")):
                 continue
             fecha = alta_en_git(md) or hoy
             if not args.dry_run:
-                escribir_campos(md, {"alta": fecha})
+                escribir_campos(md, {"added": fecha})
             print(f"  {fecha}  {carpeta}/{md.stem}")
             puestas += 1
 

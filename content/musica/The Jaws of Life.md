@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2023
-autor: Pierce the Veil
-nota:
-estado: terminado
-favorito: false
-portada: "[[the-jaws-of-life.webp]]"
+author: Pierce the Veil
+rating:
+status: finished
+favorite: false
+cover: "[[the-jaws-of-life.webp]]"
 tags:
   - alternative-rock
   - grunge
   - post-hardcore
   - melodic-hardcore
 mbid: da9d53c0-2116-4368-b234-b3403073aca7
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

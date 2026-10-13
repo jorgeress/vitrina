@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2025
-autor: Lavaflame2
-nota:
-favorito: false
-portada: "[[idleon-the-incremental-mmo.webp]]"
+author: Lavaflame2
+rating:
+favorite: false
+cover: "[[idleon-the-incremental-mmo.webp]]"
 tags:
   - adventure
   - casual
   - indie
   - massively-multiplayer
 appid: 1476970
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

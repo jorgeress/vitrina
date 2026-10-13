@@ -1,0 +1,211 @@
+---
+import Base from "../../layouts/Base.astro";
+import Portada from "../../components/Portada.astro";
+import { t } from "../../i18n";
+import {
+  SECCIONES,
+  años,
+  añoAlta,
+  añoDeApertura,
+  añoTerminada,
+  cantidad,
+  cartela,
+  fechaParcial,
+  obras,
+  porAlta,
+  porAprecio,
+  portada,
+  recortar,
+  ruta,
+  rutaFija,
+  titulo,
+  type Obra,
+} from "../../lib/obras";
+
+export async function getStaticPaths() {
+  const todas = await obras();
+  return años(todas).map((y) => ({ params: { anuario: t.rutas.anuario, ano: String(y) }, props: { y } }));
+}
+
+const { y } = Astro.props as { y: number };
+const todas = await obras();
+const lista = años(todas);
+const anterior = lista.find((otro) => otro < y);
+const siguiente = [...lista].reverse().find((otro) => otro > y);
+
+// Lo terminado ese año, por su fecha: lo último primero. Sin mes, al final.
+const terminadas = todas
+  .filter((o) => añoTerminada(o) === y)
+  .sort((a, b) => (b.data.finished_on ?? "").localeCompare(a.data.finished_on ?? "") || porAprecio(a, b));
+const entraron = todas.filter((o) => añoAlta(o) === y).sort(porAlta);
+const apertura = añoDeApertura(todas) === y;
+
+// Lo mejor del año sale de lo terminado; si ese año no se terminó nada con
+// fecha, de lo que entró, salvo el de la apertura, que entró todo.
+const fuente = terminadas.length ? terminadas : apertura ? [] : entraron;
+const mejores = fuente.filter((o) => o.data.favorite || o.data.rating).sort(porAprecio).slice(0, 6);
+const cartelas = [...terminadas, ...(apertura ? [] : entraron)]
+  .filter((o, i, todas) => todas.indexOf(o) === i)
+  .map((obra) => ({ obra, texto: cartela(obra) }))
+  .filter((e): e is { obra: Obra; texto: string } => e.texto !== null);
+
+const porSala = (grupo: Obra[]) =>
+  SECCIONES.map((s) => ({ seccion: s, n: grupo.filter((o) => o.data.type === s.tipo).length })).filter((x) => x.n > 0);
+---
+
+<Base titulo={t.añoTitulo(y)} descripcion={t.añoDescripcion(y)}>
+  <div class="contenedor">
+    <header class="titulo-pagina">
+      <a class="volver" href={rutaFija("anuario")}>← {t.anuario}</a>
+      <h1 class="año">{y}</h1>
+      <p>{t.resumenAño(terminadas.length, entraron.length)}</p>
+    </header>
+
+    {
+      mejores.length > 0 && (
+        <section class="bloque">
+          <header>
+            <h2 class="dorado">★ {t.mejoresDelAño}</h2>
+          </header>
+          <div class="rejilla">
+            {mejores.map((o) => (
+              <Portada obra={o} mixta />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      cartelas.length > 0 && (
+        <section class="bloque">
+          <header>
+            <h2>{t.cartelasTitulo}</h2>
+          </header>
+          <div class="cartelas">
+            {cartelas.map(({ obra, texto }) => (
+              <a class="cartela" href={ruta(obra)} style={`--seccion:var(--${obra.data.type})`}>
+                {portada(obra) && <img src={portada(obra)} alt="" loading="lazy" />}
+                <span>
+                  <span class="cita">{recortar(texto, 230)}</span>
+                  <span class="de">{titulo(obra)}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      terminadas.length > 0 && (
+        <section class="bloque">
+          <header>
+            <div>
+              <h2>{t.terminadas}</h2>
+              <p>
+                {porSala(terminadas).map(({ seccion, n }) => (
+                  <span class="cuenta" style={`--seccion:var(--${seccion.tipo})`}>
+                    {cantidad(n, seccion.una, seccion.varias)}
+                  </span>
+                ))}
+              </p>
+            </div>
+          </header>
+          <div class="rejilla">
+            {terminadas.map((o) => (
+              <Portada obra={o} mixta nota={o.data.finished_on && o.data.finished_on.length > 4 ? fechaParcial(o.data.finished_on) : undefined} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      entraron.length > 0 && (
+        <section class="bloque">
+          <header>
+            <div>
+              <h2>{t.entraron}</h2>
+              <p>
+                {apertura
+                  ? t.apertura
+                  : porSala(entraron).map(({ seccion, n }) => (
+                      <span class="cuenta" style={`--seccion:var(--${seccion.tipo})`}>
+                        {cantidad(n, seccion.una, seccion.varias)}
+                      </span>
+                    ))}
+              </p>
+            </div>
+          </header>
+          <div class="rejilla">
+            {entraron.map((o) => (
+              <Portada obra={o} mixta />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+
+  <nav class="contenedor pasos" aria-label={t.anuario}>
+    {anterior ? <a href={rutaFija("anuario", `${anterior}/`)}>{t.añoAnterior} · {anterior}</a> : <span />}
+    {siguiente && <a href={rutaFija("anuario", `${siguiente}/`)}>{siguiente} · {t.añoSiguiente}</a>}
+  </nav>
+</Base>
+
+<style>
+  .año {
+    font-size: clamp(3rem, 9vw, 5.5rem);
+    letter-spacing: 0.08em;
+  }
+  .dorado {
+    color: var(--dorado);
+  }
+  .cuenta + .cuenta::before {
+    content: " · ";
+    color: var(--tenue);
+  }
+  .cartelas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .cartela {
+    display: flex;
+    gap: 16px;
+    padding: 18px;
+    background: var(--caja);
+    border: 1px solid var(--borde);
+    border-left: 3px solid var(--seccion);
+    border-radius: var(--radio);
+  }
+  .cartela img {
+    width: 64px;
+    height: 96px;
+    flex: none;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  .cita {
+    display: block;
+    font-size: 1.02rem;
+    line-height: 1.5;
+  }
+  .de {
+    display: block;
+    margin-top: 8px;
+    color: var(--tenue);
+    font-size: 0.88rem;
+  }
+  .pasos {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 48px;
+    color: var(--enlace);
+  }
+  .pasos a:hover {
+    color: var(--texto);
+  }
+</style>

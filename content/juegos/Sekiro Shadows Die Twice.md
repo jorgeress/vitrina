@@ -1,17 +1,17 @@
 ---
 title: Sekiro™ Shadows Die Twice
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2019
-autor: FromSoftware, Inc.
-nota: 10
-favorito: true
-portada: "[[sekirotm-shadows-die-twice.webp]]"
+author: FromSoftware, Inc.
+rating: 10
+favorite: true
+cover: "[[sekirotm-shadows-die-twice.webp]]"
 tags:
   - action
   - adventure
 appid: 814380
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

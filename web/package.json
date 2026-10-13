@@ -15,7 +15,8 @@
     "astro": "^7.3.8",
     "d3-force": "^3.0.0",
     "pagefind": "^1.5.2",
-    "satteri-callouts": "^1.0.1"
+    "satteri-callouts": "^1.0.1",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",

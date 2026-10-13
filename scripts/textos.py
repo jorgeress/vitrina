@@ -55,7 +55,7 @@ import time
 import urllib.parse
 from pathlib import Path
 
-from vitrina import (FRONT_RE, SECCIONES, VAULT, asegurar_letterboxd, entrada_steam,
+from vitrina import (fichas, FRONT_RE, SECCIONES, VAULT, asegurar_letterboxd, entrada_steam,
                      escribir_campos, ficha_letterboxd, frontmatter, pedir,
                      serie_tvmaze, url_tvmaze)
 
@@ -325,14 +325,14 @@ def cuerpo_disco(titulos):
     al final de la linea, y se quitaron a peticion suya porque marcarlas exigia
     editar el fichero y pasar un script, y eso no lo puede hacer nadie desde la
     web publicada, que es estatica. Los favoritos son de disco entero, con el
-    campo `favorito`, que si se ve online para todo el mundo.
+    campo `favorite`, que si se ve online para todo el mundo.
     """
     lineas = [f"{i}. {t}" for i, t in enumerate(titulos, 1)]
     return "## Canciones\n\n" + "\n".join(lineas)
 
 
-FUENTES = {"juego": texto_juego, "peli": texto_peli, "serie": texto_serie,
-           "album": texto_album, "libro": texto_libro}
+FUENTES = {"game": texto_juego, "film": texto_peli, "series": texto_serie,
+           "album": texto_album, "book": texto_libro}
 
 
 # --- escritura ---------------------------------------------------------------
@@ -430,7 +430,7 @@ def fichas(args):
     carpetas = [args.seccion] if args.seccion else list(SECCIONES)
     salida = []
     for carpeta in carpetas:
-        salida += sorted(p for p in (VAULT / carpeta).glob("*.md") if p.stem != "index")
+        salida += fichas(carpeta)
     return salida
 
 
@@ -449,7 +449,7 @@ def main():
     for md in fichas(args):
         texto = md.read_text(encoding="utf-8")
         campos = frontmatter(texto)
-        tipo = campos.get("tipo") or SECCIONES.get(md.parent.name)
+        tipo = campos.get("type") or SECCIONES.get(md.parent.name)
         titulo = campos.get("title") or md.stem
         nombre = f"{md.parent.name}/{md.stem}"
 

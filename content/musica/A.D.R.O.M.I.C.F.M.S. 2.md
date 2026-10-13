@@ -1,18 +1,18 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2015
-autor: Yung Beef, Steve Lean
-nota:
-estado: terminado
-favorito: false
-portada: "[[a-d-r-o-m-i-c-f-m-s-2.webp]]"
+author: Yung Beef, Steve Lean
+rating:
+status: finished
+favorite: false
+cover: "[[a-d-r-o-m-i-c-f-m-s-2.webp]]"
 tags:
   - reggaeton
   - trap
   - trap-latino
 mbid: c582b32c-b46c-4c6c-9478-0e05218bf9a7
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

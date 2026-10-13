@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2010
-autor: Edgar Wright
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[scott-pilgrim-vs-the-world.webp]]"
+author: Edgar Wright
+rating: 10
+status: finished
+favorite: false
+cover: "[[scott-pilgrim-vs-the-world.webp]]"
 tags:
   - romance
   - action
   - comedy
 letterboxd: scott-pilgrim-vs-the-world
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -1,5 +1,6 @@
 ---
-import { ESTADOS, cartela, portada, quienFirma, ruta, titulo, transicion, type Obra } from "../lib/obras";
+import { t } from "../i18n";
+import { cartela, marcas, portada, quienFirma, ruta, titulo, transicion, type Obra } from "../lib/obras";
 
 interface Props {
   obra: Obra;
@@ -19,7 +20,7 @@ interface Props {
 
 const { obra, filtrable = false, mixta = false, viaja = false, nota, prioridad = false } = Astro.props;
 const d = obra.data;
-const cuadrada = d.tipo === "album";
+const cuadrada = d.type === "album";
 const imagen = portada(obra);
 const nombre = titulo(obra);
 const escrita = cartela(obra) !== null;
@@ -29,23 +30,24 @@ const datos = filtrable
   ? {
       "data-titulo": nombre.toLowerCase(),
       "data-autor": quien.toLowerCase(),
-      "data-estado": d.estado ?? "",
-      "data-favorito": d.favorito ? "1" : "",
-      "data-nota": d.nota ?? 0,
+      "data-estado": d.status ?? "",
+      "data-favorito": d.favorite ? "1" : "",
+      "data-nota": d.rating ?? 0,
       "data-year": d.year ?? 0,
-      "data-alta": d.alta?.getTime() ?? 0,
+      "data-alta": d.added?.getTime() ?? 0,
       "data-tags": (d.tags ?? []).join(" "),
       "data-cartela": escrita ? "1" : "",
     }
   : {};
-const retirada = d.estado === "abandonado";
+const retirada = d.status === "dropped";
+const marcadas = marcas(obra);
 ---
 
 <a
   class:list={["portada", { retirada }]}
   href={ruta(obra)}
-  style={`--seccion:var(--${d.tipo})`}
-  title={retirada ? `${nombre} · ${ESTADOS.abandonado}` : undefined}
+  style={`--seccion:var(--${d.type})`}
+  title={retirada ? t.retirada(nombre) : undefined}
   {...datos}
 >
   <div
@@ -69,12 +71,12 @@ const retirada = d.estado === "abandonado";
         </span>
       )
     }
-    {d.favorito && <span class="sello estrella" title="Lo mejor de lo mejor">★</span>}
-    {d.nota && <span class="sello nota" title={`Nota: ${d.nota} de 10`}>{d.nota}</span>}
-    {d.draft && <span class="sello borrador">Borrador</span>}
+    {d.favorite && <span class="sello estrella" title={t.mejor}>★</span>}
+    {d.rating && <span class="sello nota" title={t.nota(d.rating)}>{d.rating}</span>}
+    {marcadas.length > 0 && <span class="sello borrador">{marcadas.map((m) => t[m]).join(" · ")}</span>}
     {
       escrita && (
-        <span class="sello escrita" title="Tiene cartela: está escrito por qué está aquí">
+        <span class="sello escrita" title={t.conCartelaTitulo}>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M6 3h12l4 6-10 13L2 9Z" />
             <path d="M2 9h20" />

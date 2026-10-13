@@ -1,17 +1,19 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2018
-autor: Go Nagai
-nota:
-favorito: false
-portada: "[[devilman-crybaby.webp]]"
+author: Go Nagai
+rating:
+favorite: false
+cover: "[[devilman-crybaby.webp]]"
 tags:
   - action
   - anime
   - fantasy
 tvmaze: 30915
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

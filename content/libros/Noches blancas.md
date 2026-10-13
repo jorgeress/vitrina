@@ -1,18 +1,18 @@
 ---
-tipo: libro
-seccion: "[[libros/index|Libros]]"
+type: book
+section: "[[libros/index|Libros]]"
 year: 1848
-autor: Fiódor Dostoievski
-nota:
-estado: terminado
-favorito: true
-portada: "[[noches-blancas.webp]]"
+author: Fiódor Dostoievski
+rating:
+status: finished
+favorite: true
+cover: "[[noches-blancas.webp]]"
 tags:
   - romance
   - drama
 coverid: 10861094
 wikipedia: Noches blancas (Dostoyevski)
-alta: 2026-09-04
+added: 2026-09-04
 ---
 
 > [!quote] De qué va

@@ -1,20 +1,20 @@
 ---
 title: "ARK: Survival Evolved"
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2017
-autor: Studio Wildcard, Instinct Games
-nota:
-estado: pendiente
-favorito: false
-portada: "[[ark-survival-evolved.webp]]"
+author: Studio Wildcard, Instinct Games
+rating:
+status: pending
+favorite: false
+cover: "[[ark-survival-evolved.webp]]"
 tags:
   - action
   - adventure
   - indie
   - massively-multiplayer
 appid: 346110
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 > [!quote] De qué va

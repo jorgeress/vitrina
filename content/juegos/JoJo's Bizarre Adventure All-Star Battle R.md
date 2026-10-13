@@ -1,15 +1,15 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2022
-autor: CyberConnect2 Co. Ltd.
-nota:
-favorito: false
-portada: "[[jojo-s-bizarre-adventure-all-star-battle-r.webp]]"
+author: CyberConnect2 Co. Ltd.
+rating:
+favorite: false
+cover: "[[jojo-s-bizarre-adventure-all-star-battle-r.webp]]"
 tags:
   - action
 appid: 1372110
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2020
-autor: The Strokes
-nota:
-estado: terminado
-favorito: false
-portada: "[[the-new-abnormal.webp]]"
+author: The Strokes
+rating:
+status: finished
+favorite: false
+cover: "[[the-new-abnormal.webp]]"
 tags:
   - indie-rock
   - rock
   - alternative-rock
   - new-wave
 mbid: 43ca5aa6-92de-47e9-8f0b-9112e4881426
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

@@ -1,16 +1,16 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2019
-autor: Rockstar Games
-nota:
-favorito: false
-portada: "[[red-dead-redemption-2.webp]]"
+author: Rockstar Games
+rating:
+favorite: false
+cover: "[[red-dead-redemption-2.webp]]"
 tags:
   - action
   - adventure
 appid: 1174180
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

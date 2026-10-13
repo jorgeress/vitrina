@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2020
-autor: Mediatonic
-nota:
-favorito: false
-portada: "[[fall-guys.webp]]"
+author: Mediatonic
+rating:
+favorite: false
+cover: "[[fall-guys.webp]]"
 tags:
   - action
   - casual
   - indie
   - massively-multiplayer
 appid: 1097150
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

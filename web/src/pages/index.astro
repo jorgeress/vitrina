@@ -2,9 +2,13 @@
 import { getEntry } from "astro:content";
 import Base from "../layouts/Base.astro";
 import Portada from "../components/Portada.astro";
+import { NOMBRE } from "../config";
+import { t } from "../i18n";
 import {
   SECCIONES,
+  cantidad,
   cartela,
+  grupos,
   obras,
   porAlta,
   porAprecio,
@@ -12,6 +16,8 @@ import {
   primerParrafo,
   recortar,
   ruta,
+  rutaFija,
+  rutaGrupo,
   titulo,
   url,
 } from "../lib/obras";
@@ -20,18 +26,18 @@ import {
 const ESTRELLAS = 5;
 
 const todas = await obras();
-// La presentación es la suya: el primer párrafo de content/index.md, que se
-// edita en Obsidian como cualquier otra nota.
+// La presentación es la del dueño: el primer párrafo de content/index.md, que
+// se edita en Obsidian como cualquier otra nota.
 const portadaVault = await getEntry("paginas", "index");
 const presentacion = primerParrafo(portadaVault?.body);
 
 const salas = SECCIONES.map((s) => {
-  const lista = todas.filter((o) => o.data.tipo === s.tipo);
+  const lista = todas.filter((o) => o.data.type === s.tipo);
   return {
     seccion: s,
     lista,
     escaparate: [...lista].sort(porAprecio).slice(0, 3),
-    estrellas: lista.filter((o) => o.data.favorito).sort(porAprecio).slice(0, ESTRELLAS),
+    estrellas: lista.filter((o) => o.data.favorite).sort(porAprecio).slice(0, ESTRELLAS),
   };
 });
 
@@ -39,14 +45,20 @@ const escritas = todas
   .map((obra) => ({ obra, texto: cartela(obra) }))
   .filter((e): e is { obra: (typeof todas)[number]; texto: string } => e.texto !== null)
   .sort((a, b) => porAlta(a.obra, b.obra));
-const almacen = todas.filter((o) => o.data.estado === "pendiente").sort(porAlta);
+const almacen = todas.filter((o) => o.data.status === "pending").sort(porAlta);
 const recientes = [...todas].sort(porAlta).slice(0, 14);
-const favoritos = todas.filter((o) => o.data.favorito).length;
+const favoritos = todas.filter((o) => o.data.favorite).length;
+// Los grupos destacados van debajo de las salas, como salas hechas a mano; si
+// no hay ninguno destacado, los que más piezas tienen, hasta cuatro.
+const todosLosGrupos = await grupos();
+const destacados = todosLosGrupos.some((g) => g.destacado)
+  ? todosLosGrupos.filter((g) => g.destacado)
+  : todosLosGrupos.slice(0, 4);
 ---
 
 <Base activa="inicio">
   <section class="entrada contenedor">
-    <h1 class="rotulo-casa">Vitrina</h1>
+    <h1 class="rotulo-casa">{NOMBRE}</h1>
     {presentacion && <p class="presentacion">{presentacion}</p>}
     <ul class="cifras">
       {
@@ -59,14 +71,14 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
         ))
       }
       <li class="dorada">
-        <a href={url("favoritos/")}>★ <strong>{favoritos}</strong> en lo mejor de lo mejor</a>
+        <a href={rutaFija("favoritos")}>★ <strong>{favoritos}</strong> {t.enLoMejor}</a>
       </li>
     </ul>
   </section>
 
   <div class="contenedor">
     <section class="bloque" aria-labelledby="t-salas">
-      <header><h2 id="t-salas">Las salas</h2></header>
+      <header><h2 id="t-salas">{t.lasSalas}</h2></header>
       <div class="salas">
         {
           salas.map(({ seccion, lista, escaparate }) => (
@@ -76,28 +88,55 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
               </span>
               <span class="sala-texto">
                 <span class="sala-nombre">{seccion.nombre}</span>
-                <span class="sala-cuenta">{lista.length === 1 ? `1 ${seccion.una}` : `${lista.length} ${seccion.varias}`}</span>
+                <span class="sala-cuenta">{cantidad(lista.length, seccion.una, seccion.varias)}</span>
               </span>
             </a>
           ))
         }
-        <a class="sala constelacion" href={url("constelacion/")}>
+        <a class="sala constelacion" href={rutaFija("constelacion")}>
           <span class="estrellas-fondo" aria-hidden="true"></span>
           <span class="sala-texto">
-            <span class="sala-nombre">Constelación</span>
-            <span class="sala-cuenta">Todas, unidas por lo que comparten</span>
+            <span class="sala-nombre">{t.constelacion}</span>
+            <span class="sala-cuenta">{t.constelacionSub}</span>
           </span>
         </a>
       </div>
     </section>
 
+    {
+      destacados.length > 0 && (
+        <section class="bloque" aria-labelledby="t-grupos">
+          <header>
+            <div>
+              <h2 id="t-grupos">{t.grupos}</h2>
+              <p>{t.gruposSub}</p>
+            </div>
+            <a class="ver-todo" href={rutaFija("grupos")}>{t.verTodo}</a>
+          </header>
+          <div class="salas">
+            {destacados.map((g) => (
+              <a class="sala" href={rutaGrupo(g)}>
+                <span class="pila" aria-hidden="true">
+                  {g.obras.slice(0, 3).map((o) => portada(o) && <img src={portada(o)} alt="" loading="lazy" />)}
+                </span>
+                <span class="sala-texto">
+                  <span class="sala-nombre">{g.nombre}</span>
+                  <span class="sala-cuenta">{cantidad(g.obras.length, t.pieza, t.piezas)}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
     <section class="bloque" aria-labelledby="t-mejor">
       <header>
         <div>
-          <h2 id="t-mejor" class="dorado">★ Lo mejor de lo mejor</h2>
-          <p>Lo que no puede faltar, sala por sala.</p>
+          <h2 id="t-mejor" class="dorado">★ {t.mejor}</h2>
+          <p>{t.mejorSub}</p>
         </div>
-        <a class="ver-todo" href={url("favoritos/")}>Verlo todo →</a>
+        <a class="ver-todo" href={rutaFija("favoritos")}>{t.verTodo}</a>
       </header>
       <div class="estrellas">
         {
@@ -124,13 +163,13 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
         <section class="bloque" aria-labelledby="t-cartelas">
           <header>
             <div>
-              <h2 id="t-cartelas">Por qué están en la vitrina</h2>
-              <p>Lo que he escrito yo, no lo que dice la contraportada.</p>
+              <h2 id="t-cartelas">{t.cartelasTitulo}</h2>
+              <p>{t.cartelasSub}</p>
             </div>
           </header>
           <div class="cartelas">
             {escritas.map(({ obra, texto }) => (
-              <a class="cartela" href={ruta(obra)} style={`--seccion:var(--${obra.data.tipo})`}>
+              <a class="cartela" href={ruta(obra)} style={`--seccion:var(--${obra.data.type})`}>
                 {portada(obra) && <img src={portada(obra)} alt="" loading="lazy" />}
                 <span>
                   <span class="cita">{recortar(texto, 230)}</span>
@@ -148,8 +187,8 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
         <section class="bloque" aria-labelledby="t-almacen">
           <header>
             <div>
-              <h2 id="t-almacen">En el almacén</h2>
-              <p>Lo que espera su turno de salir a la vitrina.</p>
+              <h2 id="t-almacen">{t.almacen}</h2>
+              <p>{t.almacenSub}</p>
             </div>
           </header>
           <div class="rejilla">
@@ -164,10 +203,13 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
     <section class="bloque" aria-labelledby="t-recientes">
       <header>
         <div>
-          <h2 id="t-recientes">Recién llegadas a la vitrina</h2>
-          <p>Lo último que ha entrado, de cualquier sala.</p>
+          <h2 id="t-recientes">{t.recientes}</h2>
+          <p>{t.recientesSub}</p>
         </div>
-        <a class="ver-todo" href={url("index.xml")}>RSS</a>
+        <span class="ver-varios">
+          <a class="ver-todo" href={rutaFija("anuario")}>{t.anuario} →</a>
+          <a class="ver-todo" href={url("index.xml")}>RSS</a>
+        </span>
       </header>
       <div class="rejilla">
         {recientes.map((o) => <Portada obra={o} mixta />)}
@@ -177,6 +219,10 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
 </Base>
 
 <style>
+  .ver-varios {
+    display: flex;
+    gap: 18px;
+  }
   /* La entrada, como en Quartz: el nombre de la colección grabado en el
      centro y la presentación debajo. */
   .entrada {
@@ -311,11 +357,11 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(circle at 80% 28%, var(--juego) 0 2px, transparent 3px),
-      radial-gradient(circle at 90% 58%, var(--peli) 0 2px, transparent 3px),
+      radial-gradient(circle at 80% 28%, var(--game) 0 2px, transparent 3px),
+      radial-gradient(circle at 90% 58%, var(--film) 0 2px, transparent 3px),
       radial-gradient(circle at 95% 20%, var(--album) 0 2px, transparent 3px),
-      radial-gradient(circle at 84% 80%, var(--serie) 0 2px, transparent 3px),
-      radial-gradient(circle at 93% 86%, var(--libro) 0 2px, transparent 3px);
+      radial-gradient(circle at 84% 80%, var(--series) 0 2px, transparent 3px),
+      radial-gradient(circle at 93% 86%, var(--book) 0 2px, transparent 3px);
     opacity: 0.9;
   }
 

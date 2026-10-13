@@ -1,28 +1,29 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Portada from "../../components/Portada.astro";
-import { SECCIONES, cantidad, nombreTag, obras, porAprecio, slugQuartz, url, type Obra } from "../../lib/obras";
+import { t } from "../../i18n";
+import { SECCIONES, cantidad, nombreTag, obras, piezas, porAprecio, rutaFija, slugQuartz, type Obra } from "../../lib/obras";
 
 export async function getStaticPaths() {
   const todas = await obras();
   const porTag = new Map<string, Obra[]>();
-  for (const o of todas) for (const t of o.data.tags ?? []) porTag.set(t, [...(porTag.get(t) ?? []), o]);
+  for (const o of todas) for (const tag of o.data.tags ?? []) porTag.set(tag, [...(porTag.get(tag) ?? []), o]);
   // La misma dirección que las páginas de tag de Quartz: /tags/action.
-  return [...porTag].map(([tag, lista]) => ({ params: { tag: slugQuartz(tag) }, props: { tag, lista } }));
+  return [...porTag].map(([tag, lista]) => ({ params: { tags: t.rutas.tags, tag: slugQuartz(tag) }, props: { tag, lista } }));
 }
 
 const { tag, lista } = Astro.props as { tag: string; lista: Obra[] };
-const grupos = SECCIONES.map((s) => ({ seccion: s, obras: lista.filter((o) => o.data.tipo === s.tipo).sort(porAprecio) })).filter(
+const grupos = SECCIONES.map((s) => ({ seccion: s, obras: lista.filter((o) => o.data.type === s.tipo).sort(porAprecio) })).filter(
   (g) => g.obras.length > 0,
 );
 ---
 
-<Base titulo={nombreTag(tag)} descripcion={`${cantidad(lista.length, "pieza", "piezas")} de la vitrina con el tag ${nombreTag(tag)}.`}>
+<Base titulo={nombreTag(tag)} descripcion={t.conElTag(piezas(lista.length), nombreTag(tag))}>
   <div class="contenedor">
     <header class="titulo-pagina">
-      <a class="volver" href={url("tags/")}>← Tags</a>
+      <a class="volver" href={rutaFija("tags")}>← {t.tags}</a>
       <h1>{nombreTag(tag)}</h1>
-      <p>{cantidad(lista.length, "pieza", "piezas")} en {cantidad(grupos.length, "sala", "salas")}.</p>
+      <p>{t.enSalas(piezas(lista.length), cantidad(grupos.length, t.sala, t.salasPalabra))}</p>
     </header>
     {
       grupos.map(({ seccion, obras }) => (

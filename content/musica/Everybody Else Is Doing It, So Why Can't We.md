@@ -1,20 +1,20 @@
 ---
 title: Everybody Else Is Doing It, So Why Can’t We?
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1993
-autor: The Cranberries
-nota:
-estado: terminado
-favorito: false
-portada: "[[everybody-else-is-doing-it-so-why-cant-we.webp]]"
+author: The Cranberries
+rating:
+status: finished
+favorite: false
+cover: "[[everybody-else-is-doing-it-so-why-cant-we.webp]]"
 tags:
   - alternative-rock
   - rock
   - alternative-pop
   - dream-pop
 mbid: e6b486b3-68e7-331c-a078-94fd71d61877
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

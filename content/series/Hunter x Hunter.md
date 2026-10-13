@@ -1,11 +1,11 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2011
-autor: Yoshihiro Togashi
-nota:
-favorito: false
-portada: "[[hunter-x-hunter.webp]]"
+author: Yoshihiro Togashi
+rating:
+favorite: false
+cover: "[[hunter-x-hunter.webp]]"
 tags:
   - action
   - adventure
@@ -13,7 +13,9 @@ tags:
   - fantasy
 tvmaze: 1536
 wikipedia: Hunter × Hunter
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

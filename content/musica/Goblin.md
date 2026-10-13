@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2011
-autor: Tyler, The Creator
-nota:
-estado: terminado
-favorito: false
-portada: "[[goblin.webp]]"
+author: Tyler, The Creator
+rating:
+status: finished
+favorite: false
+cover: "[[goblin.webp]]"
 tags:
   - hip-hop
   - horrorcore
   - hardcore-hip-hop
   - abstract-hip-hop
 mbid: 5bc030ca-10f1-4d61-bfd2-846873cd9e1b
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

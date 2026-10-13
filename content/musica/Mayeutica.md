@@ -1,17 +1,17 @@
 ---
 title: Mayéutica
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2021
-autor: Robe
-nota:
-estado: terminado
-favorito: false
-portada: "[[mayeutica.webp]]"
+author: Robe
+rating:
+status: finished
+favorite: false
+cover: "[[mayeutica.webp]]"
 tags:
   - rock
 mbid: 6a685d75-be79-44c2-816d-fa9751e1cf7e
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

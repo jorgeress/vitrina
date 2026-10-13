@@ -25,10 +25,9 @@ import sys
 from pathlib import Path
 
 import textos
-from vitrina import VAULT
+from vitrina import ESTADOS, VAULT, estado_de
 
 AQUI = Path(__file__).resolve().parent
-ESTADOS = ("pendiente", "en curso", "terminado", "abandonado")
 SIN_RESPUESTA = "_No response_"
 
 
@@ -62,23 +61,25 @@ def peticion(cuerpo):
     estado = f.get("Estado", "").strip().lower()
     if estado in ("", "sin estado"):
         estado = None
-    elif estado not in ESTADOS:
+    elif estado_de(estado) in ESTADOS:
+        estado = estado_de(estado)
+    else:
         raise ValueError(f"el estado «{estado}» no es ninguno de {', '.join(ESTADOS)}")
 
     favorito = bool(re.search(r"^- \[[xX]\]", f.get("Lo mejor de lo mejor", ""), flags=re.M))
     frase = f.get("Por qué está en la vitrina", "").strip()
-    return {"enlace": enlace, "nota": nota, "estado": estado,
-            "favorito": favorito, "frase": frase}
+    return {"enlace": enlace, "rating": nota, "status": estado,
+            "favorite": favorito, "frase": frase}
 
 
 def argumentos(pedido):
     """La lista de argumentos de nueva.py, sin pasar por ninguna shell."""
     args = [pedido["enlace"]]
-    if pedido["nota"]:
-        args += ["--nota", pedido["nota"]]
-    if pedido["estado"]:
-        args += ["--estado", pedido["estado"]]
-    if pedido["favorito"]:
+    if pedido["rating"]:
+        args += ["--nota", pedido["rating"]]
+    if pedido["status"]:
+        args += ["--estado", pedido["status"]]
+    if pedido["favorite"]:
         args.append("--favorito")
     return args
 

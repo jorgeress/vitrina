@@ -1,17 +1,17 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2013
-autor: The Front Bottoms
-nota:
-estado: terminado
-favorito: false
-portada: "[[talon-of-the-hawk.webp]]"
+author: The Front Bottoms
+rating:
+status: finished
+favorite: false
+cover: "[[talon-of-the-hawk.webp]]"
 tags:
   - indie-rock
   - rock
 mbid: 008daeee-d1fe-4500-b156-fe2fa2f2a658
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

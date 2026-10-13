@@ -1,7 +1,7 @@
 ---
 title: "Lana Del Rey"
-tipo: autor
-seccion: "[[autores/index|Autores]]"
+type: author
+section: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de Lana Del Rey.

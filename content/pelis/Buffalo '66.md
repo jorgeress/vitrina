@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 1998
-autor: Vincent Gallo
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[buffalo-66.webp]]"
+author: Vincent Gallo
+rating: 10
+status: finished
+favorite: false
+cover: "[[buffalo-66.webp]]"
 tags:
   - drama
   - comedy
   - romance
 letterboxd: buffalo-66
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

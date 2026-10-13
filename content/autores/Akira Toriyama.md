@@ -1,7 +1,7 @@
 ---
 title: "Akira Toriyama"
-tipo: autor
-seccion: "[[autores/index|Autores]]"
+type: author
+section: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de Akira Toriyama.

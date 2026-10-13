@@ -1,19 +1,19 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2025
-autor: AdHoc Studio
-nota:
-favorito: false
-portada: "[[dispatch.webp]]"
+author: AdHoc Studio
+rating:
+favorite: false
+cover: "[[dispatch.webp]]"
 tags:
   - action
   - adventure
   - casual
   - indie
 appid: 2592160
-capsula: 6754ae9d2f555ee1cf37f9d44021d34554d9991d/library_600x900.jpg
-alta: 2026-09-02
+capsule: 6754ae9d2f555ee1cf37f9d44021d34554d9991d/library_600x900.jpg
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

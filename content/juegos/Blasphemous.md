@@ -1,17 +1,17 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2019
-autor: The Game Kitchen
-nota:
-favorito: false
-portada: "[[blasphemous.webp]]"
+author: The Game Kitchen
+rating:
+favorite: false
+cover: "[[blasphemous.webp]]"
 tags:
   - action
   - adventure
   - indie
 appid: 774361
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

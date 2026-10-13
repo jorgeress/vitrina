@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2022
-autor: Smilegate RPG
-nota:
-favorito: false
-portada: "[[lost-ark.webp]]"
+author: Smilegate RPG
+rating:
+favorite: false
+cover: "[[lost-ark.webp]]"
 tags:
   - action
   - adventure
   - massively-multiplayer
   - rpg
 appid: 1599340
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

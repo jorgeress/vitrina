@@ -1,0 +1,64 @@
+---
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import Portada from "../../components/Portada.astro";
+import { t } from "../../i18n";
+import { SECCIONES, grupos, piezas, rutaFija, type Grupo } from "../../lib/obras";
+
+export async function getStaticPaths() {
+  return (await grupos()).map((grupo) => ({ params: { grupos: t.rutas.grupos, grupo: grupo.slug }, props: { grupo } }));
+}
+
+const { grupo } = Astro.props as { grupo: Grupo };
+// Si cruza salas se reparte por ellas, como la página de un tag; si es de una
+// sola, una rejilla y ya.
+const Texto = grupo.nota ? (await render(grupo.nota)).Content : null;
+const porSala = SECCIONES.map((s) => ({ seccion: s, obras: grupo.obras.filter((o) => o.data.type === s.tipo) })).filter(
+  (g) => g.obras.length > 0,
+);
+---
+
+<Base titulo={grupo.nombre} descripcion={t.grupoCuenta(piezas(grupo.obras.length))}>
+  <div class="contenedor">
+    <header class="titulo-pagina">
+      <a class="volver" href={rutaFija("grupos")}>← {t.grupos}</a>
+      <h1>{grupo.nombre}</h1>
+      <p>{t.grupoCuenta(piezas(grupo.obras.length))}</p>
+    </header>
+    {
+      Texto && (
+        <div class="texto-grupo">
+          <Texto />
+        </div>
+      )
+    }
+    {
+      porSala.map(({ seccion, obras }) => (
+        <section class="bloque" style={`--seccion:var(--${seccion.tipo})`}>
+          {porSala.length > 1 && (
+            <header>
+              <h2>{seccion.nombre}</h2>
+            </header>
+          )}
+          <div class="rejilla">
+            {obras.map((o) => (
+              <Portada obra={o} viaja />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .texto-grupo {
+    max-width: 68ch;
+    margin-top: 24px;
+    font-size: 1.08rem;
+  }
+  .texto-grupo :global(a) {
+    color: var(--enlace);
+    text-decoration: underline;
+  }
+</style>

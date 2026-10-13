@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2009
-autor: Marc Webb
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[500-days-of-summer.webp]]"
+author: Marc Webb
+rating: 10
+status: finished
+favorite: false
+cover: "[[500-days-of-summer.webp]]"
 tags:
   - romance
   - comedy
   - drama
 letterboxd: 500-days-of-summer
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

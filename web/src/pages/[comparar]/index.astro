@@ -1,28 +1,35 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { t } from "../../i18n";
 import { url } from "../../lib/obras";
+
+export const getStaticPaths = () => [{ params: { comparar: t.rutas.comparar } }];
+
+// Los textos que escribe el navegador van a la página como datos, en el
+// idioma de la vitrina; las funciones no viajan, así que van con huecos.
+const cliente = { ...t.cliente, noEncuentro: t.cliente.noEncuentro("{d}") };
 ---
 
-<Base titulo="Comparar vitrinas" descripcion="Pon la dirección de otra vitrina y mira qué tenéis en común.">
+<Base titulo={t.compararTitulo} descripcion={t.compararDescripcion}>
   <div class="contenedor">
     <header class="titulo-pagina">
-      <h1>Comparar vitrinas</h1>
-      <p>
-        Pon la dirección de otra vitrina y mira qué tenéis en común, dónde no estáis de acuerdo y qué hay allí que no
-        está aquí.
-      </p>
+      <h1>{t.compararTitulo}</h1>
+      <p>{t.compararSub}</p>
     </header>
 
-    <form id="formulario" class="formulario" data-propia={url("vitrina.json")}>
+    <form id="formulario" class="formulario" data-propia={url("vitrine.json")}>
       <input
         type="url"
         name="con"
-        required
         placeholder="https://alguien.github.io/vitrina/"
-        aria-label="Dirección de la otra vitrina"
+        aria-label={t.direccionOtra}
         inputmode="url"
       />
-      <button type="submit">Comparar</button>
+      <button type="submit">{t.compararBoton}</button>
+      <label class="fichero">
+        {t.oFichero}
+        <input type="file" name="fichero" accept=".json,application/json" />
+      </label>
     </form>
     <p class="aviso" id="aviso" role="status"></p>
 
@@ -32,18 +39,18 @@ import { url } from "../../lib/obras";
         <p id="resumen"></p>
       </section>
       <section class="bloque" data-bloque="favoritas">
-        <header><h2>Lo mejor de los dos</h2></header>
+        <header><h2>{t.mejorDeLosDos}</h2></header>
         <div class="rejilla"></div>
       </section>
       <section class="bloque" data-bloque="comunes">
-        <header><h2>Lo que compartís</h2></header>
+        <header><h2>{t.compartis}</h2></header>
         <div class="rejilla"></div>
       </section>
       <section class="bloque" data-bloque="desacuerdos">
         <header>
           <div>
-            <h2>Donde no estáis de acuerdo</h2>
-            <p>Puntuadas en las dos vitrinas, con tres puntos o más de diferencia.</p>
+            <h2>{t.desacuerdos}</h2>
+            <p>{t.desacuerdosSub}</p>
           </div>
         </header>
         <ul class="desacuerdos"></ul>
@@ -51,23 +58,28 @@ import { url } from "../../lib/obras";
       <section class="bloque" data-bloque="recomendaciones">
         <header>
           <div>
-            <h2>Lo de allí que no está aquí</h2>
-            <p>Lo mejor de allí primero: por dónde empezar.</p>
+            <h2>{t.deAlli}</h2>
+            <p>{t.deAlliSub}</p>
           </div>
         </header>
         <div class="rejilla"></div>
       </section>
     </div>
   </div>
+  <script type="application/json" id="textos" set:html={JSON.stringify(cliente)} />
 </Base>
 
 <script>
-  import { comparar, direccionJSON, type Pieza, type Vitrina } from "../../lib/comparar";
+  import { comparar, direccionesJSON, esVitrina, type Pieza, type Vitrina } from "../../lib/comparar";
 
   const formulario = document.getElementById("formulario") as HTMLFormElement;
   const aviso = document.getElementById("aviso")!;
   const resultado = document.getElementById("resultado")!;
   const propia = formulario.dataset.propia!;
+  const T = JSON.parse(document.getElementById("textos")!.textContent!) as Record<string, string>;
+  /** Un texto con sus huecos rellenos: «{n} piezas». */
+  const decir = (clave: string, datos: Record<string, string | number> = {}) =>
+    T[clave].replace(/\{(\w+)\}/g, (_, k) => String(datos[k] ?? ""));
 
   /** Un elemento con sus atributos y su contenido, siempre como texto: lo
    * que viene de otra vitrina no se mete nunca como HTML. */
@@ -78,13 +90,13 @@ import { url } from "../../lib/obras";
     return nodo;
   }
 
-  const segura = (direccion: string) => (/^https?:\/\//.test(direccion) ? direccion : "#");
+  const segura = (direccion: string | null | undefined) => (direccion && /^https?:\/\//.test(direccion) ? direccion : "#");
 
   function tarjeta(p: Pieza, linea: string) {
     const marco = el("span", { class: "marco" });
-    if (p.portada) marco.append(el("img", { src: segura(p.portada), alt: "", loading: "lazy" }));
-    else marco.append(el("span", { class: "sin-imagen" }, p.titulo));
-    return el("a", { class: "pieza", href: segura(p.url) }, marco, el("span", { class: "titulo" }, p.titulo), el("span", { class: "meta" }, linea));
+    if (p.cover) marco.append(el("img", { src: segura(p.cover), alt: "", loading: "lazy" }));
+    else marco.append(el("span", { class: "sin-imagen" }, p.title));
+    return el("a", { class: "pieza", href: segura(p.url) }, marco, el("span", { class: "titulo" }, p.title), el("span", { class: "meta" }, linea));
   }
 
   function llenar(bloque: string, nodos: Node[]) {
@@ -97,72 +109,120 @@ import { url } from "../../lib/obras";
     const respuesta = await fetch(direccion);
     if (!respuesta.ok) throw new Error(`${respuesta.status}`);
     const datos = await respuesta.json();
-    if (!Array.isArray(datos?.obras)) throw new Error("no es una vitrina");
+    if (!esVitrina(datos)) throw new Error("no es una vitrina");
     return datos;
   }
 
-  async function compararCon(texto: string) {
-    let direccion: string;
-    try {
-      direccion = direccionJSON(texto);
-    } catch {
-      aviso.textContent = "Esa dirección no parece una dirección web.";
-      return;
+  /** La primera de las direcciones posibles que sea de verdad una vitrina. */
+  async function buscar(candidatas: string[]): Promise<Vitrina> {
+    for (const d of candidatas) {
+      try {
+        return await bajar(d);
+      } catch {}
     }
-    aviso.textContent = "Mirando su vitrina…";
-    resultado.hidden = true;
-    let mia: Vitrina, suya: Vitrina;
-    try {
-      [mia, suya] = await Promise.all([bajar(propia), bajar(direccion)]);
-    } catch {
-      aviso.textContent = `No encuentro una vitrina en ${direccion}. Tiene que ser una web hecha con Vitrina, que publica su colección en vitrina.json.`;
-      return;
-    }
+    throw new Error("ninguna");
+  }
 
-    // Las direcciones de vitrina.json son las publicadas. Las de esta vitrina
+  async function mostrar(suya: Vitrina) {
+    let mia: Vitrina;
+    try {
+      mia = await bajar(propia);
+    } catch {
+      aviso.textContent = decir("noEncuentro", { d: propia });
+      return;
+    }
+    // Las direcciones de vitrine.json son las publicadas. Las de esta vitrina
     // se pasan a este mismo sitio, para que también se vea en local o en una
     // copia que aún no esté publicada.
     const local = (d: string | null | undefined) => (d ? new URL(new URL(d).pathname, location.origin).href : d);
-    mia.obras = mia.obras.map((p) => ({ ...p, url: local(p.url)!, portada: local(p.portada) }));
+    mia.works = mia.works.map((p) => ({ ...p, url: local(p.url)!, cover: local(p.cover) }));
 
     const r = comparar(mia, suya);
     aviso.textContent = "";
     document.getElementById("porcentaje")!.textContent = String(Math.round(r.afinidad * 100));
-    const piezas = (n: number) => (n === 1 ? "1 pieza" : `${n} piezas`);
-    const estan = (n: number) => (n === 1 ? "está" : "están");
+    const piezas = (n: number) => (n === 1 ? decir("unaPieza") : decir("nPiezas", { n }));
+    const estan = (n: number) => (n === 1 ? T.esta : T.estan);
     const total = r.comunes.length + r.soloMias.length + r.soloSuyas.length;
-    document.getElementById("resumen")!.textContent =
-      `${piezas(r.comunes.length)} en común de ${total} entre las dos vitrinas. ` +
-      `Aquí hay ${r.soloMias.length} que no ${estan(r.soloMias.length)} allí, y allí ${r.soloSuyas.length} que no ${estan(r.soloSuyas.length)} aquí.`;
+    document.getElementById("resumen")!.textContent = decir("resumen", {
+      comunes: piezas(r.comunes.length),
+      total,
+      mias: r.soloMias.length,
+      estanMias: estan(r.soloMias.length),
+      suyas: r.soloSuyas.length,
+      estanSuyas: estan(r.soloSuyas.length),
+    });
 
-    llenar("favoritas", r.favoritasDeLosDos.map((c) => tarjeta(c.mia, "★ en las dos")));
+    llenar("favoritas", r.favoritasDeLosDos.map((c) => tarjeta(c.mia, T.enLasDos)));
     llenar(
       "comunes",
       r.comunes.map((c) =>
         tarjeta(
           c.mia,
-          c.mia.nota || c.suya.nota
-            ? [c.mia.nota && `aquí ${c.mia.nota}`, c.suya.nota && `allí ${c.suya.nota}`].filter(Boolean).join(" · ")
-            : [c.mia.year, c.mia.autores[0]].filter(Boolean).join(" · "),
+          c.mia.rating || c.suya.rating
+            ? [c.mia.rating && `${T.aqui} ${c.mia.rating}`, c.suya.rating && `${T.alli} ${c.suya.rating}`].filter(Boolean).join(" · ")
+            : [c.mia.year, c.mia.authors[0]].filter(Boolean).join(" · "),
         ),
       ),
     );
     llenar(
       "desacuerdos",
       r.desacuerdos.map((c) =>
-        el("li", {}, el("a", { href: segura(c.mia.url) }, c.mia.titulo), el("span", { class: "notas" }, `${c.mia.nota} aquí · ${c.suya.nota} allí`)),
+        el(
+          "li",
+          {},
+          el("a", { href: segura(c.mia.url) }, c.mia.title),
+          el("span", { class: "notas" }, `${c.mia.rating} ${T.aqui} · ${c.suya.rating} ${T.alli}`),
+        ),
       ),
     );
     llenar(
       "recomendaciones",
-      r.recomendaciones.slice(0, 24).map((p) => tarjeta(p, [p.favorito && "★ de lo mejor de allí", p.nota && `un ${p.nota}`, p.year].filter(Boolean).join(" · "))),
+      r.recomendaciones
+        .slice(0, 24)
+        .map((p) => tarjeta(p, [p.favorite && T.deLoMejorDeAlli, p.rating && decir("un", { n: p.rating }), p.year].filter(Boolean).join(" · "))),
     );
     resultado.hidden = false;
   }
 
+  async function compararCon(texto: string) {
+    let candidatas: string[];
+    try {
+      candidatas = direccionesJSON(texto);
+    } catch {
+      aviso.textContent = T.noEsDireccion;
+      return;
+    }
+    aviso.textContent = T.mirando;
+    resultado.hidden = true;
+    try {
+      await mostrar(await buscar(candidatas));
+    } catch {
+      aviso.textContent = decir("noEncuentro", { d: texto });
+    }
+  }
+
+  // Un fichero se lee aquí mismo, sin subirlo a ningún sitio: sirve para
+  // comparar con alguien que no tiene la vitrina publicada, o con la tuya de
+  // hace un año.
+  const fichero = formulario.elements.namedItem("fichero") as HTMLInputElement;
+  fichero.addEventListener("change", async () => {
+    const elegido = fichero.files?.[0];
+    if (!elegido) return;
+    resultado.hidden = true;
+    try {
+      const datos = JSON.parse(await elegido.text());
+      if (!esVitrina(datos)) throw new Error();
+      history.replaceState(null, "", location.pathname);
+      await mostrar(datos);
+    } catch {
+      aviso.textContent = T.noEsFichero;
+    }
+  });
+
   formulario.addEventListener("submit", (e) => {
     e.preventDefault();
-    const con = String(new FormData(formulario).get("con") ?? "");
+    const con = String(new FormData(formulario).get("con") ?? "").trim();
+    if (!con) return;
     history.replaceState(null, "", `?con=${encodeURIComponent(con)}`);
     compararCon(con);
   });
@@ -177,10 +237,12 @@ import { url } from "../../lib/obras";
 <style>
   .formulario {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 10px;
     margin-top: 28px;
   }
-  .formulario input {
+  .formulario input[type="url"] {
     flex: 1;
     padding: 11px 14px;
     border: 1px solid var(--borde);
@@ -198,6 +260,20 @@ import { url } from "../../lib/obras";
     font: inherit;
     font-weight: 600;
     cursor: pointer;
+  }
+  /* El fichero es la otra manera de comparar, más discreta: debajo, en
+     pequeño, para quien no tenga la otra vitrina publicada. */
+  .fichero {
+    display: flex;
+    flex-basis: 100%;
+    align-items: center;
+    gap: 10px;
+    color: var(--tenue);
+    font-size: 0.92rem;
+  }
+  .fichero input {
+    font: inherit;
+    color: var(--tenue);
   }
   .aviso {
     min-height: 1.5em;

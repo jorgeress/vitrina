@@ -1,18 +1,18 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2020
-autor: Adrianne Lenker
-nota:
-estado: terminado
-favorito: false
-portada: "[[songs.webp]]"
+author: Adrianne Lenker
+rating:
+status: finished
+favorite: false
+cover: "[[songs.webp]]"
 tags:
   - contemporary-folk
   - folk
   - singer-songwriter
 mbid: 5ff627e4-b8a0-43af-8ee2-4d84adf4541f
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

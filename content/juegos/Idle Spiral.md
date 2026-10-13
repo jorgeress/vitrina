@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2022
-autor: Idle System, Inc., Yayu
-nota:
-favorito: false
-portada: "[[idle-spiral.webp]]"
+author: Idle System, Inc., Yayu
+rating:
+favorite: false
+cover: "[[idle-spiral.webp]]"
 tags:
   - casual
   - indie
   - simulation
   - strategy
 appid: 1827980
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

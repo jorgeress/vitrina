@@ -1,17 +1,17 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2025
-autor: Kenji Iwaisawa
-nota: 10
-estado: terminado
-favorito: true
-portada: "[[100-meters.webp]]"
+author: Kenji Iwaisawa
+rating: 10
+status: finished
+favorite: true
+cover: "[[100-meters.webp]]"
 tags:
   - animation
   - drama
 letterboxd: 100-meters-2025
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

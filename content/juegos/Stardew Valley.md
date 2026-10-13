@@ -1,17 +1,17 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2016
-autor: ConcernedApe
-nota:
-favorito: false
-portada: "[[stardew-valley.webp]]"
+author: ConcernedApe
+rating:
+favorite: false
+cover: "[[stardew-valley.webp]]"
 tags:
   - indie
   - rpg
   - simulation
 appid: 413150
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

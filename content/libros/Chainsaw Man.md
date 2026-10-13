@@ -1,18 +1,20 @@
 ---
-tipo: libro
-seccion: "[[libros/index|Libros]]"
+type: book
+section: "[[libros/index|Libros]]"
 year: 2018
-autor: Tatsuki Fujimoto
-nota:
-favorito: false
-portada: "[[chainsaw-man.webp]]"
+author: Tatsuki Fujimoto
+rating:
+favorite: false
+cover: "[[chainsaw-man.webp]]"
 tags:
   - manga
   - action
   - horror
 coverid: 11432953
 wikipedia: Chainsaw Man
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

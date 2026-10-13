@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2004
-autor: Michel Gondry
-nota: 10
-estado: terminado
-favorito: true
-portada: "[[eternal-sunshine-of-the-spotless-mind.webp]]"
+author: Michel Gondry
+rating: 10
+status: finished
+favorite: true
+cover: "[[eternal-sunshine-of-the-spotless-mind.webp]]"
 tags:
   - science-fiction
   - romance
   - drama
 letterboxd: eternal-sunshine-of-the-spotless-mind
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!vitrina] Por qué está en la vitrina

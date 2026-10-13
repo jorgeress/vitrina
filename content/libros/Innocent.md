@@ -1,19 +1,21 @@
 ---
-tipo: libro
-seccion: "[[libros/index|Libros]]"
+type: book
+section: "[[libros/index|Libros]]"
 year: 2016
-autor: Shinichi Sakamoto
-nota:
-estado: terminado
-favorito: false
-portada: "[[innocent.webp]]"
+author: Shinichi Sakamoto
+rating:
+status: finished
+favorite: false
+cover: "[[innocent.webp]]"
 tags:
   - manga
   - history
   - drama
 coverid: 13481112
 wikipedia: Innocent (manga)
-alta: 2026-09-12
+added: 2026-09-12
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

@@ -1,18 +1,20 @@
 ---
 title: "Cyberpunk: Edgerunners"
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2022
-autor: Studio Trigger
-nota:
-favorito: false
-portada: "[[cyberpunk-edgerunners.webp]]"
+author: Studio Trigger
+rating:
+favorite: false
+cover: "[[cyberpunk-edgerunners.webp]]"
 tags:
   - action
   - anime
   - science-fiction
 tvmaze: 48945
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

@@ -1,17 +1,17 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2016
-autor: TV Girl
-nota:
-estado: terminado
-favorito: false
-portada: "[[who-really-cares.webp]]"
+author: TV Girl
+rating:
+status: finished
+favorite: false
+cover: "[[who-really-cares.webp]]"
 tags:
   - indie-pop
   - pop
 mbid: e9030f66-9494-418d-8bc9-02b7e9014834
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

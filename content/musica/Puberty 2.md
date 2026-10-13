@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2016
-autor: Mitski
-nota:
-estado: terminado
-favorito: false
-portada: "[[puberty-2.webp]]"
+author: Mitski
+rating:
+status: finished
+favorite: false
+cover: "[[puberty-2.webp]]"
 tags:
   - indie-rock
   - rock
   - art-pop
   - dream-pop
 mbid: de3537cf-8dac-475a-b456-42227e314d7e
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

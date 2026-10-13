@@ -1,17 +1,17 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2003
-autor: Quentin Tarantino
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[kill-bill-vol-1.webp]]"
+author: Quentin Tarantino
+rating: 10
+status: finished
+favorite: false
+cover: "[[kill-bill-vol-1.webp]]"
 tags:
   - crime
   - action
 letterboxd: kill-bill-vol-1
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -1,16 +1,16 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2016
-autor: Kenneth Lonergan
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[manchester-by-the-sea.webp]]"
+author: Kenneth Lonergan
+rating: 10
+status: finished
+favorite: false
+cover: "[[manchester-by-the-sea.webp]]"
 tags:
   - drama
 letterboxd: manchester-by-the-sea
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

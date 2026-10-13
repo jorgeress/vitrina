@@ -1,16 +1,16 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2022
-autor: FromSoftware, Inc.
-nota: 10
-favorito: true
-portada: "[[elden-ring.webp]]"
+author: FromSoftware, Inc.
+rating: 10
+favorite: true
+cover: "[[elden-ring.webp]]"
 tags:
   - action
   - rpg
 appid: 1245620
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

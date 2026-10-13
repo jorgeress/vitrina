@@ -1,20 +1,20 @@
 ---
 title: 悪の華
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1990
-autor: BUCK‐TICK
-nota:
-estado: terminado
-favorito: false
-portada: "[[aku-no-hana.webp]]"
+author: BUCK‐TICK
+rating:
+status: finished
+favorite: false
+cover: "[[aku-no-hana.webp]]"
 tags:
   - alternative-rock
   - new-wave
   - post-punk
   - rock
 mbid: 8d0a2aaa-0ad7-3e51-ad4b-8ae249ffbea9
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

@@ -1,6 +1,9 @@
 ---
-import Base from "../layouts/Base.astro";
-import { SECCIONES, autores, obras, portada, ruta, titulo, vecindario } from "../lib/obras";
+import Base from "../../layouts/Base.astro";
+import { t } from "../../i18n";
+import { SECCIONES, autores, obras, portada, ruta, titulo, vecindario } from "../../lib/obras";
+
+export const getStaticPaths = () => [{ params: { constelacion: t.rutas.constelacion } }];
 
 // Los nodos son las obras y las aristas, lo que tienen en común. Cada obra se
 // une a sus tres más parecidas y, siempre, a las de su mismo autor: con todas
@@ -25,8 +28,8 @@ const datos = {
   nodos: todas.map((o) => ({
     id: o.id,
     titulo: titulo(o),
-    tipo: o.data.tipo,
-    favorito: Boolean(o.data.favorito),
+    tipo: o.data.type,
+    favorito: Boolean(o.data.favorite),
     portada: portada(o),
     url: ruta(o),
   })),
@@ -34,17 +37,13 @@ const datos = {
 };
 ---
 
-<Base titulo="Constelación" descripcion="Las obras de la vitrina como un mapa: cada una unida a las que más se le parecen." activa="constelacion">
+<Base titulo={t.constelacion} descripcion={t.constelacionDescripcion} activa="constelacion">
   <div class="escena">
-    <canvas id="lienzo" aria-label="Grafo de las obras de la vitrina y lo que tienen en común"></canvas>
+    <canvas id="lienzo" aria-label={t.constelacionLienzo}></canvas>
     <div class="panel">
-      <h1>Constelación</h1>
-      <p>
-        Cada punto es una de las {datos.nodos.length} obras, y cada línea une las que comparten autor o algo que
-        las hace parecidas. Las discontinuas solo comparten sección y época, y los discos son cuadrados. Arrastra para moverte y usa la rueda
-        para acercarte.
-      </p>
-      <input id="buscar" type="search" list="titulos" placeholder="Buscar una obra…" aria-label="Buscar una obra" />
+      <h1>{t.constelacion}</h1>
+      <p>{t.constelacionTexto(datos.nodos.length)}</p>
+      <input id="buscar" type="search" list="titulos" placeholder={t.buscarObra} aria-label={t.buscarObra} />
       <datalist id="titulos">
         {datos.nodos.map((n) => <option value={n.titulo} />)}
       </datalist>
@@ -63,7 +62,7 @@ const datos = {
 </Base>
 
 <script>
-  import { iniciar } from "../scripts/constelacion";
+  import { iniciar } from "../../scripts/constelacion";
   iniciar();
 </script>
 

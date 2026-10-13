@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2012
-autor: Pierce the Veil
-nota:
-estado: terminado
-favorito: false
-portada: "[[collide-with-the-sky.webp]]"
+author: Pierce the Veil
+rating:
+status: finished
+favorite: false
+cover: "[[collide-with-the-sky.webp]]"
 tags:
   - rock
   - post-hardcore
   - emo-pop
   - alternative-rock
 mbid: fbe216fc-3443-4425-8c99-e538b44e60ac
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

@@ -45,9 +45,9 @@ class Cabeceras(unittest.TestCase):
         # Obsidian escribe asi los tags en cuanto los tocas desde su editor de
         # propiedades. Si se leyeran como vacios, un script creeria que la
         # ficha no tiene tags y los pisaria.
-        campos = m.frontmatter("---\ntags:\n  - accion\n  - rpg\nnota: 9\n---\n")
+        campos = m.frontmatter("---\ntags:\n  - accion\n  - rpg\nrating: 9\n---\n")
         self.assertEqual(campos["tags"], ["accion", "rpg"])
-        self.assertEqual(campos["nota"], "9")
+        self.assertEqual(campos["rating"], "9")
 
     def test_lista_vacia_cuenta_como_campo_sin_poner(self):
         self.assertTrue(m.vacio("[]"))
@@ -73,16 +73,16 @@ class Cabeceras(unittest.TestCase):
         # quedarian colgando bajo la clave nueva si no se los lleva por delante.
         with tempfile.TemporaryDirectory() as tmp:
             md = Path(tmp) / "f.md"
-            md.write_text("---\ntipo: juego\ntags:\n  - viejo\n  - antiguo\n"
-                          "nota: 9\n---\n\ncuerpo\n", encoding="utf-8")
+            md.write_text("---\ntype: game\ntags:\n  - viejo\n  - antiguo\n"
+                          "rating: 9\n---\n\ncuerpo\n", encoding="utf-8")
             m.escribir_campos(md, {"tags": ["nuevo"]})
             texto = md.read_text(encoding="utf-8")
             self.assertNotIn("viejo", texto)
             self.assertNotIn("antiguo", texto)
             self.assertIn("- nuevo", texto)
             # Y lo que no se toca, no se mueve.
-            self.assertIn("tipo: juego", texto)
-            self.assertIn("nota: 9", texto)
+            self.assertIn("type: game", texto)
+            self.assertIn("rating: 9", texto)
             self.assertIn("cuerpo", texto)
 
     def test_escribir_campos_añade_una_clave_que_no_existia(self):
@@ -90,7 +90,7 @@ class Cabeceras(unittest.TestCase):
         # datos.py y portadas.py añaden claves que la plantilla no trae.
         with tempfile.TemporaryDirectory() as tmp:
             md = Path(tmp) / "f.md"
-            md.write_text("---\ntipo: peli\n---\n\n", encoding="utf-8")
+            md.write_text("---\ntype: film\n---\n\n", encoding="utf-8")
             m.escribir_campos(md, {"letterboxd": "harakiri"})
             self.assertIn("letterboxd: harakiri", md.read_text(encoding="utf-8"))
 
@@ -98,7 +98,7 @@ class Cabeceras(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             md = Path(tmp) / "f.md"
             md.write_text("una nota sin cabecera\n", encoding="utf-8")
-            self.assertFalse(m.escribir_campos(md, {"nota": 9}))
+            self.assertFalse(m.escribir_campos(md, {"rating": 9}))
             self.assertEqual(md.read_text(encoding="utf-8"),
                              "una nota sin cabecera\n")
 
@@ -153,7 +153,7 @@ class NombresYParecidos(unittest.TestCase):
                          "Spider-Man Brand New Day")
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
-            m.escribir_ficha("pelis", "Spider-Man: Brand New Day", {"tipo": "peli"})
+            m.escribir_ficha("pelis", "Spider-Man: Brand New Day", {"type": "film"})
             ficha = Path(tmp) / "pelis" / "Spider-Man Brand New Day.md"
             self.assertIn('title: "Spider-Man: Brand New Day"',
                           ficha.read_text(encoding="utf-8"))
@@ -167,9 +167,9 @@ class NombresYParecidos(unittest.TestCase):
         self.assertFalse(m.sin_letras_latinas("El madrileño"))
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
-            m.escribir_ficha("musica", "アダンの風", {"tipo": "album"},
+            m.escribir_ficha("musica", "アダンの風", {"type": "album"},
                              fichero="Windswept Adan")
-            m.escribir_ficha("musica", "悪の華", {"tipo": "album"},
+            m.escribir_ficha("musica", "悪の華", {"type": "album"},
                              fichero="Aku no Hana")
             nombres = sorted(p.stem for p in (Path(tmp) / "musica").glob("*.md"))
             self.assertEqual(nombres, ["Aku no Hana", "Windswept Adan"])
@@ -178,32 +178,32 @@ class NombresYParecidos(unittest.TestCase):
 
     def test_un_titulo_aparte_no_se_come_la_clave_de_encima(self):
         # La linea de `title` se insertaba delante antes de poner el `tags: []`,
-        # y el indice de tags se calculaba sin contarla: caia sobre `portada` y
+        # y el indice de tags se calculaba sin contarla: caia sobre `cover` y
         # lo dejaba en "tags: []". La cabecera salia con dos `tags:` y sin
         # portada, que es YAML invalido: la web no se construye.
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
             md = m.escribir_ficha("musica", "D>E>A>T>H>M>E>T>A>L",
-                                  {"tipo": "album", "portada": None, "tags": None})
+                                  {"type": "album", "cover": None, "tags": None})
             cabecera = md.read_text(encoding="utf-8")
             self.assertEqual(cabecera.count("\ntags:"), 1)
-            self.assertEqual(cabecera.count("\nportada:"), 1)
+            self.assertEqual(cabecera.count("\ncover:"), 1)
             self.assertIn("title: D>E>A>T>H>M>E>T>A>L", cabecera)
 
     def test_la_misma_obra_escrita_distinto_no_se_duplica(self):
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
-            self.assertIsNotNone(m.escribir_ficha("pelis", "Parásitos", {"tipo": "peli"}))
-            self.assertIsNone(m.escribir_ficha("pelis", "Parasitos", {"tipo": "peli"}))
+            self.assertIsNotNone(m.escribir_ficha("pelis", "Parásitos", {"type": "film"}))
+            self.assertIsNone(m.escribir_ficha("pelis", "Parasitos", {"type": "film"}))
 
     def test_una_ficha_que_ya_existe_nunca_se_pisa(self):
         # De esto depende poder repetir un volcado para recoger solo lo nuevo.
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
-            m.escribir_ficha("juegos", "Portal", {"tipo": "juego", "nota": 10})
+            m.escribir_ficha("juegos", "Portal", {"type": "game", "rating": 10})
             ficha = Path(tmp) / "juegos" / "Portal.md"
             antes = ficha.read_text(encoding="utf-8")
-            self.assertIsNone(m.escribir_ficha("juegos", "Portal", {"tipo": "juego"}))
+            self.assertIsNone(m.escribir_ficha("juegos", "Portal", {"type": "game"}))
             self.assertEqual(ficha.read_text(encoding="utf-8"), antes)
 
     def test_lo_que_se_parece_se_avisa_pero_no_se_descarta(self):
@@ -211,7 +211,7 @@ class NombresYParecidos(unittest.TestCase):
         # y decide el humano.
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
-            m.escribir_ficha("juegos", "Portal", {"tipo": "juego"})
+            m.escribir_ficha("juegos", "Portal", {"type": "game"})
             self.assertTrue(m.parecidos("juegos", ["Portal 2"]))
             self.assertFalse(m.parecidos("juegos", ["Hades"]))
 
@@ -222,7 +222,7 @@ class NombresYParecidos(unittest.TestCase):
         # que empezar por el otro, que es como se repite una obra de verdad.
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
-            m.escribir_ficha("pelis", "Pi", {"tipo": "peli"})
+            m.escribir_ficha("pelis", "Pi", {"type": "film"})
             self.assertFalse(m.parecidos("pelis", ["Scott Pilgrim vs. the World"]))
             self.assertTrue(m.parecidos("pelis", ["Pi Day"]))
 
@@ -230,14 +230,14 @@ class NombresYParecidos(unittest.TestCase):
         # Por donde se repiten de verdad: el subtitulo, la edicion o el año.
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
-            m.escribir_ficha("juegos", "Dark Souls", {"tipo": "juego"})
+            m.escribir_ficha("juegos", "Dark Souls", {"type": "game"})
             self.assertTrue(m.parecidos("juegos", ["Dark Souls Remastered"]))
 
     def test_una_ficha_nueva_entra_en_borrador_y_con_tags_vacios(self):
         # El invariante del README: a la web solo llega lo ascendido a mano.
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
-            m.escribir_ficha("juegos", "Hades", {"tipo": "juego"})
+            m.escribir_ficha("juegos", "Hades", {"type": "game"})
             texto = (Path(tmp) / "juegos" / "Hades.md").read_text(encoding="utf-8")
             self.assertIn("draft: true", texto)
             self.assertIn("tags: []", texto)
@@ -247,9 +247,9 @@ class NombresYParecidos(unittest.TestCase):
         # no llegaria nunca a esa lista por mucho que fuera la ultima.
         with tempfile.TemporaryDirectory() as tmp:
             self._vault(tmp)
-            m.escribir_ficha("juegos", "Hades", {"tipo": "juego"})
+            m.escribir_ficha("juegos", "Hades", {"type": "game"})
             campos = m.frontmatter((Path(tmp) / "juegos" / "Hades.md").read_text(encoding="utf-8"))
-            self.assertRegex(campos.get("alta", ""), r"^\d{4}-\d{2}-\d{2}$")
+            self.assertRegex(campos.get("added", ""), r"^\d{4}-\d{2}-\d{2}$")
 
     def test_encaja_admite_que_el_titulo_baile_pero_no_otra_pelicula(self):
         # El buscador de Wikipedia siempre devuelve algo, aunque no tenga nada
@@ -383,12 +383,12 @@ class BuscarSeries(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             (Path(tmp) / "series").mkdir()
             (Path(tmp) / "series" / "Attack on Titan.md").write_text(
-                "---\ntipo: serie\ntvmaze: 919\n---\n", encoding="utf-8")
-            original = nueva.VAULT
-            nueva.VAULT = Path(tmp)
-            self.addCleanup(setattr, nueva, "VAULT", original)
-            self.assertEqual(nueva.ficha_con_id("series", {"tvmaze": 919}),
-                             "Attack on Titan")
+                "---\ntype: series\ntvmaze: 919\n---\n", encoding="utf-8")
+            for modulo in (nueva, m):
+                self.addCleanup(setattr, modulo, "VAULT", modulo.VAULT)
+                modulo.VAULT = Path(tmp)
+            self.assertEqual(nueva.ficha_con_id("series", {"tvmaze": 919}).name,
+                             "Attack on Titan.md")
             self.assertIsNone(nueva.ficha_con_id("series", {"tvmaze": 920}))
 
     def _urlopen(self, codigo):
@@ -430,7 +430,7 @@ class CancionesEnDiscos(unittest.TestCase):
         discos = importar.canciones_en_discos(self.LIBRERIA, {})
         self.assertEqual(discos["In Rainbows"]["favoritas"], 3)
         self.assertEqual(discos["Dummy"]["favoritas"], 1)
-        self.assertEqual(discos["In Rainbows"]["autor"], "Radiohead")
+        self.assertEqual(discos["In Rainbows"]["author"], "Radiohead")
 
     def test_una_cancion_sin_disco_no_inventa_un_disco(self):
         # Antes vacio que equivocado: sin nombre de album no hay nada que contar.
@@ -442,7 +442,7 @@ class CancionesEnDiscos(unittest.TestCase):
         discos = importar.canciones_en_discos(
             {"tracks": [{"albumName": "Dummy", "artistName": "Portishead"}]}, {})
         self.assertEqual(discos["Dummy"]["favoritas"], 1)
-        self.assertEqual(discos["Dummy"]["autor"], "Portishead")
+        self.assertEqual(discos["Dummy"]["author"], "Portishead")
 
     def test_sin_la_clave_tracks_no_revienta(self):
         self.assertEqual(importar.canciones_en_discos({"albums": []}, {}), {})
@@ -471,7 +471,7 @@ class TextosDeDiscos(unittest.TestCase):
     Sin favoritas por cancion: se probaron, con una estrella al final de la
     linea, y se quitaron a peticion suya. Marcarlas exigia editar el fichero y
     pasar un script, y eso no lo puede hacer nadie desde la web publicada, que
-    es estatica. Los favoritos son de disco entero, con el campo `favorito`.
+    es estatica. Los favoritos son de disco entero, con el campo `favorite`.
     """
 
     def test_la_lista_sale_numerada_y_en_orden(self):
@@ -514,7 +514,7 @@ class LoQueEscribeEl(unittest.TestCase):
 
 
 class AutoresYComas(unittest.TestCase):
-    """Partir el campo `autor` sin inventarse estudios que no existen."""
+    """Partir el campo `author` sin inventarse estudios que no existen."""
 
     def test_una_empresa_con_coma_no_son_dos_autores(self):
         # Mordio de verdad: partiendo por comas a secas, "Inc." salia como el
@@ -689,14 +689,14 @@ class PorEnlace(unittest.TestCase):
 
     def test_cada_enlace_dice_su_tipo_y_su_id(self):
         casos = {
-            "https://store.steampowered.com/app/367520/Hollow_Knight/": ("juego", "367520"),
-            "https://letterboxd.com/film/heat-1995/": ("peli", "heat-1995"),
+            "https://store.steampowered.com/app/367520/Hollow_Knight/": ("game", "367520"),
+            "https://letterboxd.com/film/heat-1995/": ("film", "heat-1995"),
             # Abierta desde el diario de otro, con el usuario delante.
-            "https://letterboxd.com/alguien/film/parasite-2019/": ("peli", "parasite-2019"),
-            "https://www.tvmaze.com/shows/82/game-of-thrones": ("serie", "82"),
+            "https://letterboxd.com/alguien/film/parasite-2019/": ("film", "parasite-2019"),
+            "https://www.tvmaze.com/shows/82/game-of-thrones": ("series", "82"),
             "https://open.spotify.com/intl-es/album/6dVIqQ8qmQ5GBnJ9shOYGE?si=x":
                 ("album", "6dVIqQ8qmQ5GBnJ9shOYGE"),
-            "https://openlibrary.org/works/OL27448W/The_Lord_of_the_Rings": ("libro", "OL27448W"),
+            "https://openlibrary.org/works/OL27448W/The_Lord_of_the_Rings": ("book", "OL27448W"),
         }
         for enlace, (tipo, ident) in casos.items():
             leido = nueva.leer_enlace(enlace)
@@ -711,7 +711,7 @@ class PorEnlace(unittest.TestCase):
 
     def test_un_titulo_no_es_un_enlace(self):
         self.assertFalse(nueva.es_enlace("hollow knight"))
-        self.assertFalse(nueva.es_enlace("peli"))
+        self.assertFalse(nueva.es_enlace("film"))
         self.assertTrue(nueva.es_enlace("boxd.it/2bg8"))
         self.assertIsNone(nueva.leer_enlace("https://example.com/film/x"))
 
@@ -734,14 +734,14 @@ class PorEnlace(unittest.TestCase):
 
     def test_con_dos_ids_manda_el_tipo_pedido_y_si_no_la_serie(self):
         # El anime de Death Note trae el de TVmaze y el de Letterboxd de la
-        # pelicula de 2006. Sin decir nada es la serie; con "peli", la pelicula.
+        # pelicula de 2006. Sin decir nada es la serie; con "film", la pelicula.
         entidad = {"claims": {
             "P6127": [{"mainsnak": {"datavalue": {"value": "death-note-2006"}}}],
             "P8600": [{"mainsnak": {"datavalue": {"value": "40"}}}]}}
         ids = nueva.ids_nativos(entidad)
-        self.assertEqual(nueva.elegir_nativo(ids)[0], "serie")
-        self.assertEqual(nueva.elegir_nativo(ids, "peli")[2], "death-note-2006")
-        self.assertIsNone(nueva.elegir_nativo(ids, "juego"))
+        self.assertEqual(nueva.elegir_nativo(ids)[0], "series")
+        self.assertEqual(nueva.elegir_nativo(ids, "film")[2], "death-note-2006")
+        self.assertIsNone(nueva.elegir_nativo(ids, "game"))
 
     def test_steam_puede_contestar_con_otra_clave(self):
         # Hollow Knight llego bajo el appid de uno de sus DLC, con el juego
@@ -760,21 +760,21 @@ class TuTexto(unittest.TestCase):
     def test_la_frase_va_en_su_cartela_encima_de_la_cita(self):
         with tempfile.TemporaryDirectory() as tmp:
             md = Path(tmp) / "Arcane.md"
-            md.write_text("---\ntipo: serie\n---\n\n" + self.CITA, encoding="utf-8")
+            md.write_text("---\ntype: series\n---\n\n" + self.CITA, encoding="utf-8")
             textos.escribir_lo_suyo(md, "La mejor animación que he visto.")
             texto = md.read_text(encoding="utf-8")
             self.assertIn(textos.MARCO + "\n> La mejor animación que he visto.", texto)
             self.assertLess(texto.index("[!vitrina]"), texto.index("[!quote]"))
             self.assertIn("→ Wikipedia", texto)
-            self.assertTrue(texto.startswith("---\ntipo: serie\n---\n"))
+            self.assertTrue(texto.startswith("---\ntype: series\n---\n"))
 
     def test_en_una_ficha_vacia_queda_solo_la_cartela(self):
         with tempfile.TemporaryDirectory() as tmp:
             md = Path(tmp) / "Baki.md"
-            md.write_text("---\ntipo: serie\n---\n", encoding="utf-8")
+            md.write_text("---\ntype: series\n---\n", encoding="utf-8")
             textos.escribir_lo_suyo(md, "  Absurda y perfecta.  ")
             self.assertEqual(md.read_text(encoding="utf-8"),
-                             "---\ntipo: serie\n---\n\n" + textos.MARCO
+                             "---\ntype: series\n---\n\n" + textos.MARCO
                              + "\n> Absurda y perfecta.\n")
 
     def test_lo_escrito_suelto_se_enmarca_sin_cambiar_una_palabra(self):
@@ -782,7 +782,7 @@ class TuTexto(unittest.TestCase):
         suyo = "Primera línea.\nSegunda.\n\n- una\n- dos"
         with tempfile.TemporaryDirectory() as tmp:
             md = Path(tmp) / "Dune.md"
-            md.write_text("---\ntipo: libro\n---\n\n" + suyo + "\n\n" + self.CITA,
+            md.write_text("---\ntype: book\n---\n\n" + suyo + "\n\n" + self.CITA,
                           encoding="utf-8")
             self.assertTrue(textos.enmarcar(md))
             texto = md.read_text(encoding="utf-8")
@@ -826,9 +826,9 @@ class Repasar(unittest.TestCase):
 
     def test_nota_estado_y_favorita_en_cualquier_orden(self):
         self.assertEqual(repasar.interpretar("f 8 t"),
-                         {"favorito": True, "nota": 8, "estado": "terminado"})
-        self.assertEqual(repasar.interpretar("en curso"), {"estado": "en curso"})
-        self.assertEqual(repasar.interpretar("-f"), {"favorito": False})
+                         {"favorite": True, "rating": 8, "status": "finished"})
+        self.assertEqual(repasar.interpretar("in-progress"), {"status": "in-progress"})
+        self.assertEqual(repasar.interpretar("-f"), {"favorite": False})
 
     def test_una_nota_fuera_de_escala_no_se_escribe(self):
         with self.assertRaises(ValueError):
@@ -837,16 +837,16 @@ class Repasar(unittest.TestCase):
             repasar.interpretar("8 terminao")
 
     def test_poner_nota_a_lo_pendiente_lo_da_por_terminado(self):
-        self.assertEqual(repasar.completar({"estado": ""}, {"nota": 9}),
-                         {"nota": 9, "estado": "terminado"})
-        self.assertEqual(repasar.completar({"estado": "pendiente"}, {"nota": 9}),
-                         {"nota": 9, "estado": "terminado"})
+        self.assertEqual(repasar.completar({"status": ""}, {"rating": 9}),
+                         {"rating": 9, "status": "finished"})
+        self.assertEqual(repasar.completar({"status": "pending"}, {"rating": 9}),
+                         {"rating": 9, "status": "finished"})
 
     def test_lo_abandonado_sigue_abandonado_aunque_tenga_nota(self):
-        self.assertEqual(repasar.completar({"estado": "abandonado"}, {"nota": 4}),
-                         {"nota": 4})
-        self.assertEqual(repasar.completar({}, {"nota": 4, "estado": "abandonado"}),
-                         {"nota": 4, "estado": "abandonado"})
+        self.assertEqual(repasar.completar({"status": "dropped"}, {"rating": 4}),
+                         {"rating": 4})
+        self.assertEqual(repasar.completar({}, {"rating": 4, "status": "dropped"}),
+                         {"rating": 4, "status": "dropped"})
 
 
 class DesdeIssue(unittest.TestCase):
@@ -863,12 +863,12 @@ class DesdeIssue(unittest.TestCase):
     def test_lee_todos_los_campos(self):
         pedido = desde_issue.peticion(self.CUERPO)
         self.assertEqual(pedido, {
-            "enlace": "https://letterboxd.com/film/parasite-2019/", "nota": "9",
-            "estado": "terminado", "favorito": True,
+            "enlace": "https://letterboxd.com/film/parasite-2019/", "rating": "9",
+            "status": "finished", "favorite": True,
             "frase": "La vi dos veces seguidas.\nY otra más."})
         self.assertEqual(desde_issue.argumentos(pedido), [
             "https://letterboxd.com/film/parasite-2019/", "--nota", "9",
-            "--estado", "terminado", "--favorito"])
+            "--estado", "finished", "--favorito"])
 
     def test_lo_que_se_deja_en_blanco_no_se_pasa(self):
         cuerpo = ("### Enlace\n\nhttps://boxd.it/2bg8\n\n### Nota\n\nSin nota\n\n"
@@ -903,7 +903,7 @@ class Coherencia(unittest.TestCase):
             if not ruta.exists():
                 continue
             texto = ruta.read_text(encoding="utf-8")
-            self.assertIn(f'note.tipo == "{m.SECCIONES[carpeta]}"', texto,
+            self.assertIn(f'note.type == "{m.SECCIONES[carpeta]}"', texto,
                           f"{base}.base no filtra por el tipo que escribe {carpeta}")
 
     def test_las_vistas_de_estado_filtran_por_estados_que_existen(self):
@@ -916,7 +916,7 @@ class Coherencia(unittest.TestCase):
             if not ruta.exists():
                 continue
             texto = ruta.read_text(encoding="utf-8")
-            filtrados = set(re.findall(r'note\.estado == "([^"]*)"', texto))
+            filtrados = set(re.findall(r'note\.status == "([^"]*)"', texto))
             self.assertTrue(filtrados, f"{base}.base no filtra por estado")
             for estado in filtrados:
                 self.assertIn(estado, m.ESTADOS,
@@ -942,13 +942,13 @@ class Coherencia(unittest.TestCase):
         # Juegos era la excepcion: sus dos ultimas vistas iban por `horas`, que
         # es lo que sabe Steam. Eso ataba la seccion a una sola fuente --un
         # juego apuntado a mano no traia horas y caia en "Por jugar" aunque lo
-        # hubieras terminado-- asi que ahora las cinco van por `estado`. Si
+        # hubieras terminado-- asi que ahora las cinco van por `status`. Si
         # volviera a quedar un `note.horas` suelto en un .base, la vista
         # filtraria por un campo que ya no escribe nadie: saldria vacia, que es
         # como no estar.
         for base in ("Juegos", "Peliculas", "Series", "Libros", "Musica"):
             texto = (m.RAIZ / "content" / f"{base}.base").read_text(encoding="utf-8")
-            self.assertIn('note.estado == "pendiente"', texto, base)
+            self.assertIn('note.status == "pending"', texto, base)
             self.assertNotIn("- note.horas", texto, base)
 
     def test_ninguna_ficha_guarda_ya_las_horas(self):
@@ -967,7 +967,7 @@ class Coherencia(unittest.TestCase):
             for ficha in (m.RAIZ / "content" / carpeta).glob("*.md"):
                 if ficha.stem == "index":
                     continue
-                estado = m.frontmatter(ficha.read_text(encoding="utf-8")).get("estado")
+                estado = m.frontmatter(ficha.read_text(encoding="utf-8")).get("status")
                 if m.vacio(estado):
                     continue
                 self.assertIn(estado, m.ESTADOS,
@@ -975,15 +975,15 @@ class Coherencia(unittest.TestCase):
 
     def test_los_campos_tuyos_llevan_un_valor_que_las_bases_entienden(self):
         # Son los que se escriben a mano, en Obsidian o con repasar.py, y un
-        # valor raro no da error en ningun sitio: "nota: 8,5" o "nota: 9/10"
-        # no es un numero y la galeria la ordena al final; "favorito: si" no
+        # valor raro no da error en ningun sitio: "rating: 8,5" o "rating: 9/10"
+        # no es un numero y la galeria la ordena al final; "favorite: si" no
         # es true y la ficha no sale en Favoritos. Se ve la web bien, con una
         # obra de menos donde tocaba.
-        validos = {"nota": re.compile(r"^(?:[1-9]|10)$"),
+        validos = {"rating": re.compile(r"^(?:[1-9]|10)$"),
                    "year": re.compile(r"^\d{4}$"),
-                   "favorito": re.compile(r"^(?:true|false)$"),
+                   "favorite": re.compile(r"^(?:true|false)$"),
                    "draft": re.compile(r"^(?:true|false)$"),
-                   "alta": re.compile(r"^\d{4}-\d{2}-\d{2}$")}
+                   "added": re.compile(r"^\d{4}-\d{2}-\d{2}$")}
         for carpeta in m.SECCIONES:
             for ficha in (m.RAIZ / "content" / carpeta).glob("*.md"):
                 if ficha.stem == "index":
@@ -1046,7 +1046,7 @@ class Coherencia(unittest.TestCase):
             self.assertTrue(tag.isascii(), f"la tabla de libros da {tag}")
 
     def test_cada_ficha_cuelga_de_su_seccion(self):
-        # El campo `seccion` es lo unico que une una ficha con su galeria: la
+        # El campo `section` es lo unico que une una ficha con su galeria: la
         # galeria es una .base, que no enlaza a nada, asi que sin el la ficha se
         # queda suelta en el grafo de Obsidian y en el de la web. Y como lo
         # escriben los scripts y no se ve en ningun sitio, faltaria en silencio.
@@ -1056,7 +1056,7 @@ class Coherencia(unittest.TestCase):
                 if ficha.stem == "index":
                     continue
                 campos = m.frontmatter(ficha.read_text(encoding="utf-8"))
-                self.assertEqual(campos.get("seccion"), debido,
+                self.assertEqual(campos.get("section"), debido,
                                  f"{ficha.name} no cuelga de {carpeta}")
 
     def test_la_seccion_lleva_el_nombre_que_dice_su_indice(self):
@@ -1073,11 +1073,11 @@ class Coherencia(unittest.TestCase):
                 (m.VAULT / "juegos").mkdir()
                 (m.VAULT / "juegos" / "index.md").write_text(
                     "---\ntitle: Juegos\n---\n", encoding="utf-8")
-                destino = m.escribir_ficha("juegos", "Celeste", {"tipo": "juego"})
+                destino = m.escribir_ficha("juegos", "Celeste", {"type": "game"})
                 campos = m.frontmatter(destino.read_text(encoding="utf-8"))
             finally:
                 m.VAULT = antes
-        self.assertEqual(campos.get("seccion"), "[[juegos/index|Juegos]]")
+        self.assertEqual(campos.get("section"), "[[juegos/index|Juegos]]")
 
     def test_las_fichas_de_la_vault_llevan_un_tipo_conocido(self):
         for carpeta, tipo in m.SECCIONES.items():
@@ -1085,14 +1085,14 @@ class Coherencia(unittest.TestCase):
                 if ficha.stem == "index":
                     continue
                 campos = m.frontmatter(ficha.read_text(encoding="utf-8"))
-                self.assertEqual(campos.get("tipo"), tipo,
+                self.assertEqual(campos.get("type"), tipo,
                                  f"{ficha.name} no dice tipo: {tipo}")
 
     def test_ninguna_ficha_apunta_a_una_portada_que_no_existe(self):
         # Una portada que falta no rompe el build: deja un hueco en la galeria.
         for carpeta in m.SECCIONES:
             for ficha in (m.RAIZ / "content" / carpeta).glob("*.md"):
-                portada = m.frontmatter(ficha.read_text(encoding="utf-8")).get("portada")
+                portada = m.frontmatter(ficha.read_text(encoding="utf-8")).get("cover")
                 if not portada or not portada.startswith("[["):
                     continue
                 nombre = portada.strip("[]")

@@ -1,15 +1,16 @@
 ---
 import Base from "../layouts/Base.astro";
-import { url } from "../lib/obras";
+import { t } from "../i18n";
+import { rutaFija, url } from "../lib/obras";
 ---
 
-<Base titulo="Esta vitrina está vacía">
+<Base titulo={t.vacia}>
   <div class="contenedor aviso">
     <p class="rotulo">404</p>
-    <h1>Esta vitrina está vacía</h1>
-    <p>Lo que había aquí ha cambiado de sala, o el enlace no lleva a ninguna parte.</p>
+    <h1>{t.vacia}</h1>
+    <p>{t.vaciaTexto}</p>
     <p>
-      <a href={url("buscar/")}>Buscarlo</a> · <a href={url()}>Ir a la entrada</a>
+      <a href={rutaFija("buscar")}>{t.buscarlo}</a> · <a href={url()}>{t.irEntradaCorto}</a>
     </p>
   </div>
 </Base>

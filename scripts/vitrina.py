@@ -15,11 +15,40 @@ RAIZ = Path(__file__).resolve().parent.parent
 VAULT = RAIZ / "content"
 PORTADAS = VAULT / "assets" / "portadas"
 
-# Carpeta de la vault -> valor del campo `tipo` de la ficha.
-SECCIONES = {"juegos": "juego", "pelis": "peli", "series": "serie",
-             "libros": "libro", "musica": "album"}
+# Lo que cambia de una vitrina a otra: el nombre, el idioma, la direccion y
+# como se llama cada carpeta. Lo leen tambien la web y astro.config.mjs, asi
+# que hacerse una vitrina propia es cambiar este fichero y nada mas.
+CONFIG = json.loads((RAIZ / "vitrine.config.json").read_text(encoding="utf-8"))
+IDIOMA = CONFIG.get("language", "en")
+CARPETAS = CONFIG["folders"]
 
-UA = "vitrina/1.0 (https://github.com/jorgeress/vitrina)"
+# Carpeta de la vault -> valor del campo `type` de la ficha.
+SECCIONES = {CARPETAS[t]: t for t in ("game", "film", "series", "book", "album")}
+
+# Lo privado de verdad: una carpeta que git no sube, con las mismas secciones
+# dentro (privado/juegos/...) y sus propias portadas, para que ni la caratula
+# delate lo que hay. La web publicada no la ve; vistazo.py si, marcada.
+CARPETA_PRIVADA = CARPETAS.get("private", "private")
+
+UA = f"vitrine/1.0 ({CONFIG.get('repo', 'https://github.com')})"
+
+
+def fichas(carpeta, privadas=True):
+    """Las fichas de una seccion, las publicas y, detras, las de la carpeta
+    privada. Sin el index.md de la seccion, que no es ninguna obra."""
+    rutas = sorted((VAULT / carpeta).glob("*.md"))
+    if privadas:
+        rutas += sorted((VAULT / CARPETA_PRIVADA / carpeta).glob("*.md"))
+    return [p for p in rutas if p.stem != "index"]
+
+
+def es_privada(md):
+    return (VAULT / CARPETA_PRIVADA).resolve() in Path(md).resolve().parents
+
+
+def portadas_de(md):
+    """Donde va la portada de esa ficha: con las demas, o con las privadas."""
+    return VAULT / CARPETA_PRIVADA / "portadas" if es_privada(md) else PORTADAS
 
 FRONT_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 
@@ -236,20 +265,44 @@ def enlace_seccion(carpeta):
 # Lo que hace falta para crear una ficha desde cero, que necesitan tanto el
 # importador, que las vuelca a cientos, como el alta de una obra suelta.
 
-ESTADOS = ["pendiente", "en curso", "terminado", "abandonado"]
+ESTADOS = ["pending", "in-progress", "finished", "dropped"]
 
-CAMPOS = ["tipo", "seccion", "year", "autor", "nota", "estado", "favorito",
-          "portada", "tags", "alta"]
+# En la ficha los tipos y los estados van en ingles, como las claves, para que
+# una vitrina en cualquier idioma use los mismos valores. Lo que se teclea en
+# una orden, en cambio, vale en los dos: "nueva.py peli" y "nueva.py film", o
+# "--estado terminado" y "--estado finished".
+TIPOS = ["game", "film", "series", "book", "album"]
+ALIAS_TIPO = {"juego": "game", "peli": "film", "pelicula": "film", "película": "film",
+              "movie": "film", "serie": "series", "show": "series", "libro": "book",
+              "disco": "album", "music": "album", "musica": "album", "música": "album"}
+ALIAS_ESTADO = {"pendiente": "pending", "en curso": "in-progress", "en-curso": "in-progress",
+                "terminado": "finished", "abandonado": "dropped",
+                "in progress": "in-progress", "planned": "pending", "done": "finished"}
+
+
+def tipo_de(texto):
+    """El tipo canonico de lo que se haya escrito, o el texto tal cual."""
+    t = (texto or "").strip().lower()
+    return ALIAS_TIPO.get(t, t)
+
+
+def estado_de(texto):
+    """El estado canonico de lo que se haya escrito, o el texto tal cual."""
+    t = (texto or "").strip().lower()
+    return ALIAS_ESTADO.get(t, t)
+
+CAMPOS = ["type", "section", "year", "author", "rating", "status", "favorite",
+          "cover", "tags", "added"]
 
 # Los que no dejan la clave vacia si no hay valor. Ver escribir_ficha().
-SIN_HUECO = {"estado"}
+SIN_HUECO = {"status"}
 
 def fichas_existentes(carpeta):
-    return {p.stem: normal(p.stem) for p in (VAULT / carpeta).glob("*.md")
-            if p.stem != "index"}
+    return {p.stem: normal(p.stem) for p in fichas(carpeta)}
 
 
-def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True, fichero=None):
+def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True, fichero=None,
+                   privada=False):
     """Deja la ficha en su carpeta. Devuelve None si ya existia.
 
     `fichero` es de donde sale el nombre cuando no puede salir del titulo. Uno
@@ -262,26 +315,26 @@ def escribir_ficha(carpeta, titulo, campos, cuerpo="", borrador=True, fichero=No
     es lo que pinta la web, igual que con "El madrileño".
     """
     nombre = nombre_de_fichero(fichero or titulo)
-    destino = VAULT / carpeta / f"{nombre}.md"
-    if destino.exists():
+    destino = (VAULT / CARPETA_PRIVADA if privada else VAULT) / carpeta / f"{nombre}.md"
+    if destino.exists() or (VAULT / carpeta / f"{nombre}.md").exists():
         return None
     # Misma obra escrita distinto ("Parásitos" y "Parasitos"): no se duplica.
     if normal(titulo) in fichas_existentes(carpeta).values():
         return None
     # La seccion no se pregunta ni se pasa: la dice la carpeta en la que cae.
     # Y el alta es hoy, que es cuando entra; de ella sale "Recien llegadas".
-    campos = {"alta": date.today().isoformat(), **campos,
-              "seccion": enlace_seccion(carpeta)}
+    campos = {"added": date.today().isoformat(), **campos,
+              "section": enlace_seccion(carpeta)}
     orden = CAMPOS + [c for c in campos if c not in CAMPOS]
     # Casi todos los campos se escriben aunque vengan vacios: la clave suelta es
     # el hueco donde luego pones el dato, y Obsidian lo ofrece en el editor de
-    # propiedades. `estado` no, porque ninguna fuente lo sabe de lo que ya has
+    # propiedades. `status` no, porque ninguna fuente lo sabe de lo que ya has
     # jugado: si no hay valor, no hay clave.
     orden = [c for c in orden if c not in SIN_HUECO or not vacio(campos.get(c))]
     lineas = [linea_yaml(c, campos.get(c)) for c in orden]
     # Antes de insertar el titulo, que lo que va detras se cuenta por `orden`:
     # con la linea de title delante, `lineas` lleva un elemento de mas y este
-    # indice caia sobre la clave anterior. Se comio el `portada:` de las fichas
+    # indice caia sobre la clave anterior. Se comio el `cover:` de las fichas
     # que llevan titulo aparte, y la cabecera acababa con dos `tags:` y sin
     # portada -- que es un YAML invalido, y ahi la web ya no se construye.
     if campos.get("tags") is None:

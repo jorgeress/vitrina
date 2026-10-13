@@ -1,0 +1,48 @@
+---
+import Base from "../../layouts/Base.astro";
+import { t } from "../../i18n";
+import { grupos, piezas, portada, rutaGrupo } from "../../lib/obras";
+
+export const getStaticPaths = () => [{ params: { grupos: t.rutas.grupos } }];
+
+// Los grupos los hace el dueño: una nota en la carpeta de grupos y, en cada
+// ficha, `groups: [Nombre]`. Cruzan las salas, al revés que los tags, que
+// pone la fuente.
+const lista = await grupos();
+---
+
+<Base titulo={t.grupos} descripcion={t.gruposDescripcion}>
+  <div class="contenedor">
+    <header class="titulo-pagina">
+      <h1>{t.grupos}</h1>
+      <p>{t.gruposDescripcion}</p>
+    </header>
+    {lista.length === 0 && <p class="vacio">{t.gruposVacio}</p>}
+    <ul class="lista">
+      {
+        lista.map((g) => (
+          <li>
+            <a href={rutaGrupo(g)}>
+              <span class="miniaturas" aria-hidden="true">
+                {g.obras.slice(0, 3).map((o) =>
+                  portada(o) ? <img src={portada(o)} alt="" loading="lazy" /> : <span class="hueco" style={`background:var(--${o.data.type})`} />,
+                )}
+              </span>
+              <span>
+                <strong>{g.destacado && "◆ "}{g.nombre}</strong>
+                <small>{piezas(g.obras.length)}</small>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .vacio {
+    max-width: 60ch;
+    color: var(--tenue);
+  }
+</style>

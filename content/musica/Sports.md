@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2012
-autor: Modern Baseball
-nota:
-estado: terminado
-favorito: false
-portada: "[[sports.webp]]"
+author: Modern Baseball
+rating:
+status: finished
+favorite: false
+cover: "[[sports.webp]]"
 tags:
   - indie-rock
   - alternative-rock
   - emo
   - emo-pop
 mbid: 6cd32445-c8a6-4bda-a92e-ec4f9b3dda61
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

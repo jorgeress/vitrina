@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2024
-autor: Blade and Bath
-nota:
-estado: terminado
-favorito: false
-portada: "[[rotten-in-loneliness.webp]]"
+author: Blade and Bath
+rating:
+status: finished
+favorite: false
+cover: "[[rotten-in-loneliness.webp]]"
 tags:
   - atmospheric-black-metal
   - black-metal
   - blackgaze
   - depressive-black-metal
 mbid: e279999e-4865-4919-94c4-d0938e72feb1
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

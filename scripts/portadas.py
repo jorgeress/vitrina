@@ -27,7 +27,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from vitrina import (PORTADAS, SECCIONES, VAULT, articulo_html, articulos_ingleses, wiki,
+from vitrina import (fichas, portadas_de, PORTADAS, SECCIONES, VAULT, articulo_html, articulos_ingleses, wiki,
                        asegurar_letterboxd, escribir_campos, ficha_letterboxd,
                        frontmatter, normal, pedir, serie_tvmaze, slug)
 
@@ -70,7 +70,7 @@ def portada_juego(titulo, campos, md):
     if campos.get("appid"):
         # Importado de tu propia biblioteca: el juego ya esta identificado.
         # Buscarlo por nombre falla con los free-to-play y con los titulos raros.
-        img = caratula_steam(campos["appid"], campos.get("capsula"))
+        img = caratula_steam(campos["appid"], campos.get("capsule"))
         if img:
             return img, "Steam (exacta, por appid)"
     url = "https://steamcommunity.com/actions/SearchApps/" + urllib.parse.quote(titulo)
@@ -91,7 +91,7 @@ def portada_juego_wikipedia(titulo, campos):
     titulo se parezca: la ficha lateral tiene que nombrar al estudio que ya
     dice la ficha. Sin autor no hay con que comprobarlo y se queda sin portada.
     """
-    autores = [a.strip().lower() for a in str(campos.get("autor") or "").split(",")
+    autores = [a.strip().lower() for a in str(campos.get("author") or "").split(",")
                if len(a.strip()) > 3]
     if not autores:
         return None, None
@@ -123,7 +123,7 @@ def portada_libro(titulo, campos, md):
                     binario=True)
         if img and len(img) > 5000:
             return img, "Open Library (exacta, por coverid)"
-    consulta = " ".join(filter(None, [titulo, campos.get("autor")]))
+    consulta = " ".join(filter(None, [titulo, campos.get("author")]))
     url = ("https://openlibrary.org/search.json?limit=5"
            "&fields=title,author_name,cover_i,first_publish_year&q="
            + urllib.parse.quote(consulta))
@@ -151,8 +151,8 @@ def portada_album(titulo, campos, md):
             if img and len(img) > 5000:
                 return img, f"Cover Art Archive (exacta, por mbid de {clase})"
     consulta = f'releasegroup:"{titulo}"'
-    if campos.get("autor"):
-        consulta += f' AND artist:"{campos["autor"]}"'
+    if campos.get("author"):
+        consulta += f' AND artist:"{campos["author"]}"'
     url = ("https://musicbrainz.org/ws/2/release-group?fmt=json&limit=5&query="
            + urllib.parse.quote(consulta))
     datos = pedir(url) or {}
@@ -241,8 +241,8 @@ def portada_serie(titulo, campos, md):
     return img, f"TVmaze ({serie.get('name') or tvid})"
 
 
-FUENTES = {"juego": portada_juego, "peli": portada_peli, "serie": portada_serie,
-           "libro": portada_libro, "album": portada_album}
+FUENTES = {"game": portada_juego, "film": portada_peli, "series": portada_serie,
+           "book": portada_libro, "album": portada_album}
 
 
 # --- recorrido ---------------------------------------------------------------
@@ -253,7 +253,7 @@ def fichas(args):
     carpetas = [args.seccion] if args.seccion else SECCIONES
     salida = []
     for carpeta in carpetas:
-        salida += sorted(p for p in (VAULT / carpeta).glob("*.md") if p.stem != "index")
+        salida += fichas(carpeta)
     return salida
 
 
@@ -270,13 +270,13 @@ def main():
 
     for md in fichas(args):
         campos = frontmatter(md.read_text(encoding="utf-8"))
-        tipo = campos.get("tipo") or SECCIONES.get(md.parent.name)
+        tipo = campos.get("type") or SECCIONES.get(md.parent.name)
         titulo = campos.get("title") or md.stem
         etiqueta = f"{md.parent.name}/{md.stem}"
 
         # Si apunta a una portada que ya no esta, se vuelve a bajar.
-        apuntada = re.sub(r"^\[\[|\]\]$", "", campos.get("portada") or "")
-        if apuntada and (PORTADAS / apuntada).exists() and not args.force:
+        apuntada = re.sub(r"^\[\[|\]\]$", "", campos.get("cover") or "")
+        if apuntada and (portadas_de(md) / apuntada).exists() and not args.force:
             saltadas += 1
             continue
         if tipo not in FUENTES:
@@ -297,8 +297,8 @@ def main():
         # y esa se la pisan entre ellas todas las demas. Ahi manda el nombre del
         # fichero, que ya esta en latino.
         nombre = f"{slug(titulo) or slug(md.stem)}.webp"
-        peso = guardar(img, PORTADAS / nombre)
-        escribir_campos(md, {"portada": f"[[{nombre}]]"})
+        peso = guardar(img, portadas_de(md) / nombre)
+        escribir_campos(md, {"cover": f"[[{nombre}]]"})
         print(f"  ✓  {etiqueta}: {nombre}, {peso // 1024} KB, {fuente}")
         hechas += 1
 

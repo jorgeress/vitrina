@@ -1,16 +1,16 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 1989
-autor: Peter Weir
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[dead-poets-society.webp]]"
+author: Peter Weir
+rating: 10
+status: finished
+favorite: false
+cover: "[[dead-poets-society.webp]]"
 tags:
   - drama
 letterboxd: dead-poets-society
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

@@ -1,17 +1,17 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2003
-autor: Donald Petrie
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[how-to-lose-a-guy-in-10-days.webp]]"
+author: Donald Petrie
+rating: 10
+status: finished
+favorite: false
+cover: "[[how-to-lose-a-guy-in-10-days.webp]]"
 tags:
   - comedy
   - romance
 letterboxd: how-to-lose-a-guy-in-10-days
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

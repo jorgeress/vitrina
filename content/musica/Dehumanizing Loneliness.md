@@ -1,17 +1,17 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2023
-autor: Decalius
-nota:
-estado: terminado
-favorito: false
-portada: "[[dehumanizing-loneliness.webp]]"
+author: Decalius
+rating:
+status: finished
+favorite: false
+cover: "[[dehumanizing-loneliness.webp]]"
 tags:
   - blackgaze
   - death-metal
 mbid: 38faaa8f-d18e-405e-8a7c-44d7ccde55ac
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

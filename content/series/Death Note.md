@@ -1,18 +1,20 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2006
-autor: Takeshi Obata, Tsugumi Ooba
-nota:
-favorito: false
-portada: "[[death-note.webp]]"
+author: Takeshi Obata, Tsugumi Ooba
+rating:
+favorite: false
+cover: "[[death-note.webp]]"
 tags:
   - anime
   - fantasy
   - thriller
 tvmaze: 40
 wikipedia: Death Note
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

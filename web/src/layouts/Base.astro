@@ -1,28 +1,25 @@
 ---
 import "../styles/global.css";
-import { CON_BORRADORES, SECCIONES, url } from "../lib/obras";
+import { NOMBRE } from "../config";
+import { t } from "../i18n";
+import { SECCIONES, VISTAZO, rutaFija, url } from "../lib/obras";
 
 interface Props {
   titulo?: string;
   descripcion?: string;
-  /** Imagen al compartir el enlace: la portada de la obra, si la hay. */
+  /** Imagen al compartir el enlace: la tarjeta de la obra, si la hay. */
   imagen?: string | null;
   activa?: string;
 }
 
-const {
-  titulo,
-  descripcion = "Lo que juego, veo, leo y escucho, y por qué está cada cosa en la vitrina.",
-  imagen,
-  activa,
-} = Astro.props;
-const completo = titulo ? `${titulo} · Vitrina` : "Vitrina";
+const { titulo, descripcion = t.descripcion, imagen, activa } = Astro.props;
+const completo = titulo ? `${titulo} · ${NOMBRE}` : NOMBRE;
 const canonica = new URL(Astro.url.pathname, Astro.site);
 const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang={t.locale.slice(0, 2)}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -32,28 +29,28 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
     <link rel="icon" type="image/png" href={url("iconos/favicon-64.png")} />
     <link rel="apple-touch-icon" href={url("iconos/apple-touch-icon.png")} />
     <link rel="manifest" href={url("manifest.webmanifest")} />
-    <link rel="alternate" type="application/rss+xml" title="Vitrina: recién llegadas" href={url("index.xml")} />
+    <link rel="alternate" type="application/rss+xml" title={t.rssTitulo} href={url("index.xml")} />
     <meta name="theme-color" content="#0f0e10" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#f7f4ef" media="(prefers-color-scheme: light)" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Vitrina" />
-    <meta property="og:locale" content="es_ES" />
-    <meta property="og:title" content={titulo ?? "Vitrina"} />
+    <meta property="og:site_name" content={NOMBRE} />
+    <meta property="og:locale" content={t.og} />
+    <meta property="og:title" content={titulo ?? NOMBRE} />
     <meta property="og:description" content={descripcion} />
     <meta property="og:url" content={canonica} />
     {imagenAbsoluta && <meta property="og:image" content={imagenAbsoluta} />}
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content={imagenAbsoluta ? "summary_large_image" : "summary"} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Noto Sans JP solo se descarga si la página tiene japonés: Google la
+    {/* Noto Sans JP solo se descarga si la página tiene japonés: Google la
          sirve partida por rangos de caracteres. Sin ella, «悪の華» o el
-         nombre de BUCK-TICK salen como cuadros en muchos sistemas. -->
+         nombre de BUCK-TICK salen como cuadros en muchos sistemas. */}
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+JP:wght@400;600&display=swap"
     />
-    <!-- El tema elegido a mano se aplica antes de pintar nada, para que no
-         parpadee el otro al cargar. -->
+    {/* El tema elegido a mano se aplica antes de pintar nada, para que no
+         parpadee el otro al cargar. */}
     <script is:inline>
       try {
         const tema = localStorage.getItem("tema");
@@ -62,11 +59,11 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
     </script>
   </head>
   <body>
-    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <a class="saltar" href="#contenido">{t.saltar}</a>
     <header class="barra">
       <div class="contenedor barra-dentro">
-        <a class="marca" href={url()} aria-label="Vitrina, inicio">Vitrina</a>
-        <nav class="secciones" aria-label="Secciones">
+        <a class="marca" href={url()} aria-label={t.aInicio}>{NOMBRE}</a>
+        <nav class="secciones" aria-label={t.secciones}>
           {
             SECCIONES.map((s) => (
               <a href={url(`${s.slug}/`)} aria-current={activa === s.slug ? "page" : undefined}>
@@ -74,13 +71,13 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
               </a>
             ))
           }
-          <a href={url("constelacion/")} aria-current={activa === "constelacion" ? "page" : undefined}>Constelación</a>
+          <a href={rutaFija("constelacion")} aria-current={activa === "constelacion" ? "page" : undefined}>{t.constelacion}</a>
         </nav>
         <div class="acciones">
-          <a class="boton" href={url("buscar/")} aria-label="Buscar" title="Buscar (/)" aria-current={activa === "buscar" ? "page" : undefined}>
+          <a class="boton" id="ir-buscar" href={rutaFija("buscar")} aria-label={t.buscar} title={t.buscarAtajo} aria-current={activa === "buscar" ? "page" : undefined}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
           </a>
-          <button class="boton" type="button" id="tema" aria-label="Cambiar entre claro y oscuro" title="Claro u oscuro">
+          <button class="boton" type="button" id="tema" aria-label={t.tema} title={t.temaCorto}>
             <svg class="sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
             <svg class="luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg>
           </button>
@@ -88,34 +85,29 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
       </div>
     </header>
 
-    {
-      CON_BORRADORES && (
-        <p class="vistazo">
-          Esto es el vistazo, no la web publicada: salen también las fichas en borrador, marcadas. Para publicar una,
-          quítale la línea <code>draft: true</code>.
-        </p>
-      )
-    }
+    {VISTAZO && <p class="vistazo">{t.vistazo}</p>}
     <main id="contenido">
       <slot />
     </main>
 
     <footer class="contenedor pie">
-      <a class="pie-marca" href={url()}>Vitrina</a>
-      <nav aria-label="Más">
-        <a href={url("favoritos/")}>Lo mejor de lo mejor</a>
-        <a href={url("autores/")}>Autores</a>
-        <a href={url("tags/")}>Tags</a>
-        <a href={url("cifras/")}>Cifras</a>
-        <a href={url("comparar/")}>Comparar</a>
-        <a href={url("creditos/")}>Créditos</a>
+      <a class="pie-marca" href={url()}>{NOMBRE}</a>
+      <nav aria-label={t.mas}>
+        <a href={rutaFija("favoritos")}>{t.mejor}</a>
+        <a href={rutaFija("grupos")}>{t.grupos}</a>
+        <a href={rutaFija("anuario")}>{t.anuario}</a>
+        <a href={rutaFija("autores")}>{t.autores}</a>
+        <a href={rutaFija("tags")}>{t.tags}</a>
+        <a href={rutaFija("cifras")}>{t.cifras}</a>
+        <a href={rutaFija("comparar")}>{t.comparar}</a>
+        <a href={rutaFija("creditos")}>{t.creditos}</a>
         <a href={url("index.xml")}>RSS</a>
       </nav>
     </footer>
 
-    <!-- En el móvil la navegación baja al pulgar, como en una app. -->
-    <nav class="pestanas" aria-label="Secciones">
-      <a href={url()} aria-current={activa === "inicio" ? "page" : undefined}><span>◆</span>Inicio</a>
+    {/* En el móvil la navegación baja al pulgar, como en una app. */}
+    <nav class="pestanas" aria-label={t.secciones}>
+      <a href={url()} aria-current={activa === "inicio" ? "page" : undefined}><span>◆</span>{t.inicio}</a>
       {
         SECCIONES.map((s) => (
           <a href={url(`${s.slug}/`)} aria-current={activa === s.slug ? "page" : undefined}>
@@ -124,7 +116,7 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
           </a>
         ))
       }
-      <a href={url("constelacion/")} aria-current={activa === "constelacion" ? "page" : undefined}><span>✦</span>Mapa</a>
+      <a href={rutaFija("constelacion")} aria-current={activa === "constelacion" ? "page" : undefined}><span>✦</span>{t.mapa}</a>
     </nav>
 
     <script>
@@ -148,7 +140,7 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
         const enCampo = (e.target as HTMLElement).closest("input, textarea, select, [contenteditable]");
         if (e.key === "/" && !enCampo && !e.metaKey && !e.ctrlKey) {
           e.preventDefault();
-          const buscar = document.querySelector<HTMLAnchorElement>('.acciones a[href$="buscar/"]');
+          const buscar = document.getElementById("ir-buscar") as HTMLAnchorElement | null;
           if (buscar) location.href = buscar.href;
         }
       });

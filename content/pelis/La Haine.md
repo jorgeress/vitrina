@@ -1,16 +1,16 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 1995
-autor: Mathieu Kassovitz
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[la-haine.webp]]"
+author: Mathieu Kassovitz
+rating: 10
+status: finished
+favorite: false
+cover: "[[la-haine.webp]]"
 tags:
   - drama
 letterboxd: la-haine
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

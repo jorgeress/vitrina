@@ -22,7 +22,7 @@ Por defecto va en modo rapido: solo entra lo que da senal de haberte importado
 (8 horas jugadas en Steam, 4 estrellas en Letterboxd). Con --completo entra
 todo, y los umbrales se mueven con --min-horas y --min-nota.
 
-Todo entra en borrador: `draft: true`, `nota` vacia y el cuerpo en blanco. La
+Todo entra en borrador: `draft: true`, `rating` vacia y el cuerpo en blanco. La
 excepcion son las peliculas, que si traen tu puntuacion porque Letterboxd es la
 unica de las tres fuentes que sabe si algo te gusto. La web no publica lo que
 lleva `draft`, asi que la web sigue enseñando solo lo que hayas ascendido a
@@ -45,7 +45,7 @@ from xml.etree import ElementTree
 
 import estado
 import nueva
-from vitrina import ESTADOS, escribir_ficha, parecidos, pedir
+from vitrina import ESTADOS, escribir_ficha, estado_de, parecidos, pedir
 
 # Umbrales del modo rapido. Ninguna fuente sabe si algo te gusto salvo
 # Letterboxd, asi que el resto se criba por la unica senal que dan: el uso.
@@ -90,21 +90,21 @@ def importar_letterboxd(args):
             titulo = (fila.get("Name") or "").strip()
             if not titulo:
                 continue
-            peli = pelis.setdefault(titulo, {"year": fila.get("Year"), "nota": None,
-                                             "estado": "terminado"})
+            peli = pelis.setdefault(titulo, {"year": fila.get("Year"), "rating": None,
+                                             "status": "finished"})
             if "watchlist" in nombre.lower():
-                peli["estado"] = "pendiente"
+                peli["status"] = "pending"
             else:
-                peli["estado"] = "terminado"
+                peli["status"] = "finished"
             if fila.get("Rating"):
                 # Letterboxd puntua de 0,5 a 5 estrellas; aqui la escala es de 1 a 10.
-                peli["nota"] = int(round(float(fila["Rating"]) * 2))
+                peli["rating"] = int(round(float(fila["Rating"]) * 2))
 
     if not encontrados:
         print("No he encontrado ningún csv de Letterboxd en esa ruta.")
         return 1
     print("Leído: " + ", ".join(encontrados))
-    return volcar(pelis, "pelis", "peli", args)
+    return volcar(pelis, "pelis", "film", args)
 
 
 def importar_letterboxd_rss(args):
@@ -134,8 +134,8 @@ def importar_letterboxd_rss(args):
         enlace = re.search(r"/film/([^/]+)/", entrada.findtext("link") or "")
         pelis[titulo] = {
             "year": año,
-            "estado": "terminado",
-            "nota": int(round(float(nota) * 2)) if nota else None,
+            "status": "finished",
+            "rating": int(round(float(nota) * 2)) if nota else None,
             "letterboxd": enlace.group(1) if enlace else None,
         }
 
@@ -143,7 +143,7 @@ def importar_letterboxd_rss(args):
         print("El diario no tiene entradas de películas.")
         return 1
     print(f"Diario de {usuario}: {len(pelis)} películas.")
-    return volcar(pelis, "pelis", "peli", args)
+    return volcar(pelis, "pelis", "film", args)
 
 
 # --- Steam -------------------------------------------------------------------
@@ -167,7 +167,7 @@ def buscar_juegos(dato, hallados):
             previo = hallados.get(str(nombre))
             if previo is None or minutos > previo["minutos"]:
                 hallados[str(nombre)] = {"minutos": minutos, "appid": int(appid),
-                                         "capsula": dato.get("capsule_filename")}
+                                         "capsule": dato.get("capsule_filename")}
         for v in dato.values():
             buscar_juegos(v, hallados)
     elif isinstance(dato, list):
@@ -276,8 +276,8 @@ def importar_letterboxd_watchlist(args):
                 "year": m.group(2) if m else None,
                 # Lo que define a la lista: son las que no has visto. La nota se
                 # queda vacia, que es lo unico cierto de algo sin ver.
-                "estado": "pendiente",
-                "nota": None,
+                "status": "pending",
+                "rating": None,
                 "letterboxd": slug or None,
             }
 
@@ -285,7 +285,7 @@ def importar_letterboxd_watchlist(args):
         print(f"La watchlist de '{usuario}' está vacía o no es pública.")
         return 1
     print(f"Leída la watchlist de {usuario}: {plural(len(pelis), 'película', 'películas')}.")
-    return volcar(pelis, "pelis", "peli", args, cribar=False)
+    return volcar(pelis, "pelis", "film", args, cribar=False)
 
 
 def importar_steam(args):
@@ -319,23 +319,23 @@ def importar_steam(args):
         horas = round(dato["minutos"] / 60)
         juegos[titulo] = {
             # Steam sabe cuanto has jugado, no si lo terminaste. Lo que nunca
-            # has abierto si es "pendiente" sin discusion; lo jugado se queda
-            # en blanco y lo pones tu. Antes entraba como "en curso", y como
+            # has abierto si es "pending" sin discusion; lo jugado se queda
+            # en blanco y lo pones tu. Antes entraba como "in-progress", y como
             # eso le tocaba a todo lo que tuviera una hora, los 44 juegos
             # decian lo mismo: un campo que contesta igual siempre no es un
             # dato, y desde que la ficha lo enseña encima cantaba.
-            "estado": "pendiente" if dato["minutos"] == 0 else None,
+            "status": "pending" if dato["minutos"] == 0 else None,
             # Las horas deciden que entra en el modo rapido, y ahi se quedan:
             # no van a la ficha. Eran el unico campo que solo sabia rellenar
             # una fuente, y ataban la seccion a Steam --un juego apuntado a
             # mano no las traia y caia en "Por jugar" aunque lo hubieras
-            # terminado--. Lo que reparte la seccion es `estado`, como en las
+            # terminado--. Lo que reparte la seccion es `status`, como en las
             # otras cuatro.
             "horas": horas or None,
             "appid": dato.get("appid"),
-            "capsula": dato.get("capsula"),
+            "capsule": dato.get("capsule"),
         }
-    return volcar(juegos, "juegos", "juego", args)
+    return volcar(juegos, "juegos", "game", args)
 
 
 # --- ListenBrainz ------------------------------------------------------------
@@ -377,7 +377,7 @@ def importar_listenbrainz(args):
         titulo = disco.get("release_name")
         if not titulo:
             continue
-        discos[titulo] = {"autor": disco.get("artist_name"), "estado": "terminado",
+        discos[titulo] = {"author": disco.get("artist_name"), "status": "finished",
                           "mbid": disco.get("caa_release_mbid") or disco.get("release_mbid")}
     print(f"{plural(len(discos), 'disco', 'discos')} entre lo más escuchado {cuando}.")
     return volcar(discos, "musica", "album", args, cribar=False)
@@ -398,17 +398,17 @@ def canciones_en_discos(contenido, discos):
     Spotify guarda las canciones una a una y en ningun sitio dice que disco te
     gusta: eso hay que contarlo. Un disco con once canciones tuyas dentro te
     gusta mas que uno con una, y esa cuenta no es una suposicion, es el dato.
-    Por eso este es el unico sitio del repo donde `favorito` sale de un script
+    Por eso este es el unico sitio del repo donde `favorite` sale de un script
     y no de tu mano: porque se mide, no se adivina.
     """
     for pista in contenido.get("tracks") or []:
         titulo = sacar(pista, "album", "album_name", "albumName")
         if not titulo:
             continue
-        dato = discos.setdefault(titulo, {"favoritas": 0, "autor": None,
-                                          "estado": "terminado"})
+        dato = discos.setdefault(titulo, {"favoritas": 0, "author": None,
+                                          "status": "finished"})
         dato["favoritas"] += 1
-        dato["autor"] = dato["autor"] or sacar(
+        dato["author"] = dato["author"] or sacar(
             pista, "artist", "artist_name", "artistName")
     return discos
 
@@ -437,8 +437,8 @@ def importar_spotify_export(args):
             for album in contenido.get("albums") or []:
                 titulo = sacar(album, "album", "album_name", "name")
                 if titulo:
-                    guardados[titulo] = {"autor": sacar(album, "artist", "artist_name"),
-                                         "estado": "terminado"}
+                    guardados[titulo] = {"author": sacar(album, "artist", "artist_name"),
+                                         "status": "finished"}
             leidos.append(nombre)
             continue
 
@@ -452,10 +452,10 @@ def importar_spotify_export(args):
                         sin_album += 1
                         historial_corto = True
                     continue
-                dato = escuchados.setdefault(titulo, {"ms": 0, "autor": None,
-                                                      "estado": "terminado"})
+                dato = escuchados.setdefault(titulo, {"ms": 0, "author": None,
+                                                      "status": "finished"})
                 dato["ms"] += int(ms)
-                dato["autor"] = dato["autor"] or sacar(
+                dato["author"] = dato["author"] or sacar(
                     fila, "master_metadata_album_artist_name", "artistName")
                 reproducciones += 1
             if reproducciones:
@@ -478,9 +478,9 @@ def importar_spotify_export(args):
                   "clave tracks de YourLibrary.json, que trae el export de la cuenta.")
             return 1
         for dato in canciones.values():
-            dato["favorito"] = dato["favoritas"] >= args.min_favoritas
+            dato["favorite"] = dato["favoritas"] >= args.min_favoritas
         total = sum(d["favoritas"] for d in canciones.values())
-        marcados = sum(1 for d in canciones.values() if d["favorito"])
+        marcados = sum(1 for d in canciones.values() if d["favorite"])
         print(f"{plural(total, 'cancion guardada', 'canciones guardadas')} "
               f"en {plural(len(canciones), 'disco', 'discos')}.")
         print(plural(marcados, "disco llega", "discos llegan")
@@ -502,7 +502,7 @@ def importar_spotify_export(args):
         return 1
     oidos = {k: v for k, v in escuchados.items() if v["ms"] >= MIN_MS}
     mejores = sorted(oidos, key=lambda k: oidos[k]["ms"], reverse=True)[:args.top]
-    discos = {t: {"autor": oidos[t]["autor"], "estado": "terminado"} for t in mejores}
+    discos = {t: {"author": oidos[t]["author"], "status": "finished"} for t in mejores}
     ms = sum(oidos[t]["ms"] for t in mejores)
     tiempo = (plural(round(ms / 3600000), "hora", "horas") if ms >= 3600000
               else plural(round(ms / 60000), "minuto", "minutos"))
@@ -525,7 +525,7 @@ def importar_libro(args):
     solo se traducen las opciones y se llama alli; el nombre se queda por
     costumbre y porque esta documentado.
     """
-    args.tipo = "libro"
+    args.tipo = "book"
     args.favorito = False
     args.borrador = not args.sin_borrador
     # Open Library devuelve el titulo en latino, asi que aqui nunca hace falta.
@@ -545,8 +545,8 @@ def criba(elementos, args):
             pasa = dato["horas"] >= args.min_horas
         elif dato.get("favoritas") is not None:
             pasa = dato["favoritas"] >= args.min_favoritas
-        elif dato.get("nota") is not None:
-            pasa = dato["nota"] >= args.min_nota
+        elif dato.get("rating") is not None:
+            pasa = dato["rating"] >= args.min_nota
         else:
             # Sin horas ni nota no hay con que decidir: fuera del modo rapido.
             pasa = False
@@ -559,17 +559,17 @@ def volcar(elementos, carpeta, tipo, args, cribar=True):
     avisos = parecidos(carpeta, elementos)
     nuevas = repetidas = 0
     for titulo, dato in sorted(elementos.items()):
-        campos = {"tipo": tipo, "year": dato.get("year"), "autor": dato.get("autor"),
+        campos = {"type": tipo, "year": dato.get("year"), "author": dato.get("author"),
                   # Sin defecto: una fuente que no sabe el estado lo deja en
-                  # blanco, como la nota. Inventarle "pendiente" a lo que ya
+                  # blanco, como la nota. Inventarle "pending" a lo que ya
                   # has jugado es tan falso como decir que sigue en curso.
-                  "nota": dato.get("nota"), "estado": dato.get("estado"),
-                  "favorito": dato.get("favorito", False),
-                  "portada": None, "tags": None}
+                  "rating": dato.get("rating"), "status": dato.get("status"),
+                  "favorite": dato.get("favorite", False),
+                  "cover": None, "tags": None}
         if dato.get("favoritas"):
             # Cuantas de tus canciones guardadas lleva el disco. Es lo que
             # ordena la vista "Por tus canciones" de Musica.base.
-            campos["favoritas"] = dato["favoritas"]
+            campos["favorite_tracks"] = dato["favoritas"]
         if dato.get("mbid"):
             # El identificador del disco en MusicBrainz: con el, la portada se
             # baja exacta y no por parecido de nombre.
@@ -583,10 +583,10 @@ def volcar(elementos, carpeta, tipo, args, cribar=True):
             # Lo mismo para los juegos: buscar por nombre falla con los
             # free-to-play, y con el appid la caratula sale siempre.
             campos["appid"] = dato["appid"]
-        if dato.get("capsula") and "/" in str(dato["capsula"]):
+        if dato.get("capsule") and "/" in str(dato["capsule"]):
             # Los juegos recientes no estan en la ruta clasica del CDN: su
             # caratula cuelga de un hash que solo aparece en tu propia pagina.
-            campos["capsula"] = dato["capsula"]
+            campos["capsule"] = dato["capsule"]
         if args.dry_run:
             nuevas += 1
             continue
@@ -658,14 +658,15 @@ def main():
     lb.add_argument("--top", type=int, default=40, help="cuántos discos (por defecto 40)")
     lb.set_defaults(func=importar_listenbrainz)
 
-    li = subs.add_parser("libro", help="busca un libro en Open Library y crea la ficha")
+    li = subs.add_parser("libro", aliases=["book"], help="busca un libro en Open Library y crea la ficha")
     li.add_argument("titulo", help="el título, o título y autor")
     li.add_argument("--elegir", type=int, metavar="N",
                     help="quédate con el resultado N sin preguntar")
     li.add_argument("--resultados", type=int, default=5,
                     help="cuántos resultados enseñar (por defecto 5)")
     li.add_argument("--nota", type=int, help="ponle ya la nota, del 1 al 10")
-    li.add_argument("--estado", choices=ESTADOS, default="pendiente",
+    li.add_argument("--estado", "--status", dest="estado", type=estado_de,
+                    choices=ESTADOS, default="pending",
                     help="por defecto, pendiente")
     li.set_defaults(func=importar_libro)
 

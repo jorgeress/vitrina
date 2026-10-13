@@ -1,7 +1,7 @@
 ---
 title: "System of a Down"
-tipo: autor
-seccion: "[[autores/index|Autores]]"
+type: author
+section: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de System of a Down.

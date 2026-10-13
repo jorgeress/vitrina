@@ -16,7 +16,7 @@ import argparse
 import sys
 
 import textos
-from vitrina import FRONT_RE, SECCIONES, VAULT
+from vitrina import fichas, FRONT_RE, SECCIONES, VAULT
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
 
     hechas = 0
     for carpeta in SECCIONES:
-        for md in sorted((VAULT / carpeta).glob("*.md")):
+        for md in fichas(carpeta):
             if md.stem == "index":
                 continue
             if args.dry_run:

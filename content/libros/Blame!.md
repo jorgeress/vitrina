@@ -1,18 +1,20 @@
 ---
-tipo: libro
-seccion: "[[libros/index|Libros]]"
+type: book
+section: "[[libros/index|Libros]]"
 year: 1998
-autor: Tsutomu Nihei
-nota:
-estado: terminado
-favorito: false
-portada: "[[blame.webp]]"
+author: Tsutomu Nihei
+rating:
+status: finished
+favorite: false
+cover: "[[blame.webp]]"
 tags:
   - manga
   - science-fiction
 coverid: 874491
 wikipedia: Blame!
-alta: 2026-09-12
+added: 2026-09-12
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

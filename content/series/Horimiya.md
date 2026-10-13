@@ -1,17 +1,19 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2021
-autor: HERO, Daisuke Hagiwara
-nota:
-favorito: false
-portada: "[[horimiya.webp]]"
+author: HERO, Daisuke Hagiwara
+rating:
+favorite: false
+cover: "[[horimiya.webp]]"
 tags:
   - comedy
   - anime
   - romance
 tvmaze: 52001
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

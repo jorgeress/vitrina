@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1994
-autor: Weezer
-nota:
-estado: terminado
-favorito: false
-portada: "[[weezer.webp]]"
+author: Weezer
+rating:
+status: finished
+favorite: false
+cover: "[[weezer.webp]]"
 tags:
   - alternative-rock
   - rock
   - power-pop
   - pop-punk
 mbid: c7b245c9-8099-32ea-af95-893acedde2cf
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

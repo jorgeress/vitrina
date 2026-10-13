@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1999
-autor: blink-182
-nota:
-estado: terminado
-favorito: false
-portada: "[[enema-of-the-state.webp]]"
+author: blink-182
+rating:
+status: finished
+favorite: false
+cover: "[[enema-of-the-state.webp]]"
 tags:
   - punk-rock
   - pop-punk
   - alternative-rock
   - punk
 mbid: cd367c59-eb86-384b-bbc7-62f6d2d677b9
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

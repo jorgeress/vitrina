@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2014
-autor: Modern Baseball
-nota:
-estado: terminado
-favorito: false
-portada: "[[you-re-gonna-miss-it-all.webp]]"
+author: Modern Baseball
+rating:
+status: finished
+favorite: false
+cover: "[[you-re-gonna-miss-it-all.webp]]"
 tags:
   - emo
   - emo-pop
   - indie-folk
   - indie-rock
 mbid: 0d387d98-4728-44a5-8df5-18b38f645709
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

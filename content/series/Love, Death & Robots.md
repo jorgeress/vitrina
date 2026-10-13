@@ -1,17 +1,17 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2019
-autor: Tim Miller
-nota:
-favorito: false
-portada: "[[love-death-robots.webp]]"
+author: Tim Miller
+rating:
+favorite: false
+cover: "[[love-death-robots.webp]]"
 tags:
   - horror
   - science-fiction
   - thriller
 tvmaze: 40329
-alta: 2026-09-16
+added: 2026-09-16
 ---
 
 > [!quote] De qué va

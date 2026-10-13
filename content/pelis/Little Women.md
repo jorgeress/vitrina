@@ -1,17 +1,17 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2019
-autor: Greta Gerwig
-nota: 8
-estado: terminado
-favorito: false
-portada: "[[little-women.webp]]"
+author: Greta Gerwig
+rating: 8
+status: finished
+favorite: false
+cover: "[[little-women.webp]]"
 tags:
   - drama
   - romance
 letterboxd: little-women-2019
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

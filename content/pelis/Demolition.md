@@ -1,17 +1,17 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2015
-autor: Jean-Marc Vallée
-nota: 8
-estado: terminado
-favorito: false
-portada: "[[demolition.webp]]"
+author: Jean-Marc Vallée
+rating: 8
+status: finished
+favorite: false
+cover: "[[demolition.webp]]"
 tags:
   - drama
   - comedy
 letterboxd: demolition
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

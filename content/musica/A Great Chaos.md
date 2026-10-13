@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2023
-autor: Ken Carson
-nota:
-estado: terminado
-favorito: false
-portada: "[[a-great-chaos.webp]]"
+author: Ken Carson
+rating:
+status: finished
+favorite: false
+cover: "[[a-great-chaos.webp]]"
 tags:
   - cloud-rap
   - hardcore-hip-hop
   - rage
   - gangsta-rap
 mbid: dac1ca48-7c71-4ba7-92bd-fd82445c280e
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

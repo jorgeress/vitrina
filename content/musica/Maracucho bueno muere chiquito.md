@@ -1,18 +1,18 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2018
-autor: Cruz Cafuné
-nota:
-estado: terminado
-favorito: false
-portada: "[[maracucho-bueno-muere-chiquito.webp]]"
+author: Cruz Cafuné
+rating:
+status: finished
+favorite: false
+cover: "[[maracucho-bueno-muere-chiquito.webp]]"
 tags:
   - hip-hop
   - r&b
   - trap
 mbid: 7293ca79-187a-43d4-be85-48a8ab5088c7
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

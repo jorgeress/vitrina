@@ -1,7 +1,22 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Barras from "../../components/Barras.astro";
-import { SECCIONES, autoresRepetidos, cartela, nombreTag, obras, rutaAutor, rutaTag, slugsAutores, url } from "../../lib/obras";
+import { t } from "../../i18n";
+import {
+  SECCIONES,
+  autoresRepetidos,
+  cartela,
+  comparaTexto,
+  nombreTag,
+  obras,
+  rutaAutor,
+  rutaFija,
+  rutaTag,
+  slugsAutores,
+  url,
+} from "../../lib/obras";
+
+export const getStaticPaths = () => [{ params: { cifras: t.rutas.cifras } }];
 
 const todas = await obras();
 const slugs = await slugsAutores();
@@ -25,7 +40,7 @@ const tramos = [
   ...decadas.filter((d) => d >= corte).map((d) => ({ etiqueta: `${String(d).slice(2)}s`, desde: d, hasta: d + 10 })),
 ];
 const porSala = SECCIONES.map((s) => {
-  const lista = todas.filter((o) => o.data.tipo === s.tipo);
+  const lista = todas.filter((o) => o.data.type === s.tipo);
   return {
     seccion: s,
     total: lista.length,
@@ -39,49 +54,48 @@ const maximoDecada = Math.max(...porSala.flatMap((s) => s.datos.map((d) => d.val
 
 const notas = Array.from({ length: 10 }, (_, i) => ({
   etiqueta: String(i + 1),
-  valor: todas.filter((o) => o.data.nota === i + 1).length,
+  valor: todas.filter((o) => o.data.rating === i + 1).length,
 }));
-const puntuadas = todas.filter((o) => o.data.nota).length;
-const dieces = todas.filter((o) => o.data.nota === 10).length;
+const puntuadas = todas.filter((o) => o.data.rating).length;
+const dieces = todas.filter((o) => o.data.rating === 10).length;
 
 const cuentaTags = new Map<string, number>();
-for (const o of todas) for (const t of o.data.tags ?? []) cuentaTags.set(t, (cuentaTags.get(t) ?? 0) + 1);
+for (const o of todas) for (const tag of o.data.tags ?? []) cuentaTags.set(tag, (cuentaTags.get(tag) ?? 0) + 1);
 const tags = [...cuentaTags]
   .sort((a, b) => b[1] - a[1])
   .slice(0, 12)
-  .map(([t, n]) => ({ etiqueta: nombreTag(t), valor: n, enlace: rutaTag(t) }));
+  .map(([tag, n]) => ({ etiqueta: nombreTag(tag), valor: n, enlace: rutaTag(tag) }));
 
 const autores = [...autoresRepetidos(todas)]
-  .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0], "es"))
+  .sort((a, b) => b[1].length - a[1].length || comparaTexto(a[0], b[0]))
   .slice(0, 10)
   .map(([a, lista]) => ({ etiqueta: a, valor: lista.length, enlace: rutaAutor(a, slugs) }));
 
 const escritas = todas.filter((o) => cartela(o)).length;
-const favoritos = todas.filter((o) => o.data.favorito).length;
+const favoritos = todas.filter((o) => o.data.favorite).length;
 ---
 
-<Base titulo="Cifras" descripcion="La vitrina en números: de qué épocas es, qué notas pongo y qué géneros se repiten.">
+<Base titulo={t.cifras} descripcion={t.cifrasDescripcion}>
   <div class="contenedor">
     <header class="titulo-pagina">
-      <h1>La vitrina en cifras</h1>
-      <p>De {primera} a {ultima}, en {SECCIONES.length} salas.</p>
+      <h1>{t.cifrasTitulo}</h1>
+      <p>{t.deA(primera, ultima, SECCIONES.length)}</p>
     </header>
 
     <ul class="numeros">
-      <li><strong>{todas.length}</strong> piezas</li>
-      <li class="dorada"><a href={url("favoritos/")}><strong>{favoritos}</strong> en lo mejor de lo mejor</a></li>
-      <li><strong>{escritas}</strong> con cartela</li>
-      <li><strong>{puntuadas}</strong> con nota</li>
-      <li><a href={url("autores/")}><strong>{autoresRepetidos(todas).size}</strong> autores que repiten</a></li>
+      <li><strong>{todas.length}</strong> {t.piezas}</li>
+      <li class="dorada"><a href={rutaFija("favoritos")}><strong>{favoritos}</strong> {t.enLoMejor}</a></li>
+      <li><strong>{escritas}</strong> {t.conCartela.toLowerCase()}</li>
+      <li><strong>{puntuadas}</strong> {t.conNota}</li>
+      <li><a href={rutaFija("autores")}><strong>{autoresRepetidos(todas).size}</strong> {t.autoresQueRepiten}</a></li>
     </ul>
 
     <section class="bloque">
       <header>
         <div>
-          <h2>De qué época es cada sala</h2>
+          <h2>{t.epocas}</h2>
           <p>
-            Piezas por década del año de salida, todas con la misma escala.{" "}
-            {corte > conAlgo[0] && `La primera columna junta todo lo anterior a ${corte}.`}
+            {t.epocasSub} {corte > conAlgo[0] && t.antesDe(corte)}
           </p>
         </div>
       </header>
@@ -101,7 +115,7 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
                 color={`var(--${seccion.tipo})`}
                 una={seccion.una}
                 varias={seccion.varias}
-                titulo={`${seccion.nombre} por década`}
+                titulo={t.porDecada(seccion.nombre)}
                 rotularCada={tramos.length > 6 ? 2 : 1}
               />
             </div>
@@ -114,36 +128,33 @@ const favoritos = todas.filter((o) => o.data.favorito).length;
       <section class="bloque">
         <header>
           <div>
-            <h2>Las notas</h2>
-            <p>
-              {puntuadas} piezas puntuadas, y {dieces} son un 10: la nota no separa mucho, por eso existe lo mejor de lo
-              mejor.
-            </p>
+            <h2>{t.lasNotas}</h2>
+            <p>{t.notasSub(puntuadas, dieces)}</p>
           </div>
         </header>
-        <Barras datos={notas} una="pieza" varias="piezas" titulo="Piezas por nota" />
+        <Barras datos={notas} una={t.pieza} varias={t.piezas} titulo={t.porNota} />
       </section>
 
       <section class="bloque">
         <header>
           <div>
-            <h2>Quién se repite</h2>
-            <p>Los autores con más piezas en la vitrina.</p>
+            <h2>{t.quienSeRepite}</h2>
+            <p>{t.quienSeRepiteSub}</p>
           </div>
         </header>
-        <Barras datos={autores} tumbadas una="pieza" varias="piezas" titulo="Piezas por autor" />
+        <Barras datos={autores} tumbadas una={t.pieza} varias={t.piezas} titulo={t.porAutor} />
       </section>
     </div>
 
     <section class="bloque">
       <header>
         <div>
-          <h2>Los géneros que más se repiten</h2>
-          <p>Contando todas las salas juntas.</p>
+          <h2>{t.generos}</h2>
+          <p>{t.generosSub}</p>
         </div>
-        <a class="ver-todo" href={url("tags/")}>Todos los tags →</a>
+        <a class="ver-todo" href={rutaFija("tags")}>{t.todosLosTags}</a>
       </header>
-      <Barras datos={tags} tumbadas una="pieza" varias="piezas" titulo="Piezas por tag" />
+      <Barras datos={tags} tumbadas una={t.pieza} varias={t.piezas} titulo={t.porTag} />
     </section>
   </div>
 </Base>

@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2025
-autor: Team Cherry
-nota:
-favorito: false
-portada: "[[hollow-knight-silksong.webp]]"
+author: Team Cherry
+rating:
+favorite: false
+cover: "[[hollow-knight-silksong.webp]]"
 tags:
   - action
   - adventure
   - indie
 appid: 1030300
-capsula: 93637c34351160eaa7d7ff0cce69cb4312abb819/library_capsule.jpg
-alta: 2026-09-02
+capsule: 93637c34351160eaa7d7ff0cce69cb4312abb819/library_capsule.jpg
+added: 2026-09-02
 ---
 
 > [!vitrina] Por qué está en la vitrina

@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2006
-autor: Three Days Grace
-nota:
-estado: terminado
-favorito: false
-portada: "[[one-x.webp]]"
+author: Three Days Grace
+rating:
+status: finished
+favorite: false
+cover: "[[one-x.webp]]"
 tags:
   - rock
   - alternative-metal
   - alternative-rock
   - blues
 mbid: be475d52-1eb0-3d96-91b0-f5a19a462ed7
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

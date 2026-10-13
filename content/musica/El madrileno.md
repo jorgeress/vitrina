@@ -1,20 +1,20 @@
 ---
 title: El madrileño
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2021
-autor: C. Tangana
-nota:
-estado: terminado
-favorito: false
-portada: "[[el-madrileno.webp]]"
+author: C. Tangana
+rating:
+status: finished
+favorite: false
+cover: "[[el-madrileno.webp]]"
 tags:
   - pop
   - alternative-folk
   - alternative-r&b
   - art-pop
 mbid: 4829e3a6-b240-4eec-b1a5-2f3da9686b6e
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2012
-autor: Alex G
-nota:
-estado: terminado
-favorito: false
-portada: "[[trick.webp]]"
+author: Alex G
+rating:
+status: finished
+favorite: false
+cover: "[[trick.webp]]"
 tags:
   - bedroom-pop
   - indie-pop
   - indie-rock
   - lo-fi
 mbid: a1851b11-5c14-497a-af7a-fa04c0946c78
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

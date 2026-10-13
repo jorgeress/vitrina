@@ -1,16 +1,16 @@
 ---
-tipo: libro
-seccion: "[[libros/index|Libros]]"
+type: book
+section: "[[libros/index|Libros]]"
 year: 2026
-autor: Guiltythree
-nota:
-estado: terminado
-favorito: false
-portada: "[[shadow-slave.webp]]"
+author: Guiltythree
+rating:
+status: finished
+favorite: false
+cover: "[[shadow-slave.webp]]"
 tags:
   - web-novel
   - fantasy
 coverid: 15173101
-alta: 2026-09-12
+added: 2026-09-12
 ---
 

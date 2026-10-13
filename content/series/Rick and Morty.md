@@ -1,17 +1,17 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2013
-autor: Justin Roiland, Dan Harmon
-nota:
-favorito: false
-portada: "[[rick-and-morty.webp]]"
+author: Justin Roiland, Dan Harmon
+rating:
+favorite: false
+cover: "[[rick-and-morty.webp]]"
 tags:
   - comedy
   - adventure
   - science-fiction
 tvmaze: 216
-alta: 2026-09-16
+added: 2026-09-16
 ---
 
 > [!quote] De qué va

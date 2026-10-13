@@ -1,18 +1,20 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2015
-autor: Akira Toriyama
-nota:
-favorito: false
-portada: "[[dragon-ball-super.webp]]"
+author: Akira Toriyama
+rating:
+favorite: false
+cover: "[[dragon-ball-super.webp]]"
 tags:
   - action
   - adventure
   - anime
   - fantasy
 tvmaze: 2368
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

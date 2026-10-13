@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2013
-autor: Digital Extremes
-nota: 10
-favorito: true
-portada: "[[warframe.webp]]"
+author: Digital Extremes
+rating: 10
+favorite: true
+cover: "[[warframe.webp]]"
 tags:
   - action
   - rpg
   - free-to-play
 appid: 230410
-capsula: 2c0bfd80883c15c57f995b7007c15d439e7dd0fc/library_capsule.jpg
-alta: 2026-09-02
+capsule: 2c0bfd80883c15c57f995b7007c15d439e7dd0fc/library_capsule.jpg
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

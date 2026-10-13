@@ -45,7 +45,7 @@ import sys
 import time
 from pathlib import Path
 
-from vitrina import (SECCIONES, VAULT, articulo_html, articulos_ingleses,
+from vitrina import (fichas, SECCIONES, VAULT, articulo_html, articulos_ingleses,
                        ascii_plano, asegurar_letterboxd, creadores_tvmaze, entrada_steam,
                        escribir_campos, ficha_letterboxd, frontmatter, pedir,
                        serie_tvmaze, vacio, año_tvmaze)
@@ -93,11 +93,11 @@ def datos_juego(titulo, campos, md):
     año = re.search(r"\b(1\d{3}|20\d{2})\b", (datos.get("release_date") or {}).get("date") or "")
     if año:
         valores["year"] = int(año.group(1))
-    # El estudio antes que la distribuidora: en la ficha `autor` es quien lo
+    # El estudio antes que la distribuidora: en la ficha `author` es quien lo
     # hizo, igual que la direccion en una pelicula y no la productora.
     estudios = datos.get("developers") or datos.get("publishers") or []
     if estudios:
-        valores["autor"] = ", ".join(estudios[:2])
+        valores["author"] = ", ".join(estudios[:2])
     # Los generos vienen ya en ingles, porque la ficha se pide con l=english.
     # De aqui solo salen los generos y el año; el texto de "De que va" lo pide
     # textos.py aparte, y ese si en español, que es lo que se lee en la ficha.
@@ -123,7 +123,7 @@ def datos_peli(titulo, campos, md):
     """La direccion y los generos, de la ficha de Letterboxd.
 
     Ni el export de Letterboxd ni su RSS traen el director, asi que las
-    peliculas importadas se quedan sin `autor`. Sale de la misma pagina de la
+    peliculas importadas se quedan sin `author`. Sale de la misma pagina de la
     que ya sale el cartel y de la misma peticion, asi que llega gratis. Si la
     pelicula no se ha podido identificar queda Wikipedia, que lo trae en la
     ficha lateral pero hay que rascarlo del HTML.
@@ -138,7 +138,7 @@ def datos_peli(titulo, campos, md):
         valores = {}
         direccion = ficha.get("direccion")
         if direccion:
-            valores["autor"] = ", ".join(direccion[:2])
+            valores["author"] = ", ".join(direccion[:2])
         generos = [etiqueta(g) for g in ficha.get("generos") or []]
         generos = [g for g in generos if g][:MAX_TAGS]
         if generos:
@@ -158,7 +158,7 @@ def datos_peli(titulo, campos, md):
                    for n in re.sub(r"<[^>]+>", "\n", celda).split("\n")]
         nombres = [n for n in nombres if len(n) > 2 and not re.search(r"[{}:;]", n)][:2]
         if nombres:
-            return {"autor": ", ".join(nombres)}, f"Wikipedia ({articulo})"
+            return {"author": ", ".join(nombres)}, f"Wikipedia ({articulo})"
     return {}, (detalle if not slug_lb else "su ficha de Letterboxd no dice quien dirige")
 
 
@@ -199,7 +199,7 @@ def datos_serie(titulo, campos, md):
         valores["tags"] = generos
     creadores = creadores_tvmaze(tvid)
     if creadores:
-        valores["autor"] = ", ".join(creadores[:2])
+        valores["author"] = ", ".join(creadores[:2])
     if not valores:
         return {}, f"su ficha de TVmaze esta vacia ({tvid})"
     return valores, f"TVmaze ({serie.get('name')})"
@@ -399,11 +399,11 @@ def datos_libro(titulo, campos, md):
 
 
 # Que sabe rellenar cada seccion, y en que campos.
-FUENTES = {"juego": (datos_juego, ("year", "autor", "tags")),
-           "peli": (datos_peli, ("autor", "tags")),
-           "serie": (datos_serie, ("year", "autor", "tags")),
+FUENTES = {"game": (datos_juego, ("year", "author", "tags")),
+           "film": (datos_peli, ("author", "tags")),
+           "series": (datos_serie, ("year", "author", "tags")),
            "album": (datos_album, ("tags",)),
-           "libro": (datos_libro, ("tags",))}
+           "book": (datos_libro, ("tags",))}
 
 
 # --- recorrido ---------------------------------------------------------------
@@ -417,7 +417,7 @@ def fichas(args):
         c for c, tipo in SECCIONES.items() if tipo in FUENTES]
     salida = []
     for carpeta in carpetas:
-        salida += sorted(p for p in (VAULT / carpeta).glob("*.md") if p.stem != "index")
+        salida += fichas(carpeta)
     return salida
 
 
@@ -435,7 +435,7 @@ def main():
 
     for md in fichas(args):
         campos = frontmatter(md.read_text(encoding="utf-8"))
-        tipo = campos.get("tipo") or SECCIONES.get(md.parent.name)
+        tipo = campos.get("type") or SECCIONES.get(md.parent.name)
         titulo = campos.get("title") or md.stem
         nombre = f"{md.parent.name}/{md.stem}"
         if tipo not in FUENTES:

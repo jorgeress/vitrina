@@ -1,17 +1,17 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2022
-autor: Depresión Sonora
-nota:
-estado: terminado
-favorito: false
-portada: "[[el-arte-de-morir-muy-despacio.webp]]"
+author: Depresión Sonora
+rating:
+status: finished
+favorite: false
+cover: "[[el-arte-de-morir-muy-despacio.webp]]"
 tags:
   - post-punk
   - darkwave
 mbid: 35b3ba99-8df6-4330-8da4-3b929878dde1
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

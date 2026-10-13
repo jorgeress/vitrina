@@ -1,28 +1,28 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { t } from "../../i18n";
 import { url } from "../../lib/obras";
+
+export const getStaticPaths = () => [{ params: { buscar: t.rutas.buscar } }];
 
 const base = url("pagefind/");
 ---
 
-<Base titulo="Buscar" descripcion="Buscar en todas las salas de la vitrina." activa="buscar">
+<Base titulo={t.buscar} descripcion={t.buscarDescripcion} activa="buscar">
   <div class="contenedor">
     <header class="titulo-pagina">
-      <h1>Buscar</h1>
-      <p>En todas las salas: títulos, autores, cartelas y de qué va cada pieza.</p>
+      <h1>{t.buscar}</h1>
+      <p>{t.buscarSub}</p>
     </header>
     <div id="buscador" data-base={base}></div>
-    <p id="sin-indice" class="aviso" hidden>
-      El índice del buscador se crea al construir la web (<code>npm run build</code>), así que con <code>npm run dev</code> no
-      hay nada que buscar todavía.
-    </p>
+    <p id="sin-indice" class="aviso" hidden>{t.sinIndice}</p>
   </div>
 </Base>
 
 <script>
   // Pagefind: el índice son ficheros estáticos que se bajan a trozos según lo
   // que se escribe, así que busca sin servidor. Su interfaz trae el castellano
-  // y lo elige por el lang de la página.
+  // y el inglés, y elige por el lang de la página.
   const caja = document.getElementById("buscador")!;
   const base = caja.dataset.base!;
   const estilos = document.createElement("link");

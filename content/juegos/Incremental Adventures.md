@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2020
-autor: Gniller
-nota:
-favorito: false
-portada: "[[incremental-adventures.webp]]"
+author: Gniller
+rating:
+favorite: false
+cover: "[[incremental-adventures.webp]]"
 tags:
   - casual
   - free-to-play
   - indie
   - rpg
 appid: 1371630
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

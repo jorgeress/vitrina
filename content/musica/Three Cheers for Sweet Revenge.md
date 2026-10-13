@@ -1,20 +1,20 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2004
-autor: My Chemical Romance
-nota:
-estado: terminado
-favorito: true
-portada: "[[three-cheers-for-sweet-revenge.webp]]"
+author: My Chemical Romance
+rating:
+status: finished
+favorite: true
+cover: "[[three-cheers-for-sweet-revenge.webp]]"
 tags:
   - pop-punk
   - rock
   - emo
   - punk
 mbid: 1d563513-87dc-308f-8bac-418fab4054cf
-favoritas: 1
-alta: 2026-09-04
+favorite_tracks: 1
+added: 2026-09-04
 ---
 
 ## Canciones

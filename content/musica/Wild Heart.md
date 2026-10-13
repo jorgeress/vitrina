@@ -1,15 +1,15 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2013
-autor: Current Joys
-nota:
-estado: terminado
-favorito: false
-portada: "[[wild-heart.webp]]"
+author: Current Joys
+rating:
+status: finished
+favorite: false
+cover: "[[wild-heart.webp]]"
 tags: []
 mbid: aea86a6a-ff03-4e56-9f04-1cf63ff70725
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

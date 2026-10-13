@@ -1,6 +1,6 @@
 ---
-tipo: 
-estado: pendiente
+type: 
+status: pending
 ---
 
 Plantilla mínima: de todo lo que puede llevar una ficha, `tipo` es lo único que

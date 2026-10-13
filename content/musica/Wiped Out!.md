@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2015
-autor: The Neighbourhood
-nota:
-estado: terminado
-favorito: false
-portada: "[[wiped-out.webp]]"
+author: The Neighbourhood
+rating:
+status: finished
+favorite: false
+cover: "[[wiped-out.webp]]"
 tags:
   - alternative-rock
   - pop
   - pop-rock
   - rock
 mbid: 89299f62-9c70-4bff-a42c-8df2ba512422
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

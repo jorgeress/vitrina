@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2023
-autor: Blobfish
-nota:
-favorito: false
-portada: "[[brotato.webp]]"
+author: Blobfish
+rating:
+favorite: false
+cover: "[[brotato.webp]]"
 tags:
   - action
   - casual
   - indie
   - rpg
 appid: 1942280
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

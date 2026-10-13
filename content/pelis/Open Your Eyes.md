@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 1997
-autor: Alejandro Amenábar
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[open-your-eyes.webp]]"
+author: Alejandro Amenábar
+rating: 10
+status: finished
+favorite: false
+cover: "[[open-your-eyes.webp]]"
 tags:
   - thriller
   - drama
   - science-fiction
 letterboxd: open-your-eyes
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

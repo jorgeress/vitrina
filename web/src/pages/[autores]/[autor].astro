@@ -1,13 +1,17 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Portada from "../../components/Portada.astro";
-import { autoresRepetidos, cantidad, obras, slugAutor, slugsAutores, url, type Obra } from "../../lib/obras";
+import { t } from "../../i18n";
+import { autoresRepetidos, obras, piezas, rutaFija, slugAutor, slugsAutores, type Obra } from "../../lib/obras";
 
 export async function getStaticPaths() {
   const grupos = autoresRepetidos(await obras());
   const slugs = await slugsAutores();
   // La misma dirección que la página que escribe autores.py en la vault.
-  return [...grupos].map(([autor, lista]) => ({ params: { autor: slugAutor(autor, slugs) }, props: { autor, lista } }));
+  return [...grupos].map(([autor, lista]) => ({
+    params: { autores: t.rutas.autores, autor: slugAutor(autor, slugs) },
+    props: { autor, lista },
+  }));
 }
 
 const { autor, lista } = Astro.props as { autor: string; lista: Obra[] };
@@ -16,14 +20,12 @@ const desde = Math.min(...lista.map((o) => o.data.year ?? 9999));
 const hasta = Math.max(...lista.map((o) => o.data.year ?? 0));
 ---
 
-<Base titulo={autor} descripcion={`Lo que tengo de ${autor} en la vitrina.`}>
+<Base titulo={autor} descripcion={t.loQueTengoDe(autor)}>
   <div class="contenedor">
     <header class="titulo-pagina">
-      <a class="volver" href={url("autores/")}>← Autores</a>
+      <a class="volver" href={rutaFija("autores")}>← {t.autores}</a>
       <h1>{autor}</h1>
-      <p>
-        {cantidad(lista.length, "pieza", "piezas")} en la vitrina{desde < hasta && `, de ${desde} a ${hasta}`}.
-      </p>
+      <p>{t.enLaVitrinaDesde(piezas(lista.length), desde, hasta)}</p>
     </header>
     <div class="rejilla">
       {ordenadas.map((o) => <Portada obra={o} mixta viaja />)}

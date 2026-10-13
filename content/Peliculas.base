@@ -2,31 +2,31 @@ formulas:
   # `nota` esta vacia en la mayoria de las fichas, y el comparador de Bases
   # manda los vacios al principio cuando el orden es DESC: la galeria abria con
   # lo que no he puntuado. Esto los baja a -1 para que caigan al final.
-  puntuacion: if(note.nota, note.nota, -1)
+  puntuacion: if(note.rating, note.rating, -1)
   # La nota que se pinta, que no es la que se ordena. Falta en la mayoria, y
   # en una rejilla eso se nota: las tarjetas sin ella median una fila menos y
   # las filas de la galeria quedaban dentadas. El guion las iguala, y
   # dice ademas lo que es verdad -- que no la he puntuado -- con el mismo signo
   # que ya usan las tablas para una casilla vacia.
-  nota: if(note.nota, note.nota, "—")
+  nota: if(note.rating, note.rating, "—")
 filters:
   and:
-    - note.tipo == "peli"
+    - note.type == "film"
 properties:
   file.name:
     displayName: Título
   note.year:
     displayName: Año
-  note.autor:
+  note.author:
     displayName: Dirección
-  note.nota:
+  note.rating:
     displayName: Nota
 views:
   - type: cards
     name: Galería
     order:
       - file.name
-      - note.autor
+      - note.author
       - note.year
       - formula.nota
     sort:
@@ -34,16 +34,16 @@ views:
         direction: DESC
       - property: file.name
         direction: ASC
-    image: note.portada
+    image: note.cover
     cardSize: 220
     imageAspectRatio: 0.67
   - type: table
     name: Tabla
     order:
       - file.name
-      - note.autor
+      - note.author
       - note.year
-      - note.nota
+      - note.rating
     sort:
       - property: formula.puntuacion
         direction: DESC
@@ -53,10 +53,10 @@ views:
     name: Favoritos
     filters:
       and:
-        - note.favorito == true
+        - note.favorite == true
     order:
       - file.name
-      - note.autor
+      - note.author
       - note.year
       - formula.nota
     sort:
@@ -64,14 +64,14 @@ views:
         direction: DESC
       - property: file.name
         direction: ASC
-    image: note.portada
+    image: note.cover
     cardSize: 220
     imageAspectRatio: 0.67
   # No hay vista de lo ya visto: Galería ya las enseña, y con casi todo
   # visto seria la misma lista con otro nombre. Lo que si hace falta
   # apartado es lo que queda, que es lo que esta pestaña enseña.
-  # "en curso" entra aqui: empezada no es terminada, y si se quedara fuera, la
-  # serie que estoy viendo ahora no saldria en ninguna de las dos. "abandonado"
+  # "in-progress" entra aqui: empezada no es terminada, y si se quedara fuera, la
+  # serie que estoy viendo ahora no saldria en ninguna de las dos. "dropped"
   # no, que eso ya no espera nada.
   #
   # Y sin nota, ni pintada ni en el orden: no la tiene nada de lo que todavia no
@@ -81,15 +81,15 @@ views:
     name: Por ver
     filters:
       or:
-        - note.estado == "pendiente"
-        - note.estado == "en curso"
+        - note.status == "pending"
+        - note.status == "in-progress"
     order:
       - file.name
-      - note.autor
+      - note.author
       - note.year
     sort:
       - property: file.name
         direction: ASC
-    image: note.portada
+    image: note.cover
     cardSize: 220
     imageAspectRatio: 0.67

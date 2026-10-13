@@ -1,17 +1,17 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 1957
-autor: Ingmar Bergman
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[the-seventh-seal.webp]]"
+author: Ingmar Bergman
+rating: 10
+status: finished
+favorite: false
+cover: "[[the-seventh-seal.webp]]"
 tags:
   - fantasy
   - drama
 letterboxd: the-seventh-seal
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

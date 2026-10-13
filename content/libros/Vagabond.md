@@ -1,18 +1,20 @@
 ---
-tipo: libro
-seccion: "[[libros/index|Libros]]"
+type: book
+section: "[[libros/index|Libros]]"
 year: 1999
-autor: Takehiko Inoue
-nota:
-estado: terminado
-favorito: false
-portada: "[[vagabond.webp]]"
+author: Takehiko Inoue
+rating:
+status: finished
+favorite: false
+cover: "[[vagabond.webp]]"
 tags:
   - manga
   - history
 coverid: 8432432
 wikipedia: Vagabond (manga)
-alta: 2026-09-12
+added: 2026-09-12
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

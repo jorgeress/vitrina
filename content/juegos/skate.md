@@ -1,19 +1,19 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2025
-autor: Full Circle
-nota:
-favorito: false
-portada: "[[skate.webp]]"
+author: Full Circle
+rating:
+favorite: false
+cover: "[[skate.webp]]"
 tags:
   - action
   - sports
   - free-to-play
   - early-access
 appid: 3354750
-capsula: 8dd654efd195e289b91d1d3afe1cbb24123fe6b5/library_capsule.jpg
-alta: 2026-09-02
+capsule: 8dd654efd195e289b91d1d3afe1cbb24123fe6b5/library_capsule.jpg
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

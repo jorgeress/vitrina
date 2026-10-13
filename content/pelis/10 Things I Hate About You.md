@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 1999
-autor: Gil Junger
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[10-things-i-hate-about-you.webp]]"
+author: Gil Junger
+rating: 10
+status: finished
+favorite: false
+cover: "[[10-things-i-hate-about-you.webp]]"
 tags:
   - comedy
   - drama
   - romance
 letterboxd: 10-things-i-hate-about-you
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

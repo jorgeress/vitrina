@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2011
-autor: Alex G
-nota:
-estado: terminado
-favorito: false
-portada: "[[race.webp]]"
+author: Alex G
+rating:
+status: finished
+favorite: false
+cover: "[[race.webp]]"
 tags:
   - bedroom-pop
   - indie-pop
   - lo-fi
   - pop
 mbid: 1b6f453c-0889-473e-b6cf-6bb559928f25
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

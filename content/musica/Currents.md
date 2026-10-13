@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2015
-autor: Tame Impala
-nota:
-estado: terminado
-favorito: false
-portada: "[[currents.webp]]"
+author: Tame Impala
+rating:
+status: finished
+favorite: false
+cover: "[[currents.webp]]"
 tags:
   - psychedelic-rock
   - neo-psychedelia
   - rock
   - psychedelic-pop
 mbid: 08aa7a6c-3e43-4459-87b2-e47faf3a088a
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

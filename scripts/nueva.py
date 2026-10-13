@@ -31,7 +31,7 @@ Cada tipo pregunta a la fuente que mejor lo conoce, y ninguna pide clave:
 Lo que la fuente no sabe es lo tuyo, y va en las opciones:
 
   --nota 8            del 1 al 10
-  --estado "en curso" pendiente, en curso, terminado, abandonado
+  --estado "en curso" pendiente, en curso, terminado, abandonado (o en ingles)
   --favorito          la marca como favorita: entra en Favoritos
   --elegir 2          sin preguntar: el resultado numero 2
   --fichero "Aku no Hana"  como se llama el fichero cuando del titulo no sale
@@ -39,6 +39,10 @@ Lo que la fuente no sabe es lo tuyo, y va en las opciones:
                       "悪の華" no queda nada al pasar a ASCII. El titulo de
                       verdad se guarda igual, en `title`.
   --borrador          entra con draft: true, o sea sin salir en la web
+  --oculta            entra con hidden: true: no sale en la web, pero el
+                      fichero esta en el repo y se puede leer en GitHub
+  --privada           va a la carpeta privada (content/privado/), que git no
+                      sube: ni la web ni GitHub la ven
   --dry-run           dice que crearia, sin tocar nada
 """
 
@@ -55,7 +59,7 @@ import autores
 import estado
 import textos
 from datos import datos_juego, datos_serie
-from vitrina import (ESTADOS, PORTADAS, SECCIONES, UA, VAULT, entrada_steam,
+from vitrina import (fichas, portadas_de, ESTADOS, PORTADAS, SECCIONES, UA, VAULT, entrada_steam, estado_de, tipo_de,
                        escribir_campos, escribir_ficha, ficha_letterboxd, frontmatter,
                        nombre_de_fichero, parecidos, pedir, peliculas_wikidata,
                        preguntar, serie_tvmaze, series_tvmaze, sin_letras_latinas, slug, wikidata,
@@ -76,12 +80,12 @@ CARPETAS = {tipo: carpeta for carpeta, tipo in SECCIONES.items()}
 # catalogo esta caido", y decir lo primero cuando pasa lo segundo manda a
 # buscar el fallo justo donde no esta.
 
-NOMBRE_FUENTE = {"juego": "Steam", "peli": "Wikidata", "serie": "TVmaze",
-                 "album": "MusicBrainz", "libro": "Open Library"}
+NOMBRE_FUENTE = {"game": "Steam", "film": "Wikidata", "series": "TVmaze",
+                 "album": "MusicBrainz", "book": "Open Library"}
 
 def candidato(titulo, year=None, autor=None, pista=None, **ids):
     return {"titulo": re.sub(r"\s+", " ", titulo or "").strip(),
-            "year": year, "autor": autor, "pista": pista, "ids": ids}
+            "year": year, "author": autor, "pista": pista, "ids": ids}
 
 
 def describir(c):
@@ -90,8 +94,8 @@ def describir(c):
     # descuadra la lista de resultados.
     titulo = c["titulo"] if len(c["titulo"]) <= 70 else c["titulo"][:69].rstrip() + "…"
     partes = [titulo]
-    if c["autor"]:
-        partes.append("— " + c["autor"])
+    if c["author"]:
+        partes.append("— " + c["author"])
     if c["year"]:
         partes.append(f"({c['year']})")
     if c["pista"]:
@@ -227,8 +231,8 @@ def candidato_libro(doc):
                      coverid=doc.get("cover_i"))
 
 
-BUSCADORES = {"juego": buscar_juego, "peli": buscar_peli, "serie": buscar_serie,
-              "album": buscar_album, "libro": buscar_libro}
+BUSCADORES = {"game": buscar_juego, "film": buscar_peli, "series": buscar_serie,
+              "album": buscar_album, "book": buscar_libro}
 assert set(BUSCADORES) == set(NOMBRE_FUENTE)
 
 
@@ -339,14 +343,14 @@ def libro_por_edicion(edicion):
 # que es como sale al abrirla desde el diario de otro; y en el de Spotify, el
 # idioma (open.spotify.com/intl-es/album/...).
 ENLACES = [
-    (r"(?:store\.steampowered|steamcommunity)\.com/app/(\d+)", "juego", juego_por_appid),
-    (r"letterboxd\.com/(?:[^/]+/)?film/([^/?#]+)", "peli", peli_por_slug),
-    (r"tvmaze\.com/shows/(\d+)", "serie", serie_por_id),
+    (r"(?:store\.steampowered|steamcommunity)\.com/app/(\d+)", "game", juego_por_appid),
+    (r"letterboxd\.com/(?:[^/]+/)?film/([^/?#]+)", "film", peli_por_slug),
+    (r"tvmaze\.com/shows/(\d+)", "series", serie_por_id),
     (rf"musicbrainz\.org/release-group/({UUID})", "album", album_por_grupo),
     (rf"musicbrainz\.org/release/({UUID})", "album", album_por_edicion),
     (r"open\.spotify\.com/(?:intl-[a-z]+/)?album/([A-Za-z0-9]+)", "album", album_por_spotify),
-    (r"openlibrary\.org/works/(OL\d+W)", "libro", libro_por_obra),
-    (r"openlibrary\.org/books/(OL\d+M)", "libro", libro_por_edicion),
+    (r"openlibrary\.org/works/(OL\d+W)", "book", libro_por_obra),
+    (r"openlibrary\.org/books/(OL\d+M)", "book", libro_por_edicion),
 ]
 
 
@@ -380,10 +384,10 @@ def leer_enlace(enlace):
 # fuerte; libro antes que disco por lo mismo con Open Library, que El Hobbit
 # trae tambien el disco del audiolibro. `nueva.py peli <enlace>` elige a mano.
 NATIVAS = {
-    "P1733": ("juego", juego_por_appid),
-    "P8600": ("serie", serie_por_id),
-    "P6127": ("peli", peli_por_slug),
-    "P648": ("libro", lambda ol: (libro_por_obra if ol.endswith("W")
+    "P1733": ("game", juego_por_appid),
+    "P8600": ("series", serie_por_id),
+    "P6127": ("film", peli_por_slug),
+    "P648": ("book", lambda ol: (libro_por_obra if ol.endswith("W")
                                   else libro_por_edicion)(ol)),
     "P436": ("album", album_por_grupo),
 }
@@ -391,21 +395,21 @@ NATIVAS = {
 # Enlace -> la propiedad de Wikidata que guarda ese id, el sitio, y el tipo que
 # suele ser, para decir por donde buscar si Wikidata no llega.
 PUENTES = [
-    (r"imdb\.com/title/(tt\d+)", "P345", "IMDb", "peli"),
-    (r"themoviedb\.org/movie/(\d+)", "P4947", "TMDB", "peli"),
-    (r"themoviedb\.org/tv/(\d+)", "P4983", "TMDB", "serie"),
-    (r"filmaffinity\.com/[a-z]{2}/film(\d+)\.html", "P480", "FilmAffinity", "peli"),
-    (r"myanimelist\.net/anime/(\d+)", "P4086", "MyAnimeList", "serie"),
-    (r"myanimelist\.net/manga/(\d+)", "P4087", "MyAnimeList", "libro"),
-    (r"anilist\.co/anime/(\d+)", "P8729", "AniList", "serie"),
-    (r"anilist\.co/manga/(\d+)", "P8731", "AniList", "libro"),
-    (r"goodreads\.com/(?:[a-z]+/)?book/show/(\d+)", "P2969", "Goodreads", "libro"),
-    (r"goodreads\.com/work/\w+/(\d+)", "P8383", "Goodreads", "libro"),
+    (r"imdb\.com/title/(tt\d+)", "P345", "IMDb", "film"),
+    (r"themoviedb\.org/movie/(\d+)", "P4947", "TMDB", "film"),
+    (r"themoviedb\.org/tv/(\d+)", "P4983", "TMDB", "series"),
+    (r"filmaffinity\.com/[a-z]{2}/film(\d+)\.html", "P480", "FilmAffinity", "film"),
+    (r"myanimelist\.net/anime/(\d+)", "P4086", "MyAnimeList", "series"),
+    (r"myanimelist\.net/manga/(\d+)", "P4087", "MyAnimeList", "book"),
+    (r"anilist\.co/anime/(\d+)", "P8729", "AniList", "series"),
+    (r"anilist\.co/manga/(\d+)", "P8731", "AniList", "book"),
+    (r"goodreads\.com/(?:[a-z]+/)?book/show/(\d+)", "P2969", "Goodreads", "book"),
+    (r"goodreads\.com/work/\w+/(\d+)", "P8383", "Goodreads", "book"),
     (r"music\.apple\.com/[a-z]{2}/album/(?:[^/?#]+/)?(\d+)", "P2281", "Apple Music", "album"),
     (r"deezer\.com/(?:[a-z]{2}/)?album/(\d+)", "P2722", "Deezer", "album"),
     (r"discogs\.com/(?:[a-z]{2}/)?master/(\d+)", "P1954", "Discogs", "album"),
-    (r"igdb\.com/games/([a-z0-9-]+)", "P5794", "IGDB", "juego"),
-    (r"howlongtobeat\.com/game/(\d+)", "P2816", "HowLongToBeat", "juego"),
+    (r"igdb\.com/games/([a-z0-9-]+)", "P5794", "IGDB", "game"),
+    (r"howlongtobeat\.com/game/(\d+)", "P2816", "HowLongToBeat", "game"),
 ]
 WIKIPEDIA_RE = re.compile(r"([a-z-]+)\.(?:m\.)?wikipedia\.org/wiki/([^?#]+)")
 WIKIDATA_RE = re.compile(r"wikidata\.org/wiki/(Q\d+)")
@@ -544,16 +548,16 @@ def destino(enlace):
 
 def completar(tipo, elegido):
     campos = {c: v for c, v in elegido["ids"].items() if v}
-    if tipo == "juego":
+    if tipo == "game":
         valores, detalle = datos_juego(elegido["titulo"], campos, None)
         return {**campos, **valores}, detalle
-    if tipo == "peli":
+    if tipo == "film":
         ficha = ficha_letterboxd(campos.get("letterboxd", ""))
         direccion = ficha.get("direccion") or []
         if direccion:
-            return {**campos, "autor": ", ".join(direccion[:2])}, "Letterboxd"
+            return {**campos, "author": ", ".join(direccion[:2])}, "Letterboxd"
         return campos, "su ficha de Letterboxd no dice quien dirige"
-    if tipo == "serie":
+    if tipo == "series":
         # La lista ya trajo el año y la cadena; esto pide los generos y a quien
         # se le atribuye la serie, que estan en su ficha y en su equipo. Lo que
         # venga de aqui pisa a la cadena, que no es quien la hizo.
@@ -592,10 +596,10 @@ def nombre_latino(tipo, elegido):
 def ficha_con_id(carpeta, ids):
     """La ficha de la carpeta que ya lleva alguno de esos ids, si la hay."""
     buscados = {(c, str(v)) for c, v in ids.items() if v}
-    for md in sorted((VAULT / carpeta).glob("*.md")):
+    for md in fichas(carpeta):
         campos = frontmatter(md.read_text(encoding="utf-8"))
         if any(campos.get(c) == v for c, v in buscados):
-            return md.stem
+            return md.relative_to(VAULT.parent)
     return None
 
 
@@ -612,8 +616,8 @@ def caratula(tipo, md, campos, titulo):
     if not img:
         return None
     nombre = f"{slug(md.stem)}.webp"
-    peso = guardar(img, PORTADAS / nombre)
-    escribir_campos(md, {"portada": f"[[{nombre}]]"})
+    peso = guardar(img, portadas_de(md) / nombre)
+    escribir_campos(md, {"cover": f"[[{nombre}]]"})
     return f"{nombre}, {peso // 1024} KB, {fuente}"
 
 
@@ -623,18 +627,26 @@ def main():
     p.add_argument("tipo", metavar="tipo|enlace",
                    help=f"{', '.join(BUSCADORES)}, o el enlace de la obra")
     p.add_argument("titulo", nargs="?", help="lo que escribirias en un buscador")
-    p.add_argument("--nota", type=int, choices=range(1, 11), metavar="1-10")
-    p.add_argument("--estado", choices=ESTADOS, default="pendiente")
-    p.add_argument("--favorito", action="store_true")
+    p.add_argument("--nota", "--rating", dest="nota", type=int, choices=range(1, 11),
+                   metavar="1-10")
+    p.add_argument("--estado", "--status", dest="estado", type=estado_de,
+                   choices=ESTADOS, default="pending")
+    p.add_argument("--favorito", "--favorite", dest="favorito", action="store_true")
     p.add_argument("--elegir", type=int, metavar="N",
                    help="sin preguntar: el resultado numero N")
     p.add_argument("--resultados", type=int, default=8, metavar="N")
     p.add_argument("--fichero", metavar="NOMBRE",
                    help="como se llama el fichero, si del titulo no sale uno")
-    p.add_argument("--borrador", action="store_true",
+    p.add_argument("--borrador", "--draft", dest="borrador", action="store_true",
                    help="entra con draft: true, o sea sin salir en la web")
+    p.add_argument("--oculta", "--hidden", dest="oculta", action="store_true",
+                   help="entra con hidden: true: no sale en la web, pero esta en el repo")
+    p.add_argument("--privada", "--private", dest="privada", action="store_true",
+                   help="va a la carpeta privada, que no se sube a ningun sitio")
     p.add_argument("--dry-run", action="store_true", help="no escribe ni baja nada")
     args = p.parse_args()
+    if not es_enlace(args.tipo):
+        args.tipo = tipo_de(args.tipo)
     # El enlace puede ir solo o detras del tipo: "nueva.py <enlace>" y
     # "nueva.py peli <enlace>" hacen lo mismo, y el tipo lo dice el enlace.
     escrito = next((a for a in (args.tipo, args.titulo) if es_enlace(a)), None)
@@ -691,9 +703,9 @@ def alta(args):
         return 1
     if not candidatos:
         print(f"No encuentro nada con «{args.titulo}».")
-        if args.tipo == "libro":
+        if args.tipo == "book":
             print("Prueba con el título en inglés: el catálogo va casi todo por ahí.")
-        if args.tipo == "peli":
+        if args.tipo == "film":
             print("Prueba con el título original: es el que suele estar en Wikidata.")
         return 1
 
@@ -723,7 +735,7 @@ def alta(args):
     # TVmaze son dos ficheros y una serie. El id si es el mismo.
     repetida = ficha_con_id(carpeta, elegido["ids"])
     if repetida:
-        print(f"\nEsa ya la tienes: content/{carpeta}/{repetida}.md lleva el mismo id.")
+        print(f"\nEsa ya la tienes: {repetida} lleva el mismo id.")
         return 0
 
     extra, detalle = completar(args.tipo, elegido)
@@ -753,10 +765,10 @@ def alta(args):
     # En las series la columna de la izquierda es la cadena, que sirve para
     # reconocer cual de las tres "The Office" es y no para firmar la obra: a la
     # ficha solo va si `completar` trae a alguien.
-    autor = None if args.tipo == "serie" else elegido["autor"]
-    campos = {"tipo": args.tipo, "year": elegido["year"], "autor": autor,
-              "nota": args.nota, "estado": args.estado, "favorito": args.favorito,
-              "portada": None, "tags": None}
+    autor = None if args.tipo == "series" else elegido["author"]
+    campos = {"type": args.tipo, "year": elegido["year"], "author": autor,
+              "rating": args.nota, "status": args.estado, "favorite": args.favorito,
+              "cover": None, "tags": None}
     # Lo que traiga la ficha de la obra manda sobre lo que trajo el buscador:
     # la del juego sabe el estudio y el año, y la lista solo sabia el nombre.
     campos.update({c: v for c, v in extra.items() if v})
@@ -770,8 +782,10 @@ def alta(args):
             print(f"  ({detalle})")
         return 0
 
+    if getattr(args, "oculta", False):
+        campos["hidden"] = True
     md = escribir_ficha(carpeta, titulo, campos, borrador=args.borrador,
-                        fichero=fichero)
+                        fichero=fichero, privada=getattr(args, "privada", False))
     if not md:
         print(f"\n«{titulo}» ya estaba en content/{carpeta}/.")
         return 0

@@ -2,13 +2,17 @@
 import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Portada from "../../components/Portada.astro";
+import { DUENO } from "../../config";
+import { t } from "../../i18n";
 import {
-  ESTADOS,
   autores,
   autoresRepetidos,
   cartela,
+  fechaParcial,
   fuentes,
-  mayuscula,
+  grupos,
+  marcas,
+  mesYAño,
   nombreTag,
   obras,
   porAlta,
@@ -16,10 +20,13 @@ import {
   relacionadas,
   ruta,
   rutaAutor,
+  rutaFija,
+  rutaGrupo,
   slugsAutores,
   rutaTag,
   seccionDe,
   slugObra,
+  tarjeta,
   titulo,
   transicion,
   url,
@@ -30,14 +37,14 @@ import {
 export async function getStaticPaths() {
   const todas = await obras();
   return todas.map((obra) => ({
-    params: { seccion: seccionDe(obra.data.tipo).slug, obra: slugObra(obra) },
+    params: { seccion: seccionDe(obra.data.type).slug, obra: slugObra(obra) },
     props: { obra, todas },
   }));
 }
 
 const { obra, todas } = Astro.props as { obra: Obra; todas: Obra[] };
 const d = obra.data;
-const seccion = seccionDe(d.tipo);
+const seccion = seccionDe(d.type);
 const nombre = titulo(obra);
 const imagen = portada(obra);
 const { Content } = await render(obra);
@@ -49,60 +56,62 @@ const enlaces = fuentes(obra);
 const escrita = cartela(obra);
 // Anterior y siguiente dentro de la sala, en el orden en que entraron: el
 // mismo de la rejilla, así que pasar de una a otra es recorrerla.
-const sala = todas.filter((o) => o.data.tipo === d.tipo).sort(porAlta);
+const sala = todas.filter((o) => o.data.type === d.type).sort(porAlta);
 const posicion = sala.findIndex((o) => o.id === obra.id);
 const anterior = sala[posicion - 1];
 const siguiente = sala[posicion + 1];
 
 // Lo que leen los buscadores: qué es la obra y, si hay nota o cartela, una
 // reseña mía con ellas.
-const TIPOS_SCHEMA = { juego: "VideoGame", peli: "Movie", serie: "TVSeries", libro: "Book", album: "MusicAlbum" } as const;
+const TIPOS_SCHEMA = { game: "VideoGame", film: "Movie", series: "TVSeries", book: "Book", album: "MusicAlbum" } as Record<string, string>;
 // Quien firma un disco es un grupo y un juego lo firma un estudio; lo demás,
 // personas.
-const TIPO_CREADOR = { album: "MusicGroup", juego: "Organization" } as Record<string, string>;
-const creadores = quienes.map((n) => ({ "@type": TIPO_CREADOR[d.tipo] ?? "Person", name: n }));
+const TIPO_CREADOR = { album: "MusicGroup", game: "Organization" } as Record<string, string>;
+const creadores = quienes.map((n) => ({ "@type": TIPO_CREADOR[d.type] ?? "Person", name: n }));
 const datosEstructurados = {
   "@context": "https://schema.org",
-  "@type": TIPOS_SCHEMA[d.tipo],
+  "@type": TIPOS_SCHEMA[d.type],
   name: nombre,
   ...(imagen && { image: new URL(imagen, Astro.site).href }),
   ...(d.year && { datePublished: String(d.year) }),
-  ...(creadores.length && (d.tipo === "album" ? { byArtist: creadores } : d.tipo === "peli" ? { director: creadores } : { author: creadores })),
+  ...(creadores.length && (d.type === "album" ? { byArtist: creadores } : d.type === "film" ? { director: creadores } : { author: creadores })),
   ...(d.tags?.length && { genre: d.tags.map(nombreTag) }),
-  ...((d.nota || escrita) && {
+  ...((d.rating || escrita) && {
     review: {
       "@type": "Review",
-      author: { "@type": "Person", name: "jorgeress" },
-      ...(d.nota && { reviewRating: { "@type": "Rating", ratingValue: d.nota, bestRating: 10, worstRating: 1 } }),
+      author: { "@type": "Person", name: DUENO },
+      ...(d.rating && { reviewRating: { "@type": "Rating", ratingValue: d.rating, bestRating: 10, worstRating: 1 } }),
       ...(escrita && { reviewBody: escrita }),
     },
   }),
 };
 
-const resumen = escrita ?? `${nombre}${d.year ? ` (${d.year})` : ""}, en la sala de ${seccion.nombre.toLowerCase()} de la vitrina.`;
+const resumen = escrita ?? t.resumenFicha(`${nombre}${d.year ? ` (${d.year})` : ""}`, seccion.nombre);
+const suyos = (await grupos()).filter((g) => g.obras.some((o) => o.id === obra.id));
+const marcadas = marcas(obra);
 
 /** Por qué está unida: el autor que comparten o sus dos tags más raros. */
 function motivo(v: Vecina): string {
   const [primero, segundo] = v.motivos;
   if (!primero) return "";
-  if (quienes.includes(primero)) return `También de ${primero}`;
+  if (quienes.includes(primero)) return t.tambienDe(primero);
   return [primero, segundo].filter(Boolean).map((t) => nombreTag(t!)).join(" · ");
 }
 ---
 
-<Base titulo={nombre} descripcion={resumen} imagen={imagen} activa={seccion.slug}>
+<Base titulo={nombre} descripcion={resumen} imagen={tarjeta(obra)} activa={seccion.slug}>
   <script type="application/ld+json" set:html={JSON.stringify(datosEstructurados)} />
-  <article style={`--seccion:var(--${d.tipo})`} data-pagefind-body>
+  <article style={`--seccion:var(--${d.type})`} data-pagefind-body>
     <header class="escaparate">
       {imagen && <div class="fondo" style={`background-image:url('${imagen}')`} aria-hidden="true" />}
       <div class="contenedor dentro">
         <div
-          class:list={["cubierta", d.tipo === "album" && "cuadrada", d.estado === "abandonado" && "retirada"]}
+          class:list={["cubierta", d.type === "album" && "cuadrada", d.status === "dropped" && "retirada"]}
           style={`view-transition-name:${transicion(obra)}`}
         >
           {
             imagen ? (
-              <img src={imagen} alt={`Portada de ${nombre}`} data-pagefind-meta="image[src]" />
+              <img src={imagen} alt={t.portadaDe(nombre)} data-pagefind-meta="image[src]" />
             ) : (
               <span class="sin-imagen">{nombre}</span>
             )
@@ -117,7 +126,7 @@ function motivo(v: Vecina): string {
               // FromSoftware, Inc.» solo FromSoftware la tiene.
               quienes.map((a, i) => (
                 <>
-                  {i > 0 && (i === quienes.length - 1 ? " y " : ", ")}
+                  {i > 0 && (i === quienes.length - 1 ? ` ${t.y} ` : ", ")}
                   {conPagina.has(a) ? <a href={rutaAutor(a, slugs)}>{a}</a> : <span>{a}</span>}
                 </>
               ))
@@ -126,16 +135,18 @@ function motivo(v: Vecina): string {
             {d.year}
           </p>
           <div class="sellos">
-            {d.favorito && <a class="sello dorado" href={url("favoritos/")}>★ Lo mejor de lo mejor</a>}
-            {d.nota && <span class="sello">{d.nota}<small>/10</small></span>}
-            {d.estado && <span class="sello">{ESTADOS[d.estado]}</span>}
+            {marcadas.map((m) => <span class="sello marca">{t[m]}</span>)}
+            {d.favorite && <a class="sello dorado" href={rutaFija("favoritos")}>★ {t.mejor}</a>}
+            {d.rating && <span class="sello">{d.rating}<small>/10</small></span>}
+            {d.status && <span class="sello">{t.estados[d.status]}</span>}
             {
-              d.alta && (
-                <span class="sello tenue">
-                  En la vitrina desde {d.alta.toLocaleDateString("es-ES", { month: "long", year: "numeric", timeZone: "UTC" })}
-                </span>
+              d.finished_on && (
+                <a class="sello" href={rutaFija("anuario", `${d.finished_on.slice(0, 4)}/`)}>
+                  {t.terminadaEn(fechaParcial(d.finished_on))}
+                </a>
               )
             }
+            {d.added && <span class="sello tenue">{t.desde(mesYAño(d.added))}</span>}
           </div>
           {
             (d.tags?.length ?? 0) > 0 && (
@@ -148,14 +159,25 @@ function motivo(v: Vecina): string {
               </div>
             )
           }
+          {
+            suyos.length > 0 && (
+              <p class="grupos" aria-label={t.enGrupos}>
+                {suyos.map((g) => (
+                  <a class="chip grupo" href={rutaGrupo(g)}>
+                    ◇ {g.nombre}
+                  </a>
+                ))}
+              </p>
+            )
+          }
           <p class="fuentes">
             {enlaces.map((f) => (
               <a href={f.href} rel="noopener">
                 {f.nombre} ↗
               </a>
             ))}
-            <button type="button" class="compartir" id="compartir" hidden data-titulo={nombre}>
-              Compartir
+            <button type="button" class="compartir" id="compartir" hidden data-titulo={nombre} data-compartir={t.compartir} data-copiado={t.copiado}>
+              {t.compartir}
             </button>
           </p>
         </div>
@@ -173,11 +195,11 @@ function motivo(v: Vecina): string {
       <section class="contenedor bloque" aria-labelledby="t-conectada">
         <header>
           <div>
-            <h2 id="t-conectada">Conectada con</h2>
-            <p>Lo que tiene en común con otras piezas de la vitrina.</p>
+            <h2 id="t-conectada">{t.conectada}</h2>
+            <p>{t.conectadaSub}</p>
           </div>
-          <a class="ver-todo" href={url(`constelacion/?foco=${encodeURIComponent(obra.id)}`)}>
-            Verla en la constelación →
+          <a class="ver-todo" href={rutaFija("constelacion", `?foco=${encodeURIComponent(obra.id)}`)}>
+            {t.enConstelacion}
           </a>
         </header>
         <div class="rejilla">
@@ -189,11 +211,11 @@ function motivo(v: Vecina): string {
     )
   }
 
-  <nav class="contenedor pasos" aria-label={`Más de ${seccion.nombre}`}>
+  <nav class="contenedor pasos" aria-label={t.masDe(seccion.nombre)}>
     {
       anterior ? (
         <a href={ruta(anterior)} rel="prev" id="anterior">
-          <small>← Anterior</small>
+          <small>{t.anterior}</small>
           {titulo(anterior)}
         </a>
       ) : (
@@ -203,7 +225,7 @@ function motivo(v: Vecina): string {
     {
       siguiente && (
         <a href={ruta(siguiente)} rel="next" id="siguiente" class="derecha">
-          <small>Siguiente →</small>
+          <small>{t.siguiente}</small>
           {titulo(siguiente)}
         </a>
       )
@@ -223,8 +245,8 @@ function motivo(v: Vecina): string {
         if (navigator.share) await navigator.share(datos);
         else {
           await navigator.clipboard.writeText(datos.url);
-          boton.textContent = "Enlace copiado";
-          setTimeout(() => (boton.textContent = "Compartir"), 2000);
+          boton.textContent = boton.dataset.copiado!;
+          setTimeout(() => (boton.textContent = boton.dataset.compartir!), 2000);
         }
       } catch {}
     });
@@ -358,11 +380,30 @@ function motivo(v: Vecina): string {
     color: var(--tenue);
     font-weight: 400;
   }
-  .tags {
+  /* Lo que solo se ve en el vistazo: borrador, oculta o privada. */
+  .sello.marca {
+    background: var(--enlace);
+    border-color: var(--enlace);
+    color: var(--fondo);
+  }
+  a.sello:hover {
+    border-color: var(--suave);
+  }
+  .tags,
+  .grupos {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     margin-top: 14px;
+  }
+  .grupos {
+    margin-bottom: 0;
+  }
+  /* Un grupo lo hace el dueño y un tag lo pone la fuente: el grupo va con
+     borde de su tinta, el tag con el gris de siempre. */
+  .chip.grupo {
+    color: var(--texto);
+    border-color: var(--suave);
   }
   .fuentes {
     display: flex;

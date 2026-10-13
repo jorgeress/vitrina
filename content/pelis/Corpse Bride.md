@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2005
-autor: Mike Johnson, Tim Burton
-nota: 8
-estado: terminado
-favorito: false
-portada: "[[corpse-bride.webp]]"
+author: Mike Johnson, Tim Burton
+rating: 8
+status: finished
+favorite: false
+cover: "[[corpse-bride.webp]]"
 tags:
   - fantasy
   - animation
   - romance
 letterboxd: corpse-bride
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

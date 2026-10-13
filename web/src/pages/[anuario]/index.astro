@@ -1,0 +1,57 @@
+---
+import Base from "../../layouts/Base.astro";
+import { t } from "../../i18n";
+import { años, añoAlta, añoTerminada, obras, porAprecio, portada, rutaFija } from "../../lib/obras";
+
+export const getStaticPaths = () => [{ params: { anuario: t.rutas.anuario } }];
+
+const todas = await obras();
+const lista = años(todas).map((y) => {
+  const terminadas = todas.filter((o) => añoTerminada(o) === y);
+  const entraron = todas.filter((o) => añoAlta(o) === y);
+  // Las miniaturas, de lo terminado si lo hay: es lo que dice más de ese año.
+  const muestra = [...(terminadas.length ? terminadas : entraron)].sort(porAprecio).slice(0, 3);
+  return { y, terminadas: terminadas.length, entraron: entraron.length, muestra };
+});
+---
+
+<Base titulo={t.anuario} descripcion={t.anuarioDescripcion}>
+  <div class="contenedor">
+    <header class="titulo-pagina">
+      <h1>{t.anuario}</h1>
+      <p>{t.anuarioSub}</p>
+    </header>
+    {lista.length === 0 && <p class="vacio">{t.anuarioVacio}</p>}
+    <ul class="lista">
+      {
+        lista.map(({ y, terminadas, entraron, muestra }) => (
+          <li>
+            <a href={rutaFija("anuario", `${y}/`)}>
+              <span class="miniaturas" aria-hidden="true">
+                {muestra.map((o) =>
+                  portada(o) ? <img src={portada(o)} alt="" loading="lazy" /> : <span class="hueco" style={`background:var(--${o.data.type})`} />,
+                )}
+              </span>
+              <span>
+                <strong class="año">{y}</strong>
+                <small>{t.resumenAño(terminadas, entraron)}</small>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>
+
+<style>
+  .año {
+    font-family: var(--rotulo);
+    font-size: 1.3rem;
+    letter-spacing: 0.06em;
+  }
+  .vacio {
+    max-width: 60ch;
+    color: var(--tenue);
+  }
+</style>

@@ -1,17 +1,17 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2013
-autor: Dan Goor, Mike Schur
-nota:
-favorito: false
-portada: "[[brooklyn-nine-nine.webp]]"
+author: Dan Goor, Mike Schur
+rating:
+favorite: false
+cover: "[[brooklyn-nine-nine.webp]]"
 tags:
   - comedy
   - action
   - crime
 tvmaze: 49
-alta: 2026-09-16
+added: 2026-09-16
 ---
 
 > [!quote] De qué va

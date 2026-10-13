@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2001
-autor: The Strokes
-nota:
-estado: terminado
-favorito: false
-portada: "[[is-this-it.webp]]"
+author: The Strokes
+rating:
+status: finished
+favorite: false
+cover: "[[is-this-it.webp]]"
 tags:
   - rock
   - indie-rock
   - garage-rock-revival
   - garage-rock
 mbid: efea26d1-a016-30f6-b8e2-bc8c02336b0a
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

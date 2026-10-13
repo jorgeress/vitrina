@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2025
-autor: Black Country, New Road
-nota:
-estado: terminado
-favorito: false
-portada: "[[forever-howlong.webp]]"
+author: Black Country, New Road
+rating:
+status: finished
+favorite: false
+cover: "[[forever-howlong.webp]]"
 tags:
   - art-rock
   - baroque-pop
   - progressive-pop
   - rock
 mbid: 23a9b1c2-3dd1-408e-89cb-ca0b81429176
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

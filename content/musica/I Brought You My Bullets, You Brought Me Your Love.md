@@ -1,20 +1,20 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2002
-autor: My Chemical Romance
-nota:
-estado: terminado
-favorito: true
-portada: "[[i-brought-you-my-bullets-you-brought-me-your-love.webp]]"
+author: My Chemical Romance
+rating:
+status: finished
+favorite: true
+cover: "[[i-brought-you-my-bullets-you-brought-me-your-love.webp]]"
 tags:
   - emo
   - punk
   - post-hardcore
   - rock
 mbid: e8923ffe-6ea0-3a65-b6e4-90bca0a6d3a8
-favoritas: 1
-alta: 2026-09-04
+favorite_tracks: 1
+added: 2026-09-04
 ---
 
 ## Canciones

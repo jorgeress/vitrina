@@ -1,16 +1,16 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2026
-autor: Tambouille, Géraud Zucchini
-nota:
-favorito: false
-portada: "[[sol-cesto.webp]]"
+author: Tambouille, Géraud Zucchini
+rating:
+favorite: false
+cover: "[[sol-cesto.webp]]"
 tags:
   - indie
   - strategy
 appid: 2738490
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

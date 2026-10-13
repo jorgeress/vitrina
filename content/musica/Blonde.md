@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2016
-autor: Frank Ocean
-nota:
-estado: terminado
-favorito: false
-portada: "[[blonde.webp]]"
+author: Frank Ocean
+rating:
+status: finished
+favorite: false
+cover: "[[blonde.webp]]"
 tags:
   - neo-soul
   - alternative-r&b
   - art-pop
   - contemporary-r&b
 mbid: 0da340a0-6ad7-4fc2-a272-6f94393a7831
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

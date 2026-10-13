@@ -1,20 +1,20 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1997
-autor: Radiohead
-nota:
-estado: terminado
-favorito: true
-portada: "[[ok-computer.webp]]"
+author: Radiohead
+rating:
+status: finished
+favorite: true
+cover: "[[ok-computer.webp]]"
 tags:
   - alternative-rock
   - art-rock
   - rock
   - experimental
 mbid: b1392450-e666-3926-a536-22c65f834433
-favoritas: 1
-alta: 2026-08-31
+favorite_tracks: 1
+added: 2026-08-31
 ---
 
 ## Canciones

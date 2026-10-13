@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2010
-autor: Kanye West
-nota:
-estado: terminado
-favorito: true
-portada: "[[my-beautiful-dark-twisted-fantasy.webp]]"
+author: Kanye West
+rating:
+status: finished
+favorite: true
+cover: "[[my-beautiful-dark-twisted-fantasy.webp]]"
 tags:
   - hip-hop
   - pop-rap
   - pop-soul
 mbid: 5d6e21e1-deb5-428e-bb42-c2a567f3619b
-favoritas: 1
-alta: 2026-09-04
+favorite_tracks: 1
+added: 2026-09-04
 ---
 
 ## Canciones

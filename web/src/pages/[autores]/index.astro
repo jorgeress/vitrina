@@ -1,0 +1,42 @@
+---
+import Base from "../../layouts/Base.astro";
+import { t } from "../../i18n";
+import { autoresRepetidos, comparaTexto, obras, piezas, portada, rutaAutor, slugsAutores } from "../../lib/obras";
+
+export const getStaticPaths = () => [{ params: { autores: t.rutas.autores } }];
+
+// Solo quien tiene dos obras o más, como en la vault: con una sola, la página
+// de autor no agrupa nada que no diga ya la ficha.
+const slugs = await slugsAutores();
+const grupos = [...autoresRepetidos(await obras())].sort(
+  (a, b) => b[1].length - a[1].length || comparaTexto(a[0], b[0]),
+);
+---
+
+<Base titulo={t.autores} descripcion={t.autoresSub}>
+  <div class="contenedor">
+    <header class="titulo-pagina">
+      <h1>{t.autores}</h1>
+      <p>{t.autoresSub}</p>
+    </header>
+    <ul class="lista">
+      {
+        grupos.map(([autor, lista]) => (
+          <li>
+            <a href={rutaAutor(autor, slugs)}>
+              <span class="miniaturas" aria-hidden="true">
+                {lista.slice(0, 3).map((o) =>
+                  portada(o) ? <img src={portada(o)} alt="" loading="lazy" /> : <span class="hueco" style={`background:var(--${o.data.type})`} />,
+                )}
+              </span>
+              <span>
+                <strong>{autor}</strong>
+                <small>{piezas(lista.length)}</small>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>

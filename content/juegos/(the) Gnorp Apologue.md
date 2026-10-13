@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2023
-autor: Myco
-nota:
-favorito: false
-portada: "[[the-gnorp-apologue.webp]]"
+author: Myco
+rating:
+favorite: false
+cover: "[[the-gnorp-apologue.webp]]"
 tags:
   - casual
   - indie
   - simulation
   - strategy
 appid: 1473350
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

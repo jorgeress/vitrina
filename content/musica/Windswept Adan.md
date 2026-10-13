@@ -1,19 +1,19 @@
 ---
 title: アダンの風
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2020
-autor: 青葉市子
-nota:
-estado: terminado
-favorito: false
-portada: "[[windswept-adan.webp]]"
+author: 青葉市子
+rating:
+status: finished
+favorite: false
+cover: "[[windswept-adan.webp]]"
 tags:
   - chamber-folk
   - folk
   - singer-songwriter
 mbid: 21869386-169d-4f43-ae44-972e49f89ed1
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

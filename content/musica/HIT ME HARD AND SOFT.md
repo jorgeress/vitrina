@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2024
-autor: Billie Eilish
-nota:
-estado: terminado
-favorito: false
-portada: "[[hit-me-hard-and-soft.webp]]"
+author: Billie Eilish
+rating:
+status: finished
+favorite: false
+cover: "[[hit-me-hard-and-soft.webp]]"
 tags:
   - alternative-pop
   - pop
   - indietronica
   - art-pop
 mbid: 02a544b3-0459-42c7-bd9c-047162e7b67a
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

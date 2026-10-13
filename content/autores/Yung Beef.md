@@ -1,7 +1,7 @@
 ---
 title: "Yung Beef"
-tipo: autor
-seccion: "[[autores/index|Autores]]"
+type: author
+section: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de Yung Beef.

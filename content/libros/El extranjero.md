@@ -1,17 +1,17 @@
 ---
-tipo: libro
-seccion: "[[libros/index|Libros]]"
+type: book
+section: "[[libros/index|Libros]]"
 year: 1942
-autor: Albert Camus
-nota:
-estado: terminado
-favorito: true
-portada: "[[el-extranjero.webp]]"
+author: Albert Camus
+rating:
+status: finished
+favorite: true
+cover: "[[el-extranjero.webp]]"
 tags:
   - philosophy
 coverid: 13151269
 wikipedia: El extranjero
-alta: 2026-09-04
+added: 2026-09-04
 ---
 
 > [!vitrina] Por qué está en la vitrina

@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2012
-autor: Deftones
-nota:
-estado: terminado
-favorito: false
-portada: "[[koi-no-yokan.webp]]"
+author: Deftones
+rating:
+status: finished
+favorite: false
+cover: "[[koi-no-yokan.webp]]"
 tags:
   - alternative-metal
   - alternative-rock
   - dream-pop
   - post-metal
 mbid: 87338b87-34e2-4f11-8e2e-600636b6dbcb
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

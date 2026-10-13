@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2017
-autor: Phoebe Bridgers
-nota:
-estado: terminado
-favorito: false
-portada: "[[stranger-in-the-alps.webp]]"
+author: Phoebe Bridgers
+rating:
+status: finished
+favorite: false
+cover: "[[stranger-in-the-alps.webp]]"
 tags:
   - indie-rock
   - chamber-folk
   - folk
   - indie-folk
 mbid: 0dac7ff9-b4d1-423e-bf6b-7d194abb0e14
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

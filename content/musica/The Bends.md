@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 1994
-autor: Radiohead
-nota:
-estado: terminado
-favorito: false
-portada: "[[the-bends.webp]]"
+author: Radiohead
+rating:
+status: finished
+favorite: false
+cover: "[[the-bends.webp]]"
 tags:
   - alternative-rock
   - rock
   - britpop
   - post-britpop
 mbid: b8048f24-c026-3398-b23a-b5e50716cbc7
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

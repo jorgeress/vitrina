@@ -1,18 +1,20 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2019
-autor: Koyoharu Gotouge
-nota:
-favorito: false
-portada: "[[demon-slayer.webp]]"
+author: Koyoharu Gotouge
+rating:
+favorite: false
+cover: "[[demon-slayer.webp]]"
 tags:
   - action
   - anime
   - fantasy
   - horror
 tvmaze: 41469
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

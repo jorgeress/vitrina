@@ -1,19 +1,21 @@
 ---
-tipo: libro
-seccion: "[[libros/index|Libros]]"
+type: book
+section: "[[libros/index|Libros]]"
 year: 2008
-autor: Hiroya Oku
-nota:
-estado: terminado
-favorito: false
-portada: "[[gantz.webp]]"
+author: Hiroya Oku
+rating:
+status: finished
+favorite: false
+cover: "[[gantz.webp]]"
 tags:
   - manga
   - science-fiction
   - horror
 coverid: 10489138
 wikipedia: Gantz
-alta: 2026-09-12
+added: 2026-09-12
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

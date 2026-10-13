@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2023
-autor: Perfuse Entertainment
-nota:
-favorito: false
-portada: "[[golf-it.webp]]"
+author: Perfuse Entertainment
+rating:
+favorite: false
+cover: "[[golf-it.webp]]"
 tags:
   - casual
   - indie
   - simulation
   - sports
 appid: 571740
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

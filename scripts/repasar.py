@@ -34,7 +34,7 @@ import sys
 
 import estado
 import textos
-from vitrina import (ESTADOS, FRONT_RE, SECCIONES, VAULT, escribir_campos, frontmatter,
+from vitrina import (fichas, ESTADOS, FRONT_RE, SECCIONES, VAULT, escribir_campos, frontmatter,
                      vacio, yaml_valor)
 
 try:
@@ -70,8 +70,8 @@ Cómo contestar, en una línea y en cualquier orden:
   en su cartela. Enter la salta.
 """
 
-ATAJOS = {"p": "pendiente", "c": "en curso", "t": "terminado", "a": "abandonado",
-          "curso": "en curso"}
+ATAJOS = {"p": "pending", "c": "in-progress", "t": "finished", "a": "dropped",
+          "curso": "in-progress"}
 
 
 def interpretar(respuesta):
@@ -86,13 +86,13 @@ def interpretar(respuesta):
         if trozo.isdigit():
             if not 1 <= int(trozo) <= 10:
                 raise ValueError(f"la nota va del 1 al 10, no {trozo}")
-            cambios["nota"] = int(trozo)
+            cambios["rating"] = int(trozo)
         elif trozo in ATAJOS or trozo in ESTADOS:
-            cambios["estado"] = ATAJOS.get(trozo, trozo)
+            cambios["status"] = ATAJOS.get(trozo, trozo)
         elif trozo == "f":
-            cambios["favorito"] = True
+            cambios["favorite"] = True
         elif trozo in ("-f", "nf"):
-            cambios["favorito"] = False
+            cambios["favorite"] = False
         else:
             raise ValueError(f"no entiendo «{trozo}»")
     return cambios
@@ -106,10 +106,10 @@ def completar(campos, cambios):
     o abandonado se queda asi, que ahi la nota no cambia nada.
     """
     cambios = dict(cambios)
-    actual = campos.get("estado")
-    if ("nota" in cambios and "estado" not in cambios
-            and (vacio(actual) or actual == "pendiente")):
-        cambios["estado"] = "terminado"
+    actual = campos.get("status")
+    if ("rating" in cambios and "status" not in cambios
+            and (vacio(actual) or actual == "pending")):
+        cambios["status"] = "finished"
     return cambios
 
 
@@ -141,21 +141,21 @@ def pedir_frase(md):
 
 def pendientes(carpetas, todas):
     for carpeta in carpetas:
-        for md in sorted((VAULT / carpeta).glob("*.md")):
+        for md in fichas(carpeta):
             if md.stem == "index":
                 continue
             campos = frontmatter(md.read_text(encoding="utf-8"))
-            if todas or vacio(campos.get("nota")) or vacio(campos.get("estado")):
+            if todas or vacio(campos.get("rating")) or vacio(campos.get("status")):
                 yield carpeta, md, campos
 
 
 def describir(carpeta, md, campos):
     titulo = campos.get("title") or md.stem
     año = f" ({campos['year']})" if not vacio(campos.get("year")) else ""
-    autor = f" — {campos['autor']}" if not vacio(campos.get("autor")) else ""
-    nota = campos.get("nota") if not vacio(campos.get("nota")) else "—"
-    est = campos.get("estado") if not vacio(campos.get("estado")) else "—"
-    fav = "  ★" if campos.get("favorito") == "true" else ""
+    autor = f" — {campos['author']}" if not vacio(campos.get("author")) else ""
+    nota = campos.get("rating") if not vacio(campos.get("rating")) else "—"
+    est = campos.get("status") if not vacio(campos.get("status")) else "—"
+    fav = "  ★" if campos.get("favorite") == "true" else ""
     return (f"{carpeta} · {titulo}{año}{autor}\n"
             f"      nota {nota} · {est}{fav}")
 

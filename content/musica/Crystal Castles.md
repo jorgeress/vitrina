@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2008
-autor: Crystal Castles
-nota:
-estado: terminado
-favorito: false
-portada: "[[crystal-castles.webp]]"
+author: Crystal Castles
+rating:
+status: finished
+favorite: false
+cover: "[[crystal-castles.webp]]"
 tags:
   - bitpop
   - electropop
   - electropunk
   - chiptune
 mbid: 3fd716f5-2f67-3890-95ec-20c4032511c8
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

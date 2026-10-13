@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2024
-autor: Charli xcx
-nota:
-estado: terminado
-favorito: false
-portada: "[[brat.webp]]"
+author: Charli xcx
+rating:
+status: finished
+favorite: false
+cover: "[[brat.webp]]"
 tags:
   - dance-pop
   - electropop
   - edm
   - club
 mbid: e0fdb431-0109-420d-8a37-f99eaeb4d671
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

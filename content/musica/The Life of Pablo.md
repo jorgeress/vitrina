@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2016
-autor: Kanye West
-nota:
-estado: terminado
-favorito: false
-portada: "[[the-life-of-pablo.webp]]"
+author: Kanye West
+rating:
+status: finished
+favorite: false
+cover: "[[the-life-of-pablo.webp]]"
 tags:
   - hip-hop
   - contemporary-r&b
   - experimental-hip-hop
   - pop-rap
 mbid: 8c18657a-6338-490d-a952-897663596b96
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

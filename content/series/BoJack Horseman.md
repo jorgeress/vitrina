@@ -1,16 +1,16 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2014
-autor: Raphael Bob-Waksberg
-nota:
-favorito: false
-portada: "[[bojack-horseman.webp]]"
+author: Raphael Bob-Waksberg
+rating:
+favorite: false
+cover: "[[bojack-horseman.webp]]"
 tags:
   - drama
   - comedy
 tvmaze: 184
-alta: 2026-09-16
+added: 2026-09-16
 ---
 
 > [!quote] De qué va

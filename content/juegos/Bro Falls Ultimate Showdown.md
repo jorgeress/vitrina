@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2021
-autor: Boros Bros
-nota:
-favorito: false
-portada: "[[bro-falls-ultimate-showdown.webp]]"
+author: Boros Bros
+rating:
+favorite: false
+cover: "[[bro-falls-ultimate-showdown.webp]]"
 tags:
   - action
   - casual
   - free-to-play
   - indie
 appid: 1590320
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

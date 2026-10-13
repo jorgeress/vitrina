@@ -1,71 +1,69 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Portada from "../../components/Portada.astro";
-import { ESTADOS, SECCIONES, nombreTag, obras, porAlta, url, type Estado, type Seccion } from "../../lib/obras";
+import { t, type Estado } from "../../i18n";
+import { IDIOMA } from "../../config";
+import { SECCIONES, cantidad, nombreTag, obras, porAlta, rutaFija, type Seccion } from "../../lib/obras";
 
 export async function getStaticPaths() {
   return SECCIONES.map((seccion) => ({ params: { seccion: seccion.slug }, props: { seccion } }));
 }
 
 const { seccion } = Astro.props as { seccion: Seccion };
-const lista = (await obras()).filter((o) => o.data.tipo === seccion.tipo).sort(porAlta);
+const lista = (await obras()).filter((o) => o.data.type === seccion.tipo).sort(porAlta);
 
 // Solo los estados y tags que de verdad aparecen: un filtro que no filtra
 // nada es ruido.
-const estados = (Object.keys(ESTADOS) as Estado[]).filter((e) => lista.some((o) => o.data.estado === e));
+const estados = (Object.keys(t.estados) as Estado[]).filter((e) => lista.some((o) => o.data.status === e));
 const cuenta = new Map<string, number>();
 for (const o of lista) for (const t of o.data.tags ?? []) cuenta.set(t, (cuenta.get(t) ?? 0) + 1);
 const tags = [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).slice(0, 16);
 const palabra = (n: number) => (n === 1 ? seccion.una : seccion.varias);
+const ORDENES = Object.entries(t.ordenes);
 ---
 
 <Base
   titulo={seccion.nombre}
-  descripcion={`${lista.length} ${palabra(lista.length)} en la vitrina, con lo que pienso de cada uno.`}
+  descripcion={t.enLaVitrina(cantidad(lista.length, seccion.una, seccion.varias))}
   activa={seccion.slug}
 >
   <div class="contenedor">
     <header class="titulo-pagina cabecera" style={`--seccion:var(--${seccion.tipo})`}>
       <h1>{seccion.nombre}</h1>
-      <p id="recuento" aria-live="polite" data-total={lista.length} data-una={seccion.una} data-varias={seccion.varias}>
+      <p id="recuento" aria-live="polite" data-total={lista.length} data-una={seccion.una} data-varias={seccion.varias} data-de={t.de}>
         {lista.length} {palabra(lista.length)}
       </p>
     </header>
 
-    <form class="filtros" id="filtros" role="search" onsubmit="return false">
-      <input type="search" name="q" placeholder="Buscar por título o autor…" aria-label="Buscar en esta sala" autocomplete="off" />
-      <select name="orden" aria-label="Ordenar">
-        <option value="alta">Lo último que entró</option>
-        <option value="aprecio">Lo mejor primero</option>
-        <option value="nota">Mejor nota</option>
-        <option value="year">Más nuevas</option>
-        <option value="antiguas">Más antiguas</option>
-        <option value="titulo">Por título</option>
+    <form class="filtros" id="filtros" role="search" onsubmit="return false" data-idioma={IDIOMA}>
+      <input type="search" name="q" placeholder={t.buscarEnSala} aria-label={t.buscarEnSalaEtiqueta} autocomplete="off" />
+      <select name="orden" aria-label={t.ordenar}>
+        {ORDENES.map(([valor, texto]) => <option value={valor}>{texto}</option>)}
       </select>
       {
         estados.length > 1 && (
-          <select name="estado" aria-label="Estado">
-            <option value="">Todo</option>
+          <select name="estado" aria-label={t.estado}>
+            <option value="">{t.todo}</option>
             {estados.map((e) => (
-              <option value={e}>{ESTADOS[e]}</option>
+              <option value={e}>{t.estados[e]}</option>
             ))}
           </select>
         )
       }
       <div class="opciones">
-        <label class="dorada"><input type="checkbox" name="favorito" /> ★ Lo mejor de lo mejor</label>
-        <label><input type="checkbox" name="cartela" /> Con cartela</label>
+        <label class="dorada"><input type="checkbox" name="favorito" /> ★ {t.mejor}</label>
+        <label><input type="checkbox" name="cartela" /> {t.conCartela}</label>
       </div>
       {
         tags.length > 0 && (
-          <div class="tags" role="group" aria-label="Tags">
+          <div class="tags" role="group" aria-label={t.tags}>
             {tags.map(([t, n]) => (
               <button type="button" class="chip" data-tag={t} aria-pressed="false" title={`${n} ${palabra(n)}`}>
                 {nombreTag(t)}
               </button>
             ))}
-            <a class="chip mas" href={url("tags/")}>
-              Todos los tags →
+            <a class="chip mas" href={rutaFija("tags")}>
+              {t.todosLosTags}
             </a>
           </div>
         )
@@ -76,7 +74,7 @@ const palabra = (n: number) => (n === 1 ? seccion.una : seccion.varias);
       {lista.map((o, i) => <Portada obra={o} filtrable viaja prioridad={i < 12} />)}
     </div>
     <p class="vacio" id="vacio" hidden>
-      No hay nada con esos filtros. <button type="button" id="limpiar">Quitar los filtros</button>
+      {t.nadaConFiltros} <button type="button" id="limpiar">{t.quitarFiltros}</button>
     </p>
   </div>
 </Base>
@@ -89,7 +87,7 @@ const palabra = (n: number) => (n === 1 ? seccion.una : seccion.varias);
   const rejilla = document.getElementById("rejilla")!;
   const tarjetas = [...rejilla.children] as HTMLElement[];
   const recuento = document.getElementById("recuento")!;
-  const { total, una, varias } = recuento.dataset as { total: string; una: string; varias: string };
+  const { total, una, varias, de } = recuento.dataset as { total: string; una: string; varias: string; de: string };
   const vacio = document.getElementById("vacio")!;
   const botones = [...form.querySelectorAll<HTMLButtonElement>("[data-tag]")];
   let tag = "";
@@ -114,7 +112,7 @@ const palabra = (n: number) => (n === 1 ? seccion.una : seccion.varias);
     nota: (a, b) => numero(b, "nota") - numero(a, "nota") || numero(b, "alta") - numero(a, "alta"),
     year: (a, b) => numero(b, "year") - numero(a, "year"),
     antiguas: (a, b) => (numero(a, "year") || 9999) - (numero(b, "year") || 9999),
-    titulo: (a, b) => a.dataset.titulo!.localeCompare(b.dataset.titulo!, "es"),
+    titulo: (a, b) => a.dataset.titulo!.localeCompare(b.dataset.titulo!, form.dataset.idioma),
   };
 
   function aplicar() {
@@ -139,7 +137,7 @@ const palabra = (n: number) => (n === 1 ? seccion.una : seccion.varias);
     }
     [...tarjetas].sort(ORDENES[orden] ?? ORDENES.alta).forEach((t, i) => (t.style.order = String(i)));
     const palabra = Number(total) === 1 ? una : varias;
-    recuento.textContent = n === Number(total) ? `${total} ${palabra}` : `${n} de ${total} ${palabra}`;
+    recuento.textContent = n === Number(total) ? `${total} ${palabra}` : `${n} ${de} ${total} ${palabra}`;
     vacio.hidden = n > 0;
     for (const b of botones) {
       b.classList.toggle("activo", b.dataset.tag === tag);

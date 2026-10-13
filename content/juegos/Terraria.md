@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2011
-autor: Re-Logic
-nota: 10
-favorito: true
-portada: "[[terraria.webp]]"
+author: Re-Logic
+rating: 10
+favorite: true
+cover: "[[terraria.webp]]"
 tags:
   - action
   - adventure
   - indie
   - rpg
 appid: 105600
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

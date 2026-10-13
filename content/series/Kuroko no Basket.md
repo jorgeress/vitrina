@@ -1,17 +1,19 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2012
-autor: Tadatoshi Fujimaki
-nota:
-favorito: false
-portada: "[[kuroko-no-basket.webp]]"
+author: Tadatoshi Fujimaki
+rating:
+favorite: false
+cover: "[[kuroko-no-basket.webp]]"
 tags:
   - anime
   - sports
 tvmaze: 6873
 wikipedia: Kuroko no Basket
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

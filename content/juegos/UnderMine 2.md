@@ -1,18 +1,18 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2025
-autor: Thorium
-nota:
-favorito: false
-portada: "[[undermine-2.webp]]"
+author: Thorium
+rating:
+favorite: false
+cover: "[[undermine-2.webp]]"
 tags:
   - action
   - adventure
   - indie
   - rpg
 appid: 1869780
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

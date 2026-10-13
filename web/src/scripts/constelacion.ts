@@ -34,7 +34,7 @@ export function iniciar() {
   const color = (tipo: string) => colores[tipo];
   function leerColores() {
     const estilo = getComputedStyle(document.documentElement);
-    for (const v of ["juego", "peli", "serie", "libro", "album", "fondo", "tenue", "texto"])
+    for (const v of ["game", "film", "series", "book", "album", "fondo", "tenue", "texto"])
       colores[v] = estilo.getPropertyValue(`--${v}`).trim();
   }
   leerColores();

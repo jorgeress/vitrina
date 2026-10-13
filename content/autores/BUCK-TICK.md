@@ -1,7 +1,7 @@
 ---
 title: "BUCK‐TICK"
-tipo: autor
-seccion: "[[autores/index|Autores]]"
+type: author
+section: "[[autores/index|Autores]]"
 ---
 
 Lo que tengo de BUCK‐TICK.

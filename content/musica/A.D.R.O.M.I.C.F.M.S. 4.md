@@ -1,18 +1,18 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2018
-autor: Yung Beef
-nota:
-estado: terminado
-favorito: false
-portada: "[[a-d-r-o-m-i-c-f-m-s-4.webp]]"
+author: Yung Beef
+rating:
+status: finished
+favorite: false
+cover: "[[a-d-r-o-m-i-c-f-m-s-4.webp]]"
 tags:
   - reggaeton
   - trap
   - trap-latino
 mbid: 49036bb8-3e76-411b-86e9-4ec924e5a9fc
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

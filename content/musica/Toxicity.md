@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2001
-autor: System of a Down
-nota:
-estado: terminado
-favorito: false
-portada: "[[toxicity.webp]]"
+author: System of a Down
+rating:
+status: finished
+favorite: false
+cover: "[[toxicity.webp]]"
 tags:
   - alternative-metal
   - metal
   - nu-metal
   - avant-garde-metal
 mbid: f50fbcb4-bfcd-3784-b4c9-44f4793e66b2
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

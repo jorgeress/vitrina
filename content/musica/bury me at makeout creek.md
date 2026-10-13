@@ -1,19 +1,19 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2014
-autor: Mitski
-nota:
-estado: terminado
-favorito: false
-portada: "[[bury-me-at-makeout-creek.webp]]"
+author: Mitski
+rating:
+status: finished
+favorite: false
+cover: "[[bury-me-at-makeout-creek.webp]]"
 tags:
   - indie-rock
   - rock
   - alternative-rock
   - garage-rock
 mbid: a2499c0a-6c87-413c-9f4f-f08a67ab4441
-alta: 2026-09-12
+added: 2026-09-12
 ---
 
 ## Canciones

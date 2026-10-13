@@ -1,18 +1,20 @@
 ---
-tipo: libro
-seccion: "[[libros/index|Libros]]"
+type: book
+section: "[[libros/index|Libros]]"
 year: 2020
-autor: Yuto Suzuki
-nota:
-favorito: false
-portada: "[[sakamoto-days.webp]]"
+author: Yuto Suzuki
+rating:
+favorite: false
+cover: "[[sakamoto-days.webp]]"
 tags:
   - manga
   - action
   - comedy
 coverid: 12748278
 wikipedia: Sakamoto Days
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

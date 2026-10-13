@@ -1,16 +1,16 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2001
-autor: Ben Stiller
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[zoolander.webp]]"
+author: Ben Stiller
+rating: 10
+status: finished
+favorite: false
+cover: "[[zoolander.webp]]"
 tags:
   - comedy
 letterboxd: zoolander
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

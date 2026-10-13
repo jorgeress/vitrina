@@ -1,18 +1,18 @@
 ---
-tipo: peli
-seccion: "[[pelis/index|Películas]]"
+type: film
+section: "[[pelis/index|Películas]]"
 year: 2001
-autor: David Lynch
-nota: 10
-estado: terminado
-favorito: false
-portada: "[[mulholland-drive.webp]]"
+author: David Lynch
+rating: 10
+status: finished
+favorite: false
+cover: "[[mulholland-drive.webp]]"
 tags:
   - drama
   - mystery
   - thriller
 letterboxd: mulholland-drive
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

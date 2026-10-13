@@ -1,11 +1,11 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2002
-autor: Masashi Kishimoto
-nota:
-favorito: false
-portada: "[[naruto.webp]]"
+author: Masashi Kishimoto
+rating:
+favorite: false
+cover: "[[naruto.webp]]"
 tags:
   - action
   - adventure
@@ -13,7 +13,9 @@ tags:
   - fantasy
 tvmaze: 495
 wikipedia: Naruto
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

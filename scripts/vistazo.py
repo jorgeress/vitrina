@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
-"""Levanta la web con los borradores incluidos, para verlo antes de publicar.
+"""Levanta la web con todo dentro, para verla entera antes de publicar.
 
-En la web solo sale lo publicado: se salta todo lo que lleve `draft: true`.
+En la web solo sale lo publicado: se salta lo que lleve `draft: true` o
+`hidden: true`, los campos ocultos con `hidden: [...]` y la carpeta privada.
 Eso esta bien para publicar y fatal para decidir, porque justo lo que quieres
 ver antes de publicar una tanda importada es como queda la sala con ella
-dentro.
+dentro. Y lo privado solo se puede ver aqui: en tu ordenador.
 
 No toca la vault ni copia nada: construye la web de web/ con la variable
-VITRINA_BORRADORES=1, que hace que entren tambien los borradores, marcados
-como tales y con un aviso arriba, y la sirve en su propio puerto. Construye en
+VITRINE_PREVIEW=1, que hace que entre todo, marcado como borrador, oculto o
+privado y con un aviso arriba, y la sirve en su propio puerto. Construye en
 vez de usar `astro dev` porque Astro solo deja uno por proyecto, y el de la web
 de verdad puede estar abierto. Es una foto fija: si tocas una ficha, vuelve a
 lanzarlo.
 
 Uso:
-  scripts/vistazo.py               en http://localhost:8081/vitrina/
+  scripts/vistazo.py               en http://localhost:8081/vitrina/ (la base de la config)
   scripts/vistazo.py --puerto 9000 en otro puerto
   scripts/vistazo.py --solo-build  construye en web/vistazo/ y no sirve
 """
@@ -27,21 +28,23 @@ import socketserver
 import subprocess
 import sys
 
-from vitrina import RAIZ
+from vitrina import CONFIG, RAIZ
 
 WEB = RAIZ / "web"
 PUERTO = 8081  # el 4321 lo usa `npm run dev`, la web de verdad
 # Dentro de web/ y no en /tmp: Astro mueve los ficheros con rename, que no
 # cruza de un disco a otro, y /tmp suele ser otro. Esta en el .gitignore.
 SALIDA = WEB / "vistazo"
+# La base de la web publicada (/vitrina), de vitrine.config.json.
+BASE = CONFIG.get("base", "").rstrip("/")
 
 
 def servir(carpeta, puerto):
-    """Lo construido, en /vitrina/ como en la web publicada."""
+    """Lo construido, bajo la misma base que la web publicada."""
 
     class Manejador(http.server.SimpleHTTPRequestHandler):
         def translate_path(self, ruta):
-            ruta = ruta.removeprefix("/vitrina") or "/"
+            ruta = ruta.removeprefix(BASE) or "/"
             return super().translate_path(ruta)
 
     socketserver.TCPServer.allow_reuse_address = True
@@ -62,14 +65,14 @@ def main():
     if not (WEB / "node_modules").exists():
         print("Falta instalar la web: cd web && npm ci --ignore-scripts --include=optional")
         return 1
-    entorno = {**os.environ, "VITRINA_BORRADORES": "1", "ASTRO_TELEMETRY_DISABLED": "1"}
+    entorno = {**os.environ, "VITRINE_PREVIEW": "1", "ASTRO_TELEMETRY_DISABLED": "1"}
 
     # A otra carpeta, para no dejar en web/dist una web con borradores que se
     # pudiera publicar por error.
     codigo = subprocess.call(["npx", "astro", "build", "--outDir", str(SALIDA)], cwd=WEB, env=entorno)
     if codigo != 0 or args.solo_build:
         return codigo
-    print(f"\nEl vistazo está en http://localhost:{args.puerto}/vitrina/  (Ctrl+C para salir)", flush=True)
+    print(f"\nEl vistazo está en http://localhost:{args.puerto}{BASE}/  (Ctrl+C para salir)", flush=True)
     try:
         servir(SALIDA, args.puerto)
     except KeyboardInterrupt:

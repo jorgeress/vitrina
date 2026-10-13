@@ -1,17 +1,17 @@
 ---
-tipo: album
-seccion: "[[musica/index|Música]]"
+type: album
+section: "[[musica/index|Música]]"
 year: 2008
-autor: Extremoduro
-nota:
-estado: terminado
-favorito: false
-portada: "[[la-ley-innata.webp]]"
+author: Extremoduro
+rating:
+status: finished
+favorite: false
+cover: "[[la-ley-innata.webp]]"
 tags:
   - hard-rock
   - rock
 mbid: 760dd50e-70a3-38b9-8491-14497d2a59a1
-alta: 2026-09-23
+added: 2026-09-23
 ---
 
 ## Canciones

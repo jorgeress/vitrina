@@ -1,18 +1,20 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2013
-autor: Hajime Isayama
-nota:
-favorito: false
-portada: "[[attack-on-titan.webp]]"
+author: Hajime Isayama
+rating:
+favorite: false
+cover: "[[attack-on-titan.webp]]"
 tags:
   - action
   - anime
   - fantasy
   - horror
 tvmaze: 919
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

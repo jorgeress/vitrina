@@ -1,19 +1,19 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2018
-autor: Lazy Bear Games
-nota:
-favorito: false
-portada: "[[graveyard-keeper.webp]]"
+author: Lazy Bear Games
+rating:
+favorite: false
+cover: "[[graveyard-keeper.webp]]"
 tags:
   - adventure
   - indie
   - rpg
   - simulation
 appid: 599140
-capsula: cf24c64388ff550c6d35f35643426e66be6aa622/library_capsule.jpg
-alta: 2026-09-02
+capsule: cf24c64388ff550c6d35f35643426e66be6aa622/library_capsule.jpg
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

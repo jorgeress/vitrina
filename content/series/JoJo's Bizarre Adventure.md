@@ -1,17 +1,19 @@
 ---
-tipo: serie
-seccion: "[[series/index|Series]]"
+type: series
+section: "[[series/index|Series]]"
 year: 2012
-autor: Hirohiko Araki
-nota:
-favorito: false
-portada: "[[jojo-s-bizarre-adventure.webp]]"
+author: Hirohiko Araki
+rating:
+favorite: false
+cover: "[[jojo-s-bizarre-adventure.webp]]"
 tags:
   - action
   - adventure
   - anime
 tvmaze: 8287
-alta: 2026-09-16
+added: 2026-09-16
+groups:
+  - Anime y manga
 ---
 
 > [!quote] De qué va

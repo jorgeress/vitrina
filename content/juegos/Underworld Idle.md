@@ -1,17 +1,17 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2023
-autor: Aleksandr Golovkin
-nota:
-favorito: false
-portada: "[[underworld-idle.webp]]"
+author: Aleksandr Golovkin
+rating:
+favorite: false
+cover: "[[underworld-idle.webp]]"
 tags:
   - indie
   - strategy
   - free-to-play
 appid: 1540960
-alta: 2026-09-02
+added: 2026-09-02
 ---
 
 > [!quote] De qué va

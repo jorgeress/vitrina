@@ -1,19 +1,19 @@
 ---
-tipo: juego
-seccion: "[[juegos/index|Juegos]]"
+type: game
+section: "[[juegos/index|Juegos]]"
 year: 2025
-autor: Panik Arcade
-nota:
-favorito: false
-portada: "[[cloverpit.webp]]"
+author: Panik Arcade
+rating:
+favorite: false
+cover: "[[cloverpit.webp]]"
 tags:
   - action
   - adventure
   - indie
   - simulation
 appid: 3314790
-capsula: e2c32c4af826aa068878e437d90f46f0e46f21ba/library_600x900.jpg
-alta: 2026-09-02
+capsule: e2c32c4af826aa068878e437d90f46f0e46f21ba/library_600x900.jpg
+added: 2026-09-02
 ---
 
 > [!quote] De qué va
