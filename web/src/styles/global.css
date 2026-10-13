@@ -5,6 +5,10 @@
 
    El dorado es de Lo mejor de lo mejor y de nada más: la estrella de un
    favorito y esa página. Si lo llevara cualquier otra cosa dejaría de señalar.
+   En claro es un paso más oscuro que el de Quartz (#a07b12), que se quedaba
+   en 3,6:1 contra el papel: vale para un titular, no para la letra pequeña
+   del pie o de los filtros. Este llega a 4,5:1, lo que pide el texto normal.
+   Por lo mismo, --suave pasa de 3:1 a 4,5:1 en los dos temas.
 
    Cada sección tiene su color, que se usa en lo pequeño: el punto de la
    etiqueta, los nodos de la constelación, las barras de las cifras y el filo
@@ -20,10 +24,10 @@
   --caja-2: #efebe3;
   --borde: #e3ded4;
   --tenue: #6f685d;
-  --suave: #948d80;
+  --suave: #706a60;
   --texto: #201d1a;
   --enlace: #4c5c6b;
-  --dorado: #a07b12;
+  --dorado: #846614;
   --juego: #2a78d6;
   --peli: #eb6834;
   --serie: #1baf7a;
@@ -45,7 +49,7 @@
     --caja-2: #221f22;
     --borde: #2a272a;
     --tenue: #a39d93;
-    --suave: #6f6a72;
+    --suave: #8a868a;
     --texto: #ece7dd;
     --enlace: #9aa7b4;
     --dorado: #e0c063;
@@ -64,7 +68,7 @@
   --caja-2: #221f22;
   --borde: #2a272a;
   --tenue: #a39d93;
-  --suave: #6f6a72;
+  --suave: #8a868a;
   --texto: #ece7dd;
   --enlace: #9aa7b4;
   --dorado: #e0c063;
@@ -169,9 +173,10 @@ h3 {
 }
 .bloque > header {
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 16px;
+  gap: 6px 16px;
   margin-bottom: 18px;
 }
 .bloque h2 {
