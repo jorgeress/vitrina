@@ -147,7 +147,7 @@ tags, texto, páginas de autor y las cifras del README. Solo toca lo que falta, 
 con `--sin-red` hace solo lo que no pregunta a nadie.
 
 Para ver los borradores en el sitio antes de publicarlos, `scripts/vistazo.py`
-(<http://localhost:8081>). Qué trae cada fuente está en
+(<http://localhost:8081/vitrina/>). Qué trae cada fuente está en
 [`docs/importar.md`](docs/importar.md).
 
 ## Cómo va la colección

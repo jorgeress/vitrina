@@ -71,6 +71,7 @@ const retirada = d.estado === "abandonado";
     }
     {d.favorito && <span class="sello estrella" title="Lo mejor de lo mejor">★</span>}
     {d.nota && <span class="sello nota" title={`Nota: ${d.nota} de 10`}>{d.nota}</span>}
+    {d.draft && <span class="sello borrador">Borrador</span>}
     {
       escrita && (
         <span class="sello escrita" title="Tiene cartela: está escrito por qué está aquí">
@@ -182,6 +183,13 @@ const retirada = d.estado === "abandonado";
   }
   .nota {
     right: 8px;
+  }
+  .borrador {
+    top: auto;
+    bottom: 8px;
+    left: 8px;
+    font-weight: 600;
+    background: rgb(76 92 107 / 0.9);
   }
   .escrita {
     top: auto;

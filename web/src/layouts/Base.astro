@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { SECCIONES, url } from "../lib/obras";
+import { CON_BORRADORES, SECCIONES, url } from "../lib/obras";
 
 interface Props {
   titulo?: string;
@@ -88,6 +88,14 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
       </div>
     </header>
 
+    {
+      CON_BORRADORES && (
+        <p class="vistazo">
+          Esto es el vistazo, no la web publicada: salen también las fichas en borrador, marcadas. Para publicar una,
+          quítale la línea <code>draft: true</code>.
+        </p>
+      )
+    }
     <main id="contenido">
       <slot />
     </main>
@@ -154,6 +162,15 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
 </html>
 
 <style>
+  .vistazo {
+    margin: 0;
+    padding: 10px 16px;
+    background: var(--caja-2);
+    border-bottom: 1px solid var(--borde);
+    color: var(--tenue);
+    font-size: 0.9rem;
+    text-align: center;
+  }
   .saltar {
     position: absolute;
     left: -9999px;

@@ -192,9 +192,10 @@ o fichas sin fecha de alta. No para el despliegue.
 ## vistazo.py
 
 ```bash
-scripts/vistazo.py               # http://localhost:8081, borradores incluidos
-scripts/vistazo.py --solo-build
+scripts/vistazo.py               # http://localhost:8081/vitrina/, borradores incluidos
+scripts/vistazo.py --solo-build  # lo construye en web/vistazo/
 ```
 
-Construye una copia de la vault fuera del repo con los borradores
-publicados. No toca `content/`.
+Construye la web con las fichas en borrador dentro, marcadas, para ver cómo
+queda una sala antes de publicar lo importado, y la sirve en el 8081. No copia
+ni toca la vault. Es una foto fija: si cambias algo, vuelve a lanzarlo.

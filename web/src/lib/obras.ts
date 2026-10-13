@@ -24,9 +24,15 @@ export function seccionDe(tipo: Tipo): Seccion {
   return SECCIONES.find((s) => s.tipo === tipo)!;
 }
 
-/** Todas las obras publicadas, las de borrador fuera, igual que en Quartz. */
+/**
+ * Con VITRINA_BORRADORES=1 (lo pone scripts/vistazo.py) entran también las
+ * fichas en borrador, marcadas, para ver cómo quedaría la vitrina con ellas
+ * antes de publicarlas. Sin eso, fuera, como en Quartz.
+ */
+export const CON_BORRADORES = globalThis.process?.env?.VITRINA_BORRADORES === "1";
+
 export async function obras(): Promise<Obra[]> {
-  return getCollection("obras", (o) => !o.data.draft);
+  return getCollection("obras", (o) => CON_BORRADORES || !o.data.draft);
 }
 
 /** Enlaces con la base del sitio (/vitrina), que en local también se usa. */
