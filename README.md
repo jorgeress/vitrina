@@ -5,18 +5,21 @@ de cada uno. Se escribe en Obsidian y se publica como web estática.
 
 **→ [jorgeress.github.io/vitrina](https://jorgeress.github.io/vitrina/)**
 
-*In English: [Vitrine](#in-english-vitrine).*
+*In English: [README.en.md](README.en.md). La herramienta se llama
+**Vitrine** y sirve de plantilla para hacerse una vitrina propia, en castellano
+o en inglés.*
 
 Cada obra es una ficha en Markdown. La web las lee tal cual y las enseña como
 lo que son, piezas de una colección: cada sala con sus portadas y sus filtros,
-lo mejor de lo mejor, la cartela de por qué está cada una y una constelación
-que las une por lo que comparten. En Obsidian, las galerías y tablas de los
-`.base` enseñan lo mismo con los mismos campos.
+lo mejor de lo mejor, la cartela de por qué está cada una, los grupos que hago
+yo, un anuario y una constelación que las une por lo que comparten. En
+Obsidian, las galerías y tablas de los `.base` enseñan lo mismo con los mismos
+campos.
 
 ## Arrancarlo
 
-Hace falta [Node 22.12 o superior](https://nodejs.org), Python 3 y, para editar
-cómodamente, [Obsidian](https://obsidian.md).
+Hace falta [Node 22.12 o superior](https://nodejs.org), Python 3 y, para
+editar cómodamente, [Obsidian](https://obsidian.md).
 
 ```bash
 git clone https://github.com/jorgeress/vitrina.git
@@ -31,11 +34,51 @@ npm run dev                    # http://localhost:4321/vitrina/
   fichas de `content/` sin tocarlas: lo que guardas en Obsidian sale en
   `npm run dev` al momento.
 - Sin `--ignore-scripts`, `sharp` intenta compilarse y la instalación falla.
-- El buscador solo funciona sobre la web construida: `npm run build` y después
-  `npm run preview`. Con `dev` todavía no hay índice.
+- El buscador y las tarjetas para compartir se hacen al construir: `npm run
+  build` y después `npm run preview`.
 
 En Obsidian, *Abrir carpeta como almacén* sobre **`content/`**, no sobre la raíz
 del repo. La configuración ya viene hecha.
+
+## Una sola configuración: `vitrine.config.json`
+
+Todo lo que cambia de una vitrina a otra está en un fichero, en la raíz, que
+leen la web y los scripts:
+
+```json
+{
+  "name": "Vitrina",
+  "owner": "Jorge García",
+  "language": "es",
+  "site": "https://jorgeress.github.io",
+  "base": "/vitrina",
+  "repo": "https://github.com/jorgeress/vitrina",
+  "folders": { "game": "juegos", "film": "pelis", "series": "series", "book": "libros",
+               "album": "musica", "author": "autores", "private": "privado", "group": "grupos" }
+}
+```
+
+- **`language`**: `es` o `en`. Cambia la interfaz entera, las direcciones de las
+  páginas (`/autores/` o `/authors/`), lo que dicen los scripts y en qué idioma
+  se piden los textos a Steam y a Wikipedia.
+- **`folders`**: cómo se llama cada carpeta de la vault, que es también la
+  dirección de cada sala.
+
+### Hacerse una vitrina propia
+
+Con el botón *Use this template* de GitHub (si el repo está marcado como
+plantilla), o con un fork:
+
+```bash
+scripts/empezar.py --idioma en --nombre "Shelf" --dueno "Alex" \
+    --repo https://github.com/alex/shelf --vaciar --si
+```
+
+Escribe la configuración (la dirección sale del repo), quita mi colección y
+deja las salas, las vistas de Obsidian, la entrada, las plantillas y el
+formulario del Issue en el idioma elegido. Después, en *Settings → Pages*,
+*Source* en **GitHub Actions**, y crear la etiqueta del Issue (`gh label create
+new-piece`, o `nueva-pieza` en castellano).
 
 ## Añadir una obra
 
@@ -45,9 +88,9 @@ Con el enlace de la obra, o buscándola por el título:
 scripts/nueva.py https://store.steampowered.com/app/367520/Hollow_Knight/
 scripts/nueva.py boxd.it/2bg8 --nota 9
 scripts/nueva.py peli "parasite" --nota 10 --favorito
-scripts/nueva.py serie "breaking bad"
+scripts/nueva.py serie "death note" --grupo "Anime y manga" --terminada 2021-03
 scripts/nueva.py album "in rainbows" --estado "en curso"
-scripts/nueva.py libro "dune"
+scripts/nueva.py libro "dune" --oculta
 ```
 
 Valen los enlaces de Steam, Letterboxd, TVmaze, MusicBrainz, Open Library y
@@ -55,17 +98,20 @@ Spotify, y también los de IMDb, TMDB, FilmAffinity, MyAnimeList, AniList,
 Goodreads, Apple Music, Deezer, Discogs, IGDB, HowLongToBeat y Wikipedia, que
 pasan por Wikidata (la lista con ejemplos, en
 [`docs/scripts.md`](docs/scripts.md)). Si buscas por título, te enseña los
-candidatos y eliges tú.
+candidatos y eliges tú. Las órdenes valen en castellano y en inglés: `peli` o
+`film`, `--nota` o `--rating`, `--estado terminado` o `--status finished`.
+
 La ficha sale completa: portada, año, autor, géneros, el «De qué va» y el
 identificador de la fuente. Lo único que no puede poner es lo tuyo.
 
 ### Desde el móvil, sin terminal
 
 Abre un Issue con la plantilla **Nueva pieza** y pega el enlace; si quieres,
-pon nota, estado, si es de lo mejor de lo mejor y por qué está en la vitrina.
-Una Action crea la ficha igual que `nueva.py`, la guarda, publica la web y
-cierra el Issue diciendo qué ha hecho. Solo corre con los Issues del dueño del
-repo.
+pon nota, estado, grupos, cuándo la terminaste, si es de lo mejor de lo mejor,
+si va oculta y por qué está en la vitrina. Una Action crea la ficha igual que
+`nueva.py`, la guarda, publica la web y cierra el Issue diciendo qué ha hecho.
+Solo corre con los Issues del dueño del repo, y solo si existe la etiqueta
+`nueva-pieza`.
 
 Con la web instalada como app, en Android sale **Vitrina** en el menú de
 Compartir: compartir un enlace desde Letterboxd, Steam o Spotify abre el
@@ -88,22 +134,28 @@ y en la web:
 
 No hace falta escribir el marco: escribe suelto encima de la cita y
 `scripts/al-dia.py` lo enmarca, o contéstalo en `repasar.py`, que lo pide
-después de la nota.
+después de la nota. En una vitrina en inglés el callout es `[!vitrine]`; valen
+los dos.
 
 ### A mano
 
-Una ficha es un `.md` en la carpeta de su sección. Solo `tipo` es obligatorio:
+Una ficha es un `.md` en la carpeta de su sala. Solo `type` es obligatorio. Las
+claves van en inglés también en una vitrina en castellano, para que dos
+vitrinas en idiomas distintos se puedan comparar:
 
 ```markdown
 ---
-tipo: juego          # juego, peli, serie, libro o album
+type: game           # game, film, series, book o album
 year: 2024
-autor: LocalThunk
-nota: 9              # del 1 al 10
-estado: terminado    # pendiente, en curso, terminado o abandonado
-favorito: true
+author: LocalThunk
+rating: 9            # del 1 al 10
+status: finished     # pending, in-progress, finished o dropped
+favorite: true
 tags:
   - strategy         # en inglés y sin tildes
+groups:
+  - Roguelikes       # los grupos que haces tú
+finished_on: 2024-05 # AAAA, AAAA-MM o AAAA-MM-DD: el anuario
 ---
 
 > [!vitrina] Por qué está en la vitrina
@@ -113,6 +165,39 @@ tags:
 La plantilla con todos los campos está en `content/_plantillas/Ficha.md`
 (`Ctrl+P` → *Insertar plantilla* en Obsidian). Después, `scripts/al-dia.py` la
 deja como si la hubiera creado `nueva.py`.
+
+## Lo que se ve y lo que no
+
+Tres niveles, de menos a más:
+
+| | Cómo | ¿En la web? | ¿En GitHub? |
+|---|---|---|---|
+| **Borrador** | `draft: true` | no | sí |
+| **Oculta** | `hidden: true` | no | **sí** |
+| **Campos ocultos** | `hidden: [rating, label]` | la ficha sí, esos campos no | sí |
+| **Privada** | en la carpeta `content/privado/` | no | no |
+
+- `hidden` con una lista quita esos campos de la página, del `vitrine.json`, de
+  la tarjeta para compartir y del anuario. `label` es la cartela. Valen
+  `rating`, `status`, `favorite`, `label`, `finished_on`, `groups` y `added`.
+- **Oculto no es secreto**: el repo es público y el fichero se lee en GitHub.
+  Lo que no quieras que vea nadie va en `content/privado/`, que git no sube.
+  Dentro lleva las mismas carpetas (`privado/juegos/…`) y sus propias
+  portadas. `nueva.py --privada` la crea ahí directamente.
+- `scripts/vistazo.py` construye la web con todo dentro, marcado, en
+  <http://localhost:8081/vitrina/>: es la única forma de ver lo privado, y solo
+  en tu ordenador.
+
+## Grupos
+
+Colecciones que haces tú y que cruzan las salas: «Anime y manga», «Lo que me
+recomendó Pablo», «Verano de 2024». Un tag lo pone la fuente; un grupo, tú.
+
+- En la ficha: `groups: [Anime y manga]` (o `nueva.py --grupo`).
+- Si quieres un texto o sacarlo en la entrada, una nota en `content/grupos/`
+  con su título (plantilla en `_plantillas/Grupo.md`): `featured: true` lo pone
+  debajo de las salas, `hidden: true` lo quita de la web.
+- Cada grupo tiene su página en `/grupos/`.
 
 ## Ponerle nota a lo que ya tienes
 
@@ -143,20 +228,18 @@ que le quitas la línea `draft: true`. Después, para completarlo:
 scripts/al-dia.py
 ```
 
-`al-dia.py` pasa, en orden, todo lo que los scripts saben rellenar: sección,
+`al-dia.py` pasa, en orden, todo lo que los scripts saben rellenar: sala,
 fecha de alta, la cartela de lo que hayas escrito suelto, portada, año, autor,
-tags, texto, páginas de autor y las cifras del README. Solo toca lo que falta, así que se puede lanzar siempre que quieras;
-con `--sin-red` hace solo lo que no pregunta a nadie.
-
-Para ver los borradores en el sitio antes de publicarlos, `scripts/vistazo.py`
-(<http://localhost:8081/vitrina/>). Qué trae cada fuente está en
+tags, texto, páginas de autor y las cifras del README. Solo toca lo que falta,
+así que se puede lanzar siempre que quieras; con `--sin-red` hace solo lo que
+no pregunta a nadie. Qué trae cada fuente está en
 [`docs/importar.md`](docs/importar.md).
 
 ## Cómo va la colección
 
 `scripts/estado.py` dice qué hay y qué falta. Este bloque lo escribe
 `estado.py --readme`, y `nueva.py`, `repasar.py` e `importar.py` lo actualizan
-solos:
+solos. Cuenta solo lo que sale en la web:
 
 ```
 FICHAS
@@ -182,85 +265,86 @@ FAVORITOS  ██······················  21 de 210
 
 - **La entrada** lleva el rótulo y, debajo, la presentación, que es **el primer
   párrafo de `content/index.md`**: se cambia en Obsidian como cualquier nota.
-  Después vienen las salas, **Lo mejor de lo mejor** (los `favorito: true`, de
-  más nota a menos), las cartelas escritas, lo que está **en el almacén**
-  (`estado: pendiente`) y lo **recién llegado**, por el campo `alta`, que lo
-  pone `nueva.py` y `al-dia.py` a las escritas a mano.
+  Después vienen las salas, los grupos destacados, **Lo mejor de lo mejor**
+  (los `favorite: true`, de más nota a menos), las cartelas escritas, lo que
+  está **en el almacén** (`status: pending`) y lo **recién llegado**.
 - **Cada sala** tiene buscador, orden y filtros por estado, favoritos, cartela y
   tag, y se quedan en la dirección: `juegos/?tag=metroidvania` se puede enlazar.
-  Lo `abandonado` sale como *Retirado de la vitrina*, apagado.
-- **Cada ficha** enseña sus fuentes y las seis piezas que más se le parecen,
-  con el motivo: el mismo autor, o los tags que comparten (cuanto más raro el
-  tag, más pesa).
+  Lo `dropped` sale como *Retirado de la vitrina*, apagado.
+- **Cada ficha** enseña sus fuentes, sus grupos, cuándo la terminaste y las seis
+  piezas que más se le parecen, con el motivo: el mismo autor, o los tags que
+  comparten (cuanto más raro el tag, más pesa).
+- **El anuario** (`/anuario/2024/`) junta lo que terminaste cada año
+  (`finished_on`) y lo que entró en la vitrina (`added`), con lo mejor del año
+  y sus cartelas. El año en que se abrió la vitrina lo dice: ese año entró todo
+  de golpe.
 - **La constelación** une cada pieza con sus tres más parecidas y con las de su
   mismo autor. La que no comparte nada se une a las de su sala más cercanas en
   el tiempo, con línea discontinua: ninguna se queda suelta.
+- **Cada ficha tiene su tarjeta para compartir**: al pegar su enlace en un chat
+  sale una imagen con la portada, el título, la nota, la estrella y el
+  principio de la cartela, con las letras de la casa. Se pintan al construir.
+- **Comparar** (`/comparar/`) cruza esta vitrina con otra, por su dirección o
+  con su fichero `vitrine.json`: lo que tenéis en común, dónde no estáis de
+  acuerdo y qué hay allí que no está aquí. Se compara por los ids de cada
+  fuente, no por los títulos.
 - **Las direcciones son las mismas que tenía la web cuando la hacía Quartz**
   (`juegos/golf-it!`, `autores/fromsoftware,-inc`, `tags/action`, `index.xml`),
-  así que ningún enlace viejo se rompe. Las de autor salen del nombre de
-  fichero que les da `autores.py`.
+  así que ningún enlace viejo se rompe.
 - **Se instala como app** en el móvil y abre sin conexión lo ya visitado.
-- **`vitrina.json`** es la colección entera con los ids de cada fuente, para
-  poder compararla con otra sin fiarse de los títulos.
-- Si una ficha trae un campo mal (`nota: 11`, un estado mal escrito), la web no
-  se construye y el error dice cuál: el esquema está en
+- Si una ficha trae un campo mal (`rating: 11`, un estado mal escrito), la web
+  no se construye y el error dice cuál: el esquema está en
   `web/src/content.config.ts`.
 
 ## Publicar
 
 Cada push a `main` pasa las pruebas y construye y publica el sitio en GitHub
-Pages.
-
-Para montarlo en tu cuenta:
-
-1. Haz un *fork*.
-2. En `web/astro.config.mjs`, cambia `site` por `https://tuusuario.github.io`
-   (y `base`, si el repo no se llama `vitrina`).
-   Y en `web/src/repo.ts`, la dirección de tu repo, que es a donde lleva
-   *Añadir una pieza*.
-3. En *Settings → Pages*, pon *Source* en **GitHub Actions**.
+Pages. La primera vez, en *Settings → Pages*, *Source* en **GitHub Actions**.
 
 ## Reglas de la vault
 
-- **La carpeta y el `tipo` van a juego.** Un `tipo: album` en `juegos/` sale en
+- **La carpeta y el `type` van a juego.** Un `type: album` en `juegos/` sale en
   la galería de música.
 - **Nombres de fichero y etiquetas, en ASCII**, porque de ellos salen las
   direcciones. Las etiquetas, en inglés. Si el título lleva tildes o símbolos,
   el de verdad va en `title`.
 - **Las portadas son ficheros** de `content/assets/portadas/`, enlazados como
-  `portada: "[[nombre.webp]]"`.
-- **`autor` es texto plano**, aunque sean dos separados por coma. El enlace a su
-  página lo pone la web.
+  `cover: "[[nombre.webp]]"`.
+- **`author` es texto plano**, aunque sean dos separados por coma. El enlace a
+  su página lo pone la web.
 - **`content/autores/` no se edita**: lo reescribe `autores.py`.
 - **El manga es un libro y el anime una serie**, con la etiqueta `manga` o
-  `anime`.
+  `anime`; el grupo *Anime y manga* los junta.
 
 ## Estructura
 
 ```
-content/            la vault: lo único que se escribe a mano
+vitrine.config.json  nombre, idioma, dirección y carpetas
+content/             la vault: lo único que se escribe a mano
   juegos/ pelis/ series/ libros/ musica/
-  autores/          páginas de autor, generadas
-  *.base            las galerías y tablas de cada sección
-  assets/portadas/  carátulas
-scripts/            altas, importación y mantenimiento (docs/scripts.md)
-web/                la web, en Astro
-  src/pages/        una página por tipo: entrada, sala, ficha, autor, tag...
-  src/lib/          de dónde sale cada cosa: autores, parecidos, direcciones
-  src/styles/       colores y letras
-  src/scripts/      la constelación, lo único con JavaScript propio
-  public/           iconos, manifest y service worker de la app
-  test/             pruebas de src/lib, sin levantar nada
-docs/               los scripts, las fuentes de importación y lo que queda
-.github/            el despliegue y el Issue de «Nueva pieza»
+  grupos/            las notas de los grupos
+  autores/           páginas de autor, generadas
+  privado/           lo privado, que git no sube
+  *.base             las galerías y tablas de cada sala
+  assets/portadas/   carátulas
+scripts/             altas, importación y mantenimiento (docs/scripts.md)
+  idioma.py          el idioma de la vitrina para los scripts
+  mensajes_en.py     lo que dicen los scripts, en inglés
+web/                 la web, en Astro
+  src/i18n.ts        todos los textos de la web, en castellano y en inglés
+  src/pages/         una página por tipo; las de [nombre] van en su idioma
+  src/lib/           de dónde sale cada cosa: visibilidad, grupos, parecidos
+  src/integraciones/ portadas, buscador y tarjetas para compartir
+  fuentes/           las letras de la casa, para las tarjetas
+  test/              pruebas de src/lib, sin levantar nada
+docs/                los scripts, las fuentes de importación y lo que queda
+.github/             el despliegue y el Issue de «Nueva pieza»
 ```
-
-Todos los scripts y sus opciones están en [`docs/scripts.md`](docs/scripts.md).
 
 ## Pruebas
 
 ```bash
-python3 scripts/pruebas.py   # sin red
+python3 scripts/pruebas.py   # sin red; también que no falte ninguna traducción
 cd web
 npm test                     # entre otras, que reparte los autores igual que autores.py
 npm run check                # tipos, y con ellos el esquema de las fichas
@@ -269,72 +353,14 @@ npm run check                # tipos, y con ellos el esquema de las fichas
 ## Por hacer
 
 Lo que falta y lo que se puede añadir está en
-[`docs/por-hacer.md`](docs/por-hacer.md). Lo primero:
-
-- Crear la etiqueta `nueva-pieza` en el repo, o el Issue de *Nueva pieza* no
-  llega a la Action.
-- Escribir las cartelas de verdad: cuatro de las cinco son de prueba.
-- Importar solo cada noche, con un PR de borradores para revisar.
-- «Me llegó por», «Me llevó a» y épocas, para que la vitrina diga también de
-  dónde viene cada cosa y cuándo.
-
-## In English: Vitrine
-
-**Vitrine** is the tool behind this site: a personal collection of games,
-films, series, books and albums, written as Markdown notes in Obsidian and
-published as a static website. *Vitrina* is my own collection, in Spanish;
-the name of the tool in English is Vitrine, a glass display case.
-
-Every work is a note with a few fields (`tipo`, `year`, `autor`, `nota` from
-1 to 10, `estado`, `favorito`, `tags`) and, on top, a short label written by
-the owner: *why it is in the display case*, the way a museum labels each
-piece. The site turns them into rooms with covers and filters, a page for the
-very best, author and tag pages, statistics, a constellation that links each
-piece to the ones it has most in common with, and a page that compares two
-collections by the ids of each source instead of by titles.
-
-What it does:
-
-- **Adds a work from a link** (Steam, Letterboxd, TVmaze, MusicBrainz, Open
-  Library, Spotify, and through Wikidata IMDb, TMDB, Goodreads, MyAnimeList,
-  Discogs and others) with cover, year, author, genres and synopsis. No source
-  needs an API key, an account or payment.
-- **Adds from a phone**, with no terminal: a GitHub Issue with the *Nueva
-  pieza* form, or sharing a link to the installed web app on Android.
-- **Imports** a Letterboxd diary or watchlist, a Steam library, ListenBrainz
-  and a Spotify data export, as drafts to review.
-- **Works offline** and installs as an app; publishes an RSS feed and a
-  `vitrina.json` with the whole collection.
-
-Running it needs Node 22.12+ and Python 3:
-
-```bash
-git clone https://github.com/jorgeress/vitrina.git
-cd vitrina
-pip install -r requirements.txt
-cd web
-npm ci --ignore-scripts --include=optional
-npm run dev                    # http://localhost:4321/vitrina/
-```
-
-To make it your own: fork it, delete the notes in each section folder of
-`content/` and their covers in `content/assets/portadas/`, rewrite
-`content/index.md` (its first paragraph is the welcome text), set `site` and
-`base` in
-`web/astro.config.mjs` and your repo in `web/src/repo.ts`, and choose
-*GitHub Actions* as the Pages source. The interface, the scripts and their
-documentation are in Spanish for now; translating the interface is on the
-list in [`docs/por-hacer.md`](docs/por-hacer.md).
-
-Code under MIT; the texts in `content/` under CC BY-SA 4.0. Details in
-`LICENSE.txt`.
+[`docs/por-hacer.md`](docs/por-hacer.md).
 
 ## Licencia
 
 El código es mío y va bajo MIT. Hasta octubre de 2026 la web la hacía un fork
 de [Quartz](https://quartz.jzhao.xyz), de jackyzha0, también MIT; sigue en el
 historial. Los textos de `content/` son míos, Copyright (c) 2026 Jorge García,
-bajo
-[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es). Las
-carátulas son de sus autores y se usan en miniatura para identificar cada obra.
-El detalle, en `LICENSE.txt`.
+bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es).
+Las carátulas son de sus autores y se usan en miniatura para identificar cada
+obra. Las fuentes de `web/fuentes/` son de sus autores, bajo la SIL Open Font
+License. El detalle, en `LICENSE.txt`.

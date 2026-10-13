@@ -13,6 +13,10 @@ Las carátulas y carteles de content/assets/ no entran en ninguna de las dos:
 son de sus respectivos autores y se usan en miniatura solo para identificar
 cada obra. Ver content/creditos.md.
 
+Las fuentes de web/fuentes/ (Cinzel, de The Cinzel Project Authors, y Source
+Sans 3, de Adobe) van bajo la SIL Open Font License 1.1; su texto está junto
+a ellas, en web/fuentes/OFL-*.txt.
+
 
 ================================================================================
 CÓDIGO — Licencia MIT

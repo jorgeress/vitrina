@@ -5,6 +5,13 @@ Todos leen y escriben en `content/`, ninguno pide clave de API y todos aceptan
 antes de escribir. Se pueden repetir cuantas veces quieras: solo rellenan lo
 que falta.
 
+Hablan el idioma de la vitrina (`language` en `vitrine.config.json`): sus
+mensajes, su `--help` y lo que escriben dentro de las fichas. Las órdenes y las
+opciones valen en los dos idiomas: `peli` o `film`, `--nota` o `--rating`,
+`--estado terminado` o `--status finished`, `--seccion` o `--section`. Los
+mensajes van en castellano en el código, dentro de `_()`, y su versión en
+inglés en `mensajes_en.py`; `pruebas.py` falla si alguno no la tiene.
+
 | Script | Para qué |
 | --- | --- |
 | `nueva.py` | Da de alta una obra, buscándola o desde su enlace |
@@ -16,11 +23,13 @@ que falta.
 | `datos.py` | Rellena año, autor y tags |
 | `textos.py` | Escribe el «De qué va» y las canciones de cada disco |
 | `autores.py` | Escribe las páginas de autor |
-| `secciones.py` | Cuelga cada ficha de su sección (campo `seccion`) |
-| `fechas.py` | Apunta la fecha de alta (campo `alta`) de las que no la tienen |
+| `secciones.py` | Cuelga cada ficha de su sala (campo `section`) |
+| `fechas.py` | Apunta la fecha de alta (campo `added`) de las que no la tienen |
 | `enmarcar.py` | Mete en su cartela lo que hayas escrito suelto |
 | `estado.py` | Qué hay y qué falta; actualiza las cifras del README |
-| `vistazo.py` | Levanta el sitio con los borradores dentro |
+| `vistazo.py` | Levanta el sitio con los borradores, lo oculto y lo privado dentro |
+| `empezar.py` | Deja una vitrina nueva, vacía, en castellano o en inglés |
+| `plantillas.py` | Escribe las plantillas de ficha y de grupo de Obsidian |
 | `pruebas.py` | Las pruebas, sin red |
 
 ## nueva.py
@@ -41,11 +50,11 @@ autor y las cifras del README.
 
 | Tipo | Fuente | Guarda | Enlaces que entiende |
 | --- | --- | --- | --- |
-| `juego` | Steam | `appid` | `store.steampowered.com/app/…` |
-| `peli` | Wikidata + Letterboxd | `letterboxd` | `letterboxd.com/film/…`, `boxd.it/…` |
-| `serie` | TVmaze | `tvmaze` | `tvmaze.com/shows/…` |
-| `album` | MusicBrainz | `mbid` | `musicbrainz.org/release-group/…`, `/release/…`, `open.spotify.com/album/…` |
-| `libro` | Open Library | `coverid` | `openlibrary.org/works/…`, `/books/…` |
+| `juego` / `game` | Steam | `appid` | `store.steampowered.com/app/…` |
+| `peli` / `film` | Wikidata + Letterboxd | `letterboxd` | `letterboxd.com/film/…`, `boxd.it/…` |
+| `serie` / `series` | TVmaze | `tvmaze` | `tvmaze.com/shows/…` |
+| `album` / `disco` | MusicBrainz | `mbid` | `musicbrainz.org/release-group/…`, `/release/…`, `open.spotify.com/album/…` |
+| `libro` / `book` | Open Library | `coverid` | `openlibrary.org/works/…`, `/books/…` |
 
 Un disco de Spotify solo se encuentra si alguien lo ha enlazado en MusicBrainz;
 si no, búscalo por título.
@@ -69,21 +78,40 @@ Si la obra tiene ids de dos fuentes (el anime de *Death Note* tiene serie y
 película), gana la serie; para elegir, pon el tipo delante:
 `scripts/nueva.py peli https://myanimelist.net/anime/1535`.
 
-Opciones: `--nota 1-10`, `--estado`, `--favorito`, `--borrador`, `--elegir N`
-y `--fichero NOMBRE`. Esta última hace falta cuando el título no tiene letras
-latinas (`悪の華`) y la fuente no sabe cómo se llama en latino.
+Opciones:
+
+| Opción | Qué hace |
+| --- | --- |
+| `--nota 1-10` | la nota (`rating`) |
+| `--estado` | pending, in-progress, finished, dropped (o en castellano). Sin él, lo que lleva nota o fecha entra terminado y lo demás pendiente |
+| `--favorito` | de lo mejor de lo mejor |
+| `--grupo NOMBRE` | la mete en ese grupo; se puede repetir |
+| `--terminada 2024-05` | cuándo la terminaste (`finished_on`): el anuario |
+| `--borrador` | entra con `draft: true` |
+| `--oculta` | entra con `hidden: true`: no sale en la web, pero está en el repo |
+| `--privada` | va a la carpeta privada, que git no sube |
+| `--elegir N` | sin preguntar, el resultado N |
+| `--fichero NOMBRE` | el nombre del fichero cuando el título no tiene letras latinas (`悪の華`) y la fuente no sabe cómo se llama en latino |
 
 ## desde_issue.py
 
 Es lo que usa la Action `nueva-pieza.yml`, no hace falta lanzarlo a mano.
 Para añadir sin terminal se abre un Issue con la plantilla **Nueva pieza**: el
 enlace (vale cualquiera de los que acepta `nueva.py`), y si quieres la nota,
-el estado, si es de lo mejor de lo mejor y por qué está en la vitrina. La
-Action crea la ficha con todo, la guarda en `main`, publica la web y contesta
-en el Issue con lo que ha hecho antes de cerrarlo.
+el estado, los grupos, cuándo la terminaste, si es de lo mejor de lo mejor, si
+va oculta y por qué está en la vitrina. La Action crea la ficha con todo, la
+guarda en `main` con un commit que redacta este script, publica la web y
+contesta en el Issue con lo que ha hecho antes de cerrarlo.
 
-Solo corre con los Issues del dueño del repo: en uno público cualquiera puede
-abrir uno, y esto escribe en `main`. Lo que llega del formulario se valida
+El formulario está definido aquí, en los dos idiomas, y la plantilla del Issue
+sale de él: `scripts/desde_issue.py --plantilla` la reescribe en el idioma de
+la vitrina (`nueva-pieza.yml` o `new-piece.yml`). Una prueba avisa si la del
+repo no es la que toca. Lo que ha hecho `nueva.py` lo lee de un informe en
+JSON, no de sus mensajes.
+
+Solo corre con los Issues del dueño del repo y con la etiqueta de la plantilla
+(`nueva-pieza` o `new-piece`, que hay que crear una vez): en uno público
+cualquiera puede abrir uno, y esto escribe en `main`. Lo que llega del formulario se valida
 campo a campo y nunca se pega en una orden.
 
 Desde el móvil es aún más corto: con la web instalada como app, en Android
@@ -106,14 +134,14 @@ Por cada ficha contestas en una línea, en cualquier orden:
 
 | Escribes | Pone |
 | --- | --- |
-| `8` | `nota: 8` |
-| `p` `c` `t` `a` | pendiente, en curso, terminado, abandonado |
+| `8` | `rating: 8` |
+| `p` `c` `t` `a` | pending, in-progress, finished, dropped (también escritos enteros, en los dos idiomas) |
 | `f` / `-f` | favorita / ya no |
 | Enter | nada; pasa a la siguiente |
 | `q` | para; lo contestado ya está guardado |
 
-Con nota y sin estado se entiende `terminado`, salvo que la ficha ya dijera
-`en curso` o `abandonado`. Después, si la ficha no tiene nada tuyo escrito,
+Con nota y sin estado se entiende `finished`, salvo que la ficha ya dijera
+`in-progress` o `dropped`. Después, si la ficha no tiene nada tuyo escrito,
 pide por qué está en la vitrina y lo pone arriba del todo, en su cartela
 (`> [!vitrina] Por qué está en la vitrina`), encima de la cita. Enter la salta.
 
@@ -141,7 +169,8 @@ scripts/importar.py listenbrainz TU_USUARIO
 scripts/importar.py spotify-export ~/Descargas/spotify.zip [--canciones]
 ```
 
-Todo entra en borrador (`draft: true`) salvo con `--sin-borrador`, y nunca
+Todo entra en borrador (`draft: true`) salvo con `--sin-borrador`, en la
+carpeta de su sala según la configuración, y nunca
 pisa una ficha que ya exista. Por defecto solo entra lo que tiene señal de
 haberte importado: 8 horas en Steam, 4 estrellas en Letterboxd. Los umbrales se
 cambian con `--min-horas` y `--min-nota`, y `--completo` los quita. Qué da cada
@@ -154,11 +183,15 @@ salvo con `--force`. Aceptan `--seccion CARPETA`.
 
 | Sección | Portada | Año, autor y tags | Texto |
 | --- | --- | --- | --- |
-| Juegos | Steam | Steam | Steam, en español |
-| Películas | Letterboxd | Letterboxd | Wikipedia en español; si no hay, TMDB |
-| Series | TVmaze | TVmaze | Wikipedia en español; si no hay, TVmaze |
+| Juegos | Steam | Steam | Steam, en el idioma de la vitrina |
+| Películas | Letterboxd | Letterboxd | su Wikipedia; si no hay, TMDB (en inglés) |
+| Series | TVmaze | TVmaze | su Wikipedia; si no hay, TVmaze (en inglés) |
 | Música | Cover Art Archive | MusicBrainz (tags) | Lista de canciones |
-| Libros | Open Library | Open Library (tags) | Wikipedia en español, vía Wikidata |
+| Libros | Open Library | Open Library (tags) | su Wikipedia, vía Wikidata |
+
+«Su Wikipedia» es la del idioma de la vitrina: la española en una vitrina en
+castellano, la inglesa en una en inglés. Lo que solo existe en inglés lleva el
+aviso en el crédito si la vitrina no lo está.
 
 `textos.py` solo reescribe lo que escribió él: la cita de «De qué va» y la
 lista de canciones. Lo que escribas encima se queda.
@@ -169,12 +202,14 @@ enlazada, pon ese campo a mano con el nombre del artículo.
 
 ## autores.py, secciones.py y fechas.py
 
-Los campos `seccion` y `alta` los escriben `nueva.py` e `importar.py` al crear
+Los campos `section` y `added` los escriben `nueva.py` e `importar.py` al crear
 la ficha, y `nueva.py` pasa `autores.py` al terminar. Para lo escrito o movido a
 mano, `al-dia.py` los pasa los tres. `autores.py` da página a quien tenga dos
 obras o más (`--minimo N` lo cambia). `fechas.py` saca la fecha del commit en
-que entró cada ficha, y nunca cambia una que ya esté puesta. Las páginas de `content/autores/` se
-reescriben enteras en cada pasada: no se editan a mano.
+que entró cada ficha, y nunca cambia una que ya esté puesta. Las páginas de la
+carpeta de autores se reescriben enteras en cada pasada: no se editan a mano.
+Solo cuentan las fichas públicas: una página de autor está en el repo, y no
+puede nombrar lo privado.
 
 ## estado.py
 
@@ -187,15 +222,36 @@ scripts/estado.py --comprobar  # avisa de lo que se ha quedado atrás
 
 `--comprobar` es el paso del CI que va antes de construir. Avisa si las cifras
 del README ya no son las de la vault, si hay portadas que no usa ninguna ficha
-o fichas sin fecha de alta. No para el despliegue.
+o fichas sin fecha de alta. No para el despliegue. Las cifras cuentan solo lo
+que sale en la web: ni lo oculto ni lo privado, que el README lo lee
+cualquiera.
 
 ## vistazo.py
 
 ```bash
-scripts/vistazo.py               # http://localhost:8081/vitrina/, borradores incluidos
+scripts/vistazo.py               # http://localhost:8081/vitrina/, con todo dentro
 scripts/vistazo.py --solo-build  # lo construye en web/vistazo/
 ```
 
-Construye la web con las fichas en borrador dentro, marcadas, para ver cómo
-queda una sala antes de publicar lo importado, y la sirve en el 8081. No copia
-ni toca la vault. Es una foto fija: si cambias algo, vuelve a lanzarlo.
+Construye la web con los borradores, lo oculto (`hidden`) y la carpeta privada
+dentro, marcados, para ver cómo queda una sala antes de publicar lo importado,
+y la sirve en el 8081. Es la única forma de ver lo privado en la web, y solo en
+tu ordenador. No copia ni toca la vault. Es una foto fija: si cambias algo,
+vuelve a lanzarlo.
+
+## empezar.py y plantillas.py
+
+```bash
+scripts/empezar.py --idioma en --nombre "Shelf" --dueno "Alex" \
+    --repo https://github.com/alex/shelf --vaciar        # dice qué borraría
+scripts/empezar.py ... --vaciar --si                     # lo hace
+scripts/empezar.py --idioma es --solo-vistas             # rehace solo las vistas
+scripts/plantillas.py                                    # las plantillas de Obsidian
+```
+
+`empezar.py` es para quien usa este repo como plantilla: escribe
+`vitrine.config.json` (la dirección sale del repo), las carpetas de las salas
+con el nombre en su idioma, sus vistas de Obsidian (`.base`), la entrada, los
+créditos, las plantillas y la del Issue. Con `--vaciar --si` quita la colección
+anterior: fichas, autores, grupos y portadas. Las vistas que genera son las
+mismas que las de esta vitrina, sin los comentarios.

@@ -32,7 +32,7 @@ búsqueda de libros de aquí: para libros consulta **la misma API que este repo,
 Open Library, y tampoco pide clave**. No aporta una fuente que no esté ya. Lo
 que aporta es el formulario, y a cambio trae su propio esquema de campos y su
 propia convención de nombres para las portadas. Se puede doblar con sus
-*mappings* y sus plantillas hasta que escupa `tipo/year/autor/nota/...`, pero
+*mappings* y sus plantillas hasta que escupa `type/year/author/rating/...`, pero
 entonces hay dos sistemas que tienen que seguir de acuerdo, y el día que el
 plugin cambie algo se rompe en silencio. Por eso la búsqueda está aquí dentro,
 en `importar.py libro`, y no delegada a un plugin.
@@ -167,8 +167,8 @@ La vía rápida alternativa sería la clave de la Web API de Steam
 decisión propia: aquí no se usan APIs con clave.
 
 Lo que **no** se puede: saber si terminaste un juego. Por eso las horas deciden
-qué entra pero no se guardan en la ficha, y de un volcado solo sale `estado:
-pendiente` para lo que no has abierto nunca. Lo jugado se queda con el estado en
+qué entra pero no se guardan en la ficha, y de un volcado solo sale `status:
+pending` para lo que no has abierto nunca. Lo jugado se queda con el estado en
 blanco, que lo pones tú.
 
 Lo que tampoco trae tu página de juegos es **el año, el estudio ni el género**:
@@ -248,22 +248,20 @@ canciones **se pliegan en el disco que las lleva** y cada disco se queda con la
 cuenta:
 
 ```yaml
-favoritas: 8      # ocho canciones tuyas están en este disco
-favorito: true    # ocho es más que el umbral, así que entra como favorito
+favorite_tracks: 8   # ocho canciones tuyas están en este disco
+favorite: true       # ocho es más que el umbral, así que entra como favorito
 ```
 
-Ese `favorito` es el único del repo que pone un script en vez de tu mano, y se
+Ese `favorite` es el único del repo que pone un script en vez de tu mano, y se
 lo permite porque **no lo adivina: lo cuenta**. Un disco con ocho canciones
 tuyas dentro te gusta más que uno con una suelta, y eso es un dato, no una
 suposición. El umbral son tres canciones y se mueve con `--min-favoritas`.
 
-La vista «Por tus canciones» de `content/Musica.base` ordena por esa cuenta, que
-es la mecánica de un top puesta donde de verdad tiene sentido: en música, que es
-la única sección donde tienes miles de cosas marcadas y ninguna nota.
-
-El campo se puede escribir a mano igual de bien, sin export de por medio: pones
-las canciones en el cuerpo de la ficha y `favoritas` con cuántas son. Está
-contado en el README, en «Un disco y tus canciones».
+Esa cuenta es la mecánica de un top puesta donde de verdad tiene sentido: en
+música, que es la única sección donde tienes miles de cosas marcadas y ninguna
+nota. El campo se puede escribir a mano igual de bien, sin export de por medio:
+pones las canciones en el cuerpo de la ficha y `favorite_tracks` con cuántas
+son.
 
 Lo que **no** se puede en ningún caso: sacar una nota tuya. Spotify no tiene
 puntuaciones.
@@ -305,7 +303,7 @@ Lo que **no** se puede: sacar una nota tuya, porque no hay cuenta de la que
 sacarla. Se pone con `--nota` al crearla o a mano después.
 
 **Cómics.** Open Library los cataloga y bastante bien: *Watchmen*, *Maus* y
-*Persépolis* salen los tres con portada. Hoy entran como `tipo: libro`. Si algún
+*Persépolis* salen los tres con portada. Hoy entran como `type: book`. Si algún
 día quieres separarlos, es una entrada más en `SECCIONES` y un `.base`, no una
 fuente nueva.
 
@@ -369,14 +367,15 @@ scripts/importar.py --dry-run ...                               # sin escribir
   las fuentes de carátula desde `FUENTES`, en `scripts/portadas.py`, y las de
   relleno desde el `FUENTES` de `scripts/datos.py`, donde cada sección dice qué
   campos sabe completar.
-- **Una sección nueva** son estos sitios: la entrada en `SECCIONES` de
-  `scripts/vitrina.py` y la de `web/src/lib/obras.ts` (nombre, dirección y cómo
-  se cuenta: «un disco», «90 discos»), el `tipo` y la carpeta en el esquema de
-  `web/src/content.config.ts`, su color en `web/src/styles/global.css` (en los
-  dos temas, y pasado por el validador de daltonismo) y en la lista de
-  `web/src/scripts/constelacion.ts`, su tipo de schema.org en la ficha
-  (`web/src/pages/[seccion]/[obra].astro`), el `.base` que la filtra y su
-  `index.md` en la vault, y la fuente en `nueva.py`, `portadas.py`, `datos.py` y
+- **Una sección nueva** son estos sitios: el tipo en `TIPOS` de
+  `scripts/vitrina.py` y de `web/src/config.ts`, y su carpeta en
+  `vitrine.config.json`; su nombre y cómo se cuenta («un disco», «90 discos»)
+  en los dos idiomas de `web/src/i18n.ts` y en `IDIOMAS` de
+  `scripts/empezar.py`; su color en `web/src/styles/global.css` (en los dos
+  temas, y pasado por el validador de daltonismo) y en la lista de
+  `web/src/scripts/constelacion.ts`; su tipo de schema.org en la
+  ficha (`web/src/pages/[seccion]/[obra].astro`); el `.base` que la filtra y su
+  `index.md` en la vault; y la fuente en `nueva.py`, `portadas.py`, `datos.py` y
   `textos.py`. La prueba
   `test_cada_tipo_tiene_fuente_en_los_cuatro_scripts` avisa de los cuatro
   últimos, que son los que se olvidan sin que falle nada.
