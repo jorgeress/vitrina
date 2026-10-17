@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2011
 author: Yoshihiro Togashi
 rating:
+status: finished
 favorite: false
 cover: "[[hunter-x-hunter.webp]]"
 tags:
@@ -16,6 +17,7 @@ wikipedia: Hunter × Hunter
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q70209136
 ---
 
 > [!quote] De qué va

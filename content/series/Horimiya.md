@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2021
 author: HERO, Daisuke Hagiwara
 rating:
+status: finished
 favorite: false
 cover: "[[horimiya.webp]]"
 tags:
@@ -14,6 +15,7 @@ tvmaze: 52001
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q104815263
 ---
 
 > [!quote] De qué va

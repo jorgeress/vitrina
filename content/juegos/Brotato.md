@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2023
 author: Blobfish
 rating:
+status: finished
 favorite: false
 cover: "[[brotato.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - rpg
 appid: 1942280
 added: 2026-09-02
+wikidata: Q114770253
 ---
 
 > [!quote] De qué va

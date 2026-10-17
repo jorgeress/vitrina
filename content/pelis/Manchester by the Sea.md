@@ -11,6 +11,7 @@ tags:
   - drama
 letterboxd: manchester-by-the-sea
 added: 2026-09-02
+wikidata: Q19864603
 ---
 
 > [!quote] De qué va

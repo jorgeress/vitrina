@@ -14,6 +14,8 @@ tags:
   - adventure
 letterboxd: spider-man-brand-new-day
 added: 2026-09-02
+wikidata: Q113244935
+trailer: 8TZMtslA3UY
 ---
 
 > [!quote] De qué va

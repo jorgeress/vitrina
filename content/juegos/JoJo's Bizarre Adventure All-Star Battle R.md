@@ -4,12 +4,14 @@ section: "[[juegos/index|Juegos]]"
 year: 2022
 author: CyberConnect2 Co. Ltd.
 rating:
+status: finished
 favorite: false
 cover: "[[jojo-s-bizarre-adventure-all-star-battle-r.webp]]"
 tags:
   - action
 appid: 1372110
 added: 2026-09-02
+wikidata: Q116160341
 ---
 
 > [!quote] De qué va

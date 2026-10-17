@@ -5,6 +5,7 @@ section: "[[series/index|Series]]"
 year: 2007
 author: Masashi Kishimoto
 rating:
+status: finished
 favorite: false
 cover: "[[naruto-shippuden.webp]]"
 tags:
@@ -16,6 +17,9 @@ tvmaze: 488
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q12500134
+follows:
+  - "[[series/Naruto]]"
 ---
 
 > [!quote] De qué va

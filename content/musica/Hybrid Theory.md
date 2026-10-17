@@ -14,6 +14,8 @@ tags:
   - alternative-metal
 mbid: b5b4bb4b-8ba5-3acf-88cb-4cae2699d8da
 added: 2026-09-12
+wikidata: Q19862
+spotify: 6PFPjumGRpZnBzqnDci6qJ
 ---
 
 ## Canciones

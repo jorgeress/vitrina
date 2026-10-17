@@ -13,6 +13,7 @@ tags:
   - adventure
 letterboxd: howls-moving-castle
 added: 2026-09-02
+wikidata: Q29011
 ---
 
 > [!quote] De qué va

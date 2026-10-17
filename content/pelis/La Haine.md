@@ -11,6 +11,7 @@ tags:
   - drama
 letterboxd: la-haine
 added: 2026-09-02
+wikidata: Q466101
 ---
 
 > [!quote] De qué va

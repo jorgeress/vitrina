@@ -12,6 +12,7 @@ tags:
   - romance
 letterboxd: how-to-lose-a-guy-in-10-days
 added: 2026-09-02
+wikidata: Q1327370
 ---
 
 > [!quote] De qué va

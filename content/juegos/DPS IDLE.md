@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2021
 author: YDKR, Semenov Iurii
 rating:
+status: finished
 favorite: false
 cover: "[[dps-idle.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - free-to-play
 appid: 1349540
 added: 2026-09-02
+wikidata: Q122367860
 ---
 
 > [!quote] De qué va

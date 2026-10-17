@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2012
 author: Tadatoshi Fujimaki
 rating:
+status: finished
 favorite: false
 cover: "[[kuroko-no-basket.webp]]"
 tags:
@@ -14,6 +15,7 @@ wikipedia: Kuroko no Basket
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q120118751
 ---
 
 > [!quote] De qué va

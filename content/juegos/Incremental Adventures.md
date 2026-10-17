@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2020
 author: Gniller
 rating:
+status: finished
 favorite: false
 cover: "[[incremental-adventures.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - rpg
 appid: 1371630
 added: 2026-09-02
+wikidata: Q126694681
 ---
 
 > [!quote] De qué va

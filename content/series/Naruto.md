@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2002
 author: Masashi Kishimoto
 rating:
+status: finished
 favorite: false
 cover: "[[naruto.webp]]"
 tags:
@@ -16,6 +17,7 @@ wikipedia: Naruto
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q25929253
 ---
 
 > [!quote] De qué va

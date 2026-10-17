@@ -14,6 +14,8 @@ tags:
   - baroque-pop
 mbid: 9d9b3ac3-e630-4644-92c7-fb14d4d68d86
 added: 2026-09-23
+wikidata: Q15303771
+spotify: 5TaNBj5l3VSA1F4dfJWNC4
 ---
 
 ## Canciones

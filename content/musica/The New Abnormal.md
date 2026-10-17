@@ -14,6 +14,8 @@ tags:
   - new-wave
 mbid: 43ca5aa6-92de-47e9-8f0b-9112e4881426
 added: 2026-09-23
+wikidata: Q85552601
+spotify: 2xkZV2Hl1Omi8rk2D7t5lN
 ---
 
 ## Canciones

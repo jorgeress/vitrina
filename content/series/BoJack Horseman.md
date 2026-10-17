@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2014
 author: Raphael Bob-Waksberg
 rating:
+status: finished
 favorite: false
 cover: "[[bojack-horseman.webp]]"
 tags:
@@ -11,6 +12,7 @@ tags:
   - comedy
 tvmaze: 184
 added: 2026-09-16
+wikidata: Q17733404
 ---
 
 > [!quote] De qué va

@@ -11,6 +11,7 @@ tags:
   - drama
 letterboxd: 12-angry-men
 added: 2026-09-02
+wikidata: Q2345
 ---
 
 > [!quote] De qué va

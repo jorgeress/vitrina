@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2011
 author: Re-Logic
 rating: 10
+status: finished
 favorite: true
 cover: "[[terraria.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - rpg
 appid: 105600
 added: 2026-09-02
+wikidata: Q332697
 ---
 
 > [!quote] De qué va

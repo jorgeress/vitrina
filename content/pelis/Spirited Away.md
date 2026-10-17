@@ -13,6 +13,7 @@ tags:
   - animation
 letterboxd: spirited-away
 added: 2026-09-02
+wikidata: Q155653
 ---
 
 > [!quote] De qué va

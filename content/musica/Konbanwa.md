@@ -10,6 +10,7 @@ cover: "[[konbanwa.webp]]"
 tags: []
 mbid: 1e7d61f0-111b-46bd-9217-6eb182102694
 added: 2026-09-23
+spotify: 1i99A0TkK2xd7bH6O8Dgvq
 ---
 
 ## Canciones

@@ -13,6 +13,7 @@ tags:
   - romance
 letterboxd: corpse-bride
 added: 2026-09-02
+wikidata: Q164417
 ---
 
 > [!quote] De qué va

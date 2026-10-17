@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2022
 author: Smilegate RPG
 rating:
+status: finished
 favorite: false
 cover: "[[lost-ark.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - rpg
 appid: 1599340
 added: 2026-09-02
+wikidata: Q21029108
 ---
 
 > [!quote] De qué va

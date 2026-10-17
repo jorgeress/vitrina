@@ -5,6 +5,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2017
 author: Monolith Productions
 rating:
+status: finished
 favorite: false
 cover: "[[middle-earthtm-shadow-of-wartm.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - rpg
 appid: 356190
 added: 2026-09-02
+wikidata: Q28859887
 ---
 
 > [!quote] De qué va

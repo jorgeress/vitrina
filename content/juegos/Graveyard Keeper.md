@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2018
 author: Lazy Bear Games
 rating:
+status: finished
 favorite: false
 cover: "[[graveyard-keeper.webp]]"
 tags:
@@ -14,6 +15,7 @@ tags:
 appid: 599140
 capsule: cf24c64388ff550c6d35f35643426e66be6aa622/library_capsule.jpg
 added: 2026-09-02
+wikidata: Q56278431
 ---
 
 > [!quote] De qué va

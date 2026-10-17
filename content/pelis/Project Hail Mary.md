@@ -13,6 +13,8 @@ tags:
   - adventure
 letterboxd: project-hail-mary
 added: 2026-09-02
+wikidata: Q107105860
+trailer: m08TxIsFTRI
 ---
 
 > [!quote] De qué va

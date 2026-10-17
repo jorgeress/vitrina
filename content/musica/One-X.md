@@ -14,6 +14,8 @@ tags:
   - blues
 mbid: be475d52-1eb0-3d96-91b0-f5a19a462ed7
 added: 2026-09-23
+wikidata: Q1253065
+spotify: 4ZDwEvXIKxWdwhAQK8ndBU
 ---
 
 ## Canciones

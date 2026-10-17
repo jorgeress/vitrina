@@ -13,6 +13,7 @@ tags:
   - drama
 letterboxd: 500-days-of-summer
 added: 2026-09-02
+wikidata: Q154935
 ---
 
 > [!quote] De qué va

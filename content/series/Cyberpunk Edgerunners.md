@@ -5,6 +5,7 @@ section: "[[series/index|Series]]"
 year: 2022
 author: Studio Trigger
 rating:
+status: finished
 favorite: false
 cover: "[[cyberpunk-edgerunners.webp]]"
 tags:
@@ -15,6 +16,7 @@ tvmaze: 48945
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q96677963
 ---
 
 > [!quote] De qué va

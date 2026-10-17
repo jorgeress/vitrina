@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2025
 author: Team PEAK
 rating:
+status: finished
 favorite: false
 cover: "[[peak.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
 appid: 3527290
 capsule: 480bd879ac737921bfa2529a6fea15961267ad21/library_600x900.jpg
 added: 2026-09-02
+wikidata: Q134992929
 ---
 
 > [!quote] De qué va

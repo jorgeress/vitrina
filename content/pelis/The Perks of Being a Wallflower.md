@@ -11,6 +11,7 @@ tags:
   - drama
 letterboxd: the-perks-of-being-a-wallflower
 added: 2026-09-02
+wikidata: Q675468
 ---
 
 > [!quote] De qué va

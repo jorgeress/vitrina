@@ -13,6 +13,7 @@ tags:
   - mystery
 letterboxd: clue
 added: 2026-09-02
+wikidata: Q558795
 ---
 
 > [!quote] De qué va

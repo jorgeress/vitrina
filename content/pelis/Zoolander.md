@@ -11,6 +11,7 @@ tags:
   - comedy
 letterboxd: zoolander
 added: 2026-09-02
+wikidata: Q220192
 ---
 
 > [!quote] De qué va

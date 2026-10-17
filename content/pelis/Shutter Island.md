@@ -13,6 +13,8 @@ tags:
   - thriller
 letterboxd: shutter-island
 added: 2026-09-02
+wikidata: Q210364
+trailer: wd6LnQm9HPo
 ---
 
 > [!quote] De qué va

@@ -15,6 +15,8 @@ tags:
   - art-pop
 mbid: 4829e3a6-b240-4eec-b1a5-2f3da9686b6e
 added: 2026-09-12
+wikidata: Q105563921
+spotify: 650sLMsoWUJ6AsjW2YvhCz
 ---
 
 ## Canciones

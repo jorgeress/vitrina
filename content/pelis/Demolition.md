@@ -12,6 +12,7 @@ tags:
   - comedy
 letterboxd: demolition
 added: 2026-09-02
+wikidata: Q18149188
 ---
 
 > [!quote] De qué va

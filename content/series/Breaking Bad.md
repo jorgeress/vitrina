@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2008
 author: Vince Gilligan
 rating:
+status: finished
 favorite: false
 cover: "[[breaking-bad.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - thriller
 tvmaze: 169
 added: 2026-09-16
+wikidata: Q1079
 ---
 
 > [!vitrina] Por qué está en la vitrina

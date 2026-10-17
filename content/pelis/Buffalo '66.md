@@ -13,6 +13,7 @@ tags:
   - romance
 letterboxd: buffalo-66
 added: 2026-09-02
+wikidata: Q1002142
 ---
 
 > [!quote] De qué va

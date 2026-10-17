@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2018
 author: Keisuke Itagaki
 rating:
+status: finished
 favorite: false
 cover: "[[baki.webp]]"
 tags:
@@ -14,6 +15,7 @@ tvmaze: 37673
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q59956380
 ---
 
 > [!quote] De qué va

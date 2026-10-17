@@ -5,6 +5,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2019
 author: FromSoftware, Inc.
 rating: 10
+status: finished
 favorite: true
 cover: "[[sekirotm-shadows-die-twice.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - adventure
 appid: 814380
 added: 2026-09-02
+wikidata: Q54906424
 ---
 
 > [!quote] De qué va

@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2025
 author: Team Cherry
 rating:
+status: finished
 favorite: false
 cover: "[[hollow-knight-silksong.webp]]"
 tags:
@@ -13,6 +14,10 @@ tags:
 appid: 1030300
 capsule: 93637c34351160eaa7d7ff0cce69cb4312abb819/library_capsule.jpg
 added: 2026-09-02
+wikidata: Q63294487
+trailer: 6XGeJwsUP9c
+follows:
+  - "[[juegos/Hollow Knight]]"
 ---
 
 > [!vitrina] Por qué está en la vitrina

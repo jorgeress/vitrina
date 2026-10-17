@@ -13,6 +13,7 @@ tags:
   - thriller
 letterboxd: inglourious-basterds
 added: 2026-09-02
+wikidata: Q153723
 ---
 
 > [!quote] De qué va

@@ -12,6 +12,8 @@ tags:
   - pop
 mbid: 6448381d-9d98-4f84-b99d-733b6acde906
 added: 2026-09-23
+wikidata: Q54632750
+spotify: 2Ek1q2haOnxVqhvVKqMvJe
 ---
 
 ## Canciones

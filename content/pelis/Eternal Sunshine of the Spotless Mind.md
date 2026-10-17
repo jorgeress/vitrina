@@ -13,6 +13,8 @@ tags:
   - drama
 letterboxd: eternal-sunshine-of-the-spotless-mind
 added: 2026-09-02
+wikidata: Q208269
+trailer: 07-QBnEkgXU
 ---
 
 > [!vitrina] Por qué está en la vitrina

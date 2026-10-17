@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2013
 author: Hajime Isayama
 rating:
+status: finished
 favorite: false
 cover: "[[attack-on-titan.webp]]"
 tags:
@@ -15,6 +16,7 @@ tvmaze: 919
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q22126305
 ---
 
 > [!quote] De qué va

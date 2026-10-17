@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2018
 author: Go Nagai
 rating:
+status: finished
 favorite: false
 cover: "[[devilman-crybaby.webp]]"
 tags:
@@ -14,6 +15,7 @@ tvmaze: 30915
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q47087518
 ---
 
 > [!quote] De qué va

@@ -14,6 +14,8 @@ tags:
   - punk-rock
 mbid: 1b022e01-4da6-387b-8658-8678046e4cef
 added: 2026-09-23
+wikidata: Q17444
+spotify: 2uEf3r9i2bnxwJQsxQ0xQ7
 ---
 
 ## Canciones

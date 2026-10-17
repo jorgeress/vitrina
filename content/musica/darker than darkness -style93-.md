@@ -14,6 +14,7 @@ tags:
   - rock
 mbid: 7087d4d7-6e49-318c-ab9f-7094535b3713
 added: 2026-09-23
+wikidata: Q5223609
 ---
 
 ## Canciones

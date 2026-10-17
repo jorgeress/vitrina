@@ -16,6 +16,7 @@ wikipedia: Berserk (manga)
 added: 2026-09-12
 groups:
   - Anime y manga
+wikidata: Q18558978
 ---
 
 > [!quote] De qué va

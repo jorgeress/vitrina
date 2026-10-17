@@ -13,6 +13,7 @@ tags:
   - romance
 letterboxd: 10-things-i-hate-about-you
 added: 2026-09-02
+wikidata: Q169082
 ---
 
 > [!quote] De qué va

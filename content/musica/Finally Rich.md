@@ -13,6 +13,8 @@ tags:
   - gangsta-rap
 mbid: 249eeae3-9e0f-4d19-a580-9b80bf054f41
 added: 2026-09-23
+wikidata: Q2031821
+spotify: 108j4R9oEcFUaVRzE8RZKI
 ---
 
 ## Canciones

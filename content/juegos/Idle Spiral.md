@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2022
 author: Idle System, Inc., Yayu
 rating:
+status: finished
 favorite: false
 cover: "[[idle-spiral.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - strategy
 appid: 1827980
 added: 2026-09-02
+wikidata: Q112148795
 ---
 
 > [!quote] De qué va

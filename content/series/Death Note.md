@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2006
 author: Takeshi Obata, Tsugumi Ooba
 rating:
+status: finished
 favorite: false
 cover: "[[death-note.webp]]"
 tags:
@@ -15,6 +16,7 @@ wikipedia: Death Note
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q718624
 ---
 
 > [!quote] De qué va

@@ -14,6 +14,8 @@ tags:
   - punk
 mbid: cd367c59-eb86-384b-bbc7-62f6d2d677b9
 added: 2026-09-12
+wikidata: Q532004
+spotify: 1fF8kYX49s5Ufv4XEY5sjW
 ---
 
 ## Canciones

@@ -5,6 +5,7 @@ section: "[[series/index|Series]]"
 year: 2016
 author: Shuichi Aso
 rating:
+status: finished
 favorite: false
 cover: "[[the-disastrous-life-of-saiki-k.webp]]"
 tags:
@@ -17,6 +18,7 @@ wikipedia: Saiki Kusuo no Psi-nan
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q55229501
 ---
 
 > [!quote] De qué va

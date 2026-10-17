@@ -14,6 +14,8 @@ tags:
   - alternative-hip-hop
 mbid: d44c50ad-61fd-3fce-95fc-27024d7f1d30
 added: 2026-09-12
+wikidata: Q1129439
+spotify: 3SZr5Pco2oqKFORCP3WNj9
 ---
 
 ## Canciones

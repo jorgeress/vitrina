@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2018
 author: Greg Berlanti, Sera Gamble
 rating:
+status: finished
 favorite: false
 cover: "[[you.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - thriller
 tvmaze: 26856
 added: 2026-09-16
+wikidata: Q39082126
 ---
 
 > [!quote] De qué va

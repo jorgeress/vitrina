@@ -4,12 +4,14 @@ section: "[[juegos/index|Juegos]]"
 year: 2014
 author: Nicalis, Inc., Edmund McMillen
 rating: 10
+status: finished
 favorite: true
 cover: "[[the-binding-of-isaac-rebirth.webp]]"
 tags:
   - action
 appid: 250900
 added: 2026-09-02
+wikidata: Q16267631
 ---
 
 > [!quote] De qué va

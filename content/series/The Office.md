@@ -4,12 +4,14 @@ section: "[[series/index|Series]]"
 year: 2005
 author: Stephen Merchant, Ricky Gervais
 rating:
+status: finished
 favorite: false
 cover: "[[the-office.webp]]"
 tags:
   - comedy
 tvmaze: 526
 added: 2026-09-16
+wikidata: Q23831
 ---
 
 > [!quote] De qué va

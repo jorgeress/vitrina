@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2025
 author: Lavaflame2
 rating:
+status: finished
 favorite: false
 cover: "[[idleon-the-incremental-mmo.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - massively-multiplayer
 appid: 1476970
 added: 2026-09-02
+wikidata: Q104637754
 ---
 
 > [!quote] De qué va

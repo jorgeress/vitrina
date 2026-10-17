@@ -14,6 +14,8 @@ tags:
   - emo-pop
 mbid: 6cd32445-c8a6-4bda-a92e-ec4f9b3dda61
 added: 2026-09-12
+wikidata: Q18392429
+spotify: 1xmzPFLf2gjDF0D8OQJyAo
 ---
 
 ## Canciones

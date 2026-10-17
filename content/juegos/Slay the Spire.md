@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2019
 author: Mega Crit
 rating:
+status: finished
 favorite: false
 cover: "[[slay-the-spire.webp]]"
 tags:
@@ -11,6 +12,7 @@ tags:
   - strategy
 appid: 646570
 added: 2026-09-02
+wikidata: Q48078440
 ---
 
 > [!quote] De qué va

@@ -12,6 +12,7 @@ tags:
   - romance
 letterboxd: little-women-2019
 added: 2026-09-02
+wikidata: Q56881140
 ---
 
 > [!quote] De qué va

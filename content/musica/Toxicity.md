@@ -14,6 +14,8 @@ tags:
   - avant-garde-metal
 mbid: f50fbcb4-bfcd-3784-b4c9-44f4793e66b2
 added: 2026-09-23
+wikidata: Q218971
+spotify: 4DR0GWo7w2GJyQnFVa4jAB
 ---
 
 ## Canciones

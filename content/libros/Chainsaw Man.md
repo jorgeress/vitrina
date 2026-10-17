@@ -15,6 +15,7 @@ wikipedia: Chainsaw Man
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q65240543
 ---
 
 > [!quote] De qué va

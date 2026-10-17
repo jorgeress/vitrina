@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2019
 author: Koyoharu Gotouge
 rating:
+status: finished
 favorite: false
 cover: "[[demon-slayer.webp]]"
 tags:
@@ -15,6 +16,7 @@ tvmaze: 41469
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q63350570
 ---
 
 > [!quote] De qué va

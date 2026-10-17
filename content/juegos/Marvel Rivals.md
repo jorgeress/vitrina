@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2024
 author: NetEase Games
 rating:
+status: finished
 favorite: false
 cover: "[[marvel-rivals.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
 appid: 2767030
 capsule: b7ccf53aa5becc25ad1c7b2e62d24462cdfcc4c4/library_capsule.jpg
 added: 2026-09-02
+wikidata: Q125175413
 ---
 
 > [!quote] De qué va

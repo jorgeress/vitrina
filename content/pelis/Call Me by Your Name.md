@@ -12,6 +12,7 @@ tags:
   - drama
 letterboxd: call-me-by-your-name
 added: 2026-09-02
+wikidata: Q25136757
 ---
 
 > [!quote] De qué va

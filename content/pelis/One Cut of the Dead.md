@@ -13,6 +13,7 @@ tags:
   - horror
 letterboxd: one-cut-of-the-dead
 added: 2026-09-02
+wikidata: Q55223237
 ---
 
 > [!quote] De qué va

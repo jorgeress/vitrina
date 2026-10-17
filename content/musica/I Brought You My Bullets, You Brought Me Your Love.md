@@ -15,6 +15,8 @@ tags:
 mbid: e8923ffe-6ea0-3a65-b6e4-90bca0a6d3a8
 favorite_tracks: 1
 added: 2026-09-04
+wikidata: Q863925
+spotify: 1AEe1vmsY6fovTC9dB8fVw
 ---
 
 ## Canciones

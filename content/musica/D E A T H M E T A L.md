@@ -15,6 +15,8 @@ tags:
   - indie-pop
 mbid: e53da1e9-2197-4755-baf1-182de0c74e26
 added: 2026-09-12
+wikidata: Q122962060
+spotify: 2MASm01cgG0a0CgioQpe6Q
 ---
 
 ## Canciones

@@ -5,12 +5,14 @@ section: "[[juegos/index|Juegos]]"
 year: 2018
 author: QLOC, FromSoftware, Inc.
 rating: 10
+status: finished
 favorite: true
 cover: "[[dark-soulstm-remastered.webp]]"
 tags:
   - action
 appid: 570940
 added: 2026-09-02
+wikidata: Q55728812
 ---
 
 > [!quote] De qué va

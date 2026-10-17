@@ -14,6 +14,8 @@ tags:
   - rock
 mbid: 23a9b1c2-3dd1-408e-89cb-ca0b81429176
 added: 2026-09-12
+wikidata: Q132353113
+spotify: 5FjaEW3Hi8vD2aoJNWln4t
 ---
 
 ## Canciones

@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2016
 author: ONE
 rating:
+status: finished
 favorite: false
 cover: "[[mob-psycho-100.webp]]"
 tags:
@@ -16,6 +17,7 @@ wikipedia: Mob Psycho 100
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q66313196
 ---
 
 > [!quote] De qué va

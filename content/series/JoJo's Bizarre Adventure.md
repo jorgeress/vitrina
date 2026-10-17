@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2012
 author: Hirohiko Araki
 rating:
+status: finished
 favorite: false
 cover: "[[jojo-s-bizarre-adventure.webp]]"
 tags:
@@ -14,6 +15,7 @@ tvmaze: 8287
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q28930028
 ---
 
 > [!quote] De qué va

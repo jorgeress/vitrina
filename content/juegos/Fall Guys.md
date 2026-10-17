@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2020
 author: Mediatonic
 rating:
+status: finished
 favorite: false
 cover: "[[fall-guys.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - massively-multiplayer
 appid: 1097150
 added: 2026-09-02
+wikidata: Q85760410
 ---
 
 > [!quote] De qué va

@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2019
 author: Rockstar Games
 rating:
+status: finished
 favorite: false
 cover: "[[red-dead-redemption-2.webp]]"
 tags:
@@ -11,6 +12,8 @@ tags:
   - adventure
 appid: 1174180
 added: 2026-09-02
+wikidata: Q27438121
+trailer: gmA6MrX81z4
 ---
 
 > [!quote] De qué va

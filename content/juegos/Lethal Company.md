@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2023
 author: Zeekerss
 rating:
+status: finished
 favorite: false
 cover: "[[lethal-company.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - early-access
 appid: 1966720
 added: 2026-09-02
+wikidata: Q123404756
 ---
 
 > [!quote] De qué va

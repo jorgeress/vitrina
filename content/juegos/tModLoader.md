@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2020
 author: TML Team
 rating:
+status: finished
 favorite: false
 cover: "[[tmodloader.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - rpg
 appid: 1281930
 added: 2026-09-02
+wikidata: Q120336390
 ---
 
 > [!quote] De qué va

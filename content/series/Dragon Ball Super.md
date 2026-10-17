@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2015
 author: Akira Toriyama
 rating:
+status: finished
 favorite: false
 cover: "[[dragon-ball-super.webp]]"
 tags:
@@ -15,6 +16,9 @@ tvmaze: 2368
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q19839121
+follows:
+  - "[[series/Dragon Ball Z]]"
 ---
 
 > [!quote] De qué va

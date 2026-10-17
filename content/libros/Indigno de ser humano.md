@@ -12,6 +12,7 @@ tags:
 coverid: 13003444
 wikipedia: Indigno de ser humano
 added: 2026-09-04
+wikidata: Q1147583
 ---
 
 > [!quote] De qué va

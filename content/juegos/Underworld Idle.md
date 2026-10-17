@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2023
 author: Aleksandr Golovkin
 rating:
+status: finished
 favorite: false
 cover: "[[underworld-idle.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - free-to-play
 appid: 1540960
 added: 2026-09-02
+wikidata: Q134991245
 ---
 
 > [!quote] De qué va

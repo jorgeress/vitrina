@@ -5,6 +5,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2020
 author: Pablo Leban
 rating:
+status: finished
 favorite: false
 cover: "[[idle-slayer-incremental-rpg.webp]]"
 tags:
@@ -15,6 +16,7 @@ tags:
 appid: 1353300
 capsule: 722290ef250a94cc84535249d99b87c5d3b98b83/library_600x900.jpg
 added: 2026-09-02
+wikidata: Q122821461
 ---
 
 > [!quote] De qué va

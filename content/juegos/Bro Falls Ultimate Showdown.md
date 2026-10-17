@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2021
 author: Boros Bros
 rating:
+status: finished
 favorite: false
 cover: "[[bro-falls-ultimate-showdown.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - indie
 appid: 1590320
 added: 2026-09-02
+wikidata: Q122821962
 ---
 
 > [!quote] De qué va

@@ -12,6 +12,7 @@ tags:
   - drama
 letterboxd: the-shawshank-redemption
 added: 2026-09-02
+wikidata: Q172241
 ---
 
 > [!quote] De qué va

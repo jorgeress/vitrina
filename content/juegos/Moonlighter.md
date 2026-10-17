@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2018
 author: Digital Sun
 rating:
+status: finished
 favorite: false
 cover: "[[moonlighter.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
 appid: 606150
 capsule: 99398159ad1e3cfbe51ae5939e851536cbc6211f/library_capsule.jpg
 added: 2026-09-02
+wikidata: Q55641138
 ---
 
 > [!quote] De qué va

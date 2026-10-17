@@ -13,6 +13,7 @@ tags:
   - comedy
 letterboxd: scott-pilgrim-vs-the-world
 added: 2026-09-02
+wikidata: Q753899
 ---
 
 > [!quote] De qué va

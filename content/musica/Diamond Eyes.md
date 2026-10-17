@@ -14,6 +14,8 @@ tags:
   - shoegaze
 mbid: f21cec66-4e3a-42fc-b7e4-59b17bed0cca
 added: 2026-09-12
+wikidata: Q117817
+spotify: 4RQnFSkkZlA65Xxchhnaha
 ---
 
 ## Canciones

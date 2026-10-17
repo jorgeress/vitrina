@@ -16,6 +16,7 @@ wikipedia: Gantz
 added: 2026-09-12
 groups:
   - Anime y manga
+wikidata: Q1057617
 ---
 
 > [!quote] De qué va

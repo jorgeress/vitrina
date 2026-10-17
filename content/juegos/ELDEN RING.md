@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2022
 author: FromSoftware, Inc.
 rating: 10
+status: finished
 favorite: true
 cover: "[[elden-ring.webp]]"
 tags:
@@ -11,6 +12,8 @@ tags:
   - rpg
 appid: 1245620
 added: 2026-09-02
+wikidata: Q64826862
+trailer: E3Huy2cdih0
 ---
 
 > [!quote] De qué va

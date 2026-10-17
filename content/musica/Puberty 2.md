@@ -14,6 +14,8 @@ tags:
   - dream-pop
 mbid: de3537cf-8dac-475a-b456-42227e314d7e
 added: 2026-09-12
+wikidata: Q27536501
+spotify: 16i5KnBjWgUtwOO7sVMnJB
 ---
 
 ## Canciones

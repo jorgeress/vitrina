@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2025
 author: Thorium
 rating:
+status: finished
 favorite: false
 cover: "[[undermine-2.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - rpg
 appid: 1869780
 added: 2026-09-02
+wikidata: Q125446909
 ---
 
 > [!quote] De qué va

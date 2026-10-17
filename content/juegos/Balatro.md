@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2024
 author: LocalThunk
 rating:
+status: finished
 favorite: false
 cover: "[[balatro.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - strategy
 appid: 2379780
 added: 2026-09-02
+wikidata: Q124357469
 ---
 
 > [!quote] De qué va

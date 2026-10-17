@@ -11,6 +11,7 @@ tags:
   - drama
 letterboxd: dead-poets-society
 added: 2026-09-02
+wikidata: Q106316
 ---
 
 > [!quote] De qué va

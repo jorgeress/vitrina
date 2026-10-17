@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2016
 author: Dodge Roll
 rating:
+status: finished
 favorite: false
 cover: "[[enter-the-gungeon.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
 appid: 311690
 capsule: 0f83ce1bfba1f0bd837b8d575dde76ba44855ea0/library_capsule.jpg
 added: 2026-09-02
+wikidata: Q23759338
 ---
 
 > [!quote] De qué va

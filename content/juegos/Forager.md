@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2019
 author: HopFrog
 rating:
+status: finished
 favorite: false
 cover: "[[forager.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - simulation
 appid: 751780
 added: 2026-09-02
+wikidata: Q63386191
 ---
 
 > [!quote] De qué va

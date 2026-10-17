@@ -13,6 +13,7 @@ tags:
   - action
 letterboxd: harakiri
 added: 2026-09-02
+wikidata: Q1584406
 ---
 
 > [!quote] De qué va

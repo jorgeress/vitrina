@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2026
 author: Tambouille, Géraud Zucchini
 rating:
+status: finished
 favorite: false
 cover: "[[sol-cesto.webp]]"
 tags:
@@ -11,6 +12,7 @@ tags:
   - strategy
 appid: 2738490
 added: 2026-09-02
+wikidata: Q135047122
 ---
 
 > [!quote] De qué va

@@ -14,6 +14,8 @@ tags:
   - melodic-hardcore
 mbid: da9d53c0-2116-4368-b234-b3403073aca7
 added: 2026-09-23
+wikidata: Q115207268
+spotify: 5Am1LFOFRwS94TaVzrFQwZ
 ---
 
 ## Canciones

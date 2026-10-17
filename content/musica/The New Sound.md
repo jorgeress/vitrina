@@ -13,6 +13,8 @@ tags:
   - progressive-rock
 mbid: 171db008-7f7b-48d3-a3b5-640d6ea41aa7
 added: 2026-09-12
+wikidata: Q131143581
+spotify: 07YS7ooqYtvPZLlW59MHY5
 ---
 
 ## Canciones

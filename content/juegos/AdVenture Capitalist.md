@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2015
 author: Hyper Hippo Games
 rating:
+status: finished
 favorite: false
 cover: "[[adventure-capitalist.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - free-to-play
 appid: 346900
 added: 2026-09-02
+wikidata: Q20714333
 ---
 
 > [!quote] De qué va

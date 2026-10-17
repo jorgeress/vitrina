@@ -13,6 +13,7 @@ tags:
   - thriller
 letterboxd: mulholland-drive
 added: 2026-09-02
+wikidata: Q272608
 ---
 
 > [!quote] De qué va

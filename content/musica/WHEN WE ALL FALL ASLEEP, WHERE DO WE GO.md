@@ -15,6 +15,8 @@ tags:
   - ambient-pop
 mbid: 72375978-a9a1-4254-b957-85565c716b7e
 added: 2026-09-23
+wikidata: Q61157315
+spotify: 0S0KGZnfBGSIssfF54WSJh
 ---
 
 ## Canciones

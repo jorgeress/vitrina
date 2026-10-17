@@ -14,6 +14,8 @@ tags:
   - pop-rap
 mbid: 0f1b9e07-b38b-4bba-9794-55e0924d7177
 added: 2026-09-12
+wikidata: Q63567532
+spotify: 5zi7WsKlIiUXv09tbGLKsE
 ---
 
 ## Canciones

@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 1989
 author: Akira Toriyama
 rating:
+status: finished
 favorite: false
 cover: "[[dragon-ball-z.webp]]"
 tags:
@@ -15,6 +16,7 @@ tvmaze: 2103
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q477916
 ---
 
 > [!quote] De qué va

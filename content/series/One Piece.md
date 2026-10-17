@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 1999
 author: Eiichiro Oda
 rating:
+status: finished
 favorite: false
 cover: "[[one-piece.webp]]"
 tags:
@@ -15,6 +16,7 @@ tvmaze: 1505
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q710324
 ---
 
 > [!quote] De qué va

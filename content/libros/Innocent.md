@@ -16,6 +16,7 @@ wikipedia: Innocent (manga)
 added: 2026-09-12
 groups:
   - Anime y manga
+wikidata: Q17193476
 ---
 
 > [!quote] De qué va

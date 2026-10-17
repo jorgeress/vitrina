@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2013
 author: Justin Roiland, Dan Harmon
 rating:
+status: finished
 favorite: false
 cover: "[[rick-and-morty.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - science-fiction
 tvmaze: 216
 added: 2026-09-16
+wikidata: Q15659308
 ---
 
 > [!quote] De qué va

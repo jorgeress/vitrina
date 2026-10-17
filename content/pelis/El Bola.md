@@ -11,6 +11,7 @@ tags:
   - drama
 letterboxd: pellet-2000
 added: 2026-09-02
+wikidata: Q744562
 ---
 
 > [!quote] De qué va

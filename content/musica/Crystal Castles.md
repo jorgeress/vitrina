@@ -14,6 +14,8 @@ tags:
   - chiptune
 mbid: 3fd716f5-2f67-3890-95ec-20c4032511c8
 added: 2026-09-12
+wikidata: Q687876
+spotify: 75olNPlDKi2XQhTD9IPlVC
 ---
 
 ## Canciones

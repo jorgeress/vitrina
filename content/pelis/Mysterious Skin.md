@@ -11,6 +11,7 @@ tags:
   - drama
 letterboxd: mysterious-skin
 added: 2026-09-02
+wikidata: Q1421068
 ---
 
 > [!quote] De qué va

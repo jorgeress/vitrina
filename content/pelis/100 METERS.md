@@ -12,6 +12,7 @@ tags:
   - drama
 letterboxd: 100-meters-2025
 added: 2026-09-02
+wikidata: Q134007355
 ---
 
 > [!quote] De qué va

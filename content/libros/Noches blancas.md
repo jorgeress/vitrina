@@ -13,6 +13,7 @@ tags:
 coverid: 10861094
 wikipedia: Noches blancas (Dostoyevski)
 added: 2026-09-04
+wikidata: Q600461
 ---
 
 > [!quote] De qué va

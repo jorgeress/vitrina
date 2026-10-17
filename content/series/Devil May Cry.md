@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2025
 author: Adi Shankar
 rating:
+status: finished
 favorite: false
 cover: "[[devil-may-cry.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - horror
 tvmaze: 71529
 added: 2026-09-16
+wikidata: Q122898407
 ---
 
 > [!quote] De qué va

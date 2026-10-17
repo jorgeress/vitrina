@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2021
 author: Alex Yee, Christian Linke
 rating:
+status: finished
 favorite: false
 cover: "[[arcane.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - fantasy
 tvmaze: 55138
 added: 2026-09-16
+wikidata: Q85518571
 ---
 
 > [!quote] De qué va

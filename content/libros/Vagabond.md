@@ -15,6 +15,7 @@ wikipedia: Vagabond (manga)
 added: 2026-09-12
 groups:
   - Anime y manga
+wikidata: Q1244799
 ---
 
 > [!quote] De qué va

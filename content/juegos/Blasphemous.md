@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2019
 author: The Game Kitchen
 rating:
+status: finished
 favorite: false
 cover: "[[blasphemous.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - indie
 appid: 774361
 added: 2026-09-02
+wikidata: Q67317244
 ---
 
 > [!quote] De qué va

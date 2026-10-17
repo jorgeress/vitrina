@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2023
 author: Myco
 rating:
+status: finished
 favorite: false
 cover: "[[the-gnorp-apologue.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - strategy
 appid: 1473350
 added: 2026-09-02
+wikidata: Q124050370
 ---
 
 > [!quote] De qué va

@@ -15,6 +15,7 @@ wikipedia: Sakamoto Days
 added: 2026-09-16
 groups:
   - Anime y manga
+wikidata: Q105087026
 ---
 
 > [!quote] De qué va

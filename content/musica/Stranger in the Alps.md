@@ -14,6 +14,8 @@ tags:
   - indie-folk
 mbid: 0dac7ff9-b4d1-423e-bf6b-7d194abb0e14
 added: 2026-09-23
+wikidata: Q61049085
+spotify: 0AkAmg94XyiHODJaiGHh9O
 ---
 
 ## Canciones

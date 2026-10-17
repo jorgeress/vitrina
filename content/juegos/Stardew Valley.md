@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2016
 author: ConcernedApe
 rating:
+status: finished
 favorite: false
 cover: "[[stardew-valley.webp]]"
 tags:
@@ -12,6 +13,8 @@ tags:
   - simulation
 appid: 413150
 added: 2026-09-02
+wikidata: Q23013817
+trailer: ot7uXNQskhs
 ---
 
 > [!quote] De qué va

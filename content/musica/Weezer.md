@@ -14,6 +14,8 @@ tags:
   - pop-punk
 mbid: c7b245c9-8099-32ea-af95-893acedde2cf
 added: 2026-09-12
+wikidata: Q1346351
+spotify: 1xpGyKyV26uPstk1Elgp9Q
 ---
 
 ## Canciones

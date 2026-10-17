@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2013
 author: The Indie Stone
 rating:
+status: finished
 favorite: false
 cover: "[[project-zomboid.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - early-access
 appid: 108600
 added: 2026-09-02
+wikidata: Q3603390
 ---
 
 > [!quote] De qué va

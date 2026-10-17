@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2013
 author: Dan Goor, Mike Schur
 rating:
+status: finished
 favorite: false
 cover: "[[brooklyn-nine-nine.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - crime
 tvmaze: 49
 added: 2026-09-16
+wikidata: Q13417244
 ---
 
 > [!quote] De qué va

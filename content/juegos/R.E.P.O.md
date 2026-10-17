@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2025
 author: semiwork
 rating:
+status: finished
 favorite: false
 cover: "[[r-e-p-o.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
 appid: 3241660
 capsule: 46b4813ef1cd20664299c9e5de847f3579b44f2e/library_600x900.jpg
 added: 2026-09-02
+wikidata: Q133247101
 ---
 
 > [!quote] De qué va

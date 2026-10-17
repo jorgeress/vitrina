@@ -12,6 +12,7 @@ tags:
 coverid: 13151269
 wikipedia: El extranjero
 added: 2026-09-04
+wikidata: Q163297
 ---
 
 > [!vitrina] Por qué está en la vitrina

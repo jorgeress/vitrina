@@ -11,6 +11,7 @@ tags:
   - drama
 letterboxd: the-hunt-2012
 added: 2026-09-02
+wikidata: Q32303
 ---
 
 > [!quote] De qué va

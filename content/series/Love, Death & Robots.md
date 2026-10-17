@@ -4,6 +4,7 @@ section: "[[series/index|Series]]"
 year: 2019
 author: Tim Miller
 rating:
+status: finished
 favorite: false
 cover: "[[love-death-robots.webp]]"
 tags:
@@ -12,6 +13,7 @@ tags:
   - thriller
 tvmaze: 40329
 added: 2026-09-16
+wikidata: Q61740435
 ---
 
 > [!quote] De qué va

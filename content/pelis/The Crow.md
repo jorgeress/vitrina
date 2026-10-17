@@ -13,6 +13,7 @@ tags:
   - fantasy
 letterboxd: the-crow
 added: 2026-09-02
+wikidata: Q250912
 ---
 
 > [!quote] De qué va

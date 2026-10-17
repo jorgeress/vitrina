@@ -4,6 +4,7 @@ section: "[[juegos/index|Juegos]]"
 year: 2023
 author: Perfuse Entertainment
 rating:
+status: finished
 favorite: false
 cover: "[[golf-it.webp]]"
 tags:
@@ -13,6 +14,7 @@ tags:
   - sports
 appid: 571740
 added: 2026-09-02
+wikidata: Q61783038
 ---
 
 > [!quote] De qué va
