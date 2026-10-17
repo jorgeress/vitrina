@@ -4,7 +4,11 @@ import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
+  decada,
+  destinoEnlace,
   enumerar,
+  idSpotify,
+  idYoutube,
   nombreTag,
   primerParrafo,
   recortar,
@@ -104,4 +108,27 @@ test("una cartela oculta no queda en la página, y lo demás sí", () => {
   // En una vitrina en inglés el callout es [!vitrine], y vale igual.
   assert.ok(!sinCartela('<div class="callout" data-callout="vitrine"><div><p>Mine.</p></div></div>').includes("Mine"));
   assert.equal(textoCartela("> [!vitrine] Why it's on display\n> Mine."), "Mine.");
+});
+
+test("los enlaces de la cabecera se leen con o sin carpeta, alias o extensión", () => {
+  assert.equal(destinoEnlace("[[libros/Chainsaw Man]]"), "libros/Chainsaw Man");
+  assert.equal(destinoEnlace("[[libros/Chainsaw Man|el manga]]"), "libros/Chainsaw Man");
+  assert.equal(destinoEnlace("Hollow Knight.md"), "Hollow Knight");
+});
+
+test("el tráiler y el disco valen como id o como enlace", () => {
+  assert.equal(idYoutube("E3Huy2cdih0"), "E3Huy2cdih0");
+  assert.equal(idYoutube("https://www.youtube.com/watch?v=E3Huy2cdih0&t=3"), "E3Huy2cdih0");
+  assert.equal(idYoutube("https://youtu.be/E3Huy2cdih0"), "E3Huy2cdih0");
+  assert.equal(idYoutube("no es un vídeo"), null);
+  assert.equal(idSpotify("5vkqYmiPBYLaalcmjujWxK"), "5vkqYmiPBYLaalcmjujWxK");
+  assert.equal(idSpotify("https://open.spotify.com/intl-es/album/5vkqYmiPBYLaalcmjujWxK?si=x"), "5vkqYmiPBYLaalcmjujWxK");
+  assert.equal(idSpotify("spotify:album:5vkqYmiPBYLaalcmjujWxK"), "5vkqYmiPBYLaalcmjujWxK");
+  assert.equal(idSpotify(null), null);
+});
+
+test("cada fecha cae en su década", () => {
+  assert.equal(decada(1997), 1990);
+  assert.equal(decada(2000), 2000);
+  assert.equal(decada(1848), 1840);
 });

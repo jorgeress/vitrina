@@ -27,7 +27,10 @@ export default defineConfig({
       hastPlugins: [
         callouts({
           showIndicator: false,
-          callouts: { vitrina: { title: cartela }, vitrine: { title: cartela } },
+          // `> [!spoiler]-` sale plegado, como en Obsidian, y fuera del
+          // buscador: si no, el extracto de un resultado podría destriparlo.
+          callouts: { vitrina: { title: cartela }, vitrine: { title: cartela }, spoiler: { title: "Spoilers" } },
+          props: { containerProps: (_nodo, tipo) => (tipo === "spoiler" ? { "data-pagefind-ignore": "all" } : null) },
         }),
       ],
     }),

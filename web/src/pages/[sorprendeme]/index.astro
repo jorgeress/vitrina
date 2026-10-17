@@ -1,0 +1,317 @@
+---
+import Base from "../../layouts/Base.astro";
+import { AMIGOS } from "../../config";
+import { t } from "../../i18n";
+import { SECCIONES, url } from "../../lib/obras";
+
+export const getStaticPaths = () => [{ params: { sorprendeme: t.rutas.sorprendeme } }];
+
+// Una pieza al azar, de esta vitrina o de otra: las dos salen del mismo
+// vitrine.json que usa Comparar, así que da igual de quién sea, y todo pasa en
+// el navegador de quien mira, sin servidor.
+const cliente = { ...t.azar, salas: Object.fromEntries(SECCIONES.map((s) => [s.tipo, s.nombre])) };
+---
+
+<Base titulo={t.sorprendeme} descripcion={t.sorprendemeDescripcion}>
+  <div class="contenedor">
+    <header class="titulo-pagina">
+      <h1>{t.sorprendeme}</h1>
+      <p>{t.sorprendemeSub}</p>
+    </header>
+
+    <form id="azar" class="azar" data-propia={url("vitrine.json")} onsubmit="return false">
+      <fieldset class="de-quien">
+        <label><input type="radio" name="de" value="aqui" checked /> {t.deAqui}</label>
+        <label><input type="radio" name="de" value="otra" /> {t.deOtra}</label>
+        <input
+          type="url"
+          name="otra"
+          list="amigos"
+          placeholder="https://alguien.github.io/vitrina/"
+          aria-label={t.direccionOtra}
+          inputmode="url"
+          hidden
+        />
+        <datalist id="amigos">
+          {AMIGOS.map((a) => <option value={a.url}>{a.name}</option>)}
+        </datalist>
+      </fieldset>
+      <div class="filtros">
+        <select name="sala" aria-label={t.sala}>
+          <option value="">{t.cualquierSala}</option>
+          {SECCIONES.map((s) => <option value={s.tipo}>{s.nombre}</option>)}
+        </select>
+        <label><input type="checkbox" name="almacen" /> {t.soloAlmacen}</label>
+        <label class="dorada"><input type="checkbox" name="mejor" /> ★ {t.soloMejor}</label>
+      </div>
+      <button type="submit" id="tirar">🎲 {t.otraVez}</button>
+    </form>
+    <p class="aviso" id="aviso" role="status"></p>
+
+    <article class="elegida" id="elegida" hidden>
+      <a class="marco" id="e-marco"></a>
+      <div class="datos">
+        <p class="de" id="e-de"></p>
+        <h2 id="e-titulo"></h2>
+        <p class="autor" id="e-autor"></p>
+        <blockquote id="e-cartela" hidden></blockquote>
+        <a class="ver" id="e-ver">{t.azar.verFicha}</a>
+      </div>
+    </article>
+  </div>
+  <script type="application/json" id="textos" set:html={JSON.stringify(cliente)} />
+</Base>
+
+<script>
+  import { direccionesJSON, esVitrina, type Pieza, type Vitrina } from "../../lib/comparar";
+
+  const form = document.getElementById("azar") as HTMLFormElement;
+  const aviso = document.getElementById("aviso")!;
+  const elegida = document.getElementById("elegida")!;
+  const otraCampo = form.elements.namedItem("otra") as HTMLInputElement;
+  const T = JSON.parse(document.getElementById("textos")!.textContent!) as Record<string, string> & {
+    salas: Record<string, string>;
+  };
+  const segura = (d: string | null | undefined) => (d && /^https?:\/\//.test(d) ? d : "#");
+
+  // Lo ya bajado se guarda: tirar otra vez no vuelve a pedir el fichero.
+  const bajadas = new Map<string, Promise<Vitrina>>();
+  function bajar(candidatas: string[]): Promise<Vitrina> {
+    const clave = candidatas.join(" ");
+    if (!bajadas.has(clave))
+      bajadas.set(
+        clave,
+        (async () => {
+          for (const d of candidatas)
+            try {
+              const r = await fetch(d);
+              const datos = r.ok && (await r.json());
+              if (esVitrina(datos)) return datos;
+            } catch {}
+          throw new Error("ninguna");
+        })(),
+      );
+    return bajadas.get(clave)!;
+  }
+
+  /** Para no repetir la misma dos veces seguidas. */
+  let ultima = "";
+
+  async function tirar() {
+    const f = new FormData(form);
+    const deOtra = f.get("de") === "otra";
+    otraCampo.hidden = !deOtra;
+    let candidatas = [form.dataset.propia!];
+    if (deOtra) {
+      const texto = String(f.get("otra") ?? "").trim();
+      if (!texto) {
+        otraCampo.focus();
+        return;
+      }
+      try {
+        candidatas = direccionesJSON(texto);
+      } catch {
+        aviso.textContent = T.noEncuentro.replace("{d}", texto);
+        return;
+      }
+      aviso.textContent = T.mirando;
+    }
+    let vitrina: Vitrina;
+    try {
+      vitrina = await bajar(candidatas);
+    } catch {
+      aviso.textContent = T.noEncuentro.replace("{d}", deOtra ? String(f.get("otra")) : candidatas[0]);
+      elegida.hidden = true;
+      return;
+    }
+    const sala = String(f.get("sala") ?? "");
+    const posibles = vitrina.works.filter(
+      (p) =>
+        (!sala || p.type === sala) &&
+        (!f.has("almacen") || p.status === "pending") &&
+        (!f.has("mejor") || p.favorite),
+    );
+    if (posibles.length === 0) {
+      aviso.textContent = T.nada;
+      elegida.hidden = true;
+      return;
+    }
+    aviso.textContent = "";
+    const otras = posibles.length > 1 ? posibles.filter((p) => p.url !== ultima) : posibles;
+    const p = otras[Math.floor(Math.random() * otras.length)];
+    ultima = p.url;
+    mostrar(p, deOtra ? (vitrina as Vitrina & { name?: string }).name : null);
+    if (deOtra) history.replaceState(null, "", `?de=${encodeURIComponent(String(f.get("otra")))}`);
+  }
+
+  function mostrar(p: Pieza, nombre: string | null | undefined) {
+    // Lo de esta vitrina se abre aquí mismo, también en local; lo de otra, en
+    // la suya.
+    const local = (d: string | null | undefined) => (d && !nombre ? new URL(new URL(d).pathname, location.origin).href : d);
+    const marco = document.getElementById("e-marco") as HTMLAnchorElement;
+    marco.href = segura(local(p.url));
+    marco.classList.toggle("cuadrada", p.type === "album");
+    marco.replaceChildren();
+    if (p.cover) {
+      const img = document.createElement("img");
+      img.src = segura(local(p.cover));
+      img.alt = "";
+      marco.append(img);
+    }
+    document.getElementById("e-de")!.textContent = [T.salas[p.type] ?? p.type, nombre && T.de.replace("{nombre}", nombre)]
+      .filter(Boolean)
+      .join(" · ");
+    document.getElementById("e-titulo")!.textContent = p.title;
+    document.getElementById("e-autor")!.textContent = [p.authors.join(", "), p.year].filter(Boolean).join(" · ");
+    const cartela = document.getElementById("e-cartela")!;
+    cartela.hidden = !p.label;
+    cartela.textContent = p.label ?? "";
+    (document.getElementById("e-ver") as HTMLAnchorElement).href = segura(local(p.url));
+    elegida.hidden = false;
+  }
+
+  form.addEventListener("submit", tirar);
+  form.addEventListener("change", (e) => {
+    if ((e.target as HTMLElement).getAttribute("name") !== "otra") tirar();
+  });
+  otraCampo.addEventListener("change", tirar);
+
+  const de = new URLSearchParams(location.search).get("de");
+  if (de) {
+    (form.querySelector('[value="otra"]') as HTMLInputElement).checked = true;
+    otraCampo.value = de;
+  }
+  tirar();
+</script>
+
+<style>
+  .azar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 24px;
+    align-items: center;
+    margin-top: 24px;
+  }
+  .de-quien {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    align-items: center;
+    flex-basis: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  label {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    cursor: pointer;
+  }
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    align-items: center;
+    color: var(--tenue);
+    font-size: 0.95rem;
+  }
+  .dorada {
+    color: var(--dorado);
+  }
+  input[type="url"],
+  select {
+    padding: 9px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: var(--caja);
+    color: var(--texto);
+    font: inherit;
+  }
+  input[type="url"] {
+    flex: 1 1 260px;
+  }
+  button {
+    padding: 11px 22px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--texto);
+    color: var(--fondo);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .aviso {
+    min-height: 1.5em;
+    color: var(--tenue);
+  }
+  .elegida {
+    display: flex;
+    gap: 36px;
+    align-items: flex-end;
+    margin-top: 12px;
+  }
+  .marco {
+    flex: none;
+    width: 230px;
+    aspect-ratio: 2 / 3;
+    border-radius: var(--radio);
+    overflow: hidden;
+    background: var(--caja-2);
+    box-shadow: var(--sombra);
+  }
+  .marco.cuadrada {
+    width: 270px;
+    aspect-ratio: 1;
+  }
+  .marco :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .de {
+    margin: 0;
+    font-family: var(--rotulo);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--tenue);
+  }
+  h2 {
+    margin: 8px 0 0;
+    font-size: clamp(1.7rem, 4vw, 2.6rem);
+    line-height: 1.1;
+  }
+  .autor {
+    margin: 8px 0 0;
+    color: var(--tenue);
+  }
+  blockquote {
+    margin: 18px 0 0;
+    padding: 14px 18px;
+    border-left: 3px solid var(--tenue);
+    background: var(--caja);
+    border-radius: var(--radio);
+    max-width: 60ch;
+  }
+  .ver {
+    display: inline-block;
+    margin-top: 16px;
+    color: var(--enlace);
+    font-weight: 600;
+  }
+  @media (max-width: 640px) {
+    .elegida {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 18px;
+    }
+    .marco {
+      width: 170px;
+    }
+    .marco.cuadrada {
+      width: 210px;
+    }
+  }
+</style>

@@ -3,7 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Portada from "../../components/Portada.astro";
 import { t, type Estado } from "../../i18n";
 import { IDIOMA } from "../../config";
-import { SECCIONES, cantidad, nombreTag, obras, porAlta, rutaFija, type Seccion } from "../../lib/obras";
+import { SECCIONES, cantidad, decada, nombreTag, obras, porAlta, rutaFija, type Seccion } from "../../lib/obras";
 
 export async function getStaticPaths() {
   return SECCIONES.map((seccion) => ({ params: { seccion: seccion.slug }, props: { seccion } }));
@@ -20,6 +20,13 @@ for (const o of lista) for (const t of o.data.tags ?? []) cuenta.set(t, (cuenta.
 const tags = [...cuenta].filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).slice(0, 16);
 const palabra = (n: number) => (n === 1 ? seccion.una : seccion.varias);
 const ORDENES = Object.entries(t.ordenes);
+// Las décadas que hay en la sala, para la vista «Por décadas»: una cabecera
+// por década dentro de la rejilla y una línea arriba que lleva a cada una.
+const porDecada = new Map<number, number>();
+for (const o of lista) if (o.data.year) porDecada.set(decada(o.data.year), (porDecada.get(decada(o.data.year)) ?? 0) + 1);
+const decadas = [...porDecada].sort((a, b) => a[0] - b[0]);
+const haySinAño = lista.some((o) => !o.data.year);
+const maximo = Math.max(1, ...porDecada.values());
 ---
 
 <Base
@@ -27,8 +34,8 @@ const ORDENES = Object.entries(t.ordenes);
   descripcion={t.enLaVitrina(cantidad(lista.length, seccion.una, seccion.varias))}
   activa={seccion.slug}
 >
-  <div class="contenedor">
-    <header class="titulo-pagina cabecera" style={`--seccion:var(--${seccion.tipo})`}>
+  <div class="contenedor" style={`--seccion:var(--${seccion.tipo})`}>
+    <header class="titulo-pagina cabecera">
       <h1>{seccion.nombre}</h1>
       <p id="recuento" aria-live="polite" data-total={lista.length} data-una={seccion.una} data-varias={seccion.varias} data-de={t.de}>
         {lista.length} {palabra(lista.length)}
@@ -70,7 +77,33 @@ const ORDENES = Object.entries(t.ordenes);
       }
     </form>
 
+    <nav class="linea" id="linea" hidden aria-label={t.ordenes.decadas}>
+      {
+        decadas.map(([d, n]) => (
+          <a href={`#decada-${d}`} data-decada={d} style={`--alto:${n / maximo}`}>
+            <span class="barra" />
+            <span class="cifra">{n}</span>
+            <span class="nombre">{t.decada(d)}</span>
+          </a>
+        ))
+      }
+    </nav>
+
     <div class="rejilla" id="rejilla">
+      {
+        decadas.map(([d]) => (
+          <h2 class="decada" id={`decada-${d}`} data-decada={d} hidden>
+            {t.decada(d)} <small />
+          </h2>
+        ))
+      }
+      {
+        haySinAño && (
+          <h2 class="decada" id="decada-0" data-decada="0" hidden>
+            {t.sinAño} <small />
+          </h2>
+        )
+      }
       {lista.map((o, i) => <Portada obra={o} filtrable viaja prioridad={i < 12} />)}
     </div>
     <p class="vacio" id="vacio" hidden>
@@ -85,7 +118,9 @@ const ORDENES = Object.entries(t.ordenes);
   // «mis juegos favoritos» o «lo que tengo con el tag horror».
   const form = document.getElementById("filtros") as HTMLFormElement;
   const rejilla = document.getElementById("rejilla")!;
-  const tarjetas = [...rejilla.children] as HTMLElement[];
+  const tarjetas = [...rejilla.querySelectorAll<HTMLElement>(".portada")];
+  const cabeceras = [...rejilla.querySelectorAll<HTMLElement>(".decada")];
+  const linea = document.getElementById("linea")!;
   const recuento = document.getElementById("recuento")!;
   const { total, una, varias, de } = recuento.dataset as { total: string; una: string; varias: string; de: string };
   const vacio = document.getElementById("vacio")!;
@@ -103,6 +138,7 @@ const ORDENES = Object.entries(t.ordenes);
   }
 
   const numero = (t: HTMLElement, campo: string) => Number(t.dataset[campo] ?? 0);
+  const decadaDe = (t: HTMLElement) => String(Math.floor(numero(t, "year") / 10) * 10);
   const ORDENES: Record<string, (a: HTMLElement, b: HTMLElement) => number> = {
     alta: (a, b) => numero(b, "alta") - numero(a, "alta"),
     aprecio: (a, b) =>
@@ -135,7 +171,25 @@ const ORDENES = Object.entries(t.ordenes);
       t.hidden = !ve;
       if (ve) n++;
     }
-    [...tarjetas].sort(ORDENES[orden] ?? ORDENES.alta).forEach((t, i) => (t.style.order = String(i)));
+    // Por décadas es de la más antigua a la más nueva, con una cabecera
+    // delante de cada década que tenga algo a la vista.
+    const porDecadas = orden === "decadas";
+    const ordenadas = [...tarjetas].sort(porDecadas ? ORDENES.antiguas : (ORDENES[orden] ?? ORDENES.alta));
+    const cuantas = new Map<string, number>();
+    ordenadas.forEach((t, i) => {
+      t.style.order = String(i * 2 + 1);
+      const d = decadaDe(t);
+      if (porDecadas && !t.hidden) {
+        if (!cuantas.has(d)) rejilla.querySelector<HTMLElement>(`.decada[data-decada="${d}"]`)!.style.order = String(i * 2);
+        cuantas.set(d, (cuantas.get(d) ?? 0) + 1);
+      }
+    });
+    for (const c of cabeceras) {
+      c.hidden = !cuantas.has(c.dataset.decada!);
+      c.querySelector("small")!.textContent = String(cuantas.get(c.dataset.decada!) ?? "");
+    }
+    linea.hidden = !porDecadas;
+    for (const a of linea.querySelectorAll<HTMLElement>("a")) a.classList.toggle("vacia", !cuantas.has(a.dataset.decada!));
     const palabra = Number(total) === 1 ? una : varias;
     recuento.textContent = n === Number(total) ? `${total} ${palabra}` : `${n} ${de} ${total} ${palabra}`;
     vacio.hidden = n > 0;
@@ -246,6 +300,66 @@ const ORDENES = Object.entries(t.ordenes);
   }
   .vacio {
     color: var(--tenue);
+  }
+  /* Por décadas: la cabecera ocupa la fila entera de la rejilla. */
+  .decada {
+    grid-column: 1 / -1;
+    margin: 18px 0 -4px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--borde);
+    font-family: var(--rotulo);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    scroll-margin-top: 90px;
+  }
+  .decada:first-child,
+  .decada[hidden] + .decada {
+    margin-top: 0;
+  }
+  .decada small {
+    margin-left: 6px;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--tenue);
+  }
+  /* La línea del tiempo: una barra por década, de alta lo que tenga. */
+  .linea {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+    margin: -12px 0 28px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .linea a {
+    flex: 1 0 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.78rem;
+    color: var(--tenue);
+  }
+  .linea .barra {
+    width: 100%;
+    height: calc(8px + var(--alto) * 64px);
+    border-radius: 4px 4px 0 0;
+    background: color-mix(in srgb, var(--seccion) 70%, transparent);
+  }
+  .linea a:hover .barra {
+    background: var(--seccion);
+  }
+  .linea a:hover {
+    color: var(--texto);
+  }
+  .linea .cifra {
+    order: -1;
+    font-weight: 600;
+  }
+  .linea a.vacia {
+    opacity: 0.35;
   }
   .vacio button {
     padding: 0;

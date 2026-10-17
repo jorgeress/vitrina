@@ -300,6 +300,11 @@ def main():
         # y esa se la pisan entre ellas todas las demas. Ahi manda el nombre del
         # fichero, que ya esta en latino.
         nombre = f"{slug(titulo) or slug(md.stem)}.webp"
+        # El mismo título en dos salas (el manga y el anime de Chainsaw Man)
+        # daría el mismo fichero, y la segunda le pisaría la portada a la
+        # primera: si ya existe y no es la de esta ficha, lleva el tipo detrás.
+        if (portadas_de(md) / nombre).exists() and nombre != apuntada:
+            nombre = f"{nombre[:-5]}-{tipo}.webp"
         peso = guardar(img, portadas_de(md) / nombre)
         escribir_campos(md, {"cover": f"[[{nombre}]]"})
         print(f"  ✓  {etiqueta}: {nombre}, {peso // 1024} KB, {fuente}")

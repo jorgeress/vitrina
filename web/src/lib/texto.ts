@@ -126,3 +126,36 @@ export function sinCartela(html: string): string {
   }
   return html.slice(0, inicio);
 }
+
+// --- enlaces entre fichas y reproductores -------------------------------------
+
+/**
+ * Adónde apunta un enlace de Obsidian de la cabecera (`based_on`, `follows`,
+ * `soundtrack`): «[[libros/Chainsaw Man|el manga]]» → «libros/Chainsaw Man».
+ * Sin carpeta («[[Chainsaw Man]]») vale igual, y se busca por el nombre.
+ */
+export function destinoEnlace(enlace: string): string {
+  return enlace
+    .trim()
+    .replace(/^\[\[|\]\]$/g, "")
+    .split("|")[0]
+    .replace(/\.md$/, "")
+    .trim();
+}
+
+/** El id de un vídeo de YouTube, se escriba el id o se pegue el enlace. */
+export function idYoutube(valor: string | null | undefined): string | null {
+  const v = (valor ?? "").trim();
+  const m = v.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/)([\w-]{11})/) ?? v.match(/^([\w-]{11})$/);
+  return m ? m[1] : null;
+}
+
+/** El id de un disco de Spotify, del id suelto o de su enlace. */
+export function idSpotify(valor: string | null | undefined): string | null {
+  const v = (valor ?? "").trim();
+  const m = v.match(/album[/:]([A-Za-z0-9]{22})/) ?? v.match(/^([A-Za-z0-9]{22})$/);
+  return m ? m[1] : null;
+}
+
+/** La década de un año: 1997 → 1990. */
+export const decada = (año: number) => Math.floor(año / 10) * 10;

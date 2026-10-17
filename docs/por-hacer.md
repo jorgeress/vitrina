@@ -12,6 +12,12 @@ el anuario con `finished_on`, una tarjeta para compartir cada ficha, comparar
 con un fichero, y Vitrine como plantilla en castellano o en inglés
 (`scripts/empezar.py`, la web y los scripts en los dos idiomas).
 
+El 17 de octubre: cuántas veces has terminado algo (`times`), spoilers
+plegados, el color de la portada en su ficha, el reproductor (Spotify y
+tráiler), las salas por décadas, «de la misma historia» (`based_on`, `follows`,
+`soundtrack`, con `scripts/enlazar.py` desde Wikidata), y *Sorpréndeme*, de
+esta vitrina o de otra.
+
 ## Para que funcione lo que ya está
 
 - **Subir `main`.** Es lo que publica la web nueva.
@@ -55,6 +61,22 @@ con un fichero, y Vitrine como plantilla en castellano o en inglés
 ## Lo que se puede añadir
 
 De más a menos útil, a mi juicio.
+
+- **Sellos, como los de Passport.** Guardada como idea: es lo más «de
+  aplicación» y necesita un criterio antes de código. La forma que encaja con
+  la vitrina es que **cada uno haga los suyos**, como los grupos: una nota por
+  sello con su condición (`tags: [roguelike]` y 5 piezas, `author:
+  FromSoftware`, `year < 1960`, `times >= 3`…) y la web dice cuáles has
+  ganado y cuándo (el `added` o `finished_on` de la pieza que lo completó).
+  Unos pocos de serie, que se puedan apagar.
+- **La constelación con las relaciones.** `based_on`, `follows` y
+  `soundtrack` salen en la ficha, pero la constelación aún no las dibuja: con
+  flecha, y pesando más que un tag.
+- **Bandas sonoras.** Hoy no hay ninguna puesta: Wikidata casi nunca sabe
+  cuál es el disco, así que van a mano (`soundtrack: ["[[musica/…]]"]`).
+- **Tráileres que faltan.** De 38 películas, solo 5 tienen uno que se pueda
+  ver: Wikidata suele apuntar a la película de alquiler de *YouTube Movies*,
+  y esos se descartan. Se ponen a mano con `trailer:` y el enlace.
 
 - **La fecha de terminado desde Letterboxd.** El diario guarda el día en que
   viste cada película: `importar.py letterboxd-rss` podría escribirla en

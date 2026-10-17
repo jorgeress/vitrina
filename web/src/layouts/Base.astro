@@ -77,6 +77,9 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
           <a class="boton" id="ir-buscar" href={rutaFija("buscar")} aria-label={t.buscar} title={t.buscarAtajo} aria-current={activa === "buscar" ? "page" : undefined}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
           </a>
+          <a class="boton" href={rutaFija("sorprendeme")} aria-label={t.sorprendeme} title={t.sorprendeme} aria-current={activa === "sorprendeme" ? "page" : undefined}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"></rect><circle cx="8" cy="8" r="1.2"></circle><circle cx="16" cy="16" r="1.2"></circle><circle cx="12" cy="12" r="1.2"></circle></svg>
+          </a>
           <button class="boton" type="button" id="tema" aria-label={t.tema} title={t.temaCorto}>
             <svg class="sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
             <svg class="luna" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"></path></svg>
@@ -100,6 +103,7 @@ const imagenAbsoluta = imagen ? new URL(imagen, Astro.site).href : null;
         <a href={rutaFija("tags")}>{t.tags}</a>
         <a href={rutaFija("cifras")}>{t.cifras}</a>
         <a href={rutaFija("comparar")}>{t.comparar}</a>
+        <a href={rutaFija("sorprendeme")}>{t.sorprendeme}</a>
         <a href={rutaFija("creditos")}>{t.creditos}</a>
         <a href={url("index.xml")}>RSS</a>
       </nav>

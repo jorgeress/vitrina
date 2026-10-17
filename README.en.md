@@ -21,6 +21,13 @@ into an empty vitrine of your own.
   (“Anime”, “What Sam recommended”), a **yearbook** with what you finished and
   what came in each year, and a **constellation** linking each piece to the
   ones it has most in common with.
+- **Each entry** says how many times you finished it (“Watched 3 times”),
+  takes its light from the colour of its cover, plays the album on Spotify or
+  the trailer on YouTube right on the page (nothing loads until you press), and
+  lists what's **part of the same story** on display: adaptations, sequels and
+  soundtracks. Spoilers fold away with `> [!spoiler]-`.
+- **Rooms by decade**, with a timeline on top, and **Surprise me**: a random
+  piece from your display or from someone else's.
 - **A share card** for every entry: pasting its link in a chat shows an image
   with the cover, title, rating and the start of your label.
 - **Compare** your vitrine with someone else's, by address or with their
@@ -147,6 +154,9 @@ tags:
 groups:
   - Roguelikes
 finished_on: 2024-05 # YYYY, YYYY-MM or YYYY-MM-DD: the yearbook
+times: 2             # how many times you finished it
+follows:             # which one it follows; also based_on and soundtrack
+  - "[[games/Slay the Spire]]"
 ---
 
 > [!vitrine] Why it's on display

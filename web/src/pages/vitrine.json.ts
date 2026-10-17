@@ -20,10 +20,11 @@ export const GET: APIRoute = async ({ site }) => {
       favorite: Boolean(d.favorite),
       added: d.added?.toISOString().slice(0, 10) ?? null,
       finished_on: d.finished_on ?? null,
+      times: d.times ?? null,
       tags: d.tags ?? [],
       groups: d.groups ?? [],
       ids: Object.fromEntries(
-        (["appid", "letterboxd", "tvmaze", "mbid", "wikipedia"] as const).filter((k) => d[k] != null).map((k) => [k, d[k]]),
+        (["appid", "letterboxd", "tvmaze", "mbid", "wikipedia", "wikidata"] as const).filter((k) => d[k] != null).map((k) => [k, d[k]]),
       ),
       label: cartela(o),
       url: new URL(ruta(o), site).href,

@@ -2,7 +2,9 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import { CARPETAS, CARPETA_PRIVADA, IDIOMA, TIPOS, type Tipo } from "../config";
 import { VISTAZO } from "../content.config";
 import { t } from "../i18n";
-import { CALLOUT_CARTELA, cantidad, enumerar, separarAutores, sinCartela, slugQuartz, textoCartela } from "./texto";
+import { join } from "node:path";
+import sharp from "sharp";
+import { CALLOUT_CARTELA, cantidad, destinoEnlace, enumerar, separarAutores, sinCartela, slugQuartz, textoCartela } from "./texto";
 
 export * from "./texto";
 export { VISTAZO };
@@ -59,6 +61,7 @@ function sinLoOculto(o: Obra): Obra {
   if (ocultos.includes("finished_on")) data.finished_on = null;
   if (ocultos.includes("groups")) data.groups = null;
   if (ocultos.includes("added")) data.added = null;
+  if (ocultos.includes("times")) data.times = null;
   if (!ocultos.includes("label")) return { ...o, data };
   // La cartela se quita del texto y del HTML ya hecho: no basta con no
   // pintarla, tiene que no estar en la página.
@@ -357,4 +360,98 @@ export function vecindario(todas: Obra[], cuantas: number): Map<string, Vecina[]
 
 export function relacionadas(o: Obra, todas: Obra[], cuantas = 6): Vecina[] {
   return (vecindario(todas, cuantas).get(o.id) ?? []).filter((v) => !v.debil);
+}
+
+// --- de la misma historia ------------------------------------------------------
+
+export type Relacion = "basadaEn" | "adaptadaEn" | "sigueA" | "continuaEn" | "bandaSonora" | "bandaSonoraDe";
+
+/** Cada campo, con el nombre de la relación en un sentido y en el otro: si el
+ * anime dice `based_on: [[libros/Chainsaw Man]]`, el manga dice «Adaptada en». */
+const CAMPOS_RELACION = [
+  ["based_on", "basadaEn", "adaptadaEn"],
+  ["follows", "sigueA", "continuaEn"],
+  ["soundtrack", "bandaSonora", "bandaSonoraDe"],
+] as const;
+
+/** La ficha a la que lleva un enlace: con carpeta, por su dirección; sin
+ * ella, por el nombre del fichero o el título. Lo que no está en la web (oculto,
+ * borrador, privado) no aparece en `todas` y no se enlaza. */
+function resolver(enlace: string, todas: Obra[]): Obra | undefined {
+  const destino = destinoEnlace(enlace);
+  if (destino.includes("/")) return todas.find((o) => o.id === slugQuartz(destino));
+  const slug = slugQuartz(destino);
+  return todas.find((o) => slugObra(o) === slug) ?? todas.find((o) => titulo(o) === destino);
+}
+
+/** Lo que es de la misma historia que esta obra, en los dos sentidos y sin
+ * repetir: adaptaciones, secuelas y bandas sonoras. */
+export function relaciones(o: Obra, todas: Obra[]): { tipo: Relacion; obra: Obra }[] {
+  const lista: { tipo: Relacion; obra: Obra }[] = [];
+  const añadir = (tipo: Relacion, obra: Obra | undefined) => {
+    if (obra && obra.id !== o.id && !lista.some((r) => r.obra.id === obra.id)) lista.push({ tipo, obra });
+  };
+  for (const [campo, ida] of CAMPOS_RELACION) for (const e of o.data[campo] ?? []) añadir(ida, resolver(e, todas));
+  for (const otra of todas)
+    for (const [campo, , vuelta] of CAMPOS_RELACION)
+      if ((otra.data[campo] ?? []).some((e) => resolver(e, todas)?.id === o.id)) añadir(vuelta, otra);
+  return lista;
+}
+
+// --- el color de la portada -------------------------------------------------------
+
+const colores = new Map<string, Promise<string | null>>();
+
+/**
+ * El color que manda en una portada, para teñir su ficha. No es la media,
+ * que en casi todas sale un marrón, ni el más repetido, que en las oscuras es
+ * el negro: es el tono que más pesa contando cuánto ocupa y cuánto color
+ * tiene. Una portada en blanco y negro se queda sin tinte, y la ficha con el
+ * de su sala.
+ */
+export function colorPortada(o: Obra): Promise<string | null> {
+  const nombre = o.data.cover?.replace(/^\[\[|\]\]$/g, "").split("|")[0];
+  if (!nombre) return Promise.resolve(null);
+  if (!colores.has(nombre)) colores.set(nombre, calcularColor(nombre));
+  return colores.get(nombre)!;
+}
+
+async function calcularColor(nombre: string): Promise<string | null> {
+  const carpetas = [join(process.cwd(), "..", "content", "assets", "portadas")];
+  if (VISTAZO) carpetas.push(join(process.cwd(), "..", "content", CARPETA_PRIVADA, "portadas"));
+  for (const carpeta of carpetas) {
+    try {
+      const { data } = await sharp(join(carpeta, nombre)).resize(32, 32, { fit: "fill" }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+      // Doce tonos; en cada uno se suma lo que pesa cada píxel y su color.
+      const cubos = Array.from({ length: 12 }, () => ({ peso: 0, r: 0, g: 0, b: 0 }));
+      for (let i = 0; i < data.length; i += 3) {
+        const [r, g, b] = [data[i], data[i + 1], data[i + 2]];
+        const max = Math.max(r, g, b) / 255;
+        const min = Math.min(r, g, b) / 255;
+        const luz = (max + min) / 2;
+        const sat = max === min ? 0 : (max - min) / (1 - Math.abs(2 * luz - 1));
+        if (luz < 0.12 || luz > 0.92 || sat < 0.2) continue;
+        const tono = max === min ? 0 : tonoDe(r, g, b);
+        const cubo = cubos[Math.floor(tono / 30) % 12];
+        const peso = sat * sat;
+        cubo.peso += peso;
+        cubo.r += r * peso;
+        cubo.g += g * peso;
+        cubo.b += b * peso;
+      }
+      const mejor = cubos.reduce((a, b) => (b.peso > a.peso ? b : a));
+      // Menos de un 4 % de la portada con color de verdad: es gris.
+      if (mejor.peso < 32 * 32 * 0.04) return null;
+      const c = (v: number) => Math.round(v / mejor.peso);
+      return `rgb(${c(mejor.r)} ${c(mejor.g)} ${c(mejor.b)})`;
+    } catch {}
+  }
+  return null;
+}
+
+function tonoDe(r: number, g: number, b: number): number {
+  const max = Math.max(r, g, b);
+  const d = max - Math.min(r, g, b);
+  const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return (h * 60 + 360) % 360;
 }

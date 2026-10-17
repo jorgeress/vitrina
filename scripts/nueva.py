@@ -45,6 +45,7 @@ Lo que la fuente no sabe es lo tuyo, y va en las opciones:
                       sube: ni la web ni GitHub la ven
   --grupo "Anime"     la mete en ese grupo (se puede repetir)
   --terminada 2024-05 cuando la terminaste, para el anuario
+  --veces 3           cuantas veces la has terminado: sale "Vista 3 veces"
   --dry-run           dice que crearia, sin tocar nada
 """
 
@@ -60,6 +61,7 @@ import urllib.request
 from pathlib import Path
 
 import autores
+import enlazar
 import estado
 import textos
 from idioma import _, ayuda, opciones
@@ -660,6 +662,8 @@ def main():
                    help=_("la mete en ese grupo; se puede repetir"))
     p.add_argument(*opciones("--terminada", "--finished-on"), dest="terminada", type=fecha_parcial,
                    metavar=_("AAAA[-MM[-DD]]"), help=_("cuando la terminaste, para el anuario"))
+    p.add_argument(*opciones("--veces", "--times"), dest="veces", type=int, metavar="N",
+                   help=_("cuantas veces la has terminado: vista, jugada, leida o escuchada"))
     p.add_argument("--informe", help=argparse.SUPPRESS)
     p.add_argument("--dry-run", action="store_true", help=_("no escribe ni baja nada"))
     args = p.parse_args()
@@ -789,7 +793,7 @@ def alta(args):
     # Sin estado, lo que ya tiene nota o fecha de terminado esta terminado (la
     # misma regla que repasar.py); lo demas, pendiente.
     estado = args.estado or ("finished" if args.nota or getattr(args, "terminada", None)
-                             else "pending")
+                             or getattr(args, "veces", None) else "pending")
     campos = {"type": args.tipo, "year": elegido["year"], "author": autor,
               "rating": args.nota, "status": estado, "favorite": args.favorito,
               "cover": None, "tags": None}
@@ -803,6 +807,8 @@ def alta(args):
         campos["groups"] = args.grupos
     if getattr(args, "terminada", None):
         campos["finished_on"] = args.terminada
+    if getattr(args, "veces", None):
+        campos["times"] = args.veces
 
     if args.dry_run:
         print("\n" + _("Se crearía {ruta}").format(ruta=f"content/{carpeta}/{nombre_de_fichero(fichero)}.md"))
@@ -834,6 +840,13 @@ def alta(args):
     detalles.append(_("texto: {detalle}").format(
         detalle=detalle if cuerpo else _("sin texto ({porque})").format(porque=detalle)))
     print("  " + detalles[-1])
+    # Lo que la une con otras fichas y el reproductor (trailer, Spotify), de
+    # Wikidata. Si no contesta, la ficha ya esta hecha: enlazar.py lo repite.
+    with contextlib.redirect_stdout(io.StringIO()):
+        try:
+            enlazar.main([str(md)])
+        except Exception:
+            pass
     informar(args, creada=str(md.relative_to(VAULT.parent)), detalles=detalles)
     for aviso in parecidos(carpeta, [titulo]):
         print("  " + _("Se parece a una que ya tenías: {aviso}").format(aviso=aviso))

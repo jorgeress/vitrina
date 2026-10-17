@@ -22,7 +22,14 @@ const id = (entrada: string, quitar: string | RegExp = "") =>
 
 /** Lo que se puede ocultar de una ficha pública, campo a campo. `label` es la
  * cartela, «Por qué está en la vitrina». */
-export const OCULTABLES = ["rating", "status", "favorite", "label", "finished_on", "groups", "added"] as const;
+export const OCULTABLES = ["rating", "status", "favorite", "label", "finished_on", "groups", "added", "times"] as const;
+
+/** Una lista de enlaces a otras fichas: `["[[libros/Chainsaw Man]]"]`. Uno
+ * solo, sin lista, vale igual. */
+const enlaces = z
+  .union([z.string(), z.array(z.string())])
+  .transform((v) => (Array.isArray(v) ? v : [v]))
+  .nullish();
 
 /**
  * Cuándo lo terminaste: un año, un año y un mes, o el día. YAML lee `2024`
@@ -67,6 +74,18 @@ const obras = defineCollection({
     hidden: z.union([z.boolean(), z.array(z.enum(OCULTABLES))]).nullish(),
     draft: z.boolean().optional(),
     favorite_tracks: z.number().int().nullish(),
+    /** Cuántas veces lo has terminado: visto, jugado, leído o escuchado
+     * entero. Con 1 no se dice nada; desde 2, sale en la ficha. */
+    times: z.number().int().min(1).nullish(),
+    // Lo que une la ficha con otras: en qué se basa, a cuál continúa y su
+    // banda sonora. La web pinta también el otro sentido.
+    based_on: enlaces,
+    follows: enlaces,
+    soundtrack: enlaces,
+    // El reproductor: el tráiler en YouTube y el disco en Spotify, como id o
+    // como enlace. Los pone scripts/enlazar.py desde Wikidata.
+    trailer: z.string().nullish(),
+    spotify: z.string().nullish(),
     // Los ids de cada fuente: con ellos dos vitrinas pueden compararse sin
     // fiarse del título.
     appid: z.number().nullish(),
@@ -74,6 +93,7 @@ const obras = defineCollection({
     tvmaze: z.number().nullish(),
     mbid: z.string().nullish(),
     wikipedia: z.string().nullish(),
+    wikidata: z.string().nullish(),
   }),
 });
 

@@ -8,9 +8,12 @@ import {
   autores,
   autoresRepetidos,
   cartela,
+  colorPortada,
   fechaParcial,
   fuentes,
   grupos,
+  idSpotify,
+  idYoutube,
   marcas,
   mesYAño,
   nombreTag,
@@ -18,6 +21,7 @@ import {
   porAlta,
   portada,
   relacionadas,
+  relaciones,
   ruta,
   rutaAutor,
   rutaFija,
@@ -31,6 +35,7 @@ import {
   transicion,
   url,
   type Obra,
+  type Tipo,
   type Vecina,
 } from "../../lib/obras";
 
@@ -87,6 +92,10 @@ const datosEstructurados = {
 };
 
 const resumen = escrita ?? t.resumenFicha(`${nombre}${d.year ? ` (${d.year})` : ""}`, seccion.nombre);
+const tinte = await colorPortada(obra);
+const historia = relaciones(obra, todas);
+const disco = idSpotify(d.spotify);
+const video = idYoutube(d.trailer);
 const suyos = (await grupos()).filter((g) => g.obras.some((o) => o.id === obra.id));
 const marcadas = marcas(obra);
 
@@ -101,7 +110,7 @@ function motivo(v: Vecina): string {
 
 <Base titulo={nombre} descripcion={resumen} imagen={tarjeta(obra)} activa={seccion.slug}>
   <script type="application/ld+json" set:html={JSON.stringify(datosEstructurados)} />
-  <article style={`--seccion:var(--${d.type})`} data-pagefind-body>
+  <article style={`--seccion:var(--${d.type})${tinte ? `;--tinte:${tinte}` : ""}`} class:list={[tinte && "tenida"]} data-pagefind-body>
     <header class="escaparate">
       {imagen && <div class="fondo" style={`background-image:url('${imagen}')`} aria-hidden="true" />}
       <div class="contenedor dentro">
@@ -139,6 +148,7 @@ function motivo(v: Vecina): string {
             {d.favorite && <a class="sello dorado" href={rutaFija("favoritos")}>★ {t.mejor}</a>}
             {d.rating && <span class="sello">{d.rating}<small>/10</small></span>}
             {d.status && <span class="sello">{t.estados[d.status]}</span>}
+            {d.times && d.times > 1 && <span class="sello">{t.veces(d.type as Tipo, d.times)}</span>}
             {
               d.finished_on && (
                 <a class="sello" href={rutaFija("anuario", `${d.finished_on.slice(0, 4)}/`)}>
@@ -170,6 +180,35 @@ function motivo(v: Vecina): string {
               </p>
             )
           }
+          {
+            (disco || video) && (
+              <p class="reproducir" data-pagefind-ignore>
+                {disco && (
+                  <button type="button" class="tocar" id="escuchar" aria-controls="spotify" aria-expanded="false" title={t.alPulsar("Spotify")}>
+                    {t.escuchar}
+                  </button>
+                )}
+                {video && (
+                  <button type="button" class="tocar" id="ver-trailer" title={t.alPulsar("YouTube")}>
+                    {t.verTrailer}
+                  </button>
+                )}
+              </p>
+            )
+          }
+          {
+            // El iframe se pone al pulsar, no antes: hasta entonces Spotify no
+            // sabe que alguien ha abierto la ficha.
+            disco && (
+              <div
+                class="spotify"
+                id="spotify"
+                hidden
+                data-src={`https://open.spotify.com/embed/album/${disco}?utm_source=generator`}
+                data-titulo={nombre}
+              />
+            )
+          }
           <p class="fuentes">
             {enlaces.map((f) => (
               <a href={f.href} rel="noopener">
@@ -188,6 +227,35 @@ function motivo(v: Vecina): string {
       <Content />
     </div>
   </article>
+
+  {
+    video && (
+      <dialog class="trailer" id="trailer" aria-label={t.verTrailer.replace(/^▶\s*/, "")} data-src={`https://www.youtube-nocookie.com/embed/${video}?autoplay=1&rel=0`}>
+        <form method="dialog">
+          <button class="cerrar" aria-label={t.cerrar}>×</button>
+        </form>
+        <div class="pantalla" />
+      </dialog>
+    )
+  }
+
+  {
+    historia.length > 0 && (
+      <section class="contenedor bloque" aria-labelledby="t-historia">
+        <header>
+          <div>
+            <h2 id="t-historia">{t.mismaHistoria}</h2>
+            <p>{t.mismaHistoriaSub}</p>
+          </div>
+        </header>
+        <div class="rejilla">
+          {historia.map((r) => (
+            <Portada obra={r.obra} mixta nota={t.relaciones[r.tipo]} />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
 
   {
@@ -251,6 +319,42 @@ function motivo(v: Vecina): string {
       } catch {}
     });
   }
+
+  // El reproductor: el disco se despliega debajo de los datos y el tráiler se
+  // abre encima de la página. Los dos se cargan al pulsar, no antes.
+  const escuchar = document.getElementById("escuchar");
+  const spotify = document.getElementById("spotify");
+  escuchar?.addEventListener("click", () => {
+    if (!spotify) return;
+    if (!spotify.firstChild) {
+      const marco = document.createElement("iframe");
+      marco.src = spotify.dataset.src!;
+      marco.title = `Spotify: ${spotify.dataset.titulo}`;
+      marco.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+      marco.loading = "lazy";
+      spotify.append(marco);
+    }
+    spotify.hidden = !spotify.hidden;
+    escuchar.setAttribute("aria-expanded", String(!spotify.hidden));
+  });
+
+  const trailer = document.getElementById("trailer") as HTMLDialogElement | null;
+  document.getElementById("ver-trailer")?.addEventListener("click", () => {
+    if (!trailer) return;
+    const pantalla = trailer.querySelector(".pantalla")!;
+    const marco = document.createElement("iframe");
+    marco.src = trailer.dataset.src!;
+    marco.title = trailer.getAttribute("aria-label")!;
+    marco.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
+    marco.allowFullscreen = true;
+    pantalla.replaceChildren(marco);
+    trailer.showModal();
+  });
+  // Al cerrarlo se quita el vídeo, que si no seguiría sonando detrás.
+  trailer?.addEventListener("close", () => trailer.querySelector(".pantalla")!.replaceChildren());
+  trailer?.addEventListener("click", (e) => {
+    if (e.target === trailer) trailer.close();
+  });
 
   // Las flechas del teclado pasan a la anterior y la siguiente de la sala.
   document.addEventListener("keydown", (e) => {
@@ -417,6 +521,87 @@ function motivo(v: Vecina): string {
   }
   .fuentes a:hover {
     color: var(--texto);
+  }
+  /* El color de la portada tiñe la luz del escaparate, el filo de la cartela
+     y los botones del reproductor. Solo en lo que no es texto: un color que
+     sale de una imagen no garantiza contraste con nada. */
+  .tenida .escaparate {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--tinte) 26%, transparent), transparent 85%);
+  }
+  .tenida .texto :global(.callout[data-callout="vitrina"]),
+  .tenida .texto :global(.callout[data-callout="vitrine"]) {
+    border-left-color: var(--tinte);
+  }
+  .reproducir {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0 0;
+  }
+  .tocar {
+    padding: 8px 16px;
+    border: 1px solid color-mix(in srgb, var(--tinte, var(--seccion)) 70%, var(--borde));
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--tinte, var(--seccion)) 16%, var(--caja));
+    color: var(--texto);
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.92rem;
+    cursor: pointer;
+  }
+  .tocar:hover,
+  .tocar[aria-expanded="true"] {
+    background: color-mix(in srgb, var(--tinte, var(--seccion)) 30%, var(--caja));
+  }
+  /* Con el disco abierto, la portada se queda arriba en vez de bajar con él. */
+  .dentro:has(.spotify:not([hidden])) .cubierta {
+    align-self: flex-start;
+  }
+  .spotify {
+    margin-top: 14px;
+    max-width: 560px;
+  }
+  .spotify :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 352px;
+    border: 0;
+    border-radius: 12px;
+  }
+  .trailer {
+    width: min(960px, calc(100vw - 32px));
+    padding: 0;
+    border: 0;
+    border-radius: var(--radio);
+    background: #000;
+    overflow: visible;
+  }
+  .trailer::backdrop {
+    background: rgb(0 0 0 / 0.8);
+  }
+  .trailer .pantalla {
+    aspect-ratio: 16 / 9;
+  }
+  .trailer :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: var(--radio);
+  }
+  .cerrar {
+    position: absolute;
+    top: -44px;
+    right: 0;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.15);
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
   }
   .compartir {
     padding: 0;

@@ -33,6 +33,7 @@ PASOS = [
     ("portadas.py", _("baja las carátulas que falten"), True, True),
     ("datos.py", _("rellena año, autor y tags"), True, True),
     ("textos.py", _("escribe el «De qué va»"), True, True),
+    ("enlazar.py", _("une cada ficha con Wikidata: tráiler, Spotify y de qué otra viene"), True, False),
     ("autores.py", _("escribe las páginas de autor"), False, False),
 ]
 

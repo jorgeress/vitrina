@@ -156,11 +156,23 @@ tags:
 groups:
   - Roguelikes       # los grupos que haces tú
 finished_on: 2024-05 # AAAA, AAAA-MM o AAAA-MM-DD: el anuario
+times: 2             # cuántas veces lo has terminado: «Jugado 2 veces»
+follows:             # a cuál continúa; también based_on y soundtrack
+  - "[[juegos/Slay the Spire]]"
 ---
 
 > [!vitrina] Por qué está en la vitrina
 > Lo que te dejó.
+
+> [!spoiler]- Spoilers
+> Lo que destripa algo: sale plegado en la web y no entra en el buscador.
 ```
+
+`based_on`, `follows` y `soundtrack` llevan otras fichas de la vitrina, con su
+carpeta delante porque el manga y el anime de una obra se llaman igual. Basta
+con escribirlo en una: la otra dice sola «Adaptada en», «Sigue en» o «Banda
+sonora de». `scripts/enlazar.py` pone las dos primeras cuando Wikidata las
+sabe, y también `trailer` (YouTube) y `spotify`, el reproductor de la ficha.
 
 La plantilla con todos los campos está en `content/_plantillas/Ficha.md`
 (`Ctrl+P` → *Insertar plantilla* en Obsidian). Después, `scripts/al-dia.py` la
@@ -244,21 +256,22 @@ solos. Cuenta solo lo que sale en la web:
 ```
 FICHAS
               total  borrador  publicadas  con texto
-  juegos         46         0          46         45
-  pelis          37         0          37         37
-  series         26         0          26         26
-  libros         11         0          11         10
-  musica         90         0          90         90
+  juegos         55         0          55         54
+  pelis          38         0          38         38
+  series         29         0          29         29
+  libros         14         0          14         10
+  musica         92         0          92         92
              —————— ————————— ——————————— ——————————
-  total         210         0         210        208
+  total         228         0         228        223
 
 SIN RELLENAR
-  rating      167   █████···················
+  author        3   ████████████████████████
+  rating      185   █████···················
   cover         1   ████████████████████████
-  tags          4   ████████████████████████
-  texto         2   ████████████████████████
+  tags         10   ███████████████████████·
+  texto         5   ███████████████████████·
 
-FAVORITOS  ██······················  21 de 210
+FAVORITOS  ██······················  21 de 228
 ```
 
 ## La web
@@ -270,10 +283,25 @@ FAVORITOS  ██······················  21 de 210
   está **en el almacén** (`status: pending`) y lo **recién llegado**.
 - **Cada sala** tiene buscador, orden y filtros por estado, favoritos, cartela y
   tag, y se quedan en la dirección: `juegos/?tag=metroidvania` se puede enlazar.
-  Lo `dropped` sale como *Retirado de la vitrina*, apagado.
-- **Cada ficha** enseña sus fuentes, sus grupos, cuándo la terminaste y las seis
-  piezas que más se le parecen, con el motivo: el mismo autor, o los tags que
-  comparten (cuanto más raro el tag, más pesa).
+  Lo `dropped` sale como *Retirado de la vitrina*, apagado. Ordenada **por
+  décadas** (`pelis/?orden=decadas`), la sala se parte en «Años 90», «Años
+  2000»…, con una línea del tiempo arriba que lleva a cada una.
+- **Cada ficha** enseña sus fuentes, sus grupos, cuándo la terminaste, cuántas
+  veces (`times`) y las seis piezas que más se le parecen, con el motivo: el
+  mismo autor, o los tags que comparten (cuanto más raro el tag, más pesa).
+  Debajo, lo que es **de la misma historia**: adaptaciones, secuelas y bandas
+  sonoras, en los dos sentidos.
+- **El color de la portada** tiñe la luz de su ficha y el filo de la cartela.
+  Se calcula al construir: el tono que más pesa contando cuánto ocupa y cuánto
+  color tiene. Una portada en blanco y negro deja la ficha sin tinte.
+- **El reproductor**: el disco en Spotify, desplegado en la propia ficha, y el
+  tráiler en YouTube, encima de la página. Ninguno se carga hasta pulsar el
+  botón, así que abrir una ficha no le dice nada a Spotify ni a YouTube.
+- **Sorpréndeme** (`/sorprendeme/`, el dado de la barra) saca una pieza al azar
+  de esta vitrina o de la de otra persona, por sala, de lo que espera en el
+  almacén o de lo mejor de lo mejor. Las vitrinas de tus amigos se pueden dejar
+  a mano en `vitrine.config.json`:
+  `"friends": [{ "name": "Ana", "url": "https://ana.github.io/vitrina/" }]`.
 - **El anuario** (`/anuario/2024/`) junta lo que terminaste cada año
   (`finished_on`) y lo que entró en la vitrina (`added`), con lo mejor del año
   y sus cartelas. El año en que se abrió la vitrina lo dice: ese año entró todo

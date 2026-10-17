@@ -29,6 +29,16 @@ Campos:
   tiene, sale igual.
 - `finished_on`: cuándo lo terminaste, `2024`, `2024-05` o `2024-05-03`, con
   la precisión que sepas. Es lo que lo pone en el anuario.
+- `times`: cuántas veces lo has terminado. Desde 2 sale en la ficha: «Vista 3
+  veces», «Jugado 2 veces», «Leído 4 veces».
+- `based_on`, `follows` y `soundtrack`: otras fichas de la vitrina, como
+  enlace con su carpeta: `based_on: ["[[libros/Chainsaw Man]]"]`. En qué se
+  basa, a cuál continúa y cuál es su banda sonora. Basta con ponerlo en una de
+  las dos: la otra dice «Adaptada en», «Sigue en» o «Banda sonora de».
+  `scripts/enlazar.py` pone los dos primeros cuando Wikidata los sabe.
+- `trailer` y `spotify`: el tráiler en YouTube y el disco en Spotify, como id
+  o como enlace. Salen como botones en la ficha y no se cargan hasta pulsarlos.
+  Los pone `scripts/enlazar.py`.
 - `added`: cuándo entró en la vitrina. Lo ponen los scripts.
 - `hidden`: `true` para que no salga en la web, o una lista de lo que no
   quieres enseñar: `hidden: [rating, label]` quita la nota y la cartela. Ojo:
@@ -38,7 +48,7 @@ Campos:
 - El identificador de la fuente, que lo pone el script y no se toca: `appid`
   (Steam), `letterboxd`, `tvmaze`, `mbid` (MusicBrainz) o `coverid` (Open
   Library), y `wikipedia`, el título del artículo en la Wikipedia en
-  castellano cuando Wikidata no lo sabe.
+  castellano cuando Wikidata no lo sabe. Y `wikidata`, el elemento de la obra.
 
 El cuerpo es para lo tuyo: por qué está en la vitrina, lo que te dejó. Es lo
 único que ninguna fuente puede rellenar. Va arriba, en su cartela:
@@ -48,5 +58,11 @@ El cuerpo es para lo tuyo: por qué está en la vitrina, lo que te dejó. Es lo
 
 No hace falta escribir el marco: si escribes suelto encima de la cita,
 `scripts/al-dia.py` lo mete en él sin cambiar ni una palabra.
+
+Lo que destripe algo va en un spoiler, que sale plegado en la web y no entra
+en el buscador:
+
+> [!spoiler]- Spoilers
+> Lo que pasa al final.
 
 Esta carpeta no se publica: la web solo lee las carpetas de las salas.

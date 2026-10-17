@@ -16,6 +16,8 @@ interface Ajustes {
   base: string;
   repo: string;
   folders: Record<Tipo | "author" | "private" | "group", string | undefined>;
+  /** Otras vitrinas a mano en «Sorpréndeme»: `[{ "name": "Ana", "url": "…" }]`. */
+  friends?: { name: string; url: string }[];
 }
 
 const a = ajustes as unknown as Ajustes;
@@ -26,6 +28,7 @@ export const DUENO = a.owner;
  * herramienta. */
 export const IDIOMA: Idioma = a.language === "es" ? "es" : "en";
 export const REPO = a.repo;
+export const AMIGOS = a.friends ?? [];
 
 /** La carpeta de la vault de cada sección, que es también su dirección. */
 export const CARPETAS: Record<Tipo, string> = Object.fromEntries(

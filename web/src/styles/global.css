@@ -346,6 +346,48 @@ a.chip:hover {
   display: none;
 }
 
+/* Spoilers: `> [!spoiler]-` es un <details> que se abre al pulsarlo. Escrito
+   sin el guion no se pliega, así que el texto va borroso hasta pasar por
+   encima o tocarlo. */
+.callout[data-callout="spoiler"] {
+  --icono: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.7 5.1A10.4 10.4 0 0 1 12 5c7 0 10 7 10 7a13.2 13.2 0 0 1-1.7 2.7"/><path d="M6.6 6.6A13.5 13.5 0 0 0 2 12s3 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 1 0 4.2 4.2"/><path d="m2 2 20 20"/></svg>');
+  padding: 14px 20px;
+  border: 1px dashed var(--suave);
+  border-radius: var(--radio);
+}
+.callout[data-callout="spoiler"] .callout-title {
+  margin: 0;
+  font-weight: 600;
+  color: var(--tenue);
+  cursor: pointer;
+  list-style: none;
+}
+.callout[data-callout="spoiler"] .callout-title::-webkit-details-marker {
+  display: none;
+}
+.callout[data-callout="spoiler"] .callout-title-text::after {
+  content: " · ···";
+  font-weight: 400;
+}
+.callout[data-callout="spoiler"][open] .callout-title {
+  margin-bottom: 10px;
+}
+.callout[data-callout="spoiler"][open] .callout-title-text::after {
+  content: "";
+}
+.callout[data-callout="spoiler"][data-collapsible="false"] .callout-title {
+  margin-bottom: 10px;
+}
+.callout[data-callout="spoiler"][data-collapsible="false"] .callout-content {
+  filter: blur(6px);
+  transition: filter 0.2s;
+  user-select: none;
+}
+.callout[data-callout="spoiler"][data-collapsible="false"]:hover .callout-content {
+  filter: none;
+  user-select: auto;
+}
+
 /* --- Transiciones ----------------------------------------------------------
    De una página a otra sin pantallazo, y la portada de una obra viaja de la
    rejilla a su ficha. Sin JavaScript: es CSS y lo hace el navegador. */

@@ -22,6 +22,7 @@ inglés en `mensajes_en.py`; `pruebas.py` falla si alguno no la tiene.
 | `portadas.py` | Baja las carátulas que falten |
 | `datos.py` | Rellena año, autor y tags |
 | `textos.py` | Escribe el «De qué va» y las canciones de cada disco |
+| `enlazar.py` | Une cada ficha con Wikidata: tráiler, Spotify y de qué otra viene |
 | `autores.py` | Escribe las páginas de autor |
 | `secciones.py` | Cuelga cada ficha de su sala (campo `section`) |
 | `fechas.py` | Apunta la fecha de alta (campo `added`) de las que no la tienen |
@@ -87,6 +88,7 @@ Opciones:
 | `--favorito` | de lo mejor de lo mejor |
 | `--grupo NOMBRE` | la mete en ese grupo; se puede repetir |
 | `--terminada 2024-05` | cuándo la terminaste (`finished_on`): el anuario |
+| `--veces 3` | cuántas veces la has terminado (`times`) |
 | `--borrador` | entra con `draft: true` |
 | `--oculta` | entra con `hidden: true`: no sale en la web, pero está en el repo |
 | `--privada` | va a la carpeta privada, que git no sube |
@@ -154,7 +156,7 @@ scripts/al-dia.py --sin-red         # solo secciones, fechas, cartelas, autores 
 scripts/al-dia.py --dry-run
 ```
 
-Pasa `secciones`, `fechas`, `enmarcar`, `portadas`, `datos`, `textos` y `autores`, en ese
+Pasa `secciones`, `fechas`, `enmarcar`, `portadas`, `datos`, `textos`, `enlazar` y `autores`, en ese
 orden, y al final `estado.py --readme`. Si un paso falla sigue con los demás y
 lo dice al terminar.
 
@@ -199,6 +201,33 @@ lista de canciones. Lo que escribas encima se queda.
 En los libros, el artículo sale de la obra de Open Library a la que pertenece
 el `coverid`, y se apunta en el campo `wikipedia`. Si Wikidata no tiene la obra
 enlazada, pon ese campo a mano con el nombre del artículo.
+
+## enlazar.py
+
+```bash
+scripts/enlazar.py                         # todas
+scripts/enlazar.py "content/pelis/Clue.md"
+scripts/enlazar.py --dry-run
+```
+
+Busca el elemento de Wikidata de cada ficha por el id que ya tiene (`appid`,
+`letterboxd`, `tvmaze`, `mbid`; los libros, por su `wikipedia`) y rellena, solo
+donde esté vacío:
+
+| Campo | De dónde | Para qué |
+| --- | --- | --- |
+| `wikidata` | el elemento (`Q…`) | lo demás |
+| `trailer` | Wikidata (P1651), si YouTube deja incrustarlo | el botón «Ver el tráiler» |
+| `spotify` | Wikidata (P2205) o, si no, MusicBrainz | el botón «Escuchar aquí» de los discos |
+| `based_on` | Wikidata (P144 y P4969, en los dos sentidos) | «Basada en» / «Adaptada en» |
+| `follows` | Wikidata (P155 y P156) | «Continúa a» / «Sigue en» |
+
+Las relaciones solo se escriben si la otra obra también está en la vitrina, y
+los discos no llevan `follows` (la discografía ya la cuenta la página del
+autor). Los tráileres se comprueban con el oEmbed de YouTube: Wikidata da a
+veces como tráiler la película entera de alquiler del canal *YouTube Movies*,
+que fuera de la tienda no se ve, y esos se descartan. `soundtrack` no lo sabe
+casi nunca: va a mano. `nueva.py` lo pasa solo para cada ficha nueva.
 
 ## autores.py, secciones.py y fechas.py
 

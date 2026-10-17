@@ -35,6 +35,7 @@ const es = {
     creditos: "creditos",
     grupos: "grupos",
     anuario: "anuario",
+    sorprendeme: "sorprendeme",
   },
   salas: {
     game: { nombre: "Juegos", corto: "Juegos", una: "juego", varias: "juegos" },
@@ -77,6 +78,7 @@ const es = {
   tags: "Tags",
   cifras: "Cifras",
   comparar: "Comparar",
+  sorprendeme: "Sorpréndeme",
   creditos: "Créditos",
   grupos: "Grupos",
   anuario: "Anuario",
@@ -119,6 +121,7 @@ const es = {
     year: "Más nuevas",
     antiguas: "Más antiguas",
     titulo: "Por título",
+    decadas: "Por décadas",
   },
   estado: "Estado",
   todo: "Todo",
@@ -143,6 +146,47 @@ const es = {
   siguiente: "Siguiente →",
   resumenFicha: (titulo: string, sala: string) => `${titulo}, en la sala de ${sala.toLowerCase()} de la vitrina.`,
   enGrupos: "En los grupos",
+  /** «Vista 3 veces», con el verbo de cada sala. */
+  veces: (tipo: Tipo, n: number) =>
+    `${{ game: "Jugado", film: "Vista", series: "Vista", book: "Leído", album: "Escuchado" }[tipo]} ${n} veces`,
+  escuchar: "▶ Escuchar aquí",
+  verTrailer: "▶ Ver el tráiler",
+  cerrar: "Cerrar",
+  /** Hasta que se pulsa, la página no le pide nada a Spotify ni a YouTube. */
+  alPulsar: (donde: string) => `Se carga de ${donde} al pulsar; antes, la página no le pide nada.`,
+  mismaHistoria: "De la misma historia",
+  mismaHistoriaSub: "Adaptaciones, secuelas y bandas sonoras que también están en la vitrina.",
+  relaciones: {
+    basadaEn: "Basada en",
+    adaptadaEn: "Adaptada en",
+    sigueA: "Continúa a",
+    continuaEn: "Sigue en",
+    bandaSonora: "Su banda sonora",
+    bandaSonoraDe: "Banda sonora de",
+  },
+
+  // --- décadas, en las salas ------------------------------------------------------
+  /** «Años 90», «Años 2010», «Años 1840». */
+  decada: (d: number) => `Años ${d >= 1900 && d < 2000 ? String(d).slice(2) : d}`,
+  sinAño: "Sin año",
+
+  // --- sorpréndeme ----------------------------------------------------------------
+  sorprendemeDescripcion: "Una pieza al azar, de esta vitrina o de la de otra persona.",
+  sorprendemeSub:
+    "Una pieza al azar, de aquí o de la vitrina de otra persona, para cuando no sabes qué volver a ver, jugar, leer o escuchar.",
+  deAqui: "De esta vitrina",
+  deOtra: "De otra vitrina",
+  cualquierSala: "Cualquier sala",
+  soloAlmacen: "Solo lo que espera en el almacén",
+  soloMejor: "Solo lo mejor de lo mejor",
+  otraVez: "Otra",
+  azar: {
+    mirando: "Mirando su vitrina…",
+    noEncuentro: "No encuentro una vitrina en {d}. Tiene que ser una web hecha con Vitrine, que publica su colección en vitrine.json.",
+    nada: "No hay ninguna pieza con eso.",
+    de: "De {nombre}",
+    verFicha: "Ver su ficha →",
+  },
 
   // --- lo mejor, autores, tags ---------------------------------------------------
   mejorDescripcion: "Lo que no puede faltar en la vitrina, sala por sala.",
@@ -298,6 +342,7 @@ const en: Textos = {
     creditos: "credits",
     grupos: "groups",
     anuario: "yearbook",
+    sorprendeme: "surprise-me",
   },
   salas: {
     game: { nombre: "Games", corto: "Games", una: "game", varias: "games" },
@@ -338,6 +383,7 @@ const en: Textos = {
   tags: "Tags",
   cifras: "Stats",
   comparar: "Compare",
+  sorprendeme: "Surprise me",
   creditos: "Credits",
   grupos: "Groups",
   anuario: "Yearbook",
@@ -377,6 +423,7 @@ const en: Textos = {
     year: "Newest",
     antiguas: "Oldest",
     titulo: "By title",
+    decadas: "By decade",
   },
   estado: "Status",
   todo: "All",
@@ -400,6 +447,40 @@ const en: Textos = {
   siguiente: "Next →",
   resumenFicha: (titulo, sala) => `${titulo}, in the ${sala.toLowerCase()} room.`,
   enGrupos: "In the groups",
+  veces: (tipo, n) => `${{ game: "Played", film: "Watched", series: "Watched", book: "Read", album: "Listened to" }[tipo]} ${n} times`,
+  escuchar: "▶ Listen here",
+  verTrailer: "▶ Watch the trailer",
+  cerrar: "Close",
+  alPulsar: (donde) => `Loads from ${donde} when pressed; until then, the page asks it for nothing.`,
+  mismaHistoria: "Part of the same story",
+  mismaHistoriaSub: "Adaptations, sequels and soundtracks that are on display too.",
+  relaciones: {
+    basadaEn: "Based on",
+    adaptadaEn: "Adapted as",
+    sigueA: "Follows",
+    continuaEn: "Continues in",
+    bandaSonora: "Its soundtrack",
+    bandaSonoraDe: "Soundtrack of",
+  },
+
+  decada: (d) => `${d}s`,
+  sinAño: "No year",
+
+  sorprendemeDescripcion: "A random piece, from this display or someone else's.",
+  sorprendemeSub: "A random piece, from here or from someone else's display, for when you don't know what to watch, play, read or listen to again.",
+  deAqui: "From this display",
+  deOtra: "From another display",
+  cualquierSala: "Any room",
+  soloAlmacen: "Only what's waiting in storage",
+  soloMejor: "Only the best of the best",
+  otraVez: "Another",
+  azar: {
+    mirando: "Looking at their display…",
+    noEncuentro: "I can't find a display at {d}. It has to be a site made with Vitrine, which publishes its collection in vitrine.json.",
+    nada: "There's no piece like that.",
+    de: "From {nombre}",
+    verFicha: "See its page →",
+  },
 
   mejorDescripcion: "What can't be missing from the display, room by room.",
   mejorCuenta: (cuenta) => `${cuenta} that can't be missing, room by room.`,

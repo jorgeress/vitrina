@@ -338,6 +338,12 @@ MENSAJES = {
     "{n} candidatas y la ficha no dice el año": "{n} candidates and the entry doesn't say the year",
     "ninguna es de {year}: ": "none is from {year}: ",
     "¿Cuál? (1-{n}, Enter para el 1, 0 si ninguno): ": "Which one? (1-{n}, Enter for 1, 0 for none): ",
+    "cuantas veces la has terminado: vista, jugada, leida o escuchada": "how many times you've finished it: watched, played, read or listened to",
+    "une cada ficha con Wikidata: tráiler, Spotify y de qué otra viene": "links each entry with Wikidata: trailer, Spotify and which other it comes from",
+    "las fichas que mirar; sin nada, todas": "the entries to look at; with none, all of them",
+    "dice que pondria, sin tocar nada": "says what it would write, without touching anything",
+    "Preguntando a Wikidata por {n} fichas…": "Asking Wikidata about {n} entries…",
+    "{n} fichas con algo nuevo; {m} sin elemento en Wikidata.": "{n} entries with something new; {m} without a Wikidata item.",
 }
 
 # La guia de repasar.py, entera.
@@ -437,6 +443,10 @@ guessing from the title.""",
 the same source that identifies them, in the language of the display.""",
     "portadas": """Downloads the covers that are missing, by the id the entry already has,
 and saves them as webp.""",
+    "enlazar": """Fills in, from Wikidata and only where empty, what links each entry to
+the world and to the others: its Wikidata item, the YouTube trailer, the
+album on Spotify (or MusicBrainz), and `based_on` / `follows` when the
+other work is on display too. Nothing needs an API key.""",
     "vistazo": """Builds the site with everything in it — drafts, hidden and private
 entries, marked — and serves it locally, to see it before publishing.""",
 }
