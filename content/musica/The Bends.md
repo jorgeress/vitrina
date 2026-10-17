@@ -15,7 +15,6 @@ tags:
 mbid: b8048f24-c026-3398-b23a-b5e50716cbc7
 added: 2026-09-23
 wikidata: Q221246
-spotify: 35UJLpClj5EDrhpNIi4DFg
 ---
 
 ## Canciones

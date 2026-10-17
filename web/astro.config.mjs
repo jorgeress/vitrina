@@ -9,9 +9,9 @@ import vitrina from "./src/integraciones/vitrina.mjs";
 const ajustes = JSON.parse(readFileSync(new URL("../vitrine.config.json", import.meta.url), "utf-8"));
 const vistazo = process.env.VITRINE_PREVIEW === "1";
 
-// El título de la cartela cuando la ficha no lo escribe. Las dos formas del
+// El título de la opinión cuando la ficha no lo escribe. Las dos formas del
 // callout valen en cualquier idioma: [!vitrina] y [!vitrine].
-const cartela = ajustes.language === "es" ? "Por qué está en la vitrina" : "Why it's on display";
+const opinion = ajustes.language === "es" ? "Por qué está en la vitrina" : "Why it's on display";
 
 export default defineConfig({
   site: ajustes.site,
@@ -21,7 +21,7 @@ export default defineConfig({
   // las siga viendo, y las sirve la integración `vitrina`.
   integrations: [vitrina({ privada: ajustes.folders?.private ?? "private", vistazo })],
   markdown: {
-    // Los callouts de Obsidian: la cartela y la cita de la fuente (`[!quote]`)
+    // Los callouts de Obsidian: la opinión y la cita de la fuente (`[!quote]`)
     // se ven en la web igual que en la vault.
     processor: satteri({
       hastPlugins: [
@@ -29,7 +29,7 @@ export default defineConfig({
           showIndicator: false,
           // `> [!spoiler]-` sale plegado, como en Obsidian, y fuera del
           // buscador: si no, el extracto de un resultado podría destriparlo.
-          callouts: { vitrina: { title: cartela }, vitrine: { title: cartela }, spoiler: { title: "Spoilers" } },
+          callouts: { vitrina: { title: opinion }, vitrine: { title: opinion }, spoiler: { title: "Spoilers" } },
           props: { containerProps: (_nodo, tipo) => (tipo === "spoiler" ? { "data-pagefind-ignore": "all" } : null) },
         }),
       ],

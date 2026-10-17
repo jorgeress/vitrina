@@ -6,7 +6,7 @@ la de grupo. En Obsidian se insertan con Ctrl+P -> «Insertar plantilla». La
 carpeta no se publica: la web solo lee las de las salas.
 
 Las claves de los campos van en ingles en los dos idiomas; lo que cambia es
-la explicacion y el titulo de la cartela.
+la explicacion y el titulo de la opinion.
 """
 
 import sys
@@ -48,6 +48,9 @@ Campos:
   tiene, sale igual.
 - `finished_on`: cuándo lo terminaste, `2024`, `2024-05` o `2024-05-03`, con
   la precisión que sepas. Es lo que lo pone en el anuario.
+- `started_on`: cuándo lo empezaste o, un disco, cuándo lo oíste por primera
+  vez. Igual que `finished_on`; lo pone `scripts/cuando.py` del primer logro de
+  Steam o de la primera escucha.
 - `times`: cuántas veces lo has terminado. Desde 2 sale en la ficha: «Vista 3
   veces», «Jugado 2 veces», «Leído 4 veces».
 - `based_on`, `follows` y `soundtrack`: otras fichas de la vitrina, como
@@ -55,12 +58,9 @@ Campos:
   basa, a cuál continúa y cuál es su banda sonora. Basta con ponerlo en una de
   las dos: la otra dice «Adaptada en», «Sigue en» o «Banda sonora de».
   `scripts/enlazar.py` pone los dos primeros cuando Wikidata los sabe.
-- `trailer` y `spotify`: el tráiler en YouTube y el disco en Spotify, como id
-  o como enlace. Salen como botones en la ficha y no se cargan hasta pulsarlos.
-  Los pone `scripts/enlazar.py`.
 - `added`: cuándo entró en la vitrina. Lo ponen los scripts.
 - `hidden`: `true` para que no salga en la web, o una lista de lo que no
-  quieres enseñar: `hidden: [rating, label]` quita la nota y la cartela. Ojo:
+  quieres enseñar: `hidden: [rating, opinion]` quita la nota y la opinión. Ojo:
   el fichero sigue en el repo, que es público. Lo que no quieras que vea nadie
   va en la carpeta `{privado}/`, que git no sube.
 - `draft`: true mientras es un borrador; lo importado entra así.
@@ -70,9 +70,9 @@ Campos:
   castellano cuando Wikidata no lo sabe. Y `wikidata`, el elemento de la obra.
 
 El cuerpo es para lo tuyo: por qué está en la vitrina, lo que te dejó. Es lo
-único que ninguna fuente puede rellenar. Va arriba, en su cartela:
+único que ninguna fuente puede rellenar. Va arriba, como tu opinión:
 
-> [!{callout}] {cartela}
+> [!{callout}] {opinion}
 > Lo que te dejó, en dos frases.
 
 No hace falta escribir el marco: si escribes suelto encima de la cita,
@@ -113,6 +113,9 @@ Fields:
   still shows up.
 - `finished_on`: when you finished it, `2024`, `2024-05` or `2024-05-03`,
   as precise as you know. It's what puts it in the yearbook.
+- `started_on`: when you started it or, for an album, first heard it. Same
+  format as `finished_on`; `scripts/cuando.py` fills it from your first Steam
+  achievement or first listen.
 - `times`: how many times you've finished it. From 2 on it shows on the
   page: “Watched 3 times”, “Played 2 times”, “Read 4 times”.
 - `based_on`, `follows` and `soundtrack`: other entries on display, as a link
@@ -120,12 +123,9 @@ Fields:
   on, which one it follows and its soundtrack. One side is enough: the other
   one says “Adapted as”, “Continues in” or “Soundtrack of”.
   `scripts/enlazar.py` fills in the first two when Wikidata knows them.
-- `trailer` and `spotify`: the YouTube trailer and the Spotify album, as an id
-  or a link. They show up as buttons on the page and don't load until
-  pressed. `scripts/enlazar.py` fills them in.
 - `added`: when it joined the display. The scripts set it.
 - `hidden`: `true` to keep it off the site, or a list of what you don't want
-  to show: `hidden: [rating, label]` removes the rating and the label. Mind:
+  to show: `hidden: [rating, opinion]` removes the rating and the opinion. Mind:
   the file is still in the repo, which is public. What nobody should see goes
   in the `{privado}/` folder, which git doesn't upload.
 - `draft`: true while it's a draft; imports come in like that.
@@ -135,9 +135,9 @@ Fields:
   Wikidata doesn't know it. And `wikidata`, the work's item.
 
 The body is for what's yours: why it's on display, what it left you. It's the
-only thing no source can fill in. It goes at the top, in its label:
+only thing no source can fill in. It goes at the top, as your opinion:
 
-> [!{callout}] {cartela}
+> [!{callout}] {opinion}
 > What it left you, in two sentences.
 
 No need to write the frame: if you write loose text above the quote,
@@ -198,7 +198,7 @@ LEEME = {
 def escribir():
     idioma = IDIOMA if IDIOMA in FICHA else "en"
     datos = {"grupos": CARPETAS.get("group", "groups"), "privado": CARPETAS.get("private", "private"),
-             "callout": CALLOUT, "cartela": texto("cartela")}
+             "callout": CALLOUT, "opinion": texto("opinion")}
     PLANTILLAS.mkdir(parents=True, exist_ok=True)
     (PLANTILLAS / "Ficha.md").write_text(FICHA[idioma].format(**datos), encoding="utf-8")
     (PLANTILLAS / "Grupo.md").write_text(GRUPO[idioma].format(**datos), encoding="utf-8")

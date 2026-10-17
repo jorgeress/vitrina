@@ -2,54 +2,21 @@
 
 *En castellano: [README.md](README.md).*
 
-**Vitrine** is a personal collection — games, films, series, books and albums —
-written as Markdown notes in [Obsidian](https://obsidian.md) and published as
-a static website. A vitrine is a glass display case: every piece comes with a
-label saying why it's there, the way a museum labels what it shows.
+A personal collection of games, films, series, books and albums, with what you
+think of each one. It's written in Obsidian and published as a static website.
+This repository is my own, in Spanish
+([jorgeress.github.io/vitrina](https://jorgeress.github.io/vitrina/)), and it
+works as a template for yours, in English or Spanish.
 
-This repository is my own, in Spanish (**Vitrina**:
-[jorgeress.github.io/vitrina](https://jorgeress.github.io/vitrina/)), but the
-tool is meant to be used by anyone, in English or Spanish: one command turns it
-into an empty vitrine of your own.
-
-## What it does
-
-- **Rooms** for each kind of work, with covers, search, sorting and filters
-  (status, favorites, label, tag) that stay in the address so they can be
-  linked.
-- **The best of the best**, **groups** you make yourself across rooms
-  (“Anime”, “What Sam recommended”), a **yearbook** with what you finished and
-  what came in each year, and a **constellation** linking each piece to the
-  ones it has most in common with.
-- **Each entry** says how many times you finished it (“Watched 3 times”),
-  takes its light from the colour of its cover, plays the album on Spotify or
-  the trailer on YouTube right on the page (nothing loads until you press), and
-  lists what's **part of the same story** on display: adaptations, sequels and
-  soundtracks. Spoilers fold away with `> [!spoiler]-`.
-- **Rooms by decade**, with a timeline on top, and **Surprise me**: a random
-  piece from your display or from someone else's.
-- **A share card** for every entry: pasting its link in a chat shows an image
-  with the cover, title, rating and the start of your label.
-- **Compare** your vitrine with someone else's, by address or with their
-  `vitrine.json` file, matching works by their source ids instead of titles.
-- **Add a work from its link** (Steam, Letterboxd, TVmaze, MusicBrainz, Open
-  Library, Spotify, and through Wikidata IMDb, TMDB, Goodreads, MyAnimeList,
-  Discogs and more) with cover, year, author, genres and synopsis.
-- **Add from your phone**, with a GitHub Issue form or by sharing a link to the
-  installed web app on Android.
-- **Import** a Letterboxd diary or watchlist, a Steam library, ListenBrainz or a
-  Spotify data export, as drafts to review.
-- **Privacy in three levels**: drafts, hidden entries or fields, and a private
-  folder that never leaves your computer.
-- Installs as an app and works offline; RSS feed and sitemap.
-- **No source needs an API key, an account or payment.**
+Each work is a Markdown entry. The site shows each room with its covers and
+filters, every entry with your opinion, the best of the best, your groups, a
+yearbook and a constellation linking works by what they share. No source needs
+an API key, an account or payment.
 
 ## Make your own
 
-You need [Node 22.12+](https://nodejs.org), Python 3 and Obsidian.
-
 1. Use this repository as a template on GitHub (or fork it) and clone it.
-2. Start an empty vitrine in English:
+2. Leave it empty and in English:
 
    ```bash
    pip install -r requirements.txt
@@ -57,26 +24,39 @@ You need [Node 22.12+](https://nodejs.org), Python 3 and Obsidian.
        --repo https://github.com/alex/shelf --empty --yes
    ```
 
-   It writes `vitrine.config.json` (the site address comes from the repo:
-   `github.com/alex/shelf` → `alex.github.io/shelf`), removes my collection and
-   leaves the rooms, the Obsidian views, the home note, the templates and the
-   Issue form in English.
-3. In GitHub, *Settings → Pages → Source*: **GitHub Actions**. To add from your
-   phone, create the Issue label once: `gh label create new-piece`.
-4. Open **`content/`** as a vault in Obsidian, and change the first paragraph
-   of `content/index.md`: it's the welcome text of the site.
+3. In GitHub, *Settings → Pages → Source*: **GitHub Actions**.
+4. Create the Issue labels, to add and edit from your phone:
 
-Then, to see it:
+   ```bash
+   gh label create new-piece && gh label create edit-piece
+   ```
+
+5. Change the first paragraph of `content/index.md`: it's the site's welcome text.
+
+Every push to `main` runs the tests and publishes the site.
+
+## Run it
+
+You need [Node 22.12+](https://nodejs.org), Python 3 and, to write entries,
+[Obsidian](https://obsidian.md).
 
 ```bash
+pip install -r requirements.txt
 cd web
 npm ci --ignore-scripts --include=optional
 npm run dev            # http://localhost:4321/shelf/
 ```
 
-Every push to `main` runs the tests, builds the site and publishes it.
+- What you save in Obsidian shows up in `npm run dev` right away.
+- Without `--ignore-scripts`, `sharp` tries to compile and the install fails.
+- Search and share cards are made at build time: `npm run build`, then
+  `npm run preview`.
 
-## Configuration: `vitrine.config.json`
+In Obsidian, open **`content/`** as a vault, not the repository root.
+
+### Configuration
+
+`vitrine.config.json`, at the root, is read by the site and the scripts:
 
 ```json
 {
@@ -91,12 +71,22 @@ Every push to `main` runs the tests, builds the site and publishes it.
 }
 ```
 
-`language` (`en` or `es`) changes the whole interface, the page addresses
-(`/authors/`, `/best/`, `/yearbook/`…), what the scripts say, and the language
-in which Steam and Wikipedia texts are fetched. `folders` names each vault
-folder, which is also the address of each room.
+`language` (`en` or `es`) changes the interface, the page addresses and what the
+scripts say. `folders` names each vault folder, which is also each room's
+address. `empezar.py` writes it.
 
-## Adding works
+Your accounts, to fetch dates (see [When you finished it](#when-you-finished-it)),
+go in `vitrine.local.json`, which git ignores:
+
+```json
+{ "accounts": { "letterboxd": "user", "steam": "7656119…", "goodreads": "", "listenbrainz": "" } }
+```
+
+## Use it
+
+### Adding a work
+
+From its link or searching by title:
 
 ```bash
 scripts/nueva.py https://store.steampowered.com/app/504230/Celeste/ --rating 9
@@ -106,40 +96,45 @@ scripts/nueva.py album "in rainbows" --status "in progress"
 scripts/nueva.py book "dune" --hidden
 ```
 
-With a link there's nothing to choose: it carries the id. Searching by title
-shows the candidates and you pick one. The entry comes out complete: cover,
-year, author, genres, “What it's about” and the source id. The only thing it
-can't write is yours.
+Links from Steam, Letterboxd, TVmaze, MusicBrainz, Open Library, Spotify, IMDb,
+TMDB, MyAnimeList, AniList, Goodreads, Discogs, Wikipedia and more work. The
+entry comes with cover, year, author, genres and “What it's about”. The
+scripts' names are in Spanish; their messages and options follow `language`.
 
-**From your phone**: open an Issue with the **New piece** form, paste the link
-and, if you like, rating, status, groups, when you finished it, whether it's
-among the best, whether it's hidden and why it's on display. An Action creates
-the entry, publishes the site and closes the Issue. It only runs for Issues
-opened by the repository owner.
+### From your phone
 
-**Bringing in a collection**:
+Open an Issue with the **New piece** form and paste the link; add a rating,
+status, groups, date and your opinion if you like. An Action creates the entry,
+publishes the site and closes the Issue. It only runs for the owner's Issues.
 
-```bash
-scripts/importar.py letterboxd-rss YOUR_USERNAME
-scripts/importar.py letterboxd-watchlist YOUR_USERNAME
-scripts/importar.py steam ~/Downloads/games.html
-scripts/importar.py listenbrainz YOUR_USERNAME
-scripts/importar.py spotify-export ~/Downloads/spotify.zip
-scripts/al-dia.py      # fills in covers, data, texts and author pages
+With the site installed as an app on Android, it shows up in the **Share**
+menu: sharing a link from Letterboxd, Steam or Spotify opens the form with the
+link in place. It's also at `/add/`.
+
+### Editing from the site
+
+On `/add/`, tick “Show the Edit button”. From then on, in that browser, every
+entry has a **✎ Edit** link that opens the **Edit piece** Issue with its current
+rating, status, date and opinion. Change what you want, submit it, and it's
+published in a couple of minutes.
+
+### Your opinion
+
+What you write goes at the top of the entry, in its own box, with the source's
+quote below:
+
+```markdown
+> [!vitrine] Why it's on display
+> What it left you.
 ```
 
-Imports come in as drafts (`draft: true`): visible in Obsidian, not on the site
-until you remove that line. `scripts/repasar.py` goes through entries without
-a rating or status and asks, one line each: `9 f` is a 9 and a favorite.
+No need to write the frame: write loose above the quote and
+`scripts/al-dia.py` frames it.
 
-The scripts' names and the code are in Spanish; their messages, options and
-`--help` follow `language`. Every option works in both languages (`--rating` or
-`--nota`, `film` or `peli`).
+### An entry by hand
 
-## An entry
-
-Keys are always in English, so two vitrines in different languages can be
-compared:
+A `.md` in its room's folder. Only `type` is required, and keys are always in
+English:
 
 ```markdown
 ---
@@ -154,48 +149,77 @@ tags:
 groups:
   - Roguelikes
 finished_on: 2024-05 # YYYY, YYYY-MM or YYYY-MM-DD: the yearbook
+started_on: 2024-02  # when you started it
 times: 2             # how many times you finished it
 follows:             # which one it follows; also based_on and soundtrack
   - "[[games/Slay the Spire]]"
 ---
-
-> [!vitrine] Why it's on display
-> What it left you.
 ```
 
-The full template with every field explained is `content/_plantillas/Ficha.md`.
+Then run `scripts/al-dia.py`, which adds cover, data and text. The template with
+every field explained is `content/_plantillas/Ficha.md`.
 
-## What shows and what doesn't
+### Rating what you already have
+
+```bash
+scripts/repasar.py
+```
+
+It goes through entries without a rating or status, one line each: `9 f` is a 9
+and a favorite, `t` finished, `p` pending, Enter skips, `q` stops. Then it asks
+for your opinion.
+
+### Bringing in a collection
+
+```bash
+scripts/importar.py letterboxd-rss YOUR_USERNAME
+scripts/importar.py steam ~/Downloads/games.html
+scripts/importar.py listenbrainz YOUR_USERNAME
+scripts/importar.py spotify-export ~/Downloads/spotify.zip
+scripts/al-dia.py
+```
+
+Imports come in as drafts (`draft: true`): visible in Obsidian, not on the site
+until you remove that line. `al-dia.py` fills in what's missing; with
+`--offline`, only what needs no network.
+
+### When you finished it
+
+```bash
+scripts/cuando.py                          # the accounts in vitrine.local.json
+scripts/cuando.py letterboxd YOUR_USERNAME
+```
+
+It fills in dates where missing: films from your Letterboxd diary, books from
+Goodreads, games from your first Steam achievement, albums from your first
+listen on ListenBrainz or in Spotify's history. What isn't certain stays empty.
+`al-dia.py` runs it too.
+
+### Groups
+
+Collections across rooms (“Anime”, “What Sam recommended”): `groups: [Anime]`
+in the entry. A note with its name in `content/groups/` gives it a text, and
+`featured: true` puts it on the home page.
+
+### What shows and what doesn't
 
 | | How | On the site? | On GitHub? |
 |---|---|---|---|
 | **Draft** | `draft: true` | no | yes |
 | **Hidden** | `hidden: true` | no | **yes** |
-| **Hidden fields** | `hidden: [rating, label]` | the entry yes, those fields no | yes |
+| **Hidden fields** | `hidden: [rating, opinion]` | the entry yes, those fields no | yes |
 | **Private** | in `content/private/` | no | no |
 
 Hidden is not secret: the repository is public. What nobody should see goes in
-`content/private/`, which git never uploads (it has the same room folders and
-its own covers). `scripts/vistazo.py` builds the site with everything in it,
-marked, on your computer only.
+`content/private/`, which git never uploads. `scripts/vistazo.py` shows the site
+with everything in it, on your computer only.
 
-## Structure
+## More (in Spanish)
 
-```
-vitrine.config.json   name, language, address and folders
-content/              the vault: the only thing written by hand
-scripts/              adding, importing and maintenance (docs/scripts.md, in Spanish)
-web/                  the site, in Astro
-  src/i18n.ts         every text of the site, in Spanish and English
-docs/                 scripts, import sources and the to-do list (in Spanish)
-```
-
-## Tests
-
-```bash
-python3 scripts/pruebas.py   # offline; also checks no message lacks its translation
-cd web && npm test && npm run check
-```
+- [`docs/scripts.md`](docs/scripts.md): every script and its options.
+- [`docs/importar.md`](docs/importar.md): what each source brings.
+- [`docs/la-web.md`](docs/la-web.md): what each page shows, the vault rules,
+  the structure and the tests.
 
 ## License
 

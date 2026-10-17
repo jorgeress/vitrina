@@ -41,6 +41,7 @@ import textos
 import vitrina as m
 import nueva
 import desde_issue
+cuando = __import__("cuando")
 
 
 class Cabeceras(unittest.TestCase):
@@ -106,45 +107,6 @@ class Cabeceras(unittest.TestCase):
             self.assertFalse(m.escribir_campos(md, {"rating": 9}))
             self.assertEqual(md.read_text(encoding="utf-8"),
                              "una nota sin cabecera\n")
-
-
-class CifrasDelReadme(unittest.TestCase):
-    """El bloque de cifras del README sale de la vault, no de contar a mano.
-
-    Escrito a mano se quedaba viejo solo: llego a decir 155 fichas cuando ya
-    habia 210. Las cifras que no pueden salir de aqui no se ponen en ningun
-    sitio.
-    """
-
-    RESUMEN = ("FICHAS\n  juegos  46\n\n"
-               "EN LA WEB  ████  210 de 210\n\n"
-               "SIN RELLENAR\n  nota  164\n\n"
-               "NOTAS      10:38  9:2\n\n"
-               "FAVORITOS  ██  21 de 210\n  juegos  6\n")
-
-    def test_el_bloque_es_el_resumen_recortado(self):
-        bloque = estado.bloque_readme(self.RESUMEN)
-        self.assertIn("FICHAS", bloque)
-        self.assertIn("SIN RELLENAR", bloque)
-        # De FAVORITOS solo el titular; el reparto por secciones no ilustra nada.
-        self.assertIn("FAVORITOS  ██  21 de 210", bloque)
-        self.assertNotIn("juegos  6", bloque)
-        # Y lo que el README no enseña no se cuela.
-        self.assertNotIn("EN LA WEB", bloque)
-        self.assertNotIn("NOTAS", bloque)
-
-    def test_el_bloque_cae_donde_estaba_y_no_toca_el_resto(self):
-        texto = "# Vitrina\n\n```\nFICHAS\n  viejo\n```\n\nLo de después.\n"
-        nuevo = estado.BLOQUE_RE.sub(
-            lambda _: estado.bloque_readme(self.RESUMEN), texto, count=1)
-        self.assertIn("juegos  46", nuevo)
-        self.assertNotIn("viejo", nuevo)
-        self.assertTrue(nuevo.startswith("# Vitrina"))
-        self.assertTrue(nuevo.endswith("Lo de después.\n"))
-
-    def test_un_readme_sin_bloque_no_se_toca(self):
-        # Antes que meter el bloque donde no va, no se escribe y se dice.
-        self.assertIsNone(estado.BLOQUE_RE.search("# Vitrina\n\nSin cifras.\n"))
 
 
 class NombresYParecidos(unittest.TestCase):
@@ -762,7 +724,7 @@ class TuTexto(unittest.TestCase):
 
     CITA = "> [!quote] De qué va\n> Una serie.\n>\n> → Wikipedia · CC BY-SA 4.0\n"
 
-    def test_la_frase_va_en_su_cartela_encima_de_la_cita(self):
+    def test_la_frase_va_en_su_opinion_encima_de_la_cita(self):
         with tempfile.TemporaryDirectory() as tmp:
             md = Path(tmp) / "Arcane.md"
             md.write_text("---\ntype: series\n---\n\n" + self.CITA, encoding="utf-8")
@@ -773,7 +735,7 @@ class TuTexto(unittest.TestCase):
             self.assertIn("→ Wikipedia", texto)
             self.assertTrue(texto.startswith("---\ntype: series\n---\n"))
 
-    def test_en_una_ficha_vacia_queda_solo_la_cartela(self):
+    def test_en_una_ficha_vacia_queda_solo_la_opinion(self):
         with tempfile.TemporaryDirectory() as tmp:
             md = Path(tmp) / "Baki.md"
             md.write_text("---\ntype: series\n---\n", encoding="utf-8")
@@ -798,7 +760,7 @@ class TuTexto(unittest.TestCase):
             self.assertFalse(textos.enmarcar(md))
             self.assertEqual(texto.count("[!vitrina]"), 1)
 
-    def test_la_cartela_cuenta_como_tuya_y_force_no_la_pisa(self):
+    def test_la_opinion_cuenta_como_tuya_y_force_no_la_pisa(self):
         cuerpo = textos.MARCO + "\n> Mía.\n\n" + self.CITA
         self.assertEqual(textos.lo_suyo(cuerpo), textos.MARCO + "\n> Mía.")
 
@@ -921,6 +883,12 @@ class DesdeIssue(unittest.TestCase):
         for otro in desde_issue.FORMULARIOS.values():
             if otro is not f:
                 self.assertFalse((desde_issue.PLANTILLAS / otro["fichero"]).exists())
+        # Y la de editar, igual.
+        idioma = m.CONFIG.get("language") if m.CONFIG.get("language") in desde_issue.EDITAR else "en"
+        e = desde_issue.EDITAR[idioma]
+        self.assertEqual((desde_issue.PLANTILLAS / e["fichero"]).read_text(encoding="utf-8"),
+                         desde_issue.plantilla_editar(e, desde_issue.FORMULARIOS[idioma]),
+                         "pasa scripts/desde_issue.py --plantilla")
 
 
 class Arrancan(unittest.TestCase):
@@ -1261,6 +1229,129 @@ class Coherencia(unittest.TestCase):
             self.assertEqual(actual, contenido,
                              f"{nombre}.md no lista lo que hay en la vault. "
                              "Pasa scripts/autores.py")
+
+
+class Cuando(unittest.TestCase):
+    """cuando.py: las fechas de uso. Lo que importa es que no ponga una fecha
+    que no sabe (antes vacio que equivocado)."""
+
+    def test_la_primera_vez_es_la_primera_entrada_del_diario(self):
+        self.assertEqual(cuando.primera_vista([("2024-05-02", True), ("2023-01-10", False)]), "2023-01-10")
+
+    def test_si_la_primera_entrada_ya_es_un_revisionado_no_se_sabe(self):
+        self.assertIsNone(cuando.primera_vista([("2024-05-02", False), ("2023-01-10", True)]))
+
+    def test_el_titulo_se_compara_sin_lo_que_le_cuelga_cada_sitio(self):
+        self.assertEqual(cuando.limpio("Abbey Road (Remastered)"), cuando.limpio("Abbey Road"))
+        self.assertEqual(cuando.limpio("Abbey Road - 2019 Mix"), cuando.limpio("Abbey Road"))
+        self.assertEqual(cuando.limpio("The Way of Kings (The Stormlight Archive, #1)"), cuando.limpio("The Way of Kings"))
+        self.assertNotEqual(cuando.limpio("Kid A"), cuando.limpio("Kid A Mnesia - Disc 3"))
+
+    def test_el_autor_tiene_que_coincidir_entero(self):
+        self.assertTrue(cuando.mismo_autor("Radiohead", "radiohead"))
+        self.assertTrue(cuando.mismo_autor("Simon & Garfunkel, Otro", "Otro"))
+        self.assertFalse(cuando.mismo_autor("Radiohead", "Radio"))
+        self.assertFalse(cuando.mismo_autor("", ""))
+
+    def test_un_logro_con_fecha_cero_deja_el_juego_sin_fecha(self):
+        # Salio con Idle Slayer: 1970-01 como fecha de empezado.
+        xml = (b'<playerstats><privacyState>public</privacyState><achievements>'
+               b'<achievement closed="1"><unlockTimestamp>0</unlockTimestamp></achievement>'
+               b'<achievement closed="1"><unlockTimestamp>1651104000</unlockTimestamp></achievement>'
+               b'</achievements></playerstats>')
+        with mock.patch.object(cuando, "pedir", return_value=xml):
+            self.assertIsNone(cuando.primer_logro("profiles/1", 1))
+        bueno = xml.replace(b"<unlockTimestamp>0<", b"<unlockTimestamp>1700000000<")
+        with mock.patch.object(cuando, "pedir", return_value=bueno):
+            self.assertEqual(cuando.primer_logro("profiles/1", 1).strftime("%Y-%m"), "2022-04")
+
+    def test_lo_que_suena_el_primer_mes_del_registro_no_es_la_primera_escucha(self):
+        import datetime as dt
+        d = lambda *f: dt.datetime(*f, tzinfo=dt.timezone.utc)
+        escuchas = [(d(2020, 1, 1), "Radiohead", "Kid A", None),
+                    (d(2021, 3, 5), "Radiohead", "Kid A", None),
+                    (d(2022, 6, 7), "Radiohead", "In Rainbows (Deluxe)", None)]
+        lista = [(Path("musica/Kid A.md"), {"type": "album", "author": "Radiohead"}, "Kid A"),
+                 (Path("musica/In Rainbows.md"), {"type": "album", "author": "Radiohead"}, "In Rainbows")]
+        cambios = []
+        with mock.patch.object(cuando, "escribir_campos") as escribir, mock.patch("sys.stdout", io.StringIO()):
+            cuando.primeras_escuchas(escuchas, lista, SimpleNamespace(dry_run=False), cambios)
+        escribir.assert_called_once_with(Path("musica/In Rainbows.md"), {"started_on": "2022-06-07"})
+
+    def test_lo_que_ya_tiene_fecha_no_se_toca(self):
+        cambios = []
+        with mock.patch.object(cuando, "escribir_campos") as escribir, mock.patch("sys.stdout", io.StringIO()):
+            cuando.poner(Path("x.md"), {"finished_on": "2019"}, {"finished_on": "2023-01-10"},
+                         SimpleNamespace(dry_run=False), cambios)
+        escribir.assert_not_called()
+        self.assertEqual(cambios, [])
+
+
+class EditarDesdeLaWeb(unittest.TestCase):
+    """El Issue «Editar pieza»: cambia solo lo que se pide y solo en una ficha."""
+
+    FICHA = ("---\ntype: film\nrating: 7\nstatus: finished\n---\n\n"
+             "> [!vitrina] Por qué está en la vitrina\n> La de antes.\n\n"
+             "> [!spoiler]- Spoilers\n> El final.\n\n"
+             "> [!quote] De qué va\n> Lo que dice la fuente.\n")
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        (self.tmp / "pelis").mkdir()
+        self.md = self.tmp / "pelis" / "Clue.md"
+        self.md.write_text(self.FICHA, encoding="utf-8")
+        self.parche = mock.patch.object(desde_issue, "VAULT", self.tmp)
+        self.parche.start()
+
+    def tearDown(self):
+        self.parche.stop()
+
+    def cuerpo(self, nota="Sin cambios", frase="", quitar=" ", ficha="pelis/Clue", fecha=""):
+        return (f"### Ficha\n\n{ficha}\n\n### Nota\n\n{nota}\n\n### Estado\n\nSin cambios\n\n"
+                f"### Cuándo la terminaste\n\n{fecha or '_No response_'}\n\n"
+                f"### Por qué está en la vitrina\n\n{frase or '_No response_'}\n\n"
+                f"### Quitar la opinión\n\n- [{quitar}] Borrar la opinión que tiene")
+
+    def test_no_sale_de_las_salas(self):
+        for mala in ("../README", "pelis/../../x", "/etc/passwd", "autores/Alguien", "pelis/No existe", ""):
+            with self.assertRaises(ValueError, msg=mala):
+                desde_issue.ficha_de(mala)
+        self.assertEqual(desde_issue.ficha_de("pelis/Clue"), self.md)
+
+    def test_cambia_la_nota_y_la_opinion_y_deja_el_spoiler(self):
+        pedido = desde_issue.peticion_editar(self.cuerpo(nota="9", frase="La de ahora.\nEn dos líneas."))
+        cambios = desde_issue.editar(pedido)
+        texto = self.md.read_text(encoding="utf-8")
+        self.assertIn("rating: 9", texto)
+        self.assertIn("> La de ahora.\n> En dos líneas.", texto)
+        self.assertNotIn("La de antes", texto)
+        self.assertIn("> [!spoiler]- Spoilers\n> El final.", texto)
+        self.assertIn("> [!quote] De qué va", texto)
+        self.assertEqual(len(cambios), 2)
+
+    def test_mandarlo_sin_tocar_nada_no_cambia_nada(self):
+        pedido = desde_issue.peticion_editar(self.cuerpo(frase="La de antes."))
+        self.assertEqual(desde_issue.editar(pedido), [])
+        self.assertEqual(self.md.read_text(encoding="utf-8"), self.FICHA)
+
+    def test_quitar_la_opinion_y_la_nota(self):
+        pedido = desde_issue.peticion_editar(self.cuerpo(nota="Quitar la nota", quitar="x", frase="da igual"))
+        desde_issue.editar(pedido)
+        texto = self.md.read_text(encoding="utf-8")
+        self.assertNotIn("[!vitrina]", texto)
+        self.assertRegex(texto, r"(?m)^rating:$")
+        self.assertTrue(texto.split("---\n", 2)[2].startswith("\n> [!spoiler]"))
+
+    def test_una_ficha_sin_opinion_la_recibe_arriba(self):
+        self.md.write_text(self.FICHA.replace("> [!vitrina] Por qué está en la vitrina\n> La de antes.\n\n", ""),
+                           encoding="utf-8")
+        desde_issue.editar(desde_issue.peticion_editar(self.cuerpo(frase="Nueva.")))
+        cuerpo = self.md.read_text(encoding="utf-8").split("---\n", 2)[2]
+        self.assertTrue(cuerpo.startswith("\n> [!vitrina] Por qué está en la vitrina\n> Nueva.\n\n> [!spoiler]"))
+
+    def test_una_fecha_mal_escrita_no_entra(self):
+        with self.assertRaises(ValueError):
+            desde_issue.peticion_editar(self.cuerpo(fecha="ayer"))
 
 
 if __name__ == "__main__":

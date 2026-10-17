@@ -14,7 +14,7 @@ tags:
 letterboxd: the-odyssey-2026
 added: 2026-09-02
 wikidata: Q131547207
-trailer: Mzw2ttJD2qQ
+finished_on: 2026-08-25
 ---
 
 > [!quote] De qué va

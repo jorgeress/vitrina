@@ -13,6 +13,7 @@ tags:
 letterboxd: demolition
 added: 2026-09-02
 wikidata: Q18149188
+finished_on: 2026-02-22
 ---
 
 > [!quote] De qué va

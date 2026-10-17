@@ -13,6 +13,7 @@ tags:
 letterboxd: the-seventh-seal
 added: 2026-09-02
 wikidata: Q217189
+finished_on: 2026-07-04
 ---
 
 > [!quote] De qué va

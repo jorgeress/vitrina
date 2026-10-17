@@ -14,7 +14,9 @@ export interface Pieza {
   favorite: boolean;
   tags: string[];
   ids: Record<string, string | number>;
-  label: string | null;
+  opinion: string | null;
+  /** El nombre de antes de `opinion`, en las vitrinas que aún no se han rehecho. */
+  label?: string | null;
   url: string;
   cover?: string | null;
 }

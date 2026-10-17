@@ -2,7 +2,7 @@ import rss from "@astrojs/rss";
 import type { APIContext } from "astro";
 import { NOMBRE } from "../config";
 import { t } from "../i18n";
-import { cartela, obras, porAlta, quienFirma, ruta, seccionDe, titulo } from "../lib/obras";
+import { opinion, obras, porAlta, quienFirma, ruta, seccionDe, titulo } from "../lib/obras";
 
 // Lo que va entrando en la vitrina, en la misma dirección que el RSS de
 // Quartz (index.xml), para que quien ya lo siga no tenga que cambiar nada.
@@ -20,7 +20,7 @@ export async function GET(contexto: APIContext) {
         link: ruta(o),
         pubDate: o.data.added ?? undefined,
         categories: [sala, ...(o.data.tags ?? [])],
-        description: cartela(o) ?? [sala, o.data.year, quien].filter(Boolean).join(" · "),
+        description: opinion(o) ?? [sala, o.data.year, quien].filter(Boolean).join(" · "),
       };
     }),
     customData: `<language>${t.locale.slice(0, 2)}</language>`,

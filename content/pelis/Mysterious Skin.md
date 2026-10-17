@@ -12,6 +12,7 @@ tags:
 letterboxd: mysterious-skin
 added: 2026-09-02
 wikidata: Q1421068
+finished_on: 2026-06-07
 ---
 
 > [!quote] De qué va

@@ -384,17 +384,17 @@ def escribir_cuerpo(md, cuerpo):
 
 # --- lo tuyo -----------------------------------------------------------------
 # Lo que escribes tu va en su propio marco, igual que la cita de la fuente va en
-# el suyo: una cartela, como la que lleva al lado cada pieza de un museo. Sin
-# el, tu parrafo y el de Wikipedia eran dos parrafos seguidos, y lo unico que
-# decia cual era tuyo era que el otro llevaba comillas. Es un callout y no algo
+# el suyo: tu opinion, en un recuadro aparte, como la cartela que lleva al lado
+# cada pieza de un museo. Sin el, tu parrafo y el de Wikipedia eran dos parrafos
+# seguidos, y lo unico que decia cual era tuyo era que el otro llevaba comillas. Es un callout y no algo
 # que pinte el sitio al construir para que se vea igual en Obsidian, donde el
 # snippet de .obsidian/snippets/vitrina.css le da su color.
 
-MARCO = f"> [!{CALLOUT}] {idioma.texto('cartela')}"
+MARCO = f"> [!{CALLOUT}] {idioma.texto('opinion')}"
 
 
 def marco(suyo):
-    """Tu texto dentro de la cartela, tal cual: sin reajustar lineas ni listas."""
+    """Tu texto dentro del recuadro de la opinion, tal cual: sin reajustar lineas ni listas."""
     lineas = suyo.strip().splitlines()
     return MARCO + "\n" + "\n".join(f"> {l}".rstrip() for l in lineas)
 
@@ -404,7 +404,7 @@ def enmarcado(suyo):
 
 
 def escribir_lo_suyo(md, suyo):
-    """Pone tu texto arriba, en su cartela, y deja debajo lo generado.
+    """Pone tu texto arriba, como su opinion, y deja debajo lo generado.
 
     Es la otra mitad de `escribir_cuerpo`: aquella cambia lo generado sin
     tocar lo tuyo, y esta lo tuyo sin tocar lo generado. Lo que ya venga
@@ -421,8 +421,46 @@ def escribir_lo_suyo(md, suyo):
     md.write_text(m.group(0) + "\n" + nuevo + "\n", encoding="utf-8")
 
 
+def cambiar_opinion(md, nueva):
+    """Cambia solo el recuadro de la opinion: lo demas del cuerpo se queda.
+
+    `escribir_lo_suyo` rehace el cuerpo entero (lo tuyo arriba y lo generado
+    debajo), y con ella un spoiler o una nota suelta que hubiera se perderia.
+    Editar desde la web no puede llevarse nada por delante. `nueva` vacia o
+    None quita el recuadro. Devuelve si ha cambiado algo.
+    """
+    texto = md.read_text(encoding="utf-8")
+    m = FRONT_RE.match(texto)
+    if not m:
+        raise ValueError(f"{md} no tiene cabecera")
+    lineas = texto[m.end():].split("\n")
+    inicio = next((i for i, l in enumerate(lineas) if enmarcado(l)), None)
+    fin = inicio
+    while inicio is not None and fin < len(lineas) and lineas[fin].startswith(">"):
+        fin += 1
+    bloque = marco(nueva).split("\n") if (nueva or "").strip() else []
+    if inicio is None:
+        if not bloque:
+            return False
+        # Sin opinion aun, va arriba del todo, como la pone escribir_lo_suyo.
+        while lineas and not lineas[0].strip():
+            lineas.pop(0)
+        lineas = bloque + ([""] if lineas else []) + lineas
+    else:
+        if not bloque:
+            # Sin dejar dos lineas en blanco donde estaba.
+            while fin < len(lineas) and not lineas[fin].strip():
+                fin += 1
+        lineas = lineas[:inicio] + bloque + lineas[fin:]
+    nuevo = m.group(0) + "\n" + "\n".join(lineas).strip("\n") + "\n"
+    if nuevo == texto:
+        return False
+    md.write_text(nuevo, encoding="utf-8")
+    return True
+
+
 def enmarcar(md):
-    """Mete en su cartela lo que hayas escrito suelto. Devuelve si ha hecho algo.
+    """Convierte en opinion lo que hayas escrito suelto. Devuelve si ha hecho algo.
 
     Asi se puede escribir en Obsidian sin acordarse de la sintaxis del callout:
     se escribe encima de la cita, y al-dia.py lo enmarca.

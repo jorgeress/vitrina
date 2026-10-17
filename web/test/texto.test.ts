@@ -7,15 +7,13 @@ import {
   decada,
   destinoEnlace,
   enumerar,
-  idSpotify,
-  idYoutube,
   nombreTag,
   primerParrafo,
   recortar,
   separarAutores,
-  sinCartela,
+  sinOpinion,
   slugQuartz,
-  textoCartela,
+  textoOpinion,
 } from "../src/lib/texto.ts";
 
 const RAIZ = join(import.meta.dirname, "..", "..");
@@ -78,10 +76,10 @@ test("los tags se leen como palabras", () => {
   assert.equal(nombreTag("r&b"), "R&B");
 });
 
-test("la cartela sale entera y sin el marco", () => {
+test("la opinión sale entera y sin el marco", () => {
   const cuerpo = "> [!vitrina] Por qué está en la vitrina\n> Una línea\n> y otra.\n\n> [!quote] De qué va\n> Otra cosa";
-  assert.equal(textoCartela(cuerpo), "Una línea y otra.");
-  assert.equal(textoCartela("> [!quote] De qué va\n> Nada mío"), null);
+  assert.equal(textoOpinion(cuerpo), "Una línea y otra.");
+  assert.equal(textoOpinion("> [!quote] De qué va\n> Nada mío"), null);
 });
 
 test("la presentación de la portada es el primer párrafo de index.md", () => {
@@ -97,34 +95,23 @@ test("«y» o «and», según el idioma", () => {
   assert.equal(enumerar(["A", "B"], "and"), "A and B");
 });
 
-test("una cartela oculta no queda en la página, y lo demás sí", () => {
+test("una opinión oculta no queda en la página, y lo demás sí", () => {
   const html =
     '<div class="callout" data-callout="vitrina" data-collapsible="false"><div class="callout-title"><div class="callout-title-text">Por qué</div></div>' +
     '<div class="callout-content"><p>Lo mío.</p></div></div>\n<div class="callout" data-callout="quote"><p>De qué va</p></div>';
-  const limpio = sinCartela(html);
+  const limpio = sinOpinion(html);
   assert.ok(!limpio.includes("Lo mío"));
   assert.ok(limpio.includes("De qué va"));
-  assert.equal(sinCartela("<p>sin cartela</p>"), "<p>sin cartela</p>");
+  assert.equal(sinOpinion("<p>sin opinión</p>"), "<p>sin opinión</p>");
   // En una vitrina en inglés el callout es [!vitrine], y vale igual.
-  assert.ok(!sinCartela('<div class="callout" data-callout="vitrine"><div><p>Mine.</p></div></div>').includes("Mine"));
-  assert.equal(textoCartela("> [!vitrine] Why it's on display\n> Mine."), "Mine.");
+  assert.ok(!sinOpinion('<div class="callout" data-callout="vitrine"><div><p>Mine.</p></div></div>').includes("Mine"));
+  assert.equal(textoOpinion("> [!vitrine] Why it's on display\n> Mine."), "Mine.");
 });
 
 test("los enlaces de la cabecera se leen con o sin carpeta, alias o extensión", () => {
   assert.equal(destinoEnlace("[[libros/Chainsaw Man]]"), "libros/Chainsaw Man");
   assert.equal(destinoEnlace("[[libros/Chainsaw Man|el manga]]"), "libros/Chainsaw Man");
   assert.equal(destinoEnlace("Hollow Knight.md"), "Hollow Knight");
-});
-
-test("el tráiler y el disco valen como id o como enlace", () => {
-  assert.equal(idYoutube("E3Huy2cdih0"), "E3Huy2cdih0");
-  assert.equal(idYoutube("https://www.youtube.com/watch?v=E3Huy2cdih0&t=3"), "E3Huy2cdih0");
-  assert.equal(idYoutube("https://youtu.be/E3Huy2cdih0"), "E3Huy2cdih0");
-  assert.equal(idYoutube("no es un vídeo"), null);
-  assert.equal(idSpotify("5vkqYmiPBYLaalcmjujWxK"), "5vkqYmiPBYLaalcmjujWxK");
-  assert.equal(idSpotify("https://open.spotify.com/intl-es/album/5vkqYmiPBYLaalcmjujWxK?si=x"), "5vkqYmiPBYLaalcmjujWxK");
-  assert.equal(idSpotify("spotify:album:5vkqYmiPBYLaalcmjujWxK"), "5vkqYmiPBYLaalcmjujWxK");
-  assert.equal(idSpotify(null), null);
 });
 
 test("cada fecha cae en su década", () => {

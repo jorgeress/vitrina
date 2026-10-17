@@ -1,7 +1,8 @@
 name: Nueva pieza
 
 # Añadir desde el movil: un Issue con la plantilla "Nueva pieza" se convierte
-# en ficha, se guarda en main y se publica. Ver scripts/desde_issue.py.
+# en ficha, se guarda en main y se publica. Con "Editar pieza", que abre el
+# boton Editar de cada ficha, cambia una que ya esta. Ver scripts/desde_issue.py.
 on:
   issues:
     types: [opened]
@@ -18,7 +19,9 @@ jobs:
     if: >-
       github.event.issue.user.login == github.repository_owner &&
       (contains(github.event.issue.labels.*.name, 'nueva-pieza') ||
-       contains(github.event.issue.labels.*.name, 'new-piece'))
+       contains(github.event.issue.labels.*.name, 'new-piece') ||
+       contains(github.event.issue.labels.*.name, 'editar-pieza') ||
+       contains(github.event.issue.labels.*.name, 'edit-piece'))
     runs-on: ubuntu-latest
     concurrency:
       group: nueva-pieza
@@ -35,7 +38,7 @@ jobs:
 
       # El Issue no se pega en ninguna orden: el script lo lee del JSON del
       # evento y lo valida campo a campo.
-      - name: Crear la ficha
+      - name: Crear o cambiar la ficha
         id: ficha
         run: python3 scripts/desde_issue.py "$GITHUB_EVENT_PATH" --resumen resumen.md --commit commit.txt
 

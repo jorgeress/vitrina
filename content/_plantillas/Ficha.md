@@ -29,6 +29,9 @@ Campos:
   tiene, sale igual.
 - `finished_on`: cuándo lo terminaste, `2024`, `2024-05` o `2024-05-03`, con
   la precisión que sepas. Es lo que lo pone en el anuario.
+- `started_on`: cuándo lo empezaste o, un disco, cuándo lo oíste por primera
+  vez. Igual que `finished_on`; lo pone `scripts/cuando.py` del primer logro de
+  Steam o de la primera escucha.
 - `times`: cuántas veces lo has terminado. Desde 2 sale en la ficha: «Vista 3
   veces», «Jugado 2 veces», «Leído 4 veces».
 - `based_on`, `follows` y `soundtrack`: otras fichas de la vitrina, como
@@ -36,12 +39,9 @@ Campos:
   basa, a cuál continúa y cuál es su banda sonora. Basta con ponerlo en una de
   las dos: la otra dice «Adaptada en», «Sigue en» o «Banda sonora de».
   `scripts/enlazar.py` pone los dos primeros cuando Wikidata los sabe.
-- `trailer` y `spotify`: el tráiler en YouTube y el disco en Spotify, como id
-  o como enlace. Salen como botones en la ficha y no se cargan hasta pulsarlos.
-  Los pone `scripts/enlazar.py`.
 - `added`: cuándo entró en la vitrina. Lo ponen los scripts.
 - `hidden`: `true` para que no salga en la web, o una lista de lo que no
-  quieres enseñar: `hidden: [rating, label]` quita la nota y la cartela. Ojo:
+  quieres enseñar: `hidden: [rating, opinion]` quita la nota y la opinión. Ojo:
   el fichero sigue en el repo, que es público. Lo que no quieras que vea nadie
   va en la carpeta `privado/`, que git no sube.
 - `draft`: true mientras es un borrador; lo importado entra así.
@@ -51,7 +51,7 @@ Campos:
   castellano cuando Wikidata no lo sabe. Y `wikidata`, el elemento de la obra.
 
 El cuerpo es para lo tuyo: por qué está en la vitrina, lo que te dejó. Es lo
-único que ninguna fuente puede rellenar. Va arriba, en su cartela:
+único que ninguna fuente puede rellenar. Va arriba, como tu opinión:
 
 > [!vitrina] Por qué está en la vitrina
 > Lo que te dejó, en dos frases.

@@ -12,6 +12,7 @@ tags:
 letterboxd: manchester-by-the-sea
 added: 2026-09-02
 wikidata: Q19864603
+finished_on: 2026-07-30
 ---
 
 > [!quote] De qué va

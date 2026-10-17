@@ -10,7 +10,7 @@ MENSAJES = {
     # --- al-dia.py ---------------------------------------------------------------
     "cuelga cada ficha de su sección": "links each entry to its room",
     "apunta la fecha de alta que falte": "records any missing date added",
-    "pone en su cartela lo que hayas escrito suelto": "puts what you wrote loose into its label",
+    "convierte en opinión lo que hayas escrito suelto": "turns what you wrote loose into its opinion",
     "baja las carátulas que falten": "downloads missing covers",
     "rellena año, autor y tags": "fills in year, author and tags",
     "escribe el «De qué va»": "writes the “What it's about”",
@@ -20,7 +20,6 @@ MENSAJES = {
     "no escribe nada": "doesn't write anything",
     "Al día. Lo que falta rellenar a mano: scripts/estado.py --detalle":
         "Up to date. What's left to fill in by hand: scripts/estado.py --detail",
-    "las cifras del README": "the README numbers",
     "Han fallado: {scripts}. El resto ha terminado.": "These failed: {scripts}. The rest finished.",
 
     # --- autores.py --------------------------------------------------------------
@@ -92,12 +91,12 @@ MENSAJES = {
     "No he añadido nada: {porque}.": "Nothing added: {porque}.",
     "No he podido añadirla. Lo último que dijo nueva.py:": "Couldn't add it. The last thing nueva.py said:",
     "Añadida: `{ruta}`.": "Added: `{ruta}`.",
-    "La frase va en su cartela, «{titulo}».": "The sentence goes in its label, “{titulo}”.",
+    "La frase va como tu opinión, en «{titulo}».": "The sentence goes in as your opinion, under “{titulo}”.",
     "Prueba sin escribir nada:": "Dry run, nothing written:",
 
     # --- enmarcar.py, fechas.py, secciones.py -------------------------------------------
-    "Mete en su cartela lo que hayas escrito suelto en una ficha.":
-        "Puts what you wrote loose in an entry into its label.",
+    "Convierte en opinión lo que hayas escrito suelto en una ficha.":
+        "Turns what you wrote loose in an entry into its opinion.",
     "Apunta en cada ficha cuando entro en la coleccion: el campo `added`.":
         "Records in each entry when it joined the collection: the `added` field.",
     "Cuelga cada ficha de su seccion: escribe el campo `section`.":
@@ -127,23 +126,16 @@ MENSAJES = {
     "texto": "text",
     "sin poner": "unset",
     "{n} de {total}": "{n} of {total}",
-    "El README ya estaba al dia.": "The README was already up to date.",
     "lista las fichas a las que les falta algo": "lists the entries that are missing something",
-    "reescribe el bloque de cifras del README": "rewrites the README numbers block",
     "avisa de lo que se ha quedado atras, sin tocar nada": "warns about what's fallen behind, without touching anything",
-    "El bloque de cifras del README no dice lo que hay en la vault. Pasa scripts/estado.py --readme":
-        "The README numbers block doesn't match the vault. Run scripts/estado.py --readme",
     "Nada atrasado.": "Nothing behind.",
     "No hay ninguna ficha todavía.": "There are no entries yet.",
     "  Ninguna. La web se salta lo que lleva `draft: true`; en Obsidian se\n  ven todas. Para ascender una, quítale esa línea.":
         "  None. The site skips anything with `draft: true`; Obsidian shows\n  them all. To publish one, remove that line.",
     "  Ninguna. Favoritos.base y las vistas «Solo favoritos» salen vacías\n  hasta que alguna ficha lleve `favorite: true`.":
         "  None. Favoritos.base and the favorites views stay empty\n  until some entry has `favorite: true`.",
-    "Actualizado el bloque de cifras de {fichero}.": "Updated the numbers block in {fichero}.",
     "Pasa scripts/fechas.py": "Run scripts/fechas.py",
     "Nada. Están todas completas.": "Nothing. They're all complete.",
-    "No encuentro el bloque de cifras en el README: tiene que ser un\ncercado que empiece por una linea «{titulo}».":
-        "Can't find the numbers block in the README: it has to be a\nfenced block starting with a line “{titulo}”.",
     "  {n} ficha(s) sin estado: no salen ni en la vista de lo\n  terminado ni en la lista de lo que queda.":
         "  {n} entr(ies) without a status: they show up neither among the\n  finished nor in the list of what's left.",
     "  {n} ficha(s) con un estado que no existe, que es\n  la otra manera de no salir en ninguna de las dos:":
@@ -315,7 +307,6 @@ MENSAJES = {
     "Esto pregunta ficha a ficha, y hace falta una terminal para contestar.":
         "This asks entry by entry, and needs a terminal to answer in.",
     "No hay ninguna sin nota ni estado.": "There are none without a rating or status.",
-    "Puesto al día el bloque de cifras del README.": "Updated the README numbers block.",
     "{tocadas} ficha(s) cambiadas, {frases} con frase nueva.": "{tocadas} entr(ies) changed, {frases} with a new sentence.",
     "nota {nota} · {estado}": "rating {nota} · {estado}",
     "{n} fichas por repasar.": "{n} entries to go through.",
@@ -339,11 +330,38 @@ MENSAJES = {
     "ninguna es de {year}: ": "none is from {year}: ",
     "¿Cuál? (1-{n}, Enter para el 1, 0 si ninguno): ": "Which one? (1-{n}, Enter for 1, 0 for none): ",
     "cuantas veces la has terminado: vista, jugada, leida o escuchada": "how many times you've finished it: watched, played, read or listened to",
-    "une cada ficha con Wikidata: tráiler, Spotify y de qué otra viene": "links each entry with Wikidata: trailer, Spotify and which other it comes from",
+    "une cada ficha con Wikidata: de qué otra viene": "links each entry with Wikidata: which other it comes from",
     "las fichas que mirar; sin nada, todas": "the entries to look at; with none, all of them",
     "dice que pondria, sin tocar nada": "says what it would write, without touching anything",
     "Preguntando a Wikidata por {n} fichas…": "Asking Wikidata about {n} entries…",
     "{n} fichas con algo nuevo; {m} sin elemento en Wikidata.": "{n} entries with something new; {m} without a Wikidata item.",
+    # desde_issue.py, editar
+    'la opinión': 'the opinion',
+    '«{ficha}» no es una ficha de la vitrina': '“{ficha}” is not an entry on display',
+    'la opinión, quitada': 'the opinion, removed',
+    '`{ruta}` ya estaba así; no he tocado nada.': "`{ruta}` was already like that; I didn't touch anything.",
+    'Cambiado en `{ruta}`:': 'Changed in `{ruta}`:',
+    'No he cambiado nada: {porque}.': "I didn't change anything: {porque}.",
+    # cuando.py
+    'No he encontrado diary.csv en esa ruta.': "I couldn't find diary.csv at that path.",
+    'Diario de Letterboxd (export): {n} entradas.': 'Letterboxd diary (export): {n} entries.',
+    'Diario de Letterboxd de {usuario}: {n} entradas.': "{usuario}'s Letterboxd diary: {n} entries.",
+    'Logros de Steam: {n} juegos por mirar.': 'Steam achievements: {n} games to check.',
+    'Los logros de ese perfil son privados. En Steam: Editar perfil →\nPrivacidad → Detalles de juegos, en Público.': "That profile's achievements are private. On Steam: Edit profile →\nPrivacy → Game details, set to Public.",
+    'De Goodreads hace falta el número de usuario: el de goodreads.com/user/show/NÚMERO.': 'Goodreads needs the user number: the one in goodreads.com/user/show/NUMBER.',
+    'Goodreads no ha devuelto ningún libro con fecha de leído. Comprueba el\nnúmero y que la estantería sea pública.': 'Goodreads returned no book with a read date. Check the number\nand that the shelf is public.',
+    'Goodreads: {n} libros con fecha de leído.': 'Goodreads: {n} books with a read date.',
+    "ListenBrainz no tiene escuchas de '{usuario}'.": "ListenBrainz has no listens for '{usuario}'.",
+    'ListenBrainz: {n} escuchas.': 'ListenBrainz: {n} listens.',
+    'No he encontrado el historial ampliado de Spotify en esa ruta\n(Streaming_History_Audio_*.json). El export normal no trae los discos.': "I couldn't find Spotify's extended history at that path\n(Streaming_History_Audio_*.json). The regular export has no albums.",
+    'Spotify: {n} escuchas.': 'Spotify: {n} listens.',
+    'de dónde; sin nada, las de la config': 'where from; with nothing, the ones in the config',
+    'usuario, perfil o ruta del export': 'user, profile or path to the export',
+    'Sin cuentas en vitrine.local.json: nada que mirar.': 'No accounts in vitrine.local.json: nothing to check.',
+    'No sé de dónde sacarlo: pon la cuenta detrás (scripts/cuando.py\nletterboxd TU_USUARIO) o déjala en vitrine.local.json.': "I don't know where to get it from: put the account after it (scripts/cuando.py\nletterboxd YOUR_USER) or leave it in vitrine.local.json.",
+    '{n} ficha(s) cambiarían.': '{n} entry(ies) would change.',
+    '{n} ficha(s) cambiada(s).': '{n} entry(ies) changed.',
+    'apunta cuándo terminaste o empezaste cada cosa': 'notes when you finished or started each thing',
 }
 
 # La guia de repasar.py, entera.
@@ -369,7 +387,7 @@ Cómo contestar, en una línea y en cualquier orden:
 
   Después, si la ficha no tiene nada tuyo escrito, te pide por qué está en
   la vitrina: lo que te dejó, bueno o malo. Va arriba del todo en la ficha,
-  en su cartela. Enter la salta.
+  como tu opinión. Enter la salta.
 """] = """\
 How to answer, on one line and in any order:
 
@@ -392,7 +410,7 @@ How to answer, on one line and in any order:
 
   Then, if the entry has nothing of yours written, it asks why it's on
   display: what it left you, good or bad. It goes at the top of the entry,
-  in its label. Enter skips it.
+  as your opinion. Enter skips it.
 """
 
 # La ayuda de cada script (--help), en una vitrina en ingles. En castellano
@@ -419,10 +437,10 @@ asks. One line per entry: `9 f` is a 9 and a favorite, `t` is finished,
 Enter skips it and `q` stops. Every answer is saved at once.""",
     "estado": """Says what's in the vault and what's missing: entries per room, how many
 are drafts, which fields are empty, ratings, statuses and favorites.
---readme rewrites the numbers block of the README; --check only warns.""",
+--check only warns.""",
     "al-dia": """Runs, in order, everything the scripts know how to fill in: room, date
-added, label, cover, year, author, tags, text, author pages and the README
-numbers. It only touches what's missing, so it can be run any time;
+added, opinion, cover, year, author, tags, text, dates and author pages.
+It only touches what's missing, so it can be run any time;
 --offline does only what needs no network.""",
     "importar": """Brings in your collection from elsewhere, as drafts to review:
 
@@ -444,9 +462,14 @@ the same source that identifies them, in the language of the display.""",
     "portadas": """Downloads the covers that are missing, by the id the entry already has,
 and saves them as webp.""",
     "enlazar": """Fills in, from Wikidata and only where empty, what links each entry to
-the world and to the others: its Wikidata item, the YouTube trailer, the
-album on Spotify (or MusicBrainz), and `based_on` / `follows` when the
-other work is on display too. Nothing needs an API key.""",
+the world and to the others: its Wikidata item, and `based_on` / `follows`
+when the other work is on display too. Nothing needs an API key.""",
     "vistazo": """Builds the site with everything in it — drafts, hidden and private
 entries, marked — and serves it locally, to see it before publishing.""",
+    "cuando": """Fills in, only where empty, when you finished or started each piece,
+from the sites that log it: finished_on for films (Letterboxd diary, RSS or
+export) and books (Goodreads "read" shelf), started_on for games (first Steam
+achievement, by month) and albums (first listen on ListenBrainz or in Spotify's
+extended history). Accounts can live in vitrine.local.json,
+which git ignores.""",
 }

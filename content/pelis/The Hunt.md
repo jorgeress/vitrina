@@ -12,6 +12,7 @@ tags:
 letterboxd: the-hunt-2012
 added: 2026-09-02
 wikidata: Q32303
+finished_on: 2026-06-11
 ---
 
 > [!quote] De qué va

@@ -186,13 +186,13 @@ async function pintar(t, textos, portadas, colores, logger) {
     y += linea.alto + 26;
   }
 
-  // La cartela, si cabe: lo que dice el dueño, recortado a lo que entre.
+  // La opinión, si cabe: lo que dice el dueño, recortado a lo que entre.
   const pie = ALTO - MARGEN - 30;
-  if (t.cartela && pie - y > 70) {
+  if (t.opinion && pie - y > 70) {
     const lineas = Math.floor((pie - y - 20) / 36);
     const limite = Math.max(60, lineas * 46);
     const frase =
-      t.cartela.length > limite ? `${t.cartela.slice(0, limite).replace(/\s+\S*$/, "").replace(/[\s.,;:]+$/, "")}…` : t.cartela;
+      t.opinion.length > limite ? `${t.opinion.slice(0, limite).replace(/\s+\S*$/, "").replace(/[\s.,;:]+$/, "")}…` : t.opinion;
     const cita = await texto(`<span foreground="${TEXTO}">“${escapar(frase)}”</span>`, {
       fuente: "Source Sans 3 Italic 28",
       fichero: cursiva,

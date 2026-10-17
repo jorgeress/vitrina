@@ -14,6 +14,7 @@ tags:
 letterboxd: inglourious-basterds
 added: 2026-09-02
 wikidata: Q153723
+finished_on: 2026-07-02
 ---
 
 > [!quote] De qué va

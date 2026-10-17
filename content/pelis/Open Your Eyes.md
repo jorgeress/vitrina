@@ -14,6 +14,7 @@ tags:
 letterboxd: open-your-eyes
 added: 2026-09-02
 wikidata: Q1136400
+finished_on: 2026-05-16
 ---
 
 > [!quote] De qué va

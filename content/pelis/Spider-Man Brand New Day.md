@@ -15,7 +15,7 @@ tags:
 letterboxd: spider-man-brand-new-day
 added: 2026-09-02
 wikidata: Q113244935
-trailer: 8TZMtslA3UY
+finished_on: 2026-08-04
 ---
 
 > [!quote] De qué va

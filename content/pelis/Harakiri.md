@@ -14,6 +14,7 @@ tags:
 letterboxd: harakiri
 added: 2026-09-02
 wikidata: Q1584406
+finished_on: 2026-07-04
 ---
 
 > [!quote] De qué va

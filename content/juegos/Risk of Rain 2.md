@@ -13,7 +13,7 @@ tags:
 added: 2026-10-17
 appid: 632360
 wikidata: Q62569141
-trailer: Qwgq_9EOCTg
+started_on: 2025-06
 ---
 
 > [!quote] De qué va

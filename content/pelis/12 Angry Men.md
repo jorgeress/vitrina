@@ -12,6 +12,7 @@ tags:
 letterboxd: 12-angry-men
 added: 2026-09-02
 wikidata: Q2345
+finished_on: 2026-06-05
 ---
 
 > [!quote] De qué va

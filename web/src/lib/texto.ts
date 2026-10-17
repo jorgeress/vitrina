@@ -76,21 +76,28 @@ export function nombreTag(tag: string): string {
 
 // --- lo que ha escrito el dueño --------------------------------------------
 
-/** La cartela es el callout `[!vitrina]`, o `[!vitrine]` en una vitrina en
+/** La opinión es el callout `[!vitrina]`, o `[!vitrine]` en una vitrina en
  * inglés: valen los dos en cualquier idioma. */
-export const CALLOUT_CARTELA = /^>\s*\[!vitrin[ae]\]/i;
+export const CALLOUT_OPINION = /^>\s*\[!vitrin[ae]\]/i;
 
-/** El texto de la cartela de una ficha, sin el marco ni el título. */
-export function textoCartela(cuerpo: string | undefined): string | null {
+/** El texto de la opinión de una ficha, sin el marco ni el título, en una
+ * sola línea: lo que se pone en un resumen o en una tarjeta. */
+export function textoOpinion(cuerpo: string | undefined): string | null {
+  return lineasOpinion(cuerpo)?.replace(/\s+/g, " ") ?? null;
+}
+
+/** Lo mismo con sus saltos de línea: lo que se lleva el formulario de editar,
+ * para que al mandarlo sin tocar quede igual que estaba. */
+export function lineasOpinion(cuerpo: string | undefined): string | null {
   const lineas = (cuerpo ?? "").split("\n");
-  const inicio = lineas.findIndex((l) => CALLOUT_CARTELA.test(l));
+  const inicio = lineas.findIndex((l) => CALLOUT_OPINION.test(l));
   if (inicio === -1) return null;
   const parrafo: string[] = [];
   for (const l of lineas.slice(inicio + 1)) {
     if (!l.startsWith(">")) break;
     parrafo.push(l.replace(/^>\s?/, ""));
   }
-  const texto = parrafo.join(" ").replace(/\s+/g, " ").trim();
+  const texto = parrafo.join("\n").trim();
   return texto || null;
 }
 
@@ -109,12 +116,12 @@ export function recortar(texto: string, limite: number): string {
 }
 
 /**
- * El HTML de una ficha sin su cartela, para cuando la cartela está oculta
- * (`hidden: [label]`). No basta con no pintarla: tiene que no estar en la
+ * El HTML de una ficha sin su opinión, para cuando la opinión está oculta
+ * (`hidden: [opinion]`). No basta con no pintarla: tiene que no estar en la
  * página. Se busca el bloque del callout y se corta contando los <div> que
  * abre y cierra, que una expresión regular sola no sabe emparejar.
  */
-export function sinCartela(html: string): string {
+export function sinOpinion(html: string): string {
   const inicio = html.search(/<div class="callout" data-callout="vitrin[ae]"/);
   if (inicio === -1) return html;
   const etiqueta = /<\/?div\b[^>]*>/g;
@@ -127,7 +134,7 @@ export function sinCartela(html: string): string {
   return html.slice(0, inicio);
 }
 
-// --- enlaces entre fichas y reproductores -------------------------------------
+// --- enlaces entre fichas ------------------------------------------------------
 
 /**
  * Adónde apunta un enlace de Obsidian de la cabecera (`based_on`, `follows`,
@@ -141,20 +148,6 @@ export function destinoEnlace(enlace: string): string {
     .split("|")[0]
     .replace(/\.md$/, "")
     .trim();
-}
-
-/** El id de un vídeo de YouTube, se escriba el id o se pegue el enlace. */
-export function idYoutube(valor: string | null | undefined): string | null {
-  const v = (valor ?? "").trim();
-  const m = v.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/)([\w-]{11})/) ?? v.match(/^([\w-]{11})$/);
-  return m ? m[1] : null;
-}
-
-/** El id de un disco de Spotify, del id suelto o de su enlace. */
-export function idSpotify(valor: string | null | undefined): string | null {
-  const v = (valor ?? "").trim();
-  const m = v.match(/album[/:]([A-Za-z0-9]{22})/) ?? v.match(/^([A-Za-z0-9]{22})$/);
-  return m ? m[1] : null;
 }
 
 /** La década de un año: 1997 → 1990. */

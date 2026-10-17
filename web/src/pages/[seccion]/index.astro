@@ -59,7 +59,7 @@ const maximo = Math.max(1, ...porDecada.values());
       }
       <div class="opciones">
         <label class="dorada"><input type="checkbox" name="favorito" /> ★ {t.mejor}</label>
-        <label><input type="checkbox" name="cartela" /> {t.conCartela}</label>
+        <label><input type="checkbox" name="opinion" /> {t.conOpinion}</label>
       </div>
       {
         tags.length > 0 && (
@@ -157,7 +157,7 @@ const maximo = Math.max(1, ...porDecada.values());
     const estado = String(f.get("estado") ?? "");
     const orden = String(f.get("orden") ?? "alta");
     const soloFav = f.has("favorito");
-    const soloCartela = f.has("cartela");
+    const soloOpinion = f.has("opinion");
 
     let n = 0;
     for (const t of tarjetas) {
@@ -166,7 +166,7 @@ const maximo = Math.max(1, ...porDecada.values());
         (!q || d.titulo!.includes(q) || d.autor!.includes(q)) &&
         (!estado || d.estado === estado) &&
         (!soloFav || d.favorito === "1") &&
-        (!soloCartela || d.cartela === "1") &&
+        (!soloOpinion || d.opinion === "1") &&
         (!tag || d.tags!.split(" ").includes(tag));
       t.hidden = !ve;
       if (ve) n++;
@@ -203,7 +203,7 @@ const maximo = Math.max(1, ...porDecada.values());
     if (estado) url.set("estado", estado);
     if (orden !== "alta") url.set("orden", orden);
     if (soloFav) url.set("favorito", "1");
-    if (soloCartela) url.set("cartela", "1");
+    if (soloOpinion) url.set("opinion", "1");
     if (tag) url.set("tag", tag);
     history.replaceState(null, "", url.size ? `?${url}` : location.pathname);
   }

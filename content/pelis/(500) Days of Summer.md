@@ -14,6 +14,7 @@ tags:
 letterboxd: 500-days-of-summer
 added: 2026-09-02
 wikidata: Q154935
+finished_on: 2026-06-02
 ---
 
 > [!quote] De qué va

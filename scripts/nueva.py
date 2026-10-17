@@ -62,7 +62,6 @@ from pathlib import Path
 
 import autores
 import enlazar
-import estado
 import textos
 from idioma import _, ayuda, opciones
 from datos import datos_juego, datos_serie
@@ -840,8 +839,7 @@ def alta(args):
     detalles.append(_("texto: {detalle}").format(
         detalle=detalle if cuerpo else _("sin texto ({porque})").format(porque=detalle)))
     print("  " + detalles[-1])
-    # Lo que la une con otras fichas y el reproductor (trailer, Spotify), de
-    # Wikidata. Si no contesta, la ficha ya esta hecha: enlazar.py lo repite.
+    # Lo que la une con otras fichas, de Wikidata. Si no contesta, la ficha ya esta hecha: enlazar.py lo repite.
     with contextlib.redirect_stdout(io.StringIO()):
         try:
             enlazar.main([str(md)])
@@ -871,16 +869,14 @@ def informar(args, **datos):
 
 
 def al_dia():
-    """Lo que cuelga de la vault y no pide red: autores y cifras del README.
+    """Lo que cuelga de la vault y no pide red: las paginas de autor.
 
     Una ficha nueva puede ser la segunda de un autor, que entonces estrena
-    pagina, y siempre cambia las cifras del README. Las dos cosas se quedaban
-    esperando a que alguien pasara autores.py y estado.py, y las pruebas y el
-    CI lo notaban antes que nadie. Son dos pasadas sin red que tardan nada.
+    pagina. Se quedaba esperando a que alguien pasara autores.py, y las pruebas
+    y el CI lo notaban antes que nadie. Es una pasada sin red que tarda nada.
     """
     with contextlib.redirect_stdout(io.StringIO()):
         autores.main([])
-    estado.actualizar_readme(callado=True)
 
 
 if __name__ == "__main__":

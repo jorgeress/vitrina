@@ -13,6 +13,7 @@ tags:
 letterboxd: 100-meters-2025
 added: 2026-09-02
 wikidata: Q134007355
+finished_on: 2026-07-07
 ---
 
 > [!quote] De qué va

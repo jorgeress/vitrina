@@ -14,7 +14,7 @@ tags:
 letterboxd: eternal-sunshine-of-the-spotless-mind
 added: 2026-09-02
 wikidata: Q208269
-trailer: 07-QBnEkgXU
+finished_on: 2026-05-10
 ---
 
 > [!vitrina] Por qué está en la vitrina

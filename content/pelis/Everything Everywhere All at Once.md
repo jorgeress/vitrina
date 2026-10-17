@@ -15,6 +15,7 @@ tags:
 letterboxd: everything-everywhere-all-at-once
 added: 2026-09-02
 wikidata: Q83808444
+finished_on: 2026-07-25
 ---
 
 > [!quote] De qué va

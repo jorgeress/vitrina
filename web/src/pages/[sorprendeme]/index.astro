@@ -54,7 +54,7 @@ const cliente = { ...t.azar, salas: Object.fromEntries(SECCIONES.map((s) => [s.t
         <p class="de" id="e-de"></p>
         <h2 id="e-titulo"></h2>
         <p class="autor" id="e-autor"></p>
-        <blockquote id="e-cartela" hidden></blockquote>
+        <blockquote id="e-opinion" hidden></blockquote>
         <a class="ver" id="e-ver">{t.azar.verFicha}</a>
       </div>
     </article>
@@ -163,9 +163,11 @@ const cliente = { ...t.azar, salas: Object.fromEntries(SECCIONES.map((s) => [s.t
       .join(" · ");
     document.getElementById("e-titulo")!.textContent = p.title;
     document.getElementById("e-autor")!.textContent = [p.authors.join(", "), p.year].filter(Boolean).join(" · ");
-    const cartela = document.getElementById("e-cartela")!;
-    cartela.hidden = !p.label;
-    cartela.textContent = p.label ?? "";
+    const opinion = document.getElementById("e-opinion")!;
+    // `label` es como se llamaba antes: una vitrina sin actualizar aún lo manda así.
+    const escrita = p.opinion ?? p.label;
+    opinion.hidden = !escrita;
+    opinion.textContent = escrita ?? "";
     (document.getElementById("e-ver") as HTMLAnchorElement).href = segura(local(p.url));
     elegida.hidden = false;
   }

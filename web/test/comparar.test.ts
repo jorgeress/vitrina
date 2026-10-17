@@ -12,7 +12,7 @@ const pieza = (title: string, extra: Partial<Pieza> = {}): Pieza => ({
   favorite: false,
   tags: [],
   ids: {},
-  label: null,
+  opinion: null,
   url: "",
   ...extra,
 });

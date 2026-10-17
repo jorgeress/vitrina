@@ -12,7 +12,6 @@ tags:
   - death-metal
 mbid: 38faaa8f-d18e-405e-8a7c-44d7ccde55ac
 added: 2026-09-23
-spotify: 1m3AHQKDZW9wPyIsMbt5jb
 ---
 
 ## Canciones

@@ -1,10 +1,10 @@
 import { getCollection, type CollectionEntry } from "astro:content";
-import { CARPETAS, CARPETA_PRIVADA, IDIOMA, TIPOS, type Tipo } from "../config";
+import { CARPETAS, CARPETA_PRIVADA, IDIOMA, REPO, TIPOS, type Tipo } from "../config";
 import { VISTAZO } from "../content.config";
 import { t } from "../i18n";
 import { join } from "node:path";
 import sharp from "sharp";
-import { CALLOUT_CARTELA, cantidad, destinoEnlace, enumerar, separarAutores, sinCartela, slugQuartz, textoCartela } from "./texto";
+import { CALLOUT_OPINION, lineasOpinion, cantidad, destinoEnlace, enumerar, separarAutores, sinOpinion, slugQuartz, textoOpinion } from "./texto";
 
 export * from "./texto";
 export { VISTAZO };
@@ -29,7 +29,7 @@ export const comparaTexto = (a: string, b: string) => a.localeCompare(b, IDIOMA)
 //   draft: true     un borrador, aún sin revisar (lo que entra importado).
 //   hidden: true    oculta: no sale en la web, pero el fichero está en el repo,
 //                   que es público. Sirve para que no se vea, no para que sea
-//                   secreto. Con una lista (`hidden: [rating, label]`) la
+//                   secreto. Con una lista (`hidden: [rating, opinion]`) la
 //                   ficha sale y lo que se oculta son esos campos.
 //   carpeta privada la que dice `private` en vitrine.config.json, que git no
 //                   sube: ni la web ni GitHub la ven nunca.
@@ -59,18 +59,19 @@ function sinLoOculto(o: Obra): Obra {
   if (ocultos.includes("status")) data.status = null;
   if (ocultos.includes("favorite")) data.favorite = null;
   if (ocultos.includes("finished_on")) data.finished_on = null;
+  if (ocultos.includes("started_on")) data.started_on = null;
   if (ocultos.includes("groups")) data.groups = null;
   if (ocultos.includes("added")) data.added = null;
   if (ocultos.includes("times")) data.times = null;
-  if (!ocultos.includes("label")) return { ...o, data };
-  // La cartela se quita del texto y del HTML ya hecho: no basta con no
+  if (!ocultos.includes("opinion") && !ocultos.includes("label")) return { ...o, data };
+  // La opinión se quita del texto y del HTML ya hecho: no basta con no
   // pintarla, tiene que no estar en la página.
   const lineas = (o.body ?? "").split("\n");
-  const inicio = lineas.findIndex((l) => CALLOUT_CARTELA.test(l));
+  const inicio = lineas.findIndex((l) => CALLOUT_OPINION.test(l));
   let fin = inicio;
   while (inicio !== -1 && fin < lineas.length && lineas[fin].startsWith(">")) fin++;
   const body = inicio === -1 ? o.body : [...lineas.slice(0, inicio), ...lineas.slice(fin)].join("\n");
-  const rendered = o.rendered && { ...o.rendered, html: sinCartela(o.rendered.html) };
+  const rendered = o.rendered && { ...o.rendered, html: sinOpinion(o.rendered.html) };
   return { ...o, data, body, rendered };
 }
 
@@ -128,7 +129,26 @@ export const tarjeta = (o: Obra) => url(`tarjetas/${o.id.replace(/[^a-z0-9/-]+/g
 
 export const autores = (o: Obra) => separarAutores(o.data.author);
 export const quienFirma = (o: Obra) => enumerar(autores(o), t.y);
-export const cartela = (o: Obra) => textoCartela(o.body);
+export const opinion = (o: Obra) => textoOpinion(o.body);
+
+/** Dónde está la ficha dentro de la vault, sin .md: «pelis/Shutter Island».
+ * Es lo que pide el Issue de editar para saber qué fichero cambiar. */
+export const rutaFicha = (o: Obra) => (o.filePath ?? "").match(/(?:^|\/)content\/(.+)\.md$/)?.[1] ?? null;
+
+/**
+ * El Issue «Editar pieza» ya rellenado con lo que tiene la ficha: mandarlo sin
+ * tocar no cambia nada. La nota y el estado son desplegables, y GitHub no
+ * deja elegirlos por la dirección: salen en «Sin cambios».
+ */
+export function enlaceEditar(o: Obra): string | null {
+  const ficha = rutaFicha(o);
+  if (!ficha) return null;
+  const campos: Record<string, string> = { template: t.plantillaEditar, title: `${t.editar}: ${titulo(o)}`, ficha };
+  if (o.data.finished_on) campos.terminada = o.data.finished_on;
+  const escrita = lineasOpinion(o.body);
+  if (escrita) campos.frase = escrita;
+  return `${REPO}/issues/new?${new URLSearchParams(campos)}`;
+}
 export const piezas = (n: number) => cantidad(n, t.pieza, t.piezas);
 
 let paginasAutor: Map<string, string> | null = null;
@@ -186,12 +206,13 @@ export const mesYAño = (fecha: Date) =>
   fecha.toLocaleDateString(t.locale, { month: "long", year: "numeric", timeZone: "UTC" });
 
 export const añoTerminada = (o: Obra) => (o.data.finished_on ? Number(o.data.finished_on.slice(0, 4)) : null);
+export const añoEmpezada = (o: Obra) => (o.data.started_on ? Number(o.data.started_on.slice(0, 4)) : null);
 export const añoAlta = (o: Obra) => o.data.added?.getUTCFullYear() ?? null;
 
-/** Los años del anuario: los que tienen algo terminado o algo que entró. */
+/** Los años del anuario: los que tienen algo terminado, empezado o que entró. */
 export function años(todas: Obra[]): number[] {
   const hay = new Set<number>();
-  for (const o of todas) for (const y of [añoTerminada(o), añoAlta(o)]) if (y) hay.add(y);
+  for (const o of todas) for (const y of [añoTerminada(o), añoEmpezada(o), añoAlta(o)]) if (y) hay.add(y);
   return [...hay].sort((a, b) => b - a);
 }
 
@@ -382,6 +403,21 @@ function resolver(enlace: string, todas: Obra[]): Obra | undefined {
   if (destino.includes("/")) return todas.find((o) => o.id === slugQuartz(destino));
   const slug = slugQuartz(destino);
   return todas.find((o) => slugObra(o) === slug) ?? todas.find((o) => titulo(o) === destino);
+}
+
+/** Las relaciones como flechas, de la obra de la que sale a la que sale de
+ * ella: el manga → su anime, Hollow Knight → Silksong, la película → su disco.
+ * Es lo que dibuja la constelación. */
+export function flechas(todas: Obra[]): { desde: Obra; hacia: Obra; campo: string }[] {
+  const lista: { desde: Obra; hacia: Obra; campo: string }[] = [];
+  for (const o of todas)
+    for (const [campo] of CAMPOS_RELACION)
+      for (const e of o.data[campo] ?? []) {
+        const otra = resolver(e, todas);
+        if (!otra || otra.id === o.id) continue;
+        lista.push(campo === "soundtrack" ? { desde: o, hacia: otra, campo } : { desde: otra, hacia: o, campo });
+      }
+  return lista;
 }
 
 /** Lo que es de la misma historia que esta obra, en los dos sentidos y sin

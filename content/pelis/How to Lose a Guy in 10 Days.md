@@ -13,6 +13,7 @@ tags:
 letterboxd: how-to-lose-a-guy-in-10-days
 added: 2026-09-02
 wikidata: Q1327370
+finished_on: 2026-05-16
 ---
 
 > [!quote] De qué va

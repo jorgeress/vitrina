@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { IDIOMA, NOMBRE } from "../config";
-import { autores, cartela, obras, portada, ruta, titulo } from "../lib/obras";
+import { autores, opinion, obras, portada, ruta, titulo } from "../lib/obras";
 
 // La colección entera en un fichero, con los ids de cada fuente. Es lo que
 // permite comparar dos vitrinas cualesquiera (en qué coinciden, qué tiene una
@@ -20,13 +20,14 @@ export const GET: APIRoute = async ({ site }) => {
       favorite: Boolean(d.favorite),
       added: d.added?.toISOString().slice(0, 10) ?? null,
       finished_on: d.finished_on ?? null,
+      started_on: d.started_on ?? null,
       times: d.times ?? null,
       tags: d.tags ?? [],
       groups: d.groups ?? [],
       ids: Object.fromEntries(
         (["appid", "letterboxd", "tvmaze", "mbid", "wikipedia", "wikidata"] as const).filter((k) => d[k] != null).map((k) => [k, d[k]]),
       ),
-      label: cartela(o),
+      opinion: opinion(o),
       url: new URL(ruta(o), site).href,
       cover: portada(o) && new URL(portada(o)!, site).href,
     };

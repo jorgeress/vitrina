@@ -12,6 +12,7 @@ tags:
 letterboxd: the-perks-of-being-a-wallflower
 added: 2026-09-02
 wikidata: Q675468
+finished_on: 2026-03-31
 ---
 
 > [!quote] De qué va

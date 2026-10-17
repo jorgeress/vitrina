@@ -1,4 +1,4 @@
-/* La cartela de lo tuyo, "Por qué está en la vitrina": el callout [!vitrina].
+/* Tu opinión, "Por qué está en la vitrina": el callout [!vitrina].
    En la web la pinta web/src/styles/global.css; esto es lo mismo en Obsidian,
    que sin el le daria el color y el lapiz de una nota cualquiera. */
 .callout[data-callout="vitrina"] {

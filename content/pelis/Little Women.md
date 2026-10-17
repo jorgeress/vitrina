@@ -13,6 +13,7 @@ tags:
 letterboxd: little-women-2019
 added: 2026-09-02
 wikidata: Q56881140
+finished_on: 2026-05-28
 ---
 
 > [!quote] De qué va

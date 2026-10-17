@@ -26,7 +26,7 @@ Despues, si la ficha no tiene nada escrito por ti, pide la frase del porque:
 lo que se lee arriba del todo al abrirla. Enter la salta.
 
 Cada respuesta se escribe en el momento, asi que cortarlo a medias no pierde
-nada. Al terminar pone al dia el bloque de cifras del README.
+nada.
 """
 
 import argparse
@@ -68,7 +68,7 @@ Cómo contestar, en una línea y en cualquier orden:
 
   Después, si la ficha no tiene nada tuyo escrito, te pide por qué está en
   la vitrina: lo que te dejó, bueno o malo. Va arriba del todo en la ficha,
-  en su cartela. Enter la salta.
+  como tu opinión. Enter la salta.
 """
 
 GUIA = _(GUIA_ES)
@@ -213,8 +213,6 @@ def main():
         print()
 
     print(_("{tocadas} ficha(s) cambiadas, {frases} con frase nueva.").format(tocadas=tocadas, frases=frases))
-    if tocadas and estado.actualizar_readme(callado=True):
-        print(_("Puesto al día el bloque de cifras del README."))
     return 0
 
 

@@ -5,7 +5,7 @@ import { t } from "../../i18n";
 import {
   SECCIONES,
   autoresRepetidos,
-  cartela,
+  opinion,
   comparaTexto,
   nombreTag,
   obras,
@@ -71,7 +71,7 @@ const autores = [...autoresRepetidos(todas)]
   .slice(0, 10)
   .map(([a, lista]) => ({ etiqueta: a, valor: lista.length, enlace: rutaAutor(a, slugs) }));
 
-const escritas = todas.filter((o) => cartela(o)).length;
+const escritas = todas.filter((o) => opinion(o)).length;
 const favoritos = todas.filter((o) => o.data.favorite).length;
 ---
 
@@ -85,7 +85,7 @@ const favoritos = todas.filter((o) => o.data.favorite).length;
     <ul class="numeros">
       <li><strong>{todas.length}</strong> {t.piezas}</li>
       <li class="dorada"><a href={rutaFija("favoritos")}><strong>{favoritos}</strong> {t.enLoMejor}</a></li>
-      <li><strong>{escritas}</strong> {t.conCartela.toLowerCase()}</li>
+      <li><strong>{escritas}</strong> {t.conOpinion.toLowerCase()}</li>
       <li><strong>{puntuadas}</strong> {t.conNota}</li>
       <li><a href={rutaFija("autores")}><strong>{autoresRepetidos(todas).size}</strong> {t.autoresQueRepiten}</a></li>
     </ul>

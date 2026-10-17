@@ -12,6 +12,7 @@ tags:
 letterboxd: dead-poets-society
 added: 2026-09-02
 wikidata: Q106316
+finished_on: 2026-06-13
 ---
 
 > [!quote] De qué va

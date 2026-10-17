@@ -14,6 +14,7 @@ tags:
 letterboxd: spirited-away
 added: 2026-09-02
 wikidata: Q155653
+finished_on: 2026-07-09
 ---
 
 > [!quote] De qué va

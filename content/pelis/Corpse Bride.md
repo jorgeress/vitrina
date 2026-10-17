@@ -14,6 +14,7 @@ tags:
 letterboxd: corpse-bride
 added: 2026-09-02
 wikidata: Q164417
+finished_on: 2026-04-26
 ---
 
 > [!quote] De qué va

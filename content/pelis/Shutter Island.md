@@ -14,7 +14,7 @@ tags:
 letterboxd: shutter-island
 added: 2026-09-02
 wikidata: Q210364
-trailer: wd6LnQm9HPo
+finished_on: 2026-07-22
 ---
 
 > [!quote] De qué va

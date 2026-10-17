@@ -7,9 +7,10 @@ import {
   años,
   añoAlta,
   añoDeApertura,
+  añoEmpezada,
   añoTerminada,
   cantidad,
-  cartela,
+  opinion,
   fechaParcial,
   obras,
   porAlta,
@@ -37,6 +38,10 @@ const siguiente = [...lista].reverse().find((otro) => otro > y);
 const terminadas = todas
   .filter((o) => añoTerminada(o) === y)
   .sort((a, b) => (b.data.finished_on ?? "").localeCompare(a.data.finished_on ?? "") || porAprecio(a, b));
+// Lo empezado ese año que no se terminó ese mismo año (eso ya sale arriba).
+const empezadas = todas
+  .filter((o) => añoEmpezada(o) === y && añoTerminada(o) !== y)
+  .sort((a, b) => (b.data.started_on ?? "").localeCompare(a.data.started_on ?? "") || porAprecio(a, b));
 const entraron = todas.filter((o) => añoAlta(o) === y).sort(porAlta);
 const apertura = añoDeApertura(todas) === y;
 
@@ -44,9 +49,9 @@ const apertura = añoDeApertura(todas) === y;
 // fecha, de lo que entró, salvo el de la apertura, que entró todo.
 const fuente = terminadas.length ? terminadas : apertura ? [] : entraron;
 const mejores = fuente.filter((o) => o.data.favorite || o.data.rating).sort(porAprecio).slice(0, 6);
-const cartelas = [...terminadas, ...(apertura ? [] : entraron)]
+const opiniones = [...terminadas, ...(apertura ? [] : entraron)]
   .filter((o, i, todas) => todas.indexOf(o) === i)
-  .map((obra) => ({ obra, texto: cartela(obra) }))
+  .map((obra) => ({ obra, texto: opinion(obra) }))
   .filter((e): e is { obra: Obra; texto: string } => e.texto !== null);
 
 const porSala = (grupo: Obra[]) =>
@@ -58,7 +63,7 @@ const porSala = (grupo: Obra[]) =>
     <header class="titulo-pagina">
       <a class="volver" href={rutaFija("anuario")}>← {t.anuario}</a>
       <h1 class="año">{y}</h1>
-      <p>{t.resumenAño(terminadas.length, entraron.length)}</p>
+      <p>{t.resumenAño(terminadas.length, entraron.length, empezadas.length)}</p>
     </header>
 
     {
@@ -77,14 +82,14 @@ const porSala = (grupo: Obra[]) =>
     }
 
     {
-      cartelas.length > 0 && (
+      opiniones.length > 0 && (
         <section class="bloque">
           <header>
-            <h2>{t.cartelasTitulo}</h2>
+            <h2>{t.opinionesTitulo}</h2>
           </header>
-          <div class="cartelas">
-            {cartelas.map(({ obra, texto }) => (
-              <a class="cartela" href={ruta(obra)} style={`--seccion:var(--${obra.data.type})`}>
+          <div class="opiniones">
+            {opiniones.map(({ obra, texto }) => (
+              <a class="opinion" href={ruta(obra)} style={`--seccion:var(--${obra.data.type})`}>
                 {portada(obra) && <img src={portada(obra)} alt="" loading="lazy" />}
                 <span>
                   <span class="cita">{recortar(texto, 230)}</span>
@@ -115,6 +120,24 @@ const porSala = (grupo: Obra[]) =>
           <div class="rejilla">
             {terminadas.map((o) => (
               <Portada obra={o} mixta nota={o.data.finished_on && o.data.finished_on.length > 4 ? fechaParcial(o.data.finished_on) : undefined} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      empezadas.length > 0 && (
+        <section class="bloque">
+          <header>
+            <div>
+              <h2>{t.empezadas}</h2>
+              <p>{t.empezadasSub}</p>
+            </div>
+          </header>
+          <div class="rejilla">
+            {empezadas.map((o) => (
+              <Portada obra={o} mixta nota={o.data.started_on && o.data.started_on.length > 4 ? fechaParcial(o.data.started_on) : undefined} />
             ))}
           </div>
         </section>
@@ -166,12 +189,12 @@ const porSala = (grupo: Obra[]) =>
     content: " · ";
     color: var(--tenue);
   }
-  .cartelas {
+  .opiniones {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 16px;
   }
-  .cartela {
+  .opinion {
     display: flex;
     gap: 16px;
     padding: 18px;
@@ -180,7 +203,7 @@ const porSala = (grupo: Obra[]) =>
     border-left: 3px solid var(--seccion);
     border-radius: var(--radio);
   }
-  .cartela img {
+  .opinion img {
     width: 64px;
     height: 96px;
     flex: none;

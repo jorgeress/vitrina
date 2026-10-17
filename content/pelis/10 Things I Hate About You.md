@@ -14,6 +14,7 @@ tags:
 letterboxd: 10-things-i-hate-about-you
 added: 2026-09-02
 wikidata: Q169082
+finished_on: 2026-05-04
 ---
 
 > [!quote] De qué va

@@ -43,7 +43,6 @@ import zipfile
 from pathlib import Path
 from xml.etree import ElementTree
 
-import estado
 import nueva
 from idioma import ayuda, opciones
 from vitrina import CARPETAS, ESTADOS, _, escribir_ficha, estado_de, parecidos, pedir
@@ -684,10 +683,6 @@ def main():
 
     args = p.parse_args()
     salida = args.func(args)
-    if not args.dry_run:
-        # Lo nuevo cambia las cifras del README aunque entre en borrador. Las
-        # paginas de autor no: lo importado llega sin autor hasta datos.py.
-        estado.actualizar_readme(callado=True)
     return salida
 
 

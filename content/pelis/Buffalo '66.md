@@ -14,6 +14,7 @@ tags:
 letterboxd: buffalo-66
 added: 2026-09-02
 wikidata: Q1002142
+finished_on: 2026-05-18
 ---
 
 > [!quote] De qué va

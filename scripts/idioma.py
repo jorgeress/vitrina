@@ -4,7 +4,7 @@ Sale de `language` en vitrine.config.json. Manda en tres cosas:
 
   - En que idioma se piden los textos a las fuentes: la descripcion de Steam
     y el articulo de Wikipedia salen en el de la vitrina.
-  - Lo que se escribe dentro de las fichas: el titulo de la cartela, el de la
+  - Lo que se escribe dentro de las fichas: el titulo de la opinion, el de la
     cita («De qué va» o «What it's about») y las paginas de autor.
   - Lo que dicen los scripts por pantalla, con `_()` (en vitrina.py, que es
     el que importan todos): el texto se escribe en castellano, como el resto
@@ -21,14 +21,14 @@ STEAM = {"es": "spanish", "en": "english"}.get(IDIOMA, "english")
 WIKIPEDIA = IDIOMA if IDIOMA in ("es", "en") else "en"
 LICENCIA_CC = f"https://creativecommons.org/licenses/by-sa/4.0/deed.{WIKIPEDIA}"
 
-# El callout de la cartela: [!vitrina] en castellano, [!vitrine] en ingles.
+# El callout de la opinion: [!vitrina] en castellano, [!vitrine] en ingles.
 # Se leen los dos en cualquier idioma; se escribe el de la vitrina.
 CALLOUT = "vitrina" if IDIOMA == "es" else "vitrine"
 CALLOUTS = ("vitrina", "vitrine")
 
 TEXTOS = {
     "es": {
-        "cartela": "Por qué está en la vitrina",
+        "opinion": "Por qué está en la vitrina",
         "de_que_va": "De qué va",
         "en_ingles": "en inglés",
         "autores": "Autores",
@@ -36,7 +36,7 @@ TEXTOS = {
         "la_escribe": "Esta página la escribe `scripts/autores.py`.",
     },
     "en": {
-        "cartela": "Why it's on display",
+        "opinion": "Why it's on display",
         "de_que_va": "What it's about",
         "en_ingles": "in English",
         "autores": "Authors",

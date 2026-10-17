@@ -14,6 +14,7 @@ tags:
 letterboxd: clue
 added: 2026-09-02
 wikidata: Q558795
+finished_on: 2026-06-06
 ---
 
 > [!quote] De qué va

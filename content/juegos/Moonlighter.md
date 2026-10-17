@@ -15,6 +15,7 @@ appid: 606150
 capsule: 99398159ad1e3cfbe51ae5939e851536cbc6211f/library_capsule.jpg
 added: 2026-09-02
 wikidata: Q55641138
+started_on: 2024-07
 ---
 
 > [!quote] De qué va

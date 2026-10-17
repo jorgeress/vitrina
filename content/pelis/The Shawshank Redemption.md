@@ -13,6 +13,7 @@ tags:
 letterboxd: the-shawshank-redemption
 added: 2026-09-02
 wikidata: Q172241
+finished_on: 2026-06-30
 ---
 
 > [!quote] De qué va

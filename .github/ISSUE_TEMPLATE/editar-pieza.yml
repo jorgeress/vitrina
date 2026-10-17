@@ -1,0 +1,41 @@
+# La escribe scripts/desde_issue.py --plantilla: no se toca a mano.
+name: "Editar pieza"
+description: "Cambia la nota, el estado, la fecha o la opinión de una pieza. Se abre desde el botón Editar de cada ficha."
+title: "Editar pieza"
+labels: ["editar-pieza"]
+body:
+  - type: input
+    id: ficha
+    attributes:
+      label: "Ficha"
+      description: "La pone el botón Editar de la web: carpeta y nombre del fichero, sin .md."
+    validations:
+      required: true
+  - type: dropdown
+    id: nota
+    attributes:
+      label: "Nota"
+      options: ["Sin cambios", "10", "9", "8", "7", "6", "5", "4", "3", "2", "1", "Quitar la nota"]
+      default: 0
+  - type: dropdown
+    id: estado
+    attributes:
+      label: "Estado"
+      options: ["Sin cambios", "terminado", "en curso", "pendiente", "abandonado"]
+      default: 0
+  - type: input
+    id: terminada
+    attributes:
+      label: "Cuándo la terminaste"
+      description: "AAAA, AAAA-MM o AAAA-MM-DD. Lo que haya aquí sustituye a la fecha; en blanco, se queda como está."
+  - type: textarea
+    id: frase
+    attributes:
+      label: "Por qué está en la vitrina"
+      description: "Tu opinión. Lo que haya aquí sustituye a la que tiene; en blanco, se queda como está."
+  - type: checkboxes
+    id: quitar
+    attributes:
+      label: "Quitar la opinión"
+      options:
+        - label: "Borrar la opinión que tiene"

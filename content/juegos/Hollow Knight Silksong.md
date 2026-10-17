@@ -15,9 +15,9 @@ appid: 1030300
 capsule: 93637c34351160eaa7d7ff0cce69cb4312abb819/library_capsule.jpg
 added: 2026-09-02
 wikidata: Q63294487
-trailer: 6XGeJwsUP9c
 follows:
   - "[[juegos/Hollow Knight]]"
+started_on: 2025-09
 ---
 
 > [!vitrina] Por qué está en la vitrina

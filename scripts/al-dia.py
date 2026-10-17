@@ -3,8 +3,7 @@
 
 Despues de importar, o de escribir fichas a mano, quedaban seis comandos que
 habia que recordar y lanzar en orden. El orden importa: las paginas de autor
-se escriben despues de datos.py, que es quien pone el autor de lo importado, y
-las cifras del README al final, cuando ya no cambia nada mas.
+se escriben despues de datos.py, que es quien pone el autor de lo importado.
 
   scripts/al-dia.py                  todo
   scripts/al-dia.py --seccion libros solo esa carpeta, en lo que va por carpeta
@@ -29,11 +28,12 @@ SCRIPTS = Path(__file__).resolve().parent
 PASOS = [
     ("secciones.py", _("cuelga cada ficha de su sección"), False, False),
     ("fechas.py", _("apunta la fecha de alta que falte"), False, False),
-    ("enmarcar.py", _("pone en su cartela lo que hayas escrito suelto"), False, False),
+    ("enmarcar.py", _("convierte en opinión lo que hayas escrito suelto"), False, False),
     ("portadas.py", _("baja las carátulas que falten"), True, True),
     ("datos.py", _("rellena año, autor y tags"), True, True),
     ("textos.py", _("escribe el «De qué va»"), True, True),
-    ("enlazar.py", _("une cada ficha con Wikidata: tráiler, Spotify y de qué otra viene"), True, False),
+    ("enlazar.py", _("une cada ficha con Wikidata: de qué otra viene"), True, False),
+    ("cuando.py", _("apunta cuándo terminaste o empezaste cada cosa"), True, False),
     ("autores.py", _("escribe las páginas de autor"), False, False),
 ]
 
@@ -62,11 +62,6 @@ def main():
         # según sale es lo que dice que no se ha colgado.
         if subprocess.run(orden).returncode:
             fallidos.append(script)
-
-    if not args.dry_run:
-        print("\n── estado.py --readme: " + _("las cifras del README"), flush=True)
-        if subprocess.run([sys.executable, str(SCRIPTS / "estado.py"), "--readme"]).returncode:
-            fallidos.append("estado.py")
 
     if fallidos:
         print("\n" + _("Han fallado: {scripts}. El resto ha terminado.").format(scripts=", ".join(fallidos)))

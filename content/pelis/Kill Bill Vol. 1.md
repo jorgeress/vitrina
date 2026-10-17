@@ -13,6 +13,7 @@ tags:
 letterboxd: kill-bill-vol-1
 added: 2026-09-02
 wikidata: Q165325
+finished_on: 2026-06-22
 ---
 
 > [!quote] De qué va

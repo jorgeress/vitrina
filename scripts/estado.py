@@ -12,26 +12,22 @@ Uso:
   scripts/estado.py                  el resumen
   scripts/estado.py --seccion pelis  solo esa carpeta
   scripts/estado.py --detalle        ademas, que ficha le falta cada cosa
-  scripts/estado.py --readme         reescribe el bloque de cifras del README
   scripts/estado.py --comprobar      avisa de lo que se ha quedado atras
 
-El README enseña un trozo de este resumen como ejemplo. Escrito a mano se queda
-viejo a la semana siguiente -- paso, y acabo diciendo 155 fichas cuando ya habia
-210 --, asi que no se escribe a mano: `--readme` lo vuelve a sacar de la vault y
-lo mete en su sitio. Las cifras que no pueden salir de aqui, como las de los
-comentarios de los `.base`, sencillamente no se ponen.
+El README llego a enseñar un trozo de este resumen, puesto al dia por
+`--readme`. Se quito el 17 de octubre de 2026: el README cuenta como copiar la
+vitrina y usarla, y las cifras de una coleccion concreta no le sirven a nadie
+que la copie.
 """
 
 import argparse
-import contextlib
-import io
 import os
 import re
 import sys
 from collections import Counter, defaultdict
 
 from idioma import opciones, ayuda
-from vitrina import (_, fichas, ESTADOS, FRONT_RE, PORTADAS, RAIZ, SECCIONES, VAULT,
+from vitrina import (_, fichas, ESTADOS, FRONT_RE, PORTADAS, SECCIONES, VAULT,
                      frontmatter, vacio)
 
 # Los que hacen falta para que una ficha este completa de verdad.
@@ -57,7 +53,7 @@ def leer(carpeta):
             continue
         campos = frontmatter(texto)
         # Lo oculto (`hidden: true`) no sale en la web, y estas cifras son las
-        # de la web: van al README, que lee cualquiera.
+        # de la web.
         if campos.get("hidden") == "true":
             continue
         yield md, campos, texto[m.end():].strip()
@@ -70,48 +66,6 @@ def barra(hechas, total, ancho=24):
     return "█" * llenas + "·" * (ancho - llenas)
 
 
-# El bloque del README es este resumen recortado: las tres cosas que se leen de
-# un vistazo. El reparto por estados y el recuento de notas se quedan fuera
-# porque ahi ocupan media pantalla y no es lo que el README esta contando.
-PARTES_README = (_("FICHAS"), _("SIN RELLENAR"), _("FAVORITOS"))
-
-# El bloque de cifras del README, que es el unico cercado que empieza por FICHAS.
-# Con el titulo en cualquiera de los dos idiomas: el README de una vitrina en
-# ingles puede ser todavia el de la plantilla, en castellano, y al revés.
-BLOQUE_RE = re.compile(r"(?<=```\n)(?:FICHAS|ENTRIES)\n.*?(?=\n```)", re.S)
-
-
-def bloque_readme(salida):
-    """El resumen recortado a lo que el README enseña.
-
-    De FAVORITOS solo la primera linea: el reparto por secciones que viene
-    debajo es para trabajar, no para ilustrar.
-    """
-    bloques = {t.split("\n")[0].split("  ")[0]: t
-               for t in salida.strip().split("\n\n")}
-    partes = [bloques.get(nombre, "") for nombre in PARTES_README]
-    if partes[-1]:
-        partes[-1] = partes[-1].split("\n")[0]
-    return "\n\n".join(p for p in partes if p)
-
-
-def escribir_readme(salida):
-    """Mete el bloque en el README. Devuelve si ha cambiado algo."""
-    readme = RAIZ / "README.md"
-    texto = readme.read_text(encoding="utf-8")
-    if not BLOQUE_RE.search(texto):
-        print(_("No encuentro el bloque de cifras en el README: tiene que ser un\n"
-                "cercado que empiece por una linea «{titulo}».").format(titulo=_("FICHAS")))
-        return None
-    nuevo = BLOQUE_RE.sub(lambda _: bloque_readme(salida), texto, count=1)
-    if nuevo == texto:
-        print(_("El README ya estaba al dia."))
-        return False
-    readme.write_text(nuevo, encoding="utf-8")
-    print(_("Actualizado el bloque de cifras de {fichero}.").format(fichero=readme.name))
-    return True
-
-
 def main():
     p = argparse.ArgumentParser(description=ayuda(__doc__, "estado"),
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -119,42 +73,13 @@ def main():
                    help=_("solo una carpeta"))
     p.add_argument(*opciones("--detalle", "--detail"), dest="detalle", action="store_true",
                    help=_("lista las fichas a las que les falta algo"))
-    p.add_argument("--readme", action="store_true",
-                   help=_("reescribe el bloque de cifras del README"))
     p.add_argument(*opciones("--comprobar", "--check"), dest="comprobar", action="store_true",
                    help=_("avisa de lo que se ha quedado atras, sin tocar nada"))
     args = p.parse_args()
 
-    if args.readme:
-        return 0 if actualizar_readme() is not None else 1
     if args.comprobar:
         return comprobar()
     return resumen(args)
-
-
-def resumen_entero():
-    """El resumen de la vault entera y sin detalle, como texto.
-
-    Es lo que enseña el README: el resumen, no la lista de lo que le falta a
-    cada ficha.
-    """
-    salida = io.StringIO()
-    with contextlib.redirect_stdout(salida):
-        resumen(argparse.Namespace(seccion=None, detalle=None))
-    return salida.getvalue()
-
-
-def actualizar_readme(callado=False):
-    """Vuelve a sacar el bloque de cifras y lo mete en el README.
-
-    Lo llaman tambien nueva.py, repasar.py e importar.py al terminar, que son
-    los que cambian las cifras: asi el bloque no depende de que alguien se
-    acuerde de pasar esto, que es justo lo que lo dejaba viejo.
-    """
-    if not callado:
-        return escribir_readme(resumen_entero())
-    with contextlib.redirect_stdout(io.StringIO()):
-        return escribir_readme(resumen_entero())
 
 
 def comprobar():
@@ -163,18 +88,12 @@ def comprobar():
     Es el paso del CI que va antes de construir. Lo que rompe el sitio --un
     estado inventado, una portada que no esta, una ficha sin seccion-- ya lo
     paran las pruebas. Esto es lo otro: lo que el build publica igual y nadie
-    nota, como el README contando fichas de hace un mes. No falla, porque
-    parar el despliegue por una cifra vieja seria castigar a la web por algo
-    que solo se ve en GitHub; en la Action sale como aviso amarillo en el
-    resumen del run.
+    nota, como una portada que ya no usa nadie. No falla, porque parar el
+    despliegue por eso seria castigar a la web por algo que no se ve; en la
+    Action sale como aviso amarillo en el resumen del run.
     """
     en_action = bool(os.environ.get("GITHUB_ACTIONS"))
     avisos = []
-    texto = (RAIZ / "README.md").read_text(encoding="utf-8")
-    actual = BLOQUE_RE.search(texto)
-    if actual and actual.group(0) != bloque_readme(resumen_entero()):
-        avisos.append(_("El bloque de cifras del README no dice lo que hay en la "
-                        "vault. Pasa scripts/estado.py --readme"))
     usadas = {re.sub(r"^\[\[|\]\]$", "", campos.get("cover") or "")
               for carpeta in SECCIONES for _md, campos, _cuerpo in leer(carpeta)}
     sueltas = sorted(p.name for p in PORTADAS.glob("*")

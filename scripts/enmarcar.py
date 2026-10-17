@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Mete en su cartela lo que hayas escrito suelto en una ficha.
+"""Convierte en opinión lo que hayas escrito suelto en una ficha.
 
 Lo tuyo va en un callout propio, "Por qué está en la vitrina", encima de la
 cita de la fuente: asi se ve que es tuyo, en Obsidian y en la web. Escribir el

@@ -14,7 +14,7 @@ tags:
 letterboxd: project-hail-mary
 added: 2026-09-02
 wikidata: Q107105860
-trailer: m08TxIsFTRI
+finished_on: 2026-07-12
 ---
 
 > [!quote] De qué va

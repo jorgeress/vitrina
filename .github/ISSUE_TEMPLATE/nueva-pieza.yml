@@ -44,7 +44,7 @@ body:
     id: frase
     attributes:
       label: "Por qué está en la vitrina"
-      description: "Lo que te dejó. Va en su cartela, encima de lo que diga la fuente."
+      description: "Lo que te dejó. Es tu opinión: va arriba, encima de lo que diga la fuente."
   - type: checkboxes
     id: oculta
     attributes:

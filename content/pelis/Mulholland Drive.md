@@ -14,6 +14,7 @@ tags:
 letterboxd: mulholland-drive
 added: 2026-09-02
 wikidata: Q272608
+finished_on: 2026-08-13
 ---
 
 > [!quote] De qué va

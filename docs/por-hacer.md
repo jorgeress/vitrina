@@ -13,12 +13,22 @@ con un fichero, y Vitrine como plantilla en castellano o en inglés
 (`scripts/empezar.py`, la web y los scripts en los dos idiomas).
 
 El 17 de octubre: cuántas veces has terminado algo (`times`), spoilers
-plegados, el color de la portada en su ficha, el reproductor (Spotify y
-tráiler), las salas por décadas, «de la misma historia» (`based_on`, `follows`,
+plegados, el color de la portada en su ficha, las salas por décadas, «de la misma historia» (`based_on`, `follows`,
 `soundtrack`, con `scripts/enlazar.py` desde Wikidata), y *Sorpréndeme*, de
 esta vitrina o de otra.
 
+Después, el mismo día: la «cartela» pasó a llamarse opinión; editar una ficha
+desde la web (el Issue **Editar pieza**); `scripts/cuando.py`, que pone
+`finished_on` y `started_on` de Letterboxd, Steam, Goodreads, ListenBrainz o
+Spotify (43 juegos ya tienen su mes de empezado y 36 películas su día); y la constelación en tres
+niveles (salas, géneros, obras) con flechas para lo de la misma historia.
+
 ## Para que funcione lo que ya está
+
+- **Goodreads o ListenBrainz**, si los usas: su usuario en
+  `vitrine.local.json` y `cuando.py` saca las fechas de libros y discos.
+  Letterboxd y Steam ya están. El RSS de Letterboxd solo trae las últimas ~50
+  películas: lo que se vio antes va a mano o con el export.
 
 - **Subir `main`.** Es lo que publica la web nueva.
 - **Crear la etiqueta `nueva-pieza` en el repo.** La plantilla del Issue la
@@ -37,7 +47,7 @@ esta vitrina o de otra.
 
 ## Lo que solo puedo escribir yo
 
-- **Las cartelas.** Hay cinco y cuatro son el texto de prueba (*Hollow Knight
+- **Las opiniones.** Hay cinco y cuatro son el texto de prueba (*Hollow Knight
   Silksong*, *Eternal Sunshine of the Spotless Mind*, *In Rainbows*, *Breaking
   Bad*). En la portada y en las tarjetas se ven mucho. `scripts/repasar.py` las
   pide una a una.
@@ -45,18 +55,29 @@ esta vitrina o de otra.
   cifras se quedan cojos.
 - **Los estados.** Casi todo es `finished`; no hay nada `in-progress`, así que
   esa parte de los filtros está vacía.
-- **Las fechas de terminado.** El anuario solo tiene 2026, que es el año en que
-  entró todo. Con `finished_on` en lo que recuerdes (basta el año) aparecen los
-  demás.
+- **Las fechas de terminado.** Las películas ya las tienen (Letterboxd) y los
+  juegos tienen cuándo los empezaste (Steam). Las series, los libros y cuándo
+  terminaste cada juego van a mano; con el año basta.
 - **La presentación de la portada**, el primer párrafo de `content/index.md`.
   El borrador: «Una vitrina de lo que juego, veo, leo y escucho. No todo lo que
-  pasa por mis manos: lo que se queda. Cada pieza lleva su cartela con lo que
+  pasa por mis manos: lo que se queda. Cada pieza lleva su opinión con lo que
   me dejó, y juntas dicen de mí más de lo que yo sabría contar.»
 - **Más grupos**, si quieres: el de *Anime y manga* es el ejemplo.
 - **Lo que no encuentran los scripts.** *Fortnite* no tiene portada (en
   Wikipedia solo está el logo) y quedan discos sin géneros: *DISOBEY VOL. II*,
   *Million Dollar Baby*, *Konbanwa* y *Wild Heart*. A mano, o se quedan así:
   antes vacío que equivocado.
+
+## Borradores
+
+Lo que se hizo y se sacó de la web, guardado entero por si vuelve.
+
+- **El reproductor** (rama `borrador/reproductor`). El disco de Spotify
+  desplegado en la ficha y el tráiler de YouTube encima, que no se cargaban
+  hasta pulsar, con `spotify` y `trailer` en 100 fichas y `enlazar.py`
+  rellenándolos desde Wikidata. Se quitó el 17 de octubre de 2026: la vitrina
+  no tiene por qué cargar otros sitios. La rama lo guarda tal como estaba, y
+  revertir el commit que lo quitó de `main` lo trae de vuelta.
 
 ## Lo que se puede añadir
 
@@ -69,21 +90,15 @@ De más a menos útil, a mi juicio.
   FromSoftware`, `year < 1960`, `times >= 3`…) y la web dice cuáles has
   ganado y cuándo (el `added` o `finished_on` de la pieza que lo completó).
   Unos pocos de serie, que se puedan apagar.
-- **La constelación con las relaciones.** `based_on`, `follows` y
-  `soundtrack` salen en la ficha, pero la constelación aún no las dibuja: con
-  flecha, y pesando más que un tag.
 - **Bandas sonoras.** Hoy no hay ninguna puesta: Wikidata casi nunca sabe
   cuál es el disco, así que van a mano (`soundtrack: ["[[musica/…]]"]`).
-- **Tráileres que faltan.** De 38 películas, solo 5 tienen uno que se pueda
-  ver: Wikidata suele apuntar a la película de alquiler de *YouTube Movies*,
-  y esos se descartan. Se ponen a mano con `trailer:` y el enlace.
-
-- **La fecha de terminado desde Letterboxd.** El diario guarda el día en que
-  viste cada película: `importar.py letterboxd-rss` podría escribirla en
-  `finished_on`, y el anuario de películas se llenaría solo.
 - **Importar solo cada noche.** Una Action programada que pase
-  `importar.py letterboxd-rss` y `listenbrainz` y después `al-dia.py`, y abra
-  un PR con los borradores nuevos para revisarlos.
+  `importar.py letterboxd-rss` y `listenbrainz`, `cuando.py` y después
+  `al-dia.py`, y abra un PR con los borradores nuevos para revisarlos. Con
+  `cuando.py` dentro, el diario de Letterboxd no se pierde aunque el RSS solo
+  traiga las últimas.
+- **Más niveles en la constelación**: entre géneros y obras, los autores; o
+  los grupos que haces tú como otra forma de agruparlas.
 - **«Me llegó por».** Un campo con quién te lo recomendó o de dónde salió. Con
   el tiempo, una página por persona. Se puede empezar ya con grupos («Lo que me
   recomendó Pablo»), sin campo nuevo.

@@ -13,6 +13,7 @@ tags:
 letterboxd: call-me-by-your-name
 added: 2026-09-02
 wikidata: Q25136757
+finished_on: 2026-03-24
 ---
 
 > [!quote] De qué va

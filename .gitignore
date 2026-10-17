@@ -25,3 +25,6 @@ web/.astro/
 # el nombre en la configuracion, cambialo tambien aqui.
 content/privado/
 content/private/
+
+# Tus cuentas (Letterboxd, Steam...) para scripts/cuando.py: no se publican.
+vitrine.local.json

@@ -1,6 +1,6 @@
 ---
 import { t } from "../i18n";
-import { cartela, marcas, portada, quienFirma, ruta, titulo, transicion, type Obra } from "../lib/obras";
+import { opinion, marcas, portada, quienFirma, ruta, titulo, transicion, type Obra } from "../lib/obras";
 
 interface Props {
   obra: Obra;
@@ -23,7 +23,7 @@ const d = obra.data;
 const cuadrada = d.type === "album";
 const imagen = portada(obra);
 const nombre = titulo(obra);
-const escrita = cartela(obra) !== null;
+const escrita = opinion(obra) !== null;
 const quien = quienFirma(obra);
 const carga = prioridad ? "eager" : "lazy";
 const datos = filtrable
@@ -36,7 +36,7 @@ const datos = filtrable
       "data-year": d.year ?? 0,
       "data-alta": d.added?.getTime() ?? 0,
       "data-tags": (d.tags ?? []).join(" "),
-      "data-cartela": escrita ? "1" : "",
+      "data-opinion": escrita ? "1" : "",
     }
   : {};
 const retirada = d.status === "dropped";
@@ -76,7 +76,7 @@ const marcadas = marcas(obra);
     {marcadas.length > 0 && <span class="sello borrador">{marcadas.map((m) => t[m]).join(" · ")}</span>}
     {
       escrita && (
-        <span class="sello escrita" title={t.conCartelaTitulo}>
+        <span class="sello escrita" title={t.conOpinionTitulo}>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M6 3h12l4 6-10 13L2 9Z" />
             <path d="M2 9h20" />

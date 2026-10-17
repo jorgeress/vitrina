@@ -7,7 +7,7 @@ import { t } from "../i18n";
 import {
   SECCIONES,
   cantidad,
-  cartela,
+  opinion,
   grupos,
   obras,
   porAlta,
@@ -42,7 +42,7 @@ const salas = SECCIONES.map((s) => {
 });
 
 const escritas = todas
-  .map((obra) => ({ obra, texto: cartela(obra) }))
+  .map((obra) => ({ obra, texto: opinion(obra) }))
   .filter((e): e is { obra: (typeof todas)[number]; texto: string } => e.texto !== null)
   .sort((a, b) => porAlta(a.obra, b.obra));
 const almacen = todas.filter((o) => o.data.status === "pending").sort(porAlta);
@@ -160,16 +160,16 @@ const destacados = todosLosGrupos.some((g) => g.destacado)
 
     {
       escritas.length > 0 && (
-        <section class="bloque" aria-labelledby="t-cartelas">
+        <section class="bloque" aria-labelledby="t-opiniones">
           <header>
             <div>
-              <h2 id="t-cartelas">{t.cartelasTitulo}</h2>
-              <p>{t.cartelasSub}</p>
+              <h2 id="t-opiniones">{t.opinionesTitulo}</h2>
+              <p>{t.opinionesSub}</p>
             </div>
           </header>
-          <div class="cartelas">
+          <div class="opiniones">
             {escritas.map(({ obra, texto }) => (
-              <a class="cartela" href={ruta(obra)} style={`--seccion:var(--${obra.data.type})`}>
+              <a class="opinion" href={ruta(obra)} style={`--seccion:var(--${obra.data.type})`}>
                 {portada(obra) && <img src={portada(obra)} alt="" loading="lazy" />}
                 <span>
                   <span class="cita">{recortar(texto, 230)}</span>
@@ -414,12 +414,12 @@ const destacados = todosLosGrupos.some((g) => g.destacado)
     }
   }
 
-  .cartelas {
+  .opiniones {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
     gap: 14px;
   }
-  .cartela {
+  .opinion {
     display: flex;
     gap: 16px;
     padding: 18px;
@@ -429,17 +429,17 @@ const destacados = todosLosGrupos.some((g) => g.destacado)
     border-left: 3px solid var(--tenue);
     transition: border-color 0.18s ease;
   }
-  .cartela:hover {
+  .opinion:hover {
     border-color: var(--seccion);
   }
-  .cartela img {
+  .opinion img {
     flex: none;
     width: 62px;
     aspect-ratio: 2 / 3;
     object-fit: cover;
     border-radius: 5px;
   }
-  .cartela > span {
+  .opinion > span {
     display: flex;
     flex-direction: column;
   }
@@ -485,7 +485,7 @@ const destacados = todosLosGrupos.some((g) => g.destacado)
       justify-content: flex-end;
       min-height: 112px;
     }
-    .cartelas {
+    .opiniones {
       grid-template-columns: 1fr;
     }
   }

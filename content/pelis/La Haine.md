@@ -12,6 +12,7 @@ tags:
 letterboxd: la-haine
 added: 2026-09-02
 wikidata: Q466101
+finished_on: 2026-05-23
 ---
 
 > [!quote] De qué va

@@ -396,8 +396,6 @@ def main(argv=None):
         aqui = Path(__file__).resolve().parent
         subprocess.run([sys.executable, str(aqui / "desde_issue.py"), "--plantilla"], check=True)
         subprocess.run([sys.executable, str(aqui / "plantillas.py")], check=True)
-        if args.vaciar:
-            subprocess.run([sys.executable, str(aqui / "estado.py"), "--readme"])
     return 0
 
 

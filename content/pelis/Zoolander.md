@@ -12,6 +12,7 @@ tags:
 letterboxd: zoolander
 added: 2026-09-02
 wikidata: Q220192
+finished_on: 2026-06-03
 ---
 
 > [!quote] De qué va

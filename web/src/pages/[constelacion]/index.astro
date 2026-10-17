@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { t } from "../../i18n";
-import { SECCIONES, autores, obras, portada, ruta, titulo, vecindario } from "../../lib/obras";
+import { SECCIONES, autores, flechas, nombreTag, obras, portada, ruta, titulo, vecindario } from "../../lib/obras";
 
 export const getStaticPaths = () => [{ params: { constelacion: t.rutas.constelacion } }];
 
@@ -10,19 +10,29 @@ export const getStaticPaths = () => [{ params: { constelacion: t.rutas.constelac
 // las parejas posibles saldría una bola sin forma; con pocas, se ven grupos.
 // La que no se parece a nada se une a las de su sección más cercanas en el
 // tiempo, con una arista débil que se pinta discontinua.
+//
+// Encima de las obras hay dos niveles más, que se calculan en el navegador
+// con estos mismos datos: las salas y los géneros (los tags que más se
+// repiten). Se baja pulsando una burbuja y se sube con el botón.
 const todas = await obras();
 const vecinas = vecindario(todas, 3);
-const aristas = new Map<string, { source: string; target: string; peso: number; debil: boolean }>();
+type Arista = { source: string; target: string; peso: number; debil: boolean; relacion?: string };
+const aristas = new Map<string, Arista>();
 const unir = (a: string, b: string, peso: number, debil: boolean) => {
   const clave = [a, b].sort().join("|");
   const previa = aristas.get(clave);
-  if (!previa || (previa.debil && !debil)) aristas.set(clave, { source: a, target: b, peso, debil });
+  if (!previa || (previa.debil && !debil)) aristas.set(clave, { ...previa, source: a, target: b, peso, debil });
 };
 for (const a of todas) for (const v of vecinas.get(a.id) ?? []) unir(a.id, v.obra.id, v.peso, v.debil);
 const porAutor = new Map<string, string[]>();
 for (const o of todas) for (const autor of autores(o)) porAutor.set(autor, [...(porAutor.get(autor) ?? []), o.id]);
 for (const ids of porAutor.values())
   for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) unir(ids[i], ids[j], 6, false);
+// Lo que es de la misma historia pesa más que cualquier parecido y lleva
+// sentido: la arista va de la obra de la que sale a la que sale de ella.
+for (const { desde, hacia, campo } of flechas(todas))
+  aristas.set([desde.id, hacia.id].sort().join("|"), { source: desde.id, target: hacia.id, peso: 10, debil: false, relacion: campo });
+const hayFlechas = [...aristas.values()].some((a) => a.relacion);
 
 const datos = {
   nodos: todas.map((o) => ({
@@ -32,8 +42,12 @@ const datos = {
     favorito: Boolean(o.data.favorite),
     portada: portada(o),
     url: ruta(o),
+    tags: o.data.tags ?? [],
   })),
   aristas: [...aristas.values()],
+  salas: SECCIONES.map((s) => ({ tipo: s.tipo, nombre: s.nombre })),
+  nombresTag: Object.fromEntries([...new Set(todas.flatMap((o) => o.data.tags ?? []))].map((tag) => [tag, nombreTag(tag)])),
+  textos: { ...t.nivelesTexto, obras: t.constelacionTexto(todas.length), niveles: t.niveles, todas: t.todasLasSalas },
 };
 ---
 
@@ -42,11 +56,19 @@ const datos = {
     <canvas id="lienzo" aria-label={t.constelacionLienzo}></canvas>
     <div class="panel">
       <h1>{t.constelacion}</h1>
-      <p>{t.constelacionTexto(datos.nodos.length)}</p>
+      <div class="niveles" role="group" aria-label={t.constelacion}>
+        {(["salas", "generos", "obras"] as const).map((n) => <button type="button" data-nivel={n}>{t.niveles[n]}</button>)}
+      </div>
+      <p class="migas" id="migas">
+        <button type="button" id="subir" hidden>{t.subir}</button>
+        <span id="camino"></span>
+      </p>
+      <p id="texto-nivel">{t.constelacionTexto(datos.nodos.length)}</p>
       <input id="buscar" type="search" list="titulos" placeholder={t.buscarObra} aria-label={t.buscarObra} />
       <datalist id="titulos">
         {datos.nodos.map((n) => <option value={n.titulo} />)}
       </datalist>
+      {hayFlechas && <p class="flechas" id="nota-flechas">{t.flechasLeyenda}</p>}
       <div class="leyenda" id="leyenda">
         {
           SECCIONES.map((s) => (
@@ -115,6 +137,62 @@ const datos = {
     font: inherit;
     font-size: 0.88rem;
   }
+  .niveles {
+    display: flex;
+    margin: 10px 0 4px;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .niveles button {
+    flex: 1;
+    padding: 5px 8px;
+    border: 0;
+    background: none;
+    color: var(--tenue);
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .niveles button + button {
+    border-left: 1px solid var(--borde);
+  }
+  .niveles button[aria-pressed="true"] {
+    background: var(--texto);
+    color: var(--fondo);
+    font-weight: 600;
+  }
+  .panel .migas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-height: 1.6em;
+    margin: 8px 0 0;
+    color: var(--texto);
+    font-size: 0.86rem;
+    font-weight: 600;
+  }
+  .panel .migas:not(:has(#subir:not([hidden]))):has(#camino:empty) {
+    display: none;
+  }
+  #subir {
+    padding: 2px 10px;
+    border: 1px solid var(--borde);
+    border-radius: 999px;
+    background: var(--fondo);
+    color: var(--texto);
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .panel p.flechas {
+    margin-top: -4px;
+  }
+  .leyenda[hidden],
+  .flechas[hidden] {
+    display: none;
+  }
   .leyenda {
     display: flex;
     flex-wrap: wrap;
@@ -160,7 +238,7 @@ const datos = {
       max-width: none;
       padding: 12px;
     }
-    .panel p {
+    .panel p:not(.migas) {
       display: none;
     }
   }

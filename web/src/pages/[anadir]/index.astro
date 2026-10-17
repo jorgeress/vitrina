@@ -19,6 +19,13 @@ const formulario = `${REPO}/issues/new?template=${t.plantillaIssue}`;
       <button type="submit">{t.seguirGitHub}</button>
     </form>
     <p class="nota">{t.anadirNota}</p>
+    <label class="interruptor">
+      <input type="checkbox" id="ver-editar" />
+      <span>
+        {t.verEditar}
+        <small>{t.verEditarNota}</small>
+      </span>
+    </label>
   </div>
 </Base>
 
@@ -32,6 +39,19 @@ const formulario = `${REPO}/issues/new?template=${t.plantillaIssue}`;
     .map((t) => t?.match(/https?:\/\/\S+/)?.[0])
     .find(Boolean);
   if (compartido) location.replace(destino(compartido));
+
+  // Esta página solo la abre quien añade cosas (desde la app instalada o el
+  // menú Compartir): es el sitio para decirle a este navegador que es el del
+  // dueño. Se guarda en el navegador y nada más.
+  const verEditar = document.getElementById("ver-editar") as HTMLInputElement;
+  try {
+    verEditar.checked = localStorage.getItem("vitrina:editar") === "1";
+    verEditar.addEventListener("change", () =>
+      verEditar.checked ? localStorage.setItem("vitrina:editar", "1") : localStorage.removeItem("vitrina:editar"),
+    );
+  } catch {
+    verEditar.disabled = true;
+  }
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -66,6 +86,23 @@ const formulario = `${REPO}/issues/new?template=${t.plantillaIssue}`;
   }
   .nota {
     margin-top: 20px;
+    color: var(--tenue);
+  }
+  .interruptor {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--borde);
+    cursor: pointer;
+  }
+  .interruptor input {
+    margin-top: 4px;
+  }
+  .interruptor small {
+    display: block;
+    margin-top: 4px;
     color: var(--tenue);
   }
   @media (max-width: 520px) {

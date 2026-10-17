@@ -14,6 +14,7 @@ tags:
 letterboxd: howls-moving-castle
 added: 2026-09-02
 wikidata: Q29011
+finished_on: 2026-07-06
 ---
 
 > [!quote] De qué va

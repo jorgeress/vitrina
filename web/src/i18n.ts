@@ -1,6 +1,6 @@
 // Todos los textos de la interfaz, en español y en inglés. La vitrina sale en
 // el idioma de vitrine.config.json (`language`); el contenido —las fichas, las
-// cartelas— va en el que las escriba cada uno.
+// opiniones— va en el que las escriba cada uno.
 //
 // Para añadir un idioma basta con otro objeto con la misma forma que `es`: el
 // tipo `Textos` obliga a que no falte nada.
@@ -90,7 +90,7 @@ const es = {
   borrador: "Borrador",
   oculta: "Oculta",
   privada: "Privada",
-  conCartelaTitulo: "Tiene cartela: está escrito por qué está aquí",
+  conOpinionTitulo: "Tiene opinión: está escrito por qué está aquí",
   nota: (n: number) => `Nota: ${n} de 10`,
   portadaDe: (t: string) => `Portada de ${t}`,
   retirada: (t: string) => `${t} · Retirado de la vitrina`,
@@ -101,8 +101,8 @@ const es = {
   constelacionSub: "Todas, unidas por lo que comparten",
   mejorSub: "Lo que no puede faltar, sala por sala.",
   verTodo: "Verlo todo →",
-  cartelasTitulo: "Por qué están en la vitrina",
-  cartelasSub: "Lo que he escrito yo, no lo que dice la contraportada.",
+  opinionesTitulo: "Por qué están en la vitrina",
+  opinionesSub: "Lo que he escrito yo, no lo que dice la contraportada.",
   almacen: "En el almacén",
   almacenSub: "Lo que espera su turno de salir a la vitrina.",
   recientes: "Recién llegadas a la vitrina",
@@ -125,16 +125,19 @@ const es = {
   },
   estado: "Estado",
   todo: "Todo",
-  conCartela: "Con cartela",
+  conOpinion: "Con opinión",
   todosLosTags: "Todos los tags →",
   nadaConFiltros: "No hay nada con esos filtros.",
   quitarFiltros: "Quitar los filtros",
 
   // --- una ficha --------------------------------------------------------------
-  cartelaTitulo: "Por qué está en la vitrina",
+  opinionTitulo: "Por qué está en la vitrina",
   deQueVa: "De qué va",
   desde: (fecha: string) => `En la vitrina desde ${fecha}`,
   terminadaEn: (fecha: string) => `Terminado en ${fecha}`,
+  /** `started_on`: lo que quiere decir cambia con la sala. */
+  empezadaEn: (tipo: Tipo, fecha: string) =>
+    `${{ game: "Empezado en", film: "Vista por primera vez en", series: "Empezada en", book: "Empezado en", album: "Escuchado por primera vez en" }[tipo]} ${fecha}`,
   compartir: "Compartir",
   copiado: "Enlace copiado",
   conectada: "Conectada con",
@@ -149,11 +152,6 @@ const es = {
   /** «Vista 3 veces», con el verbo de cada sala. */
   veces: (tipo: Tipo, n: number) =>
     `${{ game: "Jugado", film: "Vista", series: "Vista", book: "Leído", album: "Escuchado" }[tipo]} ${n} veces`,
-  escuchar: "▶ Escuchar aquí",
-  verTrailer: "▶ Ver el tráiler",
-  cerrar: "Cerrar",
-  /** Hasta que se pulsa, la página no le pide nada a Spotify ni a YouTube. */
-  alPulsar: (donde: string) => `Se carga de ${donde} al pulsar; antes, la página no le pide nada.`,
   mismaHistoria: "De la misma historia",
   mismaHistoriaSub: "Adaptaciones, secuelas y bandas sonoras que también están en la vitrina.",
   relaciones: {
@@ -216,13 +214,21 @@ const es = {
   añoDescripcion: (y: number) => `Lo que terminé y lo que entró en la vitrina en ${y}.`,
   terminadas: "Lo que terminé",
   terminadasSub: (cuenta: string) => `${cuenta}, por la fecha de \`finished_on\`.`,
+  empezadas: "Lo que empecé",
+  empezadasSub: "Lo que empecé ese año, o escuché por primera vez, y no terminé ese mismo año.",
   entraron: "Lo que entró en la vitrina",
   entraronSub: (cuenta: string) => `${cuenta}, por la fecha de alta.`,
   apertura:
     "El año en que se abrió la vitrina: entró de golpe todo lo que ya tenía, así que esta lista es la colección de partida más que lo de ese año.",
   mejoresDelAño: "Lo mejor del año",
-  resumenAño: (terminadas: number, entraron: number) =>
-    [terminadas && `${terminadas} terminadas`, entraron && `${entraron} nuevas en la vitrina`].filter(Boolean).join(" · "),
+  resumenAño: (terminadas: number, entraron: number, empezadas = 0) =>
+    [
+      terminadas && `${terminadas} ${terminadas === 1 ? "terminada" : "terminadas"}`,
+      empezadas && `${empezadas} ${empezadas === 1 ? "empezada" : "empezadas"}`,
+      entraron && `${entraron} ${entraron === 1 ? "nueva" : "nuevas"} en la vitrina`,
+    ]
+      .filter(Boolean)
+      .join(" · "),
   añoAnterior: "← Año anterior",
   añoSiguiente: "Año siguiente →",
 
@@ -250,7 +256,7 @@ const es = {
 
   // --- buscar ---------------------------------------------------------------------
   buscarDescripcion: "Buscar en todas las salas de la vitrina.",
-  buscarSub: "En todas las salas: títulos, autores, cartelas y de qué va cada pieza.",
+  buscarSub: "En todas las salas: títulos, autores, opiniones y de qué va cada pieza.",
   sinIndice:
     "El índice del buscador se crea al construir la web (npm run build), así que con npm run dev no hay nada que buscar todavía.",
 
@@ -297,6 +303,12 @@ const es = {
   seguirGitHub: "Seguir en GitHub →",
   anadirNota: `Con la web instalada como app en Android, ${NOMBRE} sale en el menú de Compartir: compartir un enlace desde Letterboxd, Steam o Spotify trae directamente aquí.`,
   plantillaIssue: "nueva-pieza.yml",
+  plantillaEditar: "editar-pieza.yml",
+  editar: "Editar",
+  editarTitulo: "Cambiar la nota, el estado, la fecha o la opinión, con un Issue en GitHub",
+  verEditar: "Enseñar el botón «Editar» en las fichas, en este navegador",
+  verEditarNota:
+    "Abre un Issue con lo que tiene la ficha; lo cambias, lo mandas y en un par de minutos está publicado. Solo cuentan los Issues tuyos, así que el botón no deja editar a nadie más.",
 
   // --- avisos ---------------------------------------------------------------------
   sinConexion: "Sin conexión",
@@ -314,6 +326,14 @@ const es = {
   constelacionTexto: (n: number) =>
     `Cada punto es una de las ${n} obras, y cada línea une las que comparten autor o algo que las hace parecidas. Las discontinuas solo comparten sección y época, y los discos son cuadrados. Arrastra para moverte y usa la rueda para acercarte.`,
   buscarObra: "Buscar una obra…",
+  niveles: { salas: "Salas", generos: "Géneros", obras: "Obras" },
+  nivelesTexto: {
+    salas: "Las salas, más grandes cuantas más obras tienen, y unidas por las obras que se parecen de una a otra. Pulsa una para bajar a sus géneros.",
+    generos: "Los géneros que más se repiten, unidos cuando comparten obras. Pulsa uno para bajar a sus obras.",
+  },
+  subir: "↑ Subir",
+  todasLasSalas: "Todas",
+  flechasLeyenda: "Las flechas van de una obra a la que salió de ella: el manga a su anime, un juego a su secuela.",
 
   // --- tarjeta para compartir ------------------------------------------------------
   tarjeta: {
@@ -394,7 +414,7 @@ const en: Textos = {
   borrador: "Draft",
   oculta: "Hidden",
   privada: "Private",
-  conCartelaTitulo: "Has a label: it says why it is here",
+  conOpinionTitulo: "Has an opinion: it says why it is here",
   nota: (n) => `Rating: ${n} out of 10`,
   portadaDe: (t) => `Cover of ${t}`,
   retirada: (t) => `${t} · Off display`,
@@ -404,8 +424,8 @@ const en: Textos = {
   constelacionSub: "All of them, joined by what they share",
   mejorSub: "What can't be missing, room by room.",
   verTodo: "See all →",
-  cartelasTitulo: "Why they are on display",
-  cartelasSub: "What I wrote, not what the back cover says.",
+  opinionesTitulo: "Why they are on display",
+  opinionesSub: "What I wrote, not what the back cover says.",
   almacen: "In storage",
   almacenSub: "Waiting for their turn on display.",
   recientes: "Just arrived",
@@ -427,15 +447,17 @@ const en: Textos = {
   },
   estado: "Status",
   todo: "All",
-  conCartela: "With a label",
+  conOpinion: "With an opinion",
   todosLosTags: "All tags →",
   nadaConFiltros: "Nothing matches those filters.",
   quitarFiltros: "Clear the filters",
 
-  cartelaTitulo: "Why it's on display",
+  opinionTitulo: "Why it's on display",
   deQueVa: "What it's about",
   desde: (fecha) => `On display since ${fecha}`,
   terminadaEn: (fecha) => `Finished in ${fecha}`,
+  empezadaEn: (tipo, fecha) =>
+    `${{ game: "Started in", film: "First watched in", series: "Started in", book: "Started in", album: "First heard in" }[tipo]} ${fecha}`,
   compartir: "Share",
   copiado: "Link copied",
   conectada: "Connected to",
@@ -448,10 +470,6 @@ const en: Textos = {
   resumenFicha: (titulo, sala) => `${titulo}, in the ${sala.toLowerCase()} room.`,
   enGrupos: "In the groups",
   veces: (tipo, n) => `${{ game: "Played", film: "Watched", series: "Watched", book: "Read", album: "Listened to" }[tipo]} ${n} times`,
-  escuchar: "▶ Listen here",
-  verTrailer: "▶ Watch the trailer",
-  cerrar: "Close",
-  alPulsar: (donde) => `Loads from ${donde} when pressed; until then, the page asks it for nothing.`,
   mismaHistoria: "Part of the same story",
   mismaHistoriaSub: "Adaptations, sequels and soundtracks that are on display too.",
   relaciones: {
@@ -505,13 +523,17 @@ const en: Textos = {
   añoDescripcion: (y) => `What I finished and what came in in ${y}.`,
   terminadas: "What I finished",
   terminadasSub: (cuenta) => `${cuenta}, by their \`finished_on\` date.`,
+  empezadas: "What I started",
+  empezadasSub: "What I started that year, or first heard, and didn't finish that same year.",
   entraron: "What came in",
   entraronSub: (cuenta) => `${cuenta}, by the date they were added.`,
   apertura:
     "The year the display opened: everything already owned came in at once, so this list is the starting collection more than that year's.",
   mejoresDelAño: "Best of the year",
-  resumenAño: (terminadas, entraron) =>
-    [terminadas && `${terminadas} finished`, entraron && `${entraron} new on display`].filter(Boolean).join(" · "),
+  resumenAño: (terminadas, entraron, empezadas = 0) =>
+    [terminadas && `${terminadas} finished`, empezadas && `${empezadas} started`, entraron && `${entraron} new on display`]
+      .filter(Boolean)
+      .join(" · "),
   añoAnterior: "← Previous year",
   añoSiguiente: "Next year →",
 
@@ -537,7 +559,7 @@ const en: Textos = {
   verTabla: "Show as a table",
 
   buscarDescripcion: "Search every room of the display.",
-  buscarSub: "In every room: titles, authors, labels and what each piece is about.",
+  buscarSub: "In every room: titles, authors, opinions and what each piece is about.",
   sinIndice:
     "The search index is made when the site is built (npm run build), so with npm run dev there is nothing to search yet.",
 
@@ -580,6 +602,12 @@ const en: Textos = {
   seguirGitHub: "Continue on GitHub →",
   anadirNota: `With the site installed as an app on Android, ${NOMBRE} shows up in the Share menu: sharing a link from Letterboxd, Steam or Spotify brings you straight here.`,
   plantillaIssue: "new-piece.yml",
+  plantillaEditar: "edit-piece.yml",
+  editar: "Edit",
+  editarTitulo: "Change the rating, status, date or opinion, with a GitHub Issue",
+  verEditar: "Show the “Edit” button on entries, in this browser",
+  verEditarNota:
+    "It opens an Issue with what the entry has; change it, submit it and it's published in a couple of minutes. Only your own Issues count, so the button lets nobody else edit.",
 
   sinConexion: "Offline",
   sinConexionTitulo: "This room isn't saved",
@@ -595,6 +623,14 @@ const en: Textos = {
   constelacionTexto: (n) =>
     `Each dot is one of the ${n} works, and each line joins those that share an author or something that makes them alike. Dashed lines only share a room and an era, and albums are squares. Drag to move and scroll to zoom.`,
   buscarObra: "Find a work…",
+  niveles: { salas: "Rooms", generos: "Genres", obras: "Works" },
+  nivelesTexto: {
+    salas: "The rooms, bigger the more works they hold, joined by works that resemble each other across them. Tap one to go down to its genres.",
+    generos: "The most repeated genres, joined when they share works. Tap one to go down to its works.",
+  },
+  subir: "↑ Up",
+  todasLasSalas: "All",
+  flechasLeyenda: "Arrows go from a work to the one that came out of it: the manga to its anime, a game to its sequel.",
 
   tarjeta: {
     mejor: "★ The best of the best",

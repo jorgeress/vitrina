@@ -14,6 +14,7 @@ tags:
 letterboxd: one-cut-of-the-dead
 added: 2026-09-02
 wikidata: Q55223237
+finished_on: 2026-06-24
 ---
 
 > [!quote] De qué va

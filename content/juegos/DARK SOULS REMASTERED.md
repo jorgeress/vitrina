@@ -13,6 +13,7 @@ tags:
 appid: 570940
 added: 2026-09-02
 wikidata: Q55728812
+started_on: 2024-05
 ---
 
 > [!quote] De qué va

@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { t } from "../../i18n";
-import { años, añoAlta, añoTerminada, obras, porAprecio, portada, rutaFija } from "../../lib/obras";
+import { años, añoAlta, añoEmpezada, añoTerminada, obras, porAprecio, portada, rutaFija } from "../../lib/obras";
 
 export const getStaticPaths = () => [{ params: { anuario: t.rutas.anuario } }];
 
@@ -9,9 +9,10 @@ const todas = await obras();
 const lista = años(todas).map((y) => {
   const terminadas = todas.filter((o) => añoTerminada(o) === y);
   const entraron = todas.filter((o) => añoAlta(o) === y);
+  const empezadas = todas.filter((o) => añoEmpezada(o) === y && añoTerminada(o) !== y);
   // Las miniaturas, de lo terminado si lo hay: es lo que dice más de ese año.
-  const muestra = [...(terminadas.length ? terminadas : entraron)].sort(porAprecio).slice(0, 3);
-  return { y, terminadas: terminadas.length, entraron: entraron.length, muestra };
+  const muestra = [...(terminadas.length ? terminadas : entraron.length ? entraron : empezadas)].sort(porAprecio).slice(0, 3);
+  return { y, terminadas: terminadas.length, entraron: entraron.length, empezadas: empezadas.length, muestra };
 });
 ---
 
@@ -24,7 +25,7 @@ const lista = años(todas).map((y) => {
     {lista.length === 0 && <p class="vacio">{t.anuarioVacio}</p>}
     <ul class="lista">
       {
-        lista.map(({ y, terminadas, entraron, muestra }) => (
+        lista.map(({ y, terminadas, entraron, empezadas, muestra }) => (
           <li>
             <a href={rutaFija("anuario", `${y}/`)}>
               <span class="miniaturas" aria-hidden="true">
@@ -34,7 +35,7 @@ const lista = años(todas).map((y) => {
               </span>
               <span>
                 <strong class="año">{y}</strong>
-                <small>{t.resumenAño(terminadas, entraron)}</small>
+                <small>{t.resumenAño(terminadas, entraron, empezadas)}</small>
               </span>
             </a>
           </li>

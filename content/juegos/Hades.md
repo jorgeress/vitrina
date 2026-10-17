@@ -14,7 +14,6 @@ tags:
 added: 2026-10-17
 appid: 1145360
 wikidata: Q59756366
-trailer: YZZFlcE0fWE
 ---
 
 > [!quote] De qué va

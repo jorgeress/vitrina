@@ -14,6 +14,7 @@ tags:
 letterboxd: the-crow
 added: 2026-09-02
 wikidata: Q250912
+finished_on: 2026-03-30
 ---
 
 > [!quote] De qué va

@@ -16,7 +16,6 @@ mbid: 6e335887-60ba-38f0-95af-fae7774336bf
 favorite_tracks: 2
 added: 2026-08-31
 wikidata: Q223295
-spotify: 5vkqYmiPBYLaalcmjujWxK
 ---
 
 > [!vitrina] Por qué está en la vitrina

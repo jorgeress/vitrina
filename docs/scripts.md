@@ -15,19 +15,20 @@ inglés en `mensajes_en.py`; `pruebas.py` falla si alguno no la tiene.
 | Script | Para qué |
 | --- | --- |
 | `nueva.py` | Da de alta una obra, buscándola o desde su enlace |
-| `desde_issue.py` | Lo mismo desde un Issue de GitHub, para añadir desde el móvil |
+| `desde_issue.py` | Lo mismo desde un Issue de GitHub, para añadir o editar desde el móvil |
 | `repasar.py` | Pone nota, estado, favorito y tu frase, ficha a ficha |
 | `importar.py` | Vuelca Letterboxd, Steam, ListenBrainz o Spotify |
 | `al-dia.py` | Pasa todos los de abajo en orden, hasta `autores.py` |
 | `portadas.py` | Baja las carátulas que falten |
 | `datos.py` | Rellena año, autor y tags |
 | `textos.py` | Escribe el «De qué va» y las canciones de cada disco |
-| `enlazar.py` | Une cada ficha con Wikidata: tráiler, Spotify y de qué otra viene |
+| `enlazar.py` | Une cada ficha con Wikidata: de qué otra viene |
+| `cuando.py` | Cuándo terminaste o empezaste cada cosa, de Letterboxd, Steam, Goodreads, ListenBrainz o Spotify |
 | `autores.py` | Escribe las páginas de autor |
 | `secciones.py` | Cuelga cada ficha de su sala (campo `section`) |
 | `fechas.py` | Apunta la fecha de alta (campo `added`) de las que no la tienen |
-| `enmarcar.py` | Mete en su cartela lo que hayas escrito suelto |
-| `estado.py` | Qué hay y qué falta; actualiza las cifras del README |
+| `enmarcar.py` | Convierte en opinión lo que hayas escrito suelto |
+| `estado.py` | Qué hay y qué falta |
 | `vistazo.py` | Levanta el sitio con los borradores, lo oculto y lo privado dentro |
 | `empezar.py` | Deja una vitrina nueva, vacía, en castellano o en inglés |
 | `plantillas.py` | Escribe las plantillas de ficha y de grupo de Obsidian |
@@ -47,7 +48,7 @@ scripts/nueva.py boxd.it/2bg8                    # el enlace corto de Letterboxd
 Con un título enseña candidatos y eliges tú. Con un enlace no pregunta, porque
 el enlace ya dice cuál es. Guarda el identificador de la obra y la fecha de
 alta, baja la portada, escribe el «De qué va» y pone al día las páginas de
-autor y las cifras del README.
+autor.
 
 | Tipo | Fuente | Guarda | Enlaces que entiende |
 | --- | --- | --- | --- |
@@ -116,6 +117,15 @@ Solo corre con los Issues del dueño del repo y con la etiqueta de la plantilla
 cualquiera puede abrir uno, y esto escribe en `main`. Lo que llega del formulario se valida
 campo a campo y nunca se pega en una orden.
 
+La otra plantilla, **Editar pieza** (`editar-pieza.yml`, con la etiqueta
+`editar-pieza`), cambia una ficha que ya está: nota, estado, fecha de terminada
+y opinión. No se rellena a mano: la abre el botón **✎ Editar** de cada ficha
+(sale en el navegador donde lo hayas pedido en `/anadir/`), con la ruta de la
+ficha y lo que ya tiene. Lo que llega en «Sin cambios» o en blanco no se toca;
+la opinión se cambia sin tocar el resto del texto (spoilers, la cita). La ruta
+tiene que ser una ficha que exista dentro de una sala; cualquier otra cosa es
+un error, no un fichero nuevo.
+
 Desde el móvil es aún más corto: con la web instalada como app, en Android
 sale en el menú de **Compartir**. Compartir un enlace de Letterboxd, Steam o
 Spotify a *Vitrina* abre el formulario con el enlace ya puesto.
@@ -144,7 +154,7 @@ Por cada ficha contestas en una línea, en cualquier orden:
 
 Con nota y sin estado se entiende `finished`, salvo que la ficha ya dijera
 `in-progress` o `dropped`. Después, si la ficha no tiene nada tuyo escrito,
-pide por qué está en la vitrina y lo pone arriba del todo, en su cartela
+pide por qué está en la vitrina y lo pone arriba del todo, como su opinión
 (`> [!vitrina] Por qué está en la vitrina`), encima de la cita. Enter la salta.
 
 ## al-dia.py
@@ -152,12 +162,12 @@ pide por qué está en la vitrina y lo pone arriba del todo, en su cartela
 ```bash
 scripts/al-dia.py                   # todo
 scripts/al-dia.py --seccion libros  # solo esa carpeta, en lo que va por carpeta
-scripts/al-dia.py --sin-red         # solo secciones, fechas, cartelas, autores y README
+scripts/al-dia.py --sin-red         # solo secciones, fechas, opiniones y autores
 scripts/al-dia.py --dry-run
 ```
 
-Pasa `secciones`, `fechas`, `enmarcar`, `portadas`, `datos`, `textos`, `enlazar` y `autores`, en ese
-orden, y al final `estado.py --readme`. Si un paso falla sigue con los demás y
+Pasa `secciones`, `fechas`, `enmarcar`, `portadas`, `datos`, `textos`,
+`enlazar`, `cuando` y `autores`, en ese orden. Si un paso falla sigue con los demás y
 lo dice al terminar.
 
 ## importar.py
@@ -202,6 +212,34 @@ En los libros, el artículo sale de la obra de Open Library a la que pertenece
 el `coverid`, y se apunta en el campo `wikipedia`. Si Wikidata no tiene la obra
 enlazada, pon ese campo a mano con el nombre del artículo.
 
+## cuando.py
+
+```bash
+scripts/cuando.py                          # las cuentas de "accounts"
+scripts/cuando.py letterboxd TU_USUARIO     # el RSS: las últimas ~50 películas
+scripts/cuando.py letterboxd ~/Descargas/letterboxd.zip   # el export, entero
+scripts/cuando.py steam 7656119XXXXXXXXXX
+scripts/cuando.py goodreads 12345678
+scripts/cuando.py listenbrainz TU_USUARIO
+scripts/cuando.py spotify ~/Descargas/my_spotify_data.zip
+scripts/cuando.py --dry-run
+```
+
+Solo escribe donde el campo está vacío:
+
+| Sala | Campo | De dónde |
+| --- | --- | --- |
+| Películas | `finished_on` (el día) | diario de Letterboxd, por el slug de la ficha; con el export, también `times` |
+| Libros | `finished_on` (el día) | estantería «read» de Goodreads, por título y autor a la vez |
+| Juegos | `started_on` (el mes) | el primer logro en Steam, por el `appid` |
+| Discos | `started_on` (el día) | la primera escucha en ListenBrainz o en el historial ampliado de Spotify |
+
+Lo que no se sabe seguro se deja vacío: una película cuya primera entrada en el
+diario ya es un revisionado, un juego con algún logro sin fecha (Steam pone
+1970), un disco cuya primera escucha cae en el primer mes del registro. Steam
+pide el perfil y los detalles de juegos públicos; Goodreads, la estantería
+pública. Las series no tienen de dónde: TVmaze y Trakt piden cuenta o clave.
+
 ## enlazar.py
 
 ```bash
@@ -217,17 +255,12 @@ donde esté vacío:
 | Campo | De dónde | Para qué |
 | --- | --- | --- |
 | `wikidata` | el elemento (`Q…`) | lo demás |
-| `trailer` | Wikidata (P1651), si YouTube deja incrustarlo | el botón «Ver el tráiler» |
-| `spotify` | Wikidata (P2205) o, si no, MusicBrainz | el botón «Escuchar aquí» de los discos |
 | `based_on` | Wikidata (P144 y P4969, en los dos sentidos) | «Basada en» / «Adaptada en» |
 | `follows` | Wikidata (P155 y P156) | «Continúa a» / «Sigue en» |
 
 Las relaciones solo se escriben si la otra obra también está en la vitrina, y
 los discos no llevan `follows` (la discografía ya la cuenta la página del
-autor). Los tráileres se comprueban con el oEmbed de YouTube: Wikidata da a
-veces como tráiler la película entera de alquiler del canal *YouTube Movies*,
-que fuera de la tienda no se ve, y esos se descartan. `soundtrack` no lo sabe
-casi nunca: va a mano. `nueva.py` lo pasa solo para cada ficha nueva.
+autor). `soundtrack` no lo sabe casi nunca: va a mano. `nueva.py` lo pasa solo para cada ficha nueva.
 
 ## autores.py, secciones.py y fechas.py
 
@@ -245,15 +278,13 @@ puede nombrar lo privado.
 ```bash
 scripts/estado.py              # el resumen
 scripts/estado.py --detalle    # qué le falta a cada ficha
-scripts/estado.py --readme     # reescribe el bloque de cifras del README
 scripts/estado.py --comprobar  # avisa de lo que se ha quedado atrás
 ```
 
-`--comprobar` es el paso del CI que va antes de construir. Avisa si las cifras
-del README ya no son las de la vault, si hay portadas que no usa ninguna ficha
-o fichas sin fecha de alta. No para el despliegue. Las cifras cuentan solo lo
-que sale en la web: ni lo oculto ni lo privado, que el README lo lee
-cualquiera.
+`--comprobar` es el paso del CI que va antes de construir. Avisa si hay
+portadas que no usa ninguna ficha o fichas sin fecha de alta. No para el
+despliegue. Las cifras cuentan solo lo que sale en la web: ni lo oculto ni lo
+privado.
 
 ## vistazo.py
 

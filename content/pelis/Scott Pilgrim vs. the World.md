@@ -14,6 +14,7 @@ tags:
 letterboxd: scott-pilgrim-vs-the-world
 added: 2026-09-02
 wikidata: Q753899
+finished_on: 2024-04-18
 ---
 
 > [!quote] De qué va

@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { NOMBRE } from "../config";
 import { t } from "../i18n";
-import { cartela, obras, quienFirma, seccionDe, tarjeta, titulo, url } from "../lib/obras";
+import { opinion, obras, quienFirma, seccionDe, tarjeta, titulo, url } from "../lib/obras";
 
 // Lo que necesita la integración para pintar la tarjeta de cada ficha: la
 // imagen que sale al pegar el enlace en un chat o una red. No se publica: la
@@ -23,7 +23,7 @@ export const GET: APIRoute = async ({ site }) => {
       sala: seccionDe(d.type).nombre,
       nota: d.rating ?? null,
       favorito: Boolean(d.favorite),
-      cartela: cartela(o),
+      opinion: opinion(o),
       portada: d.cover?.replace(/^\[\[|\]\]$/g, "").split("|")[0] ?? null,
     };
   });

@@ -20,9 +20,10 @@ const privada = (patron: string) => (VISTAZO ? [`${CARPETA_PRIVADA}/${patron}`] 
 const id = (entrada: string, quitar: string | RegExp = "") =>
   slugQuartz(entrada.replace(new RegExp(`^${CARPETA_PRIVADA}/`), "").replace(quitar, "").replace(/\.md$/, ""));
 
-/** Lo que se puede ocultar de una ficha pública, campo a campo. `label` es la
- * cartela, «Por qué está en la vitrina». */
-export const OCULTABLES = ["rating", "status", "favorite", "label", "finished_on", "groups", "added", "times"] as const;
+/** Lo que se puede ocultar de una ficha pública, campo a campo. `opinion` es lo
+ * que ha escrito el dueño, «Por qué está en la vitrina»; `label`, su nombre
+ * de antes, sigue valiendo. */
+export const OCULTABLES = ["rating", "status", "favorite", "opinion", "label", "finished_on", "started_on", "groups", "added", "times"] as const;
 
 /** Una lista de enlaces a otras fichas: `["[[libros/Chainsaw Man]]"]`. Uno
  * solo, sin lista, vale igual. */
@@ -32,7 +33,7 @@ const enlaces = z
   .nullish();
 
 /**
- * Cuándo lo terminaste: un año, un año y un mes, o el día. YAML lee `2024`
+ * Una fecha de la ficha (cuándo lo terminaste, cuándo lo empezaste): un año, un año y un mes, o el día. YAML lee `2024`
  * como número y `2024-05-03` como fecha; aquí todo acaba en texto
  * («2024-05»), con la precisión que se haya escrito y ni una más.
  */
@@ -41,7 +42,7 @@ const fechaParcial = z
   .transform((v, ctx) => {
     const texto = v instanceof Date ? v.toISOString().slice(0, 10) : String(v).trim();
     if (!/^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?)?$/.test(texto)) {
-      ctx.addIssue({ code: "custom", message: `finished_on: «${texto}» no es AAAA, AAAA-MM ni AAAA-MM-DD` });
+      ctx.addIssue({ code: "custom", message: `fecha: «${texto}» no es AAAA, AAAA-MM ni AAAA-MM-DD` });
       return z.NEVER;
     }
     return texto;
@@ -70,6 +71,10 @@ const obras = defineCollection({
     tags: z.array(z.string()).nullish(),
     added: z.coerce.date().nullish(),
     finished_on: fechaParcial.nullish(),
+    /** Cuándo lo empezaste (un juego) o lo oíste por primera vez (un disco).
+     * Lo pone scripts/cuando.py del primer logro de Steam o de la primera
+     * escucha; se puede escribir a mano igual que finished_on. */
+    started_on: fechaParcial.nullish(),
     groups: z.array(z.union([z.string(), z.number()]).transform(String)).nullish(),
     hidden: z.union([z.boolean(), z.array(z.enum(OCULTABLES))]).nullish(),
     draft: z.boolean().optional(),
@@ -82,10 +87,6 @@ const obras = defineCollection({
     based_on: enlaces,
     follows: enlaces,
     soundtrack: enlaces,
-    // El reproductor: el tráiler en YouTube y el disco en Spotify, como id o
-    // como enlace. Los pone scripts/enlazar.py desde Wikidata.
-    trailer: z.string().nullish(),
-    spotify: z.string().nullish(),
     // Los ids de cada fuente: con ellos dos vitrinas pueden compararse sin
     // fiarse del título.
     appid: z.number().nullish(),
